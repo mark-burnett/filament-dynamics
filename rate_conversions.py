@@ -3,9 +3,9 @@ def scale_rates( rates, dt ):
     Scales the given rates by dt.
     """
     result = {}
-    for instate, out in rates.iteritems():
-        if out:
-            result[instate] = (out[0] * dt, out[1])
+    for instate, p in rates.iteritems():
+        if p:
+            result[instate] = p * dt
         else:
             result[instate] = None
     return result
