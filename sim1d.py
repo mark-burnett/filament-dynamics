@@ -29,7 +29,7 @@ def simulate( tailsize, tailstate, hydro_rates, depoly_rates,
 
         # Depolymerize
         state = strand.peek()
-        if random.random() < depoly_rates[state]:
+        if random.random() < dr[state]:
             strand.pop()
             removed += 1
 
