@@ -92,9 +92,9 @@ class Strand(object):
             if sub[1] != state:
                 num += sub[0]
         return num
-    def sanity_check(self):
-        for s in self._substrands:
-            assert( 0 < s[0] )
+#    def sanity_check(self):
+#        for s in self._substrands:
+#            assert( 0 < s[0] )
 
     # Evolution operators
     def evolve(self, probabilities):

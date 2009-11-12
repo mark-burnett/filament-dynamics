@@ -16,32 +16,35 @@
 
 import ppmap
 
-concentrations = [ 0.075 ] #, 0.05, 0.05, 0.05 ]
+concentrations = [ 0.1 ] #, 0.05, 0.05, 0.05 ]
 
 
 def sim( c ):
+    # FIXME remove seed
     import sys
     sys.path.remove('/usr/share/pyshared')
     import sim1d
     from states import ChemicalState
     import data_collectors
+    from numpy.random import mtrand
+    mtrand.seed(0)
 
-    duration = 2000
-    dt = 0.001
+    duration = 100000
+    dt = 0.01
     dc = {'length'   : data_collectors.strand_length,
           'cap_len'  : data_collectors.cap_length,
           'ATP_cap'  : data_collectors.ATP_cap,
           'tip_state': data_collectors.tip_state}
 
-    hydro = { #ChemicalState.ATP:   [(0.3,   ChemicalState.ADP)],
-              #ChemicalState.ADPPi: [(0.004, ChemicalState.ADP)],
+    hydro = { ChemicalState.ATP:   [(0.3,   ChemicalState.ADPPi)],
+              ChemicalState.ADPPi: [(0.004, ChemicalState.ADP)],
               ChemicalState.ADP:   [] }
-    remove = { #ChemicalState.ATP:   1.4,
-               #ChemicalState.ADPPi: 1.1,
+    remove = { ChemicalState.ATP:   1.4,
+               ChemicalState.ADPPi: 1.1,
                ChemicalState.ADP:   7.2 }
     addition = 11.6 # per uM per s
     return sim1d.simulate( 10**9, ChemicalState.ADP, hydro, remove,
-                           addition * c, ChemicalState.ADP,
+                           addition * c, ChemicalState.ATP,
                            duration, dt, dc )
 
 outputs = ppmap.ppmap( sim, concentrations )
@@ -52,8 +55,8 @@ def analyze( output ):
     from states import ChemicalState
     import diffusion
 
-    trash_time = 500
-    dt = 0.001
+    trash_time = 2500
+    dt = 0.01
     trash_samples = int(trash_time/dt)
     length = output['length'   ][ trash_samples: ]
     cl     = output['cap_len'  ][ trash_samples: ]
