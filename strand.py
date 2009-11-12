@@ -13,7 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from numpy import random
+from numpy.random import mtrand
+import copy
 
 class Strand(object):
     """
@@ -61,6 +62,12 @@ class Strand(object):
         return self._substrands[-1][1]
 #    def __getitem__(self, i):
 #        return i
+
+    def __len__(self):
+        num = 0
+        for sub in self._substrands:
+            num += sub[0]
+        return num
 
     # Statistical/measurement operators
     def count(self, state):
@@ -119,18 +126,19 @@ def _join_strands(left, right):
         return left
     left_end    = left[-1]
     right_begin = right[0]
+    lc = copy.copy(left)
     if left_end[1] == right_begin[1]:
-        left[-1] = (left_end[0] + right_begin[0], left_end[1])
-        left.extend( right[1:] )
+        lc[-1] = (left_end[0] + right_begin[0], left_end[1])
+        lc.extend( right[1:] )
     else:
-        left.extend( right )
-    return left
+        lc.extend( right )
+    return lc
 
-def _evolve_substrand(substrand, p):
-    if not p:
+def _evolve_substrand(substrand, probs):
+    if not probs:
         return [substrand]
-    rnums = random.random( substrand[0] )
-    states = map( lambda x: _choose_state( p, x, substrand[1] ), rnums )
+    rnums = mtrand.rand( substrand[0] )
+    states = map( lambda x: _choose_state( probs, x, substrand[1] ), rnums )
 
     result_strand = []
     current_count = None
@@ -148,8 +156,8 @@ def _evolve_substrand(substrand, p):
     result_strand.append( (current_count, current_state) )
     return result_strand
 
-def _choose_state( p, num, default=None ):
-    for r, s in p:
-        if num < r:
-            return s
+def _choose_state( probs, num, default=None ):
+    for rate, state in probs:
+        if num < rate:
+            return state
     return default

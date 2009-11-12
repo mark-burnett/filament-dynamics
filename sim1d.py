@@ -13,7 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from numpy import random
+from numpy.random import mtrand
 
 from rate_conversions import scale_rates, scale_multiple_rates
 from states import ChemicalState
@@ -25,7 +25,7 @@ def simulate( tailsize, tailstate, hydro_rates, depoly_rates,
     dr = scale_rates( depoly_rates, dt )
     hr = scale_multiple_rates( hydro_rates, dt )
 
-    timesteps = int ( duration / dt )
+    timesteps = int( duration / dt )
 
     added   = 0
     removed = 0
@@ -35,8 +35,8 @@ def simulate( tailsize, tailstate, hydro_rates, depoly_rates,
 
     for i in xrange( timesteps ):
         # Add a new monomer
-        if random.random() < pr:
-            strand.append( ChemicalState.ATP )
+        if mtrand.rand() < pr:
+            strand.append( poly_state )
             added += 1
 
         # Hydrolize the strand
@@ -44,7 +44,7 @@ def simulate( tailsize, tailstate, hydro_rates, depoly_rates,
 
         # Depolymerize
         state = strand.peek()
-        if random.random() < dr[state]:
+        if mtrand.rand() < dr[state]:
             strand.pop()
             removed += 1
 
