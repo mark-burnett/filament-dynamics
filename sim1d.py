@@ -53,5 +53,9 @@ def simulate( tailsize, tailstate, hydro_rates, depoly_rates,
             result = f(strand, added, removed, i)
             if result is not None:
                 data[key].append( result )
+        # FIXME - delete these checks
+        # assert for single state test case
+        assert(1 == len(strand._substrands))
+        strand.sanity_check()
 
     return data
