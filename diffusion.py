@@ -17,27 +17,46 @@ from numpy import array, average, linspace, roll, var, std
 from scipy.stats import linregress
 import cPickle
 
-def _dispersion( L, window_size, dt ):
+def _dispersion( L, window_size, dt, v ):
+#    size = len(L) - window_size
+#    end = None
+#    n2 = 0
+#    nwin = 0
+#    for i in xrange(0, size, window_size):
+#        n2 += (L[i] - L[i+window_size])**2
+#        end = L[i+window_size]
+#        nwin += 1
+#    n2 /= float(nwin)
+#    n = float(L[i]-end)/nwin
+#    return float(n2 - n**2)/(2*dt*window_size)
     shifted = roll( L, window_size )
     difference = L[window_size:] - shifted[window_size:]
-    return var(difference) / ( 2 * window_size * dt )
+#    print average(difference) / (dt * window_size)
+    way1 = (average(difference**2) - (dt*window_size*v)**2) / ( 2 * window_size * dt )
+    way2 =  var(difference) / (2*window_size*dt)
+    way3 = (average(difference**2) - (dt*window_size*-0.8723432)**2) / ( 2 * window_size * dt )
+    way4 = (average(difference**2) - (dt*window_size*-0.88)**2) / ( 2 * window_size * dt )
+#    print way1 - way2
+    return (way1, way2, way3, way4)
+#    return (average(difference**2) - (dt*window_size*v)**2) / ( 2 * window_size * dt )
 
-def _fluctuations( L, time, dt, n_pts ):
+def _fluctuations( L, time, dt, n_pts, vel ):
     """
     Determines the Diffusion constant for L.
 
     L should be adjusted so both its velocity is 0, and its sum is 0.
     """
     values = []
-    window_sizes = array( linspace(10/dt, len(time)/2, n_pts), int )
-    values = [ _dispersion( array(L), ws, dt ) for ws in window_sizes ]
+    window_sizes = array( linspace(10/dt, 300000, n_pts), int )
+#    window_sizes = array( linspace(10/dt, len(L)/2, n_pts), int )
+    values = [ _dispersion( array(L), ws, dt, vel ) for ws in window_sizes ]
 
     t_win_sizes = dt * array(window_sizes)
     f = file('dco.dat','w')
     for t, v in zip(t_win_sizes, values):
-        f.write('%s %s\n' % (t,v))
+        f.write('%s %s %s %s %s\n' % (t,v[0],v[1],v[2],v[3]))
     f.close()
-    return values[-1], 0, 0, 0, 0
+    return values[-1][0], 0, 0, 0, 0
 
 def D_and_V( values, dt ):
     """
@@ -50,6 +69,7 @@ def D_and_V( values, dt ):
     # Next we subtract the linear portion for the diffusion calculation
 #    subvalues = array( values ) - (time * v)# + v_const)
     # Now the actual diffusion calculation
-    d, d_const, d_r, d_tt, d_err = _fluctuations( values, time, dt, 500 )
+    d, d_const, d_r, d_tt, d_err = _fluctuations( values, time, dt, 20, v )
 
     return d, v, d_err, v_err
+#    return 0, v, 0, v_err
