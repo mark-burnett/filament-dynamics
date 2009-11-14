@@ -24,8 +24,8 @@ from states import ChemicalState
 import rate_conversions
 
 # Simulation parameters
-output_file_name='simout.p'
-concentrations = [ 0.1 ]#, 0.02, 0.03, 0.05, 0.1 ] #, 0.05, 0.05, 0.05 ]
+output_file_name='simout.pickle'
+concentrations = [0.1] #[ 0.01, 0.02, 0.03, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1 ]
 duration   = 10000
 dt = 0.01
 
