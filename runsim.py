@@ -14,86 +14,60 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import ppmap
+import cPickle
+from multiprocessing import Pool, Process
 
-concentrations = [ 0.1 ] #, 0.05, 0.05, 0.05 ]
-#concentrations = [ 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09,
-#                   0.10, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18 ]
-#concentrations = [ 0.19, 0.20, 0.21, 0.22, 0.23, 0.24, 0.25, 0.26, 0.27,
-#                   0.28, 0.29, 0.30 ]
+import strand
+import sim1d
+import data_collectors
+from states import ChemicalState
+import rate_conversions
 
+# Simulation parameters
+output_file_name='simout.p'
+concentrations = [ 0.1 ]#, 0.02, 0.03, 0.05, 0.1 ] #, 0.05, 0.05, 0.05 ]
+duration   = 10000
+dt = 0.01
 
-def sim( c ):
-    import sys
-    try :
-        sys.path.remove('/usr/share/pyshared')
-    except ValueError:
-        pass
-    import sim1d
-    from states import ChemicalState
-    import data_collectors
-    # FIXME remove seed
-    from numpy.random import mtrand
-    mtrand.seed(0)
+hydro  = { ChemicalState.ATP:   [(0.3,   ChemicalState.ADPPi)],
+           ChemicalState.ADPPi: [(0.004, ChemicalState.ADP)],
+           ChemicalState.ADP:   [] }
+depoly = { ChemicalState.ATP:   1.4,
+           ChemicalState.ADPPi: 1.1,
+           ChemicalState.ADP:   7.2 }
+poly_rate = 11.6 # per uM per s
 
-    duration = 20000
-    dt = 0.01
-    dc = {'length'   : data_collectors.strand_length,
-          'cap_len'  : data_collectors.cap_length,
-          'ATP_cap'  : data_collectors.ATP_cap,
-          'tip_state': data_collectors.tip_state}
+dc = {'length'   : data_collectors.strand_length,
+      'cap_len'  : lambda **a: data_collectors.count_not(ChemicalState.ADP,**a),
+      'ATP_cap'  : lambda **a: data_collectors.count(ChemicalState.ATP, **a),
+      'tip_state': data_collectors.tip_state}
 
-    hydro = { ChemicalState.ATP:   [(0.3,   ChemicalState.ADPPi)],
-              ChemicalState.ADPPi: [(0.004, ChemicalState.ADP)],
-              ChemicalState.ADP:   [] }
-    remove = { ChemicalState.ATP:   1.4,
-               ChemicalState.ADPPi: 1.1,
-               ChemicalState.ADP:   7.2 }
-    addition = 11.6 # per uM per s
-    return sim1d.simulate( 10**9, ChemicalState.ADP, hydro, remove,
-                           addition * c, ChemicalState.ATP,
-                           duration, dt, dc )
+# Derived parameters
+timesteps = int(duration/dt)
 
-outputs = ppmap.ppmap( sim, concentrations )
-#outputs = map( sim, concentrations )
+scaled_hydro  = rate_conversions.scale_multiple_rates( hydro, dt )
+scaled_depoly = rate_conversions.scale_rates( depoly, dt )
+scaled_poly   = dt * poly_rate
 
-def analyze( output ):
-    from numpy import average, array
-    from states import ChemicalState
-    import diffusion
+# This cannot be a lambda expression.  You have to write it out explicitly
+# to avoid a pickling error.
+def sim(c):
+    return sim1d.simulate(strand.Strand(10**9, ChemicalState.ADP), 
+                          scaled_hydro, scaled_depoly, scaled_poly * c,
+                          ChemicalState.ATP, timesteps, dc)
 
-    trash_time = 2500
-    dt = 0.01
-    trash_samples = int(trash_time/dt)
-    length = output['length'   ][ trash_samples: ]
-    cl     = output['cap_len'  ][ trash_samples: ]
-    ac     = output['ATP_cap'  ][ trash_samples: ]
-    ts     = output['tip_state'][ trash_samples: ]
-    import cPickle
-    cPickle.dump( (length, cl, ac), file('cl.p','wb') )
+def go():
+    p = Pool()
+    outputs = p.map(sim, concentrations)
+    p.close()
+    p.join()
+    cPickle.dump({'concentrations': concentrations, 'data': outputs,
+                  'duration': duration, 'dt': dt,
+                  'hydro_rates': hydro, 'depoly_rates': depoly,
+                  'poly_rate': poly_rate},
+                 file(output_file_name,'wb'))
 
-    D, V, Derr, Verr = diffusion.D_and_V( length, dt )
-    cap_len = average(cl)
-    atp_len = average(ac)
-    tT  = float(sum(array(ts)==ChemicalState.ATP))/len(ts)
-    tDp = float(sum(array(ts)==ChemicalState.ADPPi)) /len(ts)
-    tD  = float(sum(array(ts)==ChemicalState.ADP))/len(ts)
-    return D, V, cap_len, atp_len, tT, tDp, tD
-
-res = ppmap.ppmap( analyze, outputs )
-
-#f = file('allres.dat','w')
-for c, res_tup in zip(concentrations, res):
-    D, V, cap_len, atp_len, tT, tDp, tD = res_tup
-#    f.write('%s %s %s %s %s %s %s %s\n' %
-#            (c, D, V, cap_len, atp_len, tT, tDp, tD))
-#f.close()
-
-    print 'Concentration:', c
-    print 'D, V:', D, V
-    print 'Cap length:', cap_len
-    print 'ATP cap length:', atp_len
-    print 'Tip ATP fraction:', tT
-    print 'Tip ADPPi fraction:', tDp
-    print 'Tip ADP fraction:', tD
-    print 'Total fraction:', tT + tDp + tD
+if '__main__' == __name__:
+    p = Process(target = go)
+    p.start()
+    p.join()

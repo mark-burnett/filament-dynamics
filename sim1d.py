@@ -15,43 +15,43 @@
 
 from numpy.random import mtrand
 
-from rate_conversions import scale_rates, scale_multiple_rates
-from states import ChemicalState
-from strand import Strand
+def simulate(strand, hydro_rates, depoly_rates, poly_rate, poly_state,
+             steps, data_collectors):
+    """
+    Performs a 1d simulation that allows only one end to grow/shrink.
 
-def simulate( tailsize, tailstate, hydro_rates, depoly_rates,
-              poly_rate, poly_state, duration, dt, data_collectors ):
-    pr = poly_rate * dt
-    dr = scale_rates( depoly_rates, dt )
-    hr = scale_multiple_rates( hydro_rates, dt )
+    'strand' is modified during the process
+    'data_collectors' is a dict of callbacks with access to all local variables
+                      see data_collectors.py, and runsim.py for examples
 
-    timesteps = int( duration / dt )
+    returns the results of the data_collectors
+    """
 
-    added   = 0
-    removed = 0
-    strand  = Strand( tailsize, tailstate )
+    # Tracks the current length of the strand (relative to the start).
+    length  = 0
 
+    # Initialize data storage dictionary
     data = dict( (key, []) for key in data_collectors.keys() )
 
-    for i in xrange( timesteps ):
+    for iteration in xrange( steps ):
         # Add a new monomer
-        if mtrand.rand() < pr:
-            strand.append( poly_state )
-            added += 1
+        if mtrand.rand() < poly_rate:
+            strand.append(poly_state)
+            length += 1
 
         # Hydrolize the strand
-        strand.evolve( hr )
+        strand.evolve(hydro_rates)
 
         # Depolymerize
-        state = strand.peek()
-        if mtrand.rand() < dr[state]:
+        tipstate = strand.peek()
+        if mtrand.rand() < depoly_rates[tipstate]:
             strand.pop()
-            removed += 1
+            length -= 1
 
         # Collect and store data
         for key, f in data_collectors.items():
-            result = f(strand, added, removed, i)
+            result = f(**locals())
             if result is not None:
-                data[key].append( result )
+                data[key].append(result)
 
     return data

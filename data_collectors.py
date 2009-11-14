@@ -13,16 +13,49 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from states import ChemicalState
+import copy
 
-def strand_length( strand, added, removed, i ):
-    return added - removed
+def record_periodic(f, interval, **kwargs):
+    """
+    A wrapper function that will calculate 'f' only every 'interval' timesteps.
+    """
+    if not kwargs['iteration'] % interval:
+        return f(**kwargs)
 
-def cap_length( strand, added, removed, i ):
-    return strand.count_not(ChemicalState.ADP)
+# Various simple strand measurements.
+def strand_length(**kwargs):
+    """
+    Returns the length of the strand.
+    """
+    return kwargs['length']
 
-def ATP_cap( strand, added, removed, i ):
-    return strand.count(ChemicalState.ATP)
+def explicit_strand_length(**kwargs):
+    """
+    A slower alternative for 'strand_length'.
+    """
+    return len(kwargs['strand'])
 
-def tip_state( strand, added, removed, i ):
-    return strand.peek()
+def count_not(neg_state, **kwargs):
+    """
+    Counts the number of monomers in the strand not in 'state'.
+    """
+    return kwargs['strand'].count_not(neg_state)
+
+def count(state, **kwargs):
+    """
+    Counts the number of monomers in the strand in 'state'.
+    """
+    return kwargs['strand'].count(state)
+
+def tip_state(**kwargs):
+    """
+    Peeks at the tip state of the strand.
+    """
+    return kwargs['strand'].peek()
+ 
+# More intensive measurements.
+def copy_strand(**kwargs):
+    """
+    Makes a copy of the entire strand.
+    """
+    return copy.copy(kwargs['strand'])
