@@ -24,8 +24,8 @@ from states import ChemicalState
 import rate_conversions
 
 # Simulation parameters
-output_file_name='simout.pickle'
-concentrations = [0.1] #[ 0.01, 0.02, 0.03, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1 ]
+output_file_name='0_15_10,000s.pickle'
+concentrations = [0.15] #[ 0.01, 0.02, 0.03, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1 ]
 duration   = 10000
 dt = 0.01
 
@@ -56,18 +56,16 @@ def sim(c):
                           scaled_hydro, scaled_depoly, scaled_poly * c,
                           ChemicalState.ATP, timesteps, dc)
 
-def go():
+if '__main__' == __name__:
     p = Pool()
-    outputs = p.map(sim, concentrations)
-    p.close()
-    p.join()
+    try:
+        outputs = p.map(sim, concentrations)
+        p.close()
+        p.join()
+    except KeyboardInterrupt:
+        p.terminate()
     cPickle.dump({'concentrations': concentrations, 'data': outputs,
                   'duration': duration, 'dt': dt,
                   'hydro_rates': hydro, 'depoly_rates': depoly,
                   'poly_rate': poly_rate},
-                 file(output_file_name,'wb'))
-
-if '__main__' == __name__:
-    p = Process(target = go)
-    p.start()
-    p.join()
+                 file(output_file_name,'wb'), True)

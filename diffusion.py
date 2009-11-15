@@ -22,8 +22,8 @@ def fit_velocity(values, dt):
     A least-squares fit to the growth rate.
     """
     time = dt * array( range(len(values)) )
-    v, v_const, v_r, v_tt, v_err = linregress( time, values )
-    return v
+    m, b, v_r, v_tt, v_err = linregress( time, values )
+    return m, b
 
 def window_velocity(values, window_size, dt):
     """
@@ -41,6 +41,11 @@ def naive_diffusion(values, window_size, dt):
     shifted    = roll(values, window_size)
     difference = values[window_size:] - shifted[window_size:]
     return var(difference) / (2 * window_size * dt)
+
+def naive_subtracted(values, m, b, dt):
+    time = dt * array( range(len(values)) )
+    flattened = values - (m * time + b)
+    return average(flattened**2)/(2 * time[-1])
 
 def given_v_diffusion(values, v, window_size, dt):
     """
