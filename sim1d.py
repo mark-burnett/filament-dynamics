@@ -26,6 +26,7 @@ def simulate(strand, hydro_rates, depoly_rates, poly_rate, poly_state,
 
     returns the results of the data_collectors
     """
+    mtrand.seed()
 
     # Tracks the current length of the strand (relative to the start).
     length  = 0
@@ -40,7 +41,7 @@ def simulate(strand, hydro_rates, depoly_rates, poly_rate, poly_state,
             length += 1
 
         # Hydrolize the strand
-        strand.evolve(hydro_rates)
+        strand.random_hydrolysis(hydro_rates)
 
         # Depolymerize
         tipstate = strand.peek()

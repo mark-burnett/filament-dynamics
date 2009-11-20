@@ -33,6 +33,26 @@ def window_velocity(values, window_size, dt):
     difference = values[window_size:] - shifted[window_size:]
     return average(difference) / (window_size * dt)
 
+def tip_state_velocities(values, tip_states, dt):
+    from states import ChemicalState
+    atp_vel   = 0
+    adppi_vel = 0
+    adp_vel   = 0
+    atp_num   = 0
+    adppi_num = 0
+    adp_num   = 0
+    for i in xrange(len(values)-1):
+        if tip_states[i] == ChemicalState.ATP:
+            atp_vel += values[i+1]-values[i]
+            atp_num +=1
+        elif tip_states[i] == ChemicalState.ADPPi:
+            adppi_vel += values[i+1]-values[i]
+            adppi_num +=1
+        else:
+            adp_vel += values[i+1]-values[i]
+            adp_num +=1
+    return atp_vel/dt/atp_num, adppi_vel/dt/adppi_num, adp_vel/dt/adp_num
+
 # Diffusion calculations
 def naive_diffusion(values, window_size, dt):
     """

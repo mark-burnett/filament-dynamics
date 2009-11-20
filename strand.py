@@ -97,7 +97,7 @@ class Strand(object):
 #            assert( 0 < s[0] )
 
     # Evolution operators
-    def evolve(self, probabilities):
+    def random_hydrolysis(self, probabilities):
         """
         Evolves the strand by one step.  Essentially used for hydrolization and
         other changes of state that monomers in the filament might go through.

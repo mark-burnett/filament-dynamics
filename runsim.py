@@ -24,9 +24,9 @@ from states import ChemicalState
 import rate_conversions
 
 # Simulation parameters
-output_file_name='0_15_10,000s.pickle'
-concentrations = [0.15] #[ 0.01, 0.02, 0.03, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1 ]
-duration   = 10000
+output_file_name='0_1_160000s_8runs.pickle'
+concentrations = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]
+duration   = 160000
 dt = 0.01
 
 hydro  = { ChemicalState.ATP:   [(0.3,   ChemicalState.ADPPi)],
@@ -52,9 +52,11 @@ scaled_poly   = dt * poly_rate
 # This cannot be a lambda expression.  You have to write it out explicitly
 # to avoid a pickling error.
 def sim(c):
-    return sim1d.simulate(strand.Strand(10**9, ChemicalState.ADP), 
+    the_strand = strand.Strand(10**9, ChemicalState.ADP)
+    data = sim1d.simulate(the_strand,
                           scaled_hydro, scaled_depoly, scaled_poly * c,
                           ChemicalState.ATP, timesteps, dc)
+    return (the_strand, data)
 
 if '__main__' == __name__:
     p = Pool()
