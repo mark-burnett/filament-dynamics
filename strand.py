@@ -25,6 +25,9 @@ class Strand(object):
     def __init__(self, tailsize, tailstate):
         self._substrands = [ (tailsize, tailstate) ]
 
+    def __str__(self):
+        return str(self._substrands)
+
     # Addition and removal operators
     def append(self, state):
         """
@@ -97,10 +100,9 @@ class Strand(object):
 #            assert( 0 < s[0] )
 
     # Evolution operators
-    def random_hydrolysis(self, probabilities):
+    def hydrolysis(self, probabilities):
         """
-        Evolves the strand by one step.  Essentially used for hydrolization and
-        other changes of state that monomers in the filament might go through.
+        Performs hydrolysis on the strand given probabilities.
 
         This will not add or remove monomers, only change their states.
 

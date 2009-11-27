@@ -41,7 +41,7 @@ def simulate(strand, hydro_rates, depoly_rates, poly_rate, poly_state,
             length += 1
 
         # Hydrolize the strand
-        strand.random_hydrolysis(hydro_rates)
+        strand.hydrolysis(hydro_rates)
 
         # Depolymerize
         tipstate = strand.peek()

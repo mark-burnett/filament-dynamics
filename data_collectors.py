@@ -15,12 +15,14 @@
 
 import copy
 
-def record_periodic(f, interval, **kwargs):
+def record_periodic(f, interval):
     """
     A wrapper function that will calculate 'f' only every 'interval' timesteps.
     """
-    if not kwargs['iteration'] % interval:
-        return f(**kwargs)
+    def _wrapper(**kwargs):
+        if not kwargs['iteration'] % interval:
+            return f(**kwargs)
+    return _wrapper
 
 # Various simple strand measurements.
 def strand_length(**kwargs):

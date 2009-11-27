@@ -19,15 +19,20 @@ from multiprocessing import Pool, Process
 
 import strand
 import sim1d
-import data_collectors
+import data_collectors as dcm
 from states import ChemicalState
 import rate_conversions
 
 # Simulation parameters
-output_file_name='0_1_160000s_8runs.pickle'
-concentrations = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]
-duration   = 160000
-dt = 0.01
+output_file_name = '0_1_10000s_1run.pickle'
+
+concentrations = [0.1]
+
+duration = 10000
+dt       = 0.01 # seconds
+
+sample_period = 10 # seconds
+sample_spacing = int(sample_period/dt) # timesteps
 
 hydro  = { ChemicalState.ATP:   [(0.3,   ChemicalState.ADPPi)],
            ChemicalState.ADPPi: [(0.004, ChemicalState.ADP)],
@@ -37,10 +42,12 @@ depoly = { ChemicalState.ATP:   1.4,
            ChemicalState.ADP:   7.2 }
 poly_rate = 11.6 # per uM per s
 
-dc = {'length'   : data_collectors.strand_length,
-      'cap_len'  : lambda **a: data_collectors.count_not(ChemicalState.ADP,**a),
-      'ATP_cap'  : lambda **a: data_collectors.count(ChemicalState.ATP, **a),
-      'tip_state': data_collectors.tip_state}
+dc = {'length'   : dcm.record_periodic(dcm.strand_length, sample_spacing),
+      'cap_len'  : dcm.record_periodic(
+          lambda **a: dcm.count_not(ChemicalState.ADP,**a), sample_spacing),
+      'ATP_cap'  : dcm.record_periodic(
+          lambda **a: dcm.count(ChemicalState.ATP, **a), sample_spacing),
+      'tip_state': dcm.record_periodic(dcm.tip_state, sample_spacing)}
 
 # Derived parameters
 timesteps = int(duration/dt)
@@ -68,6 +75,7 @@ if '__main__' == __name__:
         p.terminate()
     cPickle.dump({'concentrations': concentrations, 'data': outputs,
                   'duration': duration, 'dt': dt,
+                  'sample_period': sample_period,
                   'hydro_rates': hydro, 'depoly_rates': depoly,
                   'poly_rate': poly_rate},
-                 file(output_file_name,'wb'), True)
+                 file(output_file_name, 'wb'), True)
