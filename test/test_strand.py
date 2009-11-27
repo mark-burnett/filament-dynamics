@@ -66,7 +66,7 @@ def test_reverse():
     s.reverse()
     assert( 'append' == s.peek() )
 
-# Test helper functions for evolve
+# Test helper functions for hydrolysis
 # -------------------------------------------------------------------------
 
 # _join_strands tests
@@ -129,30 +129,49 @@ def test_choose_state():
 
 # Test overall Strand evolution
 # -------------------------------------------------------------------------
-def test_evolve():
+def test_hydrolysis():
     from numpy.random import mtrand
     mtrand.seed(0)
 
-    probs = { 's1': [(0.45,'s2')],
-              's2': [(0.1,'s3')],
-              's3': [] }
+#    probs = { 's1': [(0.45,'s2')],
+#              's2': [(0.1,'s3')],
+#              's3': [] }
+
+    probs = {
+              ('s1', None): [(0.45,'s2')],
+              ('s1', 's1'): [(0.45,'s2')],
+              ('s1', 's2'): [(0.45,'s2')],
+              ('s1', 's3'): [(0.45,'s2')],
+              ('s2', None): [(0.1,'s3')],
+              ('s2', 's1'): [(0.1,'s3')],
+              ('s2', 's2'): [(0.1,'s3')],
+              ('s2', 's3'): [(0.1,'s3')],
+              ('s3', None): [],
+              ('s3', 's1'): [],
+              ('s3', 's2'): [],
+              ('s3', 's3'): []
+              }
 
     s = Strand(10, 's1')
-    s.evolve( probs )
+    print s._substrands
+    s.hydrolysis( probs )
+    print s._substrands
     assert( [(4,'s1'),(1,'s2'),(1,'s1'),(1,'s2'),(2,'s1'),(1,'s2')]
             == s._substrands )
-    s.evolve( probs )
+    s.hydrolysis( probs )
+    print s._substrands
     assert( [(4,'s1'),(1,'s3'),(1,'s2'),(1,'s3'),(2,'s1'),(1,'s2')]
             == s._substrands )
-    s.evolve( probs )
+    s.hydrolysis( probs )
+    print s._substrands
     assert( [(4,'s1'),(1,'s3'),(1,'s2'),(1,'s3'),(1,'s1'),(2,'s2')]
             == s._substrands )
-    s.evolve( probs )
+    s.hydrolysis( probs )
     assert( [(1,'s1'),(2,'s2'),(1,'s1'),(1,'s3'),(1,'s2'),(1,'s3'),(1,'s1'),
              (1,'s3'),(1,'s2')] == s._substrands )
-    s.evolve( probs )
+    s.hydrolysis( probs )
     assert( [(1,'s1'),(2,'s2'),(1,'s1'),(1,'s3'),(1,'s2'),(1,'s3'),(1,'s2'),
              (1,'s3'),(1,'s2')] == s._substrands )
-    s.evolve( probs )
+    s.hydrolysis( probs )
     assert( [(4,'s2'),(1,'s3'),(1,'s2'),(1,'s3'),(1,'s2'), (1,'s3'),(1,'s2')]
             == s._substrands )

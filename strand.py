@@ -63,8 +63,6 @@ class Strand(object):
         Returns the state of the end of the strand.
         """
         return self._substrands[-1][1]
-#    def __getitem__(self, i):
-#        return i
 
     def __len__(self):
         num = 0
@@ -95,9 +93,6 @@ class Strand(object):
             if sub[1] != state:
                 num += sub[0]
         return num
-#    def sanity_check(self):
-#        for s in self._substrands:
-#            assert( 0 < s[0] )
 
     # Evolution operators
     def hydrolysis(self, probabilities):
@@ -118,10 +113,33 @@ class Strand(object):
         it will be changed into the first state it is less than.
         """
         new_substrands = []
+        last_state = None
         for substrand in self._substrands:
-            new_substrands = _join_strands( new_substrands,
-                    _evolve_substrand(substrand, probabilities[substrand[1]]) )
+            num           = substrand[0]
+            current_state = substrand[1]
+            if last_state:
+                p = probabilities[(last_state, current_state)]
+                if p:
+                    new_substrands = _join_strands(new_substrands, [(1,
+                           _choose_state(p, mtrand.rand(), last_state))])
+                else:
+                    new_substrands = _join_strands(new_substrands,
+                            [(1, last_state)])
+            if num - 1:
+                new_substrands = _join_strands(new_substrands,
+                        _evolve_substrand( (num - 1, current_state),
+                                 probabilities[(current_state, current_state)]))
+            last_state = current_state
+
+        p = probabilities[(last_state, None)]
+        if p:
+            new_substrands = _join_strands(new_substrands, [(1,
+                    _choose_state(p, mtrand.rand(), last_state))])
+        else:
+            new_substrands = _join_strands(new_substrands, [(1, last_state)])
+        changed = (self._substrands != new_substrands)
         self._substrands = new_substrands
+        return changed
 
 # Helper functions
 def _join_strands(left, right):
@@ -140,10 +158,12 @@ def _join_strands(left, right):
     return lc
 
 def _evolve_substrand(substrand, probs):
+    num   = substrand[0]
+    state = substrand[1]
     if not probs:
-        return [substrand]
-    rnums = mtrand.rand( substrand[0] )
-    states = map( lambda x: _choose_state( probs, x, substrand[1] ), rnums )
+        return [(num, state)]
+    rnums = mtrand.rand( num )
+    states = map( lambda x: _choose_state( probs, x, state ), rnums )
 
     result_strand = []
     current_count = None
@@ -165,4 +185,5 @@ def _choose_state( probs, num, default=None ):
     for rate, state in probs:
         if num < rate:
             return state
+
     return default
