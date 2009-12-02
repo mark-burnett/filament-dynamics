@@ -16,7 +16,7 @@
 
 import sys
 import cPickle
-import itertools
+from itertools import izip
 from multiprocessing import Pool, Process
 
 from numpy import array, average
@@ -25,19 +25,13 @@ from states import ChemicalState
 import diffusion
 
 # Analysis parameters
-#input_file_name = '0_01_to_0_1.pickle'
-#input_file_name = '0_1.pickle'
 input_file_name = '0_1_160000s_8runs.pickle'
 trash_time = 2500
 
-# Ideally placeholder_tuple would be *args, but that is difficult to do with
-# izip/itertools (as far as I can tell).
-#def analyze(placeholder_tuple):
-def analyze(i, c, results, dt):
+def analyze(i, c, results):
     strand, output = results
-#    c, (final_strand, output), dt = placeholder_tuple
-#    c, output, dt = placeholder_tuple
-    trash_samples = int(trash_time/dt)
+    sample_period = output['sample_period']
+    trash_samples = int(trash_time/sample_period)
     length = output['length'   ][ trash_samples: ]
     cl     = output['cap_len'  ][ trash_samples: ]
     ac     = output['ATP_cap'  ][ trash_samples: ]
@@ -50,54 +44,48 @@ def analyze(i, c, results, dt):
                )/len(ts)
 
     # All our crazy v and d calculations
-    V, v_const  = diffusion.fit_velocity(length, dt)
+    V, v_const  = diffusion.fit_velocity(length, sample_period)
     tip_v = c * 11.6 - tT * 1.4 - tDp * 1.1 - tD * 7.2
-    end_v = (length[-1]-length[0])/(dt*len(length))
+    end_v = (length[-1]-length[0])/(sample_length*len(length))
     print i, V, tip_v, end_v
-#    print c, tT, tDp, tD, V, tip_v
-#    print diffusion.tip_state_velocities(length, ts, dt)
-#    print (length[-1]-length[0])/(dt*len(length))
-    outfile = file(str(i)+'win.dat', 'w')
-    for t_window_size in [10,25,50,75,100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2250,2500,2750,3000]:
-        window_size = int(t_window_size/dt)
 
-        D    = diffusion.naive_diffusion(length, window_size, dt)
-
-        DgV  = diffusion.given_v_diffusion(length, V, window_size, dt)
-        DsV  = diffusion.subtracted_v_diffusion(length, V, window_size, dt)
-
-        DgtV = diffusion.given_v_diffusion(length, tip_v, window_size, dt)
-        DstV = diffusion.subtracted_v_diffusion(length, tip_v, window_size, dt)
-
-        DgeV = diffusion.given_v_diffusion(length, end_v, window_size, dt)
-        DseV = diffusion.subtracted_v_diffusion(length, end_v, window_size, dt)
-
-#        outfile.write('%s %s\n' % (t_window_size, D))
-        outfile.write('%s %s %s %s %s %s %s %s\n' %
-                      (t_window_size, D, DgV, DsV, DgtV, DstV, DgeV, DseV))
-    outfile.close()
-
-#    cap_len = average(cl)
-#    atp_len = average(ac)
-#    map(lambda x: sys.stdout.write('%5.3f ' % x),
-#            [c, tT, tDp, tD, tT+tDp+tD, cap_len, atp_len,
-#             V, Vd, tip_v, D, Dg, Ds])
-#    print
-#    return V, Vd, tip_v, D, Dg, Ds
+#    with file(str(i)+'win.dat', 'w') as outfile:
+#        for t_window_size in [10,25,50,75,100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2250,2500,2750,3000]:
+#            window_size = int(t_window_size/dt)
+#
+#            D    = diffusion.naive_diffusion(length, window_size, dt)
+#
+#            DgV  = diffusion.given_v_diffusion(length, V, window_size, dt)
+#            DsV  = diffusion.subtracted_v_diffusion(length, V, window_size, dt)
+#
+#            DgtV = diffusion.given_v_diffusion(length, tip_v, window_size, dt)
+#            DstV = diffusion.subtracted_v_diffusion(length, tip_v, window_size,
+#                                                    dt)
+#
+#            DgeV = diffusion.given_v_diffusion(length, end_v, window_size, dt)
+#            DseV = diffusion.subtracted_v_diffusion(length, end_v, window_size,
+#                                                    dt)
+#            outfile.write('%s %s %s %s %s %s %s %s\n' %
+#                          (t_window_size, D, DgV, DsV, DgtV, DstV, DgeV, DseV))
+#
+    cap_len = average(cl)
+    atp_len = average(ac)
+    map(lambda x: sys.stdout.write('%5.3f ' % x),
+            [c, tT, tDp, tD, tT+tDp+tD, cap_len, atp_len,
+             V, Vd, tip_v, D, Dg, Ds])
+    print
+    return V, Vd, tip_v, D, Dg, Ds
 
 if '__main__' == __name__:
-    results = cPickle.load(file(input_file_name))
-    p = Pool(1)
+    with file(input_file_name) as f:
+        results = cPickle.load(f)
+    p = Pool()
     concentrations = results['concentrations']
     data = results['data']
     dt = results['dt']
     try:
-        for (i,c), d in itertools.izip(enumerate(concentrations),data):
-            p.apply_async(analyze, (i, c, d, dt))
-#        outputs = p.map(analyze,
-#                        itertools.izip(results['concentrations'],
-#                                       results['data'],
-#                                       itertools.repeat(results['dt'])))
+        for (i,c), d in izip(enumerate(concentrations),data):
+            p.apply_async(analyze, (i, c, d))
         p.close()
         p.join()
     except KeyboardInterrupt:

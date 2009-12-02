@@ -20,7 +20,9 @@ from multiprocessing import Pool, Process
 import strand
 import sim1d
 import data_collectors as dcm
+
 from states import ChemicalState
+import compile_dict
 import rate_conversions
 
 # Simulation parameters
@@ -34,9 +36,10 @@ dt       = 0.01 # seconds
 sample_period = 10 # seconds
 sample_spacing = int(sample_period/dt) # timesteps
 
-hydro  = { ChemicalState.ATP:   [(0.3,   ChemicalState.ADPPi)],
-           ChemicalState.ADPPi: [(0.004, ChemicalState.ADP)],
-           ChemicalState.ADP:   [] }
+possible_states = [ChemicalState.ATP, ChemicalState.ADPPi, ChemicalState.ADP]
+base_hydro = [ [(0.3, ChemicalState.ADPPi)], [(0.004, ChemicalState.ADP)], [] ]
+hydro = compile_dict.uncoupled(possible_states, base_hydro)
+
 depoly = { ChemicalState.ATP:   1.4,
            ChemicalState.ADPPi: 1.1,
            ChemicalState.ADP:   7.2 }
@@ -73,9 +76,10 @@ if '__main__' == __name__:
         p.join()
     except KeyboardInterrupt:
         p.terminate()
-    cPickle.dump({'concentrations': concentrations, 'data': outputs,
-                  'duration': duration, 'dt': dt,
-                  'sample_period': sample_period,
-                  'hydro_rates': hydro, 'depoly_rates': depoly,
-                  'poly_rate': poly_rate},
-                 file(output_file_name, 'wb'), True)
+    with file(output_file_name, 'wb') as f:
+        cPickle.dump({'concentrations': concentrations, 'data': outputs,
+                      'duration': duration, 'dt': dt,
+                      'sample_period': sample_period,
+                      'hydro_rates': hydro, 'depoly_rates': depoly,
+                      'poly_rate': poly_rate},
+                      f, True)
