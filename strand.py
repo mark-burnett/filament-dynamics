@@ -35,7 +35,7 @@ class Strand(object):
         """
         end = self._substrands[-1]
         if end[1] == state:
-            self._substrands[-1] = ( end[0] + 1, state )
+            self._substrands[-1] = (end[0] + 1, state)
         else:
             self._substrands.append( (1, state) )
     def pop(self):
@@ -112,37 +112,44 @@ class Strand(object):
         the state will not change.  If it is less than  any of the nubers,
         it will be changed into the first state it is less than.
         """
+        # We need to reverse the strand to work from the barbed end.
+        self.reverse()
         new_substrands = []
         last_state = None
         for substrand in self._substrands:
             num           = substrand[0]
             current_state = substrand[1]
+            # Take care of the (pointed) end of the last substrand
             if last_state:
-                p = probabilities[(last_state, current_state)]
-                if p:
-                    new_substrands = _join_strands(new_substrands, [(1,
-                           _choose_state(p, mtrand.rand(), last_state))])
-                else:
-                    new_substrands = _join_strands(new_substrands,
-                            [(1, last_state)])
+                new_substrands = _join_strands(new_substrands,
+                        _substrand_transition(
+                            probabilities[(last_state, current_state)],
+                            last_state))
+            # Deal with the bulk current substrand
             if num - 1:
                 new_substrands = _join_strands(new_substrands,
                         _evolve_substrand( (num - 1, current_state),
                                  probabilities[(current_state, current_state)]))
             last_state = current_state
 
-        p = probabilities[(last_state, None)]
-        if p:
-            new_substrands = _join_strands(new_substrands, [(1,
-                    _choose_state(p, mtrand.rand(), last_state))])
-        else:
-            new_substrands = _join_strands(new_substrands, [(1, last_state)])
+        # Take care of the (pointed) end of the final substrand
+        new_substrands = _join_strands(new_substrands,
+                _substrand_transition(
+                    probabilities[(last_state, current_state)], last_state))
+
         changed = (self._substrands != new_substrands)
         self._substrands = new_substrands
+
+        # Reverse the strand again to put the barbed end back at _substrands[-1]
+        self.reverse()
+
         return changed
 
 # Helper functions
 def _join_strands(left, right):
+    """
+    Properly concatinates two strands (lists of substrands).
+    """
     if not left:
         return right
     if not right:
@@ -154,10 +161,23 @@ def _join_strands(left, right):
         lc[-1] = (left_end[0] + right_begin[0], left_end[1])
         lc.extend( right[1:] )
     else:
-        lc.extend( right )
+        lc.extend(right)
     return lc
 
+def _substrand_transition(probs, default_state):
+    """
+    Creates a short, 1 unit, strand containing the hydrolized transition from
+    one substrand to the next.
+    """
+    if probs:
+        return [(1, _choose_state(probs, mtrand.rand(), default_state))]
+    else:
+        return [(1, default_state)]
+
 def _evolve_substrand(substrand, probs):
+    """
+    Performs random hydrolysis on a whole substrand.
+    """
     num   = substrand[0]
     state = substrand[1]
     if not probs:
@@ -181,7 +201,10 @@ def _evolve_substrand(substrand, probs):
     result_strand.append( (current_count, current_state) )
     return result_strand
 
-def _choose_state( probs, num, default=None ):
+def _choose_state(probs, num, default=None):
+    """
+    Selects a state from probs given an already generated random number, num.
+    """
     for rate, state in probs:
         if num < rate:
             return state

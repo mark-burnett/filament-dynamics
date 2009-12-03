@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from itertools import izip
+from states import ChemicalState
 
 def uncoupled(states, rates):
     """
@@ -26,3 +27,55 @@ def uncoupled(states, rates):
         for s2 in states:
             d[(s1, s2)] = r
     return d
+
+def vectoral(wh, wr):
+    """
+    Generates a simple vectoral hydrolysis dictionary.
+
+    wh is the rate of cleaving a phosphate from ATP
+    wr is the rate of releasing that phosphate from ADPPi
+    """
+    T = ChemicalState.ATP
+    P = ChemicalState.ADPPi
+    D = ChemicalState.ADP
+    return {
+            (T,T): [],
+            (T,P): [(wh, P)],
+            (T,D): [(wh, P)],
+            (P,T): [],
+            (P,P): [],
+            (P,D): [(wr, P)],
+            (D,T): [],
+            (D,P): [],
+            (D,D): [],
+            (T,None): [],
+            (P,None): [],
+            (D,None): [] }
+
+
+def build_lipowsky_coupled(wh, rhoh, wr, rhor):
+    """
+    Generates a dicitonary for doing Lipowsky's coupled hydrolysis model:
+    PRL 103, 048102 (2009)
+
+    wh is the rate of cleaving a phosphate from ATP
+    wr is the rate of releasing that phosphate from ADPPi
+
+    the rho's are the suppression rates for hydrolysis and removal
+    """
+    T = ChemicalState.ATP
+    P = ChemicalState.ADPPi
+    D = ChemicalState.ADP
+    return {
+            (T,T): [(rhoh * wh, P)],
+            (T,P): [(       wh, P)],
+            (T,D): [(       wh, P)],
+            (P,T): [(rhor * wr, P)],
+            (P,P): [(rhor * wr, P)],
+            (P,D): [(       wr, P)],
+            (D,T): [],
+            (D,P): [],
+            (D,D): [],
+            (T,None): [],
+            (P,None): [],
+            (D,None): [] }

@@ -1,3 +1,4 @@
+from numpy.random import mtrand
 from strand import Strand, _join_strands, _evolve_substrand, _choose_state
 
 # Basic tests of Strand object
@@ -129,16 +130,10 @@ def test_choose_state():
 
 # Test overall Strand evolution
 # -------------------------------------------------------------------------
-def test_hydrolysis():
-    from numpy.random import mtrand
+def test_random_hydrolysis():
     mtrand.seed(0)
 
-#    probs = { 's1': [(0.45,'s2')],
-#              's2': [(0.1,'s3')],
-#              's3': [] }
-
-    probs = {
-              ('s1', None): [(0.45,'s2')],
+    probs = { ('s1', None): [(0.45,'s2')],
               ('s1', 's1'): [(0.45,'s2')],
               ('s1', 's2'): [(0.45,'s2')],
               ('s1', 's3'): [(0.45,'s2')],
@@ -149,29 +144,105 @@ def test_hydrolysis():
               ('s3', None): [],
               ('s3', 's1'): [],
               ('s3', 's2'): [],
-              ('s3', 's3'): []
-              }
+              ('s3', 's3'): [] }
 
     s = Strand(10, 's1')
-    print s._substrands
-    s.hydrolysis( probs )
-    print s._substrands
+    # Reverse the substrands to be able to use the same test cases as before
+    s.reverse()
+    s.hydrolysis(probs)
+    s.reverse()
     assert( [(4,'s1'),(1,'s2'),(1,'s1'),(1,'s2'),(2,'s1'),(1,'s2')]
             == s._substrands )
-    s.hydrolysis( probs )
-    print s._substrands
+    s.reverse()
+    s.hydrolysis(probs)
+    s.reverse()
     assert( [(4,'s1'),(1,'s3'),(1,'s2'),(1,'s3'),(2,'s1'),(1,'s2')]
             == s._substrands )
-    s.hydrolysis( probs )
-    print s._substrands
+    s.reverse()
+    s.hydrolysis(probs)
+    s.reverse()
     assert( [(4,'s1'),(1,'s3'),(1,'s2'),(1,'s3'),(1,'s1'),(2,'s2')]
             == s._substrands )
-    s.hydrolysis( probs )
+    s.reverse()
+    s.hydrolysis(probs)
+    s.reverse()
     assert( [(1,'s1'),(2,'s2'),(1,'s1'),(1,'s3'),(1,'s2'),(1,'s3'),(1,'s1'),
              (1,'s3'),(1,'s2')] == s._substrands )
-    s.hydrolysis( probs )
+    s.reverse()
+    s.hydrolysis(probs)
+    s.reverse()
     assert( [(1,'s1'),(2,'s2'),(1,'s1'),(1,'s3'),(1,'s2'),(1,'s3'),(1,'s2'),
              (1,'s3'),(1,'s2')] == s._substrands )
-    s.hydrolysis( probs )
+    s.reverse()
+    s.hydrolysis(probs)
+    s.reverse()
     assert( [(4,'s2'),(1,'s3'),(1,'s2'),(1,'s3'),(1,'s2'), (1,'s3'),(1,'s2')]
             == s._substrands )
+
+def test_cooperative_hydrolysis():
+    mtrand.seed(0)
+    print mtrand.rand(2*8)
+    mtrand.seed(0)
+    probs = { ('s1', None): [(0.6,'s2')],
+              ('s1', 's1'): [],
+              ('s1', 's2'): [(0.6,'s2')],
+              ('s1', 's3'): [(0.6,'s2')],
+              ('s2', None): [(0.4,'s3')],
+              ('s2', 's1'): [],
+              ('s2', 's2'): [],
+              ('s2', 's3'): [(0.4,'s3')],
+              ('s3', None): [],
+              ('s3', 's1'): [],
+              ('s3', 's2'): [],
+              ('s3', 's3'): [] }
+
+    s = Strand(10, 's1')
+    s._substrands = [(10, 's3'), (10, 's2'), (10,'s1')]
+
+    s.hydrolysis(probs)
+    print s._substrands
+    assert( 30 == len(s) )
+    assert(  3 == len(s._substrands) )
+    assert( [(10, 's3'),(11, 's2'),( 9, 's1')] == s._substrands )
+
+    s.hydrolysis(probs)
+    print s._substrands
+    assert( 30 == len(s) )
+    assert(  3 == len(s._substrands) )
+    assert( [(10, 's3'),(11, 's2'),( 9, 's1')] == s._substrands )
+
+    s.hydrolysis(probs)
+    print s._substrands
+    assert( 30 == len(s) )
+    assert(  3 == len(s._substrands) )
+    assert( [(10, 's3'),(12, 's2'),( 8, 's1')] == s._substrands )
+
+    s.hydrolysis(probs)
+    print s._substrands
+    assert( 30 == len(s) )
+    assert(  3 == len(s._substrands) )
+    assert( [(10, 's3'),(13, 's2'),( 7, 's1')] == s._substrands )
+
+    s.hydrolysis(probs)
+    print s._substrands
+    assert( 30 == len(s) )
+    assert(  3 == len(s._substrands) )
+    assert( [(11, 's3'),(12, 's2'),( 7, 's1')] == s._substrands )
+
+    s.hydrolysis(probs)
+    print s._substrands
+    assert( 30 == len(s) )
+    assert(  3 == len(s._substrands) )
+    assert( [(11, 's3'),(12, 's2'),( 7, 's1')] == s._substrands )
+
+    s.hydrolysis(probs)
+    print s._substrands
+    assert( 30 == len(s) )
+    assert(  3 == len(s._substrands) )
+    assert( [(11, 's3'),(13, 's2'),( 6, 's1')] == s._substrands )
+
+    s.hydrolysis(probs)
+    print s._substrands
+    assert( 30 == len(s) )
+    assert(  3 == len(s._substrands) )
+    assert( [(12, 's3'),(13, 's2'),( 5, 's1')] == s._substrands )
