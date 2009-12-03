@@ -25,7 +25,7 @@ import compile_dict
 import rate_conversions
 
 # Simulation parameters
-output_file_name = 'non_vec_with_fixed.pickle'
+output_file_name = 'vec_test.pickle'
 
 build_concentration = 6
 
@@ -34,8 +34,8 @@ depoly_duration = 60 * 30 # seconds
 dt              = 0.01    # seconds
 
 # Rates
-hydro  = compile_dict.build_lipowsky_coupled(1.0, 3*10**-6, 0.57, 2*10**-6)
-#hydro  = compile_dict.vectoral(1.0, 0.57)
+#hydro  = compile_dict.build_lipowsky_coupled(1.0, 3*10**-6, 0.57, 2*10**-6)
+hydro  = compile_dict.vectoral(1.0, 0.57)
 depoly = { ChemicalState.ATP:   2.2,
            ChemicalState.ADPPi: 0.1,
            ChemicalState.ADP:   2.7 }
@@ -60,13 +60,13 @@ scaled_poly   = dt * poly_rate
 print 'Two step simulation of filament growth/depolymerization.'
 print 'Beginning build, concentration:', build_concentration, 'uM',
 print 'duration:', build_duration, 's'
-the_strand = strand.Strand(10, ChemicalState.ADP)
-#sim1d.simulate(the_strand, scaled_hydro, scaled_depoly,
-#               scaled_poly * build_concentration,
-#               ChemicalState.ATP, build_timesteps, {})
-the_strand._substrands = [(1000, ChemicalState.ADP),
-                          (100,  ChemicalState.ADPPi),
-                          (1000, ChemicalState.ATP)]
+the_strand = strand.Strand(100, ChemicalState.ADP)
+sim1d.simulate(the_strand, scaled_hydro, scaled_depoly,
+               scaled_poly * build_concentration,
+               ChemicalState.ATP, build_timesteps, {})
+#the_strand._substrands = [(1000, ChemicalState.ADP),
+#                          (100,  ChemicalState.ADPPi),
+#                          (1000, ChemicalState.ATP)]
 print the_strand._substrands
 
 # Depolymerize the strand
