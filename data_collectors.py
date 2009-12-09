@@ -20,28 +20,45 @@ def record_periodic(f, interval):
     A wrapper function that will calculate 'f' only every 'interval' timesteps.
     """
     def _wrapper(**kwargs):
-        if not kwargs['iteration'] % interval:
+        if not kwargs['step'] % interval:
+            return f(**kwargs)
+    return _wrapper
+
+def record_initial(f):
+    """
+    A wrapper function that will calculate 'f' only for the first timestep.
+    """
+    def _wrapper(**kwargs):
+        if not kwargs['step']:
+            return f(**kwargs)
+    return _wrapper
+
+def record_final(f, timesteps):
+    """
+    A wrapper function that will calculate 'f' only for the final timestep.
+    """
+    t = timesteps - 1
+    def _wrapper(**kwargs):
+        if not kwargs['step'] == t:
             return f(**kwargs)
     return _wrapper
 
 # Various simple strand measurements.
-def strand_length(**kwargs):
+def strand_growth(**kwargs):
     """
-    Returns the length of the strand.
+    Returns the how much the strand has grown during the simulation.
     """
-    return kwargs['length']
+    return kwargs['growth']
 
-def explicit_strand_length(**kwargs):
-    """
-    A slower alternative for 'strand_length'.
-    """
+def strand_length(**kwargs):
     return len(kwargs['strand'])
 
 def count_not(neg_state, **kwargs):
     """
     Counts the number of monomers in the strand not in 'state'.
     """
-    return kwargs['strand'].count_not(neg_state)
+    s = kwargs['strand']
+    return len(s) - s.count(neg_state)
 
 def count(state, **kwargs):
     """
@@ -53,7 +70,7 @@ def tip_state(**kwargs):
     """
     Peeks at the tip state of the strand.
     """
-    return kwargs['strand'].peek()
+    return kwargs['strand'][-1]
  
 # More intensive measurements.
 def copy_strand(**kwargs):

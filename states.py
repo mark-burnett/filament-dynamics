@@ -15,11 +15,11 @@
 
 # Monomer chemical state enumeration
 class ChemicalState(object):
-    ATP   = 1
-    ADPPi = 2
-    ADP   = 3
+    ATP   = 0
+    ADPPi = 1
+    ADP   = 2
 
 # Monomer mechanical state enumeration
 class MechanicalState(object):
-    OPEN   = 1
-    CLOSED = 2
+    OPEN   = 0
+    CLOSED = 1
