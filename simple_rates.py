@@ -22,8 +22,9 @@ D = ChemicalState.ADP
 class VectoralVectoral:
     def __init__(self, poly_rate, hydro_rate, release_rate, rT, rP, rD,
                  poly_state):
-        self.poly_rate = poly_rate
-        self.hydro_rates  = (hydro_rate, release_rate)
+        self.poly_rate    = poly_rate
+        self.hydro_rate   = hydro_rate
+        self.release_rate = release_rate
         self.depoly_rates = (rT, rP, rD)
 
         self.poly_state  = poly_state
@@ -34,11 +35,11 @@ class VectoralVectoral:
     def depoly(self, state):
         return self.depoly_rates[state]
 
-    def transition(self, states):
-        pointed_state = states[0]
-        this_state    = states[1]
-        if pointed_state > this_state:
-            return ((self.hydro_rates[this_state], pointed_state),)
+    def transition(self, pointed_state, this_state):
+        if T == this_state and T != pointed_state:
+            return ((self.hydro_rate, P),)
+        elif P == this_state and D == pointed_state:
+            return ((self.release_rate, D),)
         return ()
 
     def transition_barbed(self, states):
@@ -49,11 +50,79 @@ class VectoralVectoral:
             return ()
         elif T == st:
             newst = P
-        elif P == st:
+        else:
             newst = D
         return self.hydro_rates[st], newst
 
-def vv_from_list(pars, poly_state):
+class VectoralRandom:
+    def __init__(self, poly_rate, hydro_rate, release_rate, rT, rP, rD,
+                 poly_state):
+        self.poly_rate    = poly_rate
+        self.hydro_rate   = hydro_rate
+        self.release_rate = release_rate
+        self.depoly_rates = (rT, rP, rD)
+
+        self.poly_state  = poly_state
+        self.window_size = 2
+
+    def poly(self):
+        return self.poly_rate
+    def depoly(self, state):
+        return self.depoly_rates[state]
+
+    def transition(self, pointed_state, this_state):
+        # Random release
+        if P == this_state:
+            return ((self.release_rate, D),)
+        # Vectorial hydrolysis OK
+        if T == this_state and P == pointed_state:
+            return ((self.hydro_rate, P),)
+        return ()
+
+    def transition_barbed(self, states):
+        raise NotImplementedError
+    def transition_pointed(self, states):
+        st = states[0]
+        if D == st:
+            return ()
+        elif T == st:
+            return (self.hydro_rate, P)
+            newst = P
+        return (self.release_rate, D)
+
+class RandomRandom:
+    def __init__(self, poly_rate, hydro_rate, release_rate, rT, rP, rD,
+                 poly_state):
+        self.poly_rate    = poly_rate
+        self.hydro_rate   = hydro_rate
+        self.release_rate = release_rate
+        self.depoly_rates = (rT, rP, rD)
+
+        self.poly_state  = poly_state
+        self.window_size = 1
+
+    def poly(self):
+        return self.poly_rate
+    def depoly(self, state):
+        return self.depoly_rates[state]
+
+    def transition(self, state):
+        if T == state:
+            return ((self.hydro_rate, P),)
+        if P == state:
+            return ((self.release_rate, D),)
+        return ()
+
+    def transition_barbed(self, states):
+        raise NotImplementedError
+    def transition_pointed(self, states):
+        raise NotImplementedError
+
+def _pars_to_class(pars, poly_state, cls):
     l = list(pars)
     l.append(poly_state)
-    return VectoralVectoral(*l)
+    return cls(*l)
+
+vv_from_list = lambda pars, ps: _pars_to_class(pars, ps, VectoralVectoral)
+vr_from_list = lambda pars, ps: _pars_to_class(pars, ps, VectoralRandom)
+rr_from_list = lambda pars, ps: _pars_to_class(pars, ps, RandomRandom)

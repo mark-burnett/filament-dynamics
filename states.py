@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import namedtuple
+
 # Monomer chemical state enumeration
 class ChemicalState(object):
     ATP   = 0
@@ -23,3 +25,5 @@ class ChemicalState(object):
 class MechanicalState(object):
     OPEN   = 0
     CLOSED = 1
+
+ProtomerState = namedtuple('ProtomerState', 'chemical_state, mechanical_state')

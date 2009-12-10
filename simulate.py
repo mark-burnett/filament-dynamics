@@ -13,12 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from scipy import weave
+from itertools import islice
+
 def simulate(strand, steps, rates, data_collectors, rng):
     # Initialize data storage dictionary
     data = dict( (key, []) for key in data_collectors.keys() )
 
     # Use local names to get rid of a bunch of useless lookups
-    poly        = rates.poly
+    poly        = rates.poly()
     depoly      = rates.depoly
     trans       = rates.transition
     trans_b     = rates.transition_barbed
@@ -33,32 +36,41 @@ def simulate(strand, steps, rates, data_collectors, rng):
 
     for step in xrange(steps):
         # Polymerize
-        if rng() < poly():
+        if rng() < poly:
             strand.append(poly_state)
-        # Depolymerize
-        if rng() < depoly(strand[-1]):
-            try:
-                strand.pop()
-            except IndexError:
-                # NOTE: This will not let the data collectors collect this step.
-                break
+        try:
+            # Depolymerize
+            if rng() < depoly(strand[-1]):
+                    strand.pop()
 
         # FIXME This is technically questionable, as hydrolysis will slightly
         #       depend on the ordering of the hydrolysis. I should consider
         #       copying every time, though it would be slower.
 
-        # Hydrolize pointed end
-        for i in xrange(shift):
-            probs = trans_p(strand[max(0, i-shift):i-shift+window_size])
-            strand[i] = _choose_state(probs, rng(), strand[i])
-        # Hydrolize the builk of the filament
-        for i in xrange(len(strand) - window_size):
-            probs = trans(strand[i:i + window_size])
-            if probs:
-                strand[i + shift] = _choose_state(probs, rng(), strand[i])
-        # Hydrolize barbed end
-        for i in xrange(window_size - shift - 1):
-            raise RuntimeError('Barbed end special case not written.')
+            # Hydrolize pointed end
+            strand_length = len(strand)
+            for i in xrange(shift):
+                probs = trans_p(strand[max(0, i-shift):i-shift+window_size])
+                if probs:
+                    strand[i] = _choose_state(probs, rng(), strand[i])
+            # Hydrolize the builk of the filament
+            for i in xrange(len(strand) - window_size):
+                probs = trans(*strand[i:i + window_size])
+                if probs:
+                    strand[i + shift] = _choose_state(probs, rng(),
+                                                      strand[i+shift])
+            # Hydrolize barbed end
+            for i in xrange(window_size - shift - 1):
+                probs = trans_b(strand[strand_length - window_size + i:])
+                if probs:
+                    strand[i + shift] = _choose_state(probs, rng(),
+                                                      strand[i+shift])
+        except IndexError:
+            # NOTE: This will not let the data collectors collect this step.
+            #       I could use a finally: statement, but then any data
+            #       collectors that look inside strand would be vulnerable.
+            #      *Is that something that I should be concerned about here?
+            break
 
         # Collect and store data
         for key, f in data_collectors.items():

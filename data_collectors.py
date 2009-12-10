@@ -39,7 +39,7 @@ def record_final(f, timesteps):
     """
     t = timesteps - 1
     def _wrapper(**kwargs):
-        if not kwargs['step'] == t:
+        if kwargs['step'] == t:
             return f(**kwargs)
     return _wrapper
 
