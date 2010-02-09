@@ -49,10 +49,9 @@ class VectoralVectoral:
         if D == st:
             return ()
         elif T == st:
-            newst = P
+            return ((self.hydro_rate, P),)
         else:
-            newst = D
-        return self.hydro_rates[st], newst
+            return ((self.release_rate, D),)
 
 class VectoralRandom:
     def __init__(self, poly_rate, hydro_rate, release_rate, rT, rP, rD,
