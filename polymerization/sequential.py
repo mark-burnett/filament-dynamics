@@ -8,12 +8,8 @@ from util import choose_state
 __all__ = ['Strand', 'Hydro']
 
 class Hydro(object):
-    def __init__(self, rates, nucleation_state):
+    def __init__(self, rates):
         self.rates = rates
-        self.nucleation_state = nucleation_state
-
-    def create_strand(self, size):
-        return Strand(size, self.nucleation_state)
 
     def __call__(self, strand, hstats):
         new_substrands = []

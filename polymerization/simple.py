@@ -55,20 +55,8 @@ class PointedDepoly(object):
         return 0
 
 class CollectedRates(object):
-    def __init__(self, Barbed, Pointed):
-        self.Barbed  = Barbed
-        self.Pointed = Pointed
+    def __init__(self, barbed, pointed):
+        self.barbed  = barbed
+        self.pointed = pointed
     def __call__(self, strand):
-        return self.Barbed(strand) + self.Pointed(strand)
-
-# Hydrolysis
-class Hydro(object):
-    def __init__(self, rates, strand_factory):
-        self.rates = rates
-        self.strand_factory = strand_factory
-
-    def create_strand(self, size):
-        return self.strand_factory(size)
-
-    def __call__(self, strand):
-        raise NotImplementedError()
+        return self.barbed(strand) + self.pointed(strand)

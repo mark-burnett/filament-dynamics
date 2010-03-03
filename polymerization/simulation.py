@@ -1,3 +1,5 @@
+import copy
+
 class Simulation(object):
     def __init__(self, poly, depoly, hydro, record, end):
         self.poly   = poly
@@ -6,9 +8,10 @@ class Simulation(object):
         self.record = record
         self.end    = end
 
-    def run(self, nucleus_size):
+    def run(self, initial_strand):
         # Initialize strand
-        strand = self.hydro.create_strand(nucleus_size)
+        # Copy initial strand to avoid threading problems.
+        strand = copy.copy(initial_strand)
 
         # Initialize data storage dictionary
 #        data = dict( (key, []) for key in self.record.keys() )
@@ -17,9 +20,11 @@ class Simulation(object):
         depoly_count = 0
         hydro_stats  = None
 
-        [e.reset() for e in self.end]
-#        while not any(e(**locals()) for e in self.end):
-        while not any(e(None) for e in self.end):
+        # Copy end conditions to prevent threading problems.
+        end = copy.deepcopy(self.end)
+        [e.reset() for e in end]
+#        while not any(e(**locals()) for e in end):
+        while not any(e(None) for e in end):
             print strand
             poly_count += self.poly(strand)
             try:
