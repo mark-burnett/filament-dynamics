@@ -1,3 +1,8 @@
+"""
+    This module contains some very simple callables that can be used in both
+random and vectorial hydrolysis models.
+"""
+
 import random
 
 from util import choose_state
@@ -8,10 +13,17 @@ __all__ = ['BarbedPoly',   'PointedPoly',
 
 # No-op, do nothing instead of poly/depoly
 def NoOp(strand):
+    """
+    Does nothing.
+    """
     return 0
 
 # Polymerization
 class BarbedPoly(object):
+    """
+        Attaches a new monomer to the barbed end of the strand as determined
+    by 'rates'.
+    """
     def __init__(self, rates):
         self.rates = rates
 
@@ -24,6 +36,10 @@ class BarbedPoly(object):
             return 0
 
 class PointedPoly(object):
+    """
+        Attaches a new monomer to the pointed end of the strand as determined
+    by 'rates'.
+    """
     def __init__(self, rates):
         self.rates = rates
 
@@ -37,6 +53,10 @@ class PointedPoly(object):
 
 # Depolymerization
 class BarbedDepoly(object):
+    """
+        Removes a protomer to the barbed end of the strand as determined by
+    'rates'.
+    """
     def __init__(self, rates):
         self.rates = rates
     def __call__(self, strand):
@@ -46,6 +66,10 @@ class BarbedDepoly(object):
         return 0
 
 class PointedDepoly(object):
+    """
+        Removes a protomer to the pointed end of the strand as determined by
+    'rates'.
+    """
     def __init__(self, rates):
         self.rates = rates
     def __call__(self, strand):
@@ -55,6 +79,10 @@ class PointedDepoly(object):
         return 0
 
 class CollectedRates(object):
+    """
+        Used to combine barbed and pointed end polymerization or
+    depolymerization rates together to simplify the simulation.
+    """
     def __init__(self, barbed, pointed):
         self.barbed  = barbed
         self.pointed = pointed
