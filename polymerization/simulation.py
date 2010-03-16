@@ -20,12 +20,18 @@ class Simulation(object):
             that accept **kwargs.  These callables are passed locals()
             at each step.  All return values that are not None are saved
             and returned when the simulation is performed by 'run' (below).
+        'end' is either a single end condition or an iterable of end
+            conditions (see 'end_conditions' module).
         """
         self.poly   = poly
         self.depoly = depoly
         self.hydro  = hydro
         self.record = record
-        self.end    = end
+        self.end    = copy.deepcopy(end)
+        try:
+            iter(self.end)
+        except:
+            self.end = [self.end]
 
     def run(self, initial_strand):
         """
@@ -43,10 +49,8 @@ class Simulation(object):
         hydro_stats  = None
 
         # Copy end conditions to prevent threading problems.
-        end = copy.deepcopy(self.end)
-        [e.reset() for e in end]
-        while not any(e(**locals()) for e in end):
-#        while not any(e(None) for e in end):
+        [e.reset() for e in self.end]
+        while not any(e(**locals()) for e in self.end):
             print strand
             poly_count += self.poly(strand)
             try:

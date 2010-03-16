@@ -8,7 +8,7 @@ hydro  = polymerization.vectorial.Hydro(hr)
 poly   = polymerization.simple.BarbedPoly(bp)
 depoly = polymerization.simple.BarbedDepoly(bd)
 
-ec = [polymerization.end_conditions.Counter(15)]
+ec = polymerization.end_conditions.Counter(15)
 
 s = polymerization.Simulation(poly, depoly, hydro, {}, ec)
 
