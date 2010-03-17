@@ -18,6 +18,7 @@
 """
 
 import copy
+import random
 
 __all__ = ['Simulation', 'SimulationSequence']
 
@@ -25,7 +26,7 @@ class Simulation(object):
     """
     Stochastic simulation object.
     """
-    def __init__(self, poly, depoly, hydro, record, end):
+    def __init__(self, poly, depoly, hydro, record, end, rng=random):
         """
         'poly', and 'depoly' are functions that modify the strand and return
             the number of subunits added or removed from the strand
@@ -47,11 +48,13 @@ class Simulation(object):
             iter(self.end)
         except:
             self.end = [self.end]
+        self.rng = rng
 
     def __call__(self, initial_strand):
         """
-        Calls self.run(initial_strand).
+        Sets the random seed, then calls self.run(initial_strand).
         """
+        self.rng.seed()
         return self.run(initial_strand)
 
     def run(self, initial_strand):
@@ -67,7 +70,6 @@ class Simulation(object):
 
         poly_count   = 0
         depoly_count = 0
-        hydro_stats  = None
 
         # Copy end conditions to prevent threading problems.
         [e.reset() for e in self.end]
@@ -94,8 +96,9 @@ class SimulationSequence(object):
         This chains multiple simulations together, using the 'final_strand'
     of each previous simulation as the initial_strand for the next.
     """
-    def __init__(self, simulations):
+    def __init__(self, simulations, rng=random):
         self.simulations = simulations
+        self.rng = rng
 
     def run(self, initial_strand):
         current_strand = copy.copy(initial_strand)
@@ -108,6 +111,7 @@ class SimulationSequence(object):
 
     def __call__(self, initial_strand):
         """
-        Calls self.run(initial_strand).
+        Sets the random seed, then calls self.run(initial_strand).
         """
+        self.rng.seed()
         return self.run(initial_strand)
