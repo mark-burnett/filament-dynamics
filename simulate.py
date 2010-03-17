@@ -26,15 +26,23 @@ import time
 from collections import deque
 
 import polymerization
+import data_collectors
 import mp_sim
 
 @baker.command
 def depolymerization(configuration_filename,
-                     output_filename='sim_results.dat',
+                     output_filename='sim_results.pickle',
                      model_type='vectorial',
                      barbed_end=True,
                      pointed_end=False):
-# Read configuration
+    """
+    Simulate a depolymerization timecourse.
+    :param output_filename: Default: 'sim_results.pickle'
+    :param model_type: Model to simulate. Allowed: 'vectorial'
+    :param barbed_end: Boolean, simulate barbed end?
+    :param pointed_end: Boolean, simulate pointed end?
+    """
+    # Read configuration
     config = json.load(file(configuration_filename))
 
     # Calculate some secondary parameters
@@ -53,51 +61,41 @@ def depolymerization(configuration_filename,
     config['true_length_sample_period'] =\
             config['length_sample_timesteps'] * config['dt']
 
-# Construct polymerization and depolymerization rates
+    # Construct polymerization and depolymerization rates.
     poly_rates, depoly_rates = construct_rates(config['parameters'], barbed_end, pointed_end)
 
-# Construct initial_strand
-    initial_strand = construct_initial_strand(config, model_type)
-
-# Construct Simulation
-    # Create polymerization simulation
-        # Construct end conditions
-    poly_ec = polymerization.end_conditions.Counter(
-                config['polymerization_timesteps'])
-    poly_sim = polymerization.Simulation(poly_rates, depoly_rates,
-                                         hydro_object, {}, poly_ec)
-    # Create depolymerization simulation
-        # Construct data collectors
+    # Construct data collectors for depolymerization timecourse.
     depoly_dc = {'length':data_collectors.record_periodic(
                     data_collectors.strand_length,
                     config['length_sample_timesteps'])}
-        # Construct hydrolysis handler
-    hydrolysis = construct_hydrolysis_handler(config['parameters'], model_type)
-        # Construct end conditions
-    depoly_ec = polymerization.end_conditions.Counter(
-                    config['depolymerization_timesteps'])
-    depoly_sim = polymerization.Simulation(polymerization.simulation.NoOp,
-                                           depoly_rates, hydro_object,
-                                           depoly_dc, depoly_ec)
 
-    # Combine simulations
-    combined_simulation = polymerization.SimulationSequence([poly_sim,
-                                                             depoly_sim])
+    # Construct simulation
+    if 'vectorial' == model_type:
+        sim = polymerization.vectorial.construct_depolymerization_simulation(
+                poly_rates, depoly_rates,
+                config['parameters'], # Contains hydrolysis parameters
+                {}, # Polymerization data collectors (empty)
+                depoly_dc,
+                config['polymerization_timesteps'],
+                config['depolymerization_timesteps'])
+    else:
+        raise NotImplementedError()
 
-# Run combined simulation
+    # Construct initial_strand
+    initial_strand = construct_initial_strand(config, model_type)
+
+    # Run simulation
     result = mp_sim.pool_sim(combined_simulation, initial_strand,
                              num_simulations = config['num_simulations'],
                              num_processes   = config['num_processes'])
 
-# Reorganize results
+    # Reorganize results
     depoly_results = zip(*result)[1]
     length_profiles = [d['length'] for d in depoly_results]
-    # FIXME - make this make sense
-    reorganized_lengths = statisticalize(length_profiles)
 
-# Write output
+    # Write output
     cPickle.dump({'simulation_type':'depolymerization',
-                  'reorganized_lengths':reorganized_lengths,
+                  'length_profiles':length_profiles,
                   'config':config,
                   'model_type':model_type,
                   'barbed_end':barbed_end,
