@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import polymerization
+import mp_sim
 
 hr = {'t':[(0.4, 'p')], 'p':[(0.1,'d')], 'd':[]}
 bp = [(0.5, 't')]
@@ -23,8 +24,20 @@ hydro  = polymerization.vectorial.Hydro(hr)
 poly   = polymerization.simple.BarbedPoly(bp)
 depoly = polymerization.simple.BarbedDepoly(bd)
 
-ec = polymerization.end_conditions.Counter(15)
+ec = polymerization.end_conditions.Counter(100000)
 
-s = polymerization.Simulation(poly, depoly, hydro, {}, ec)
+build_sim = polymerization.Simulation(poly, depoly, hydro, {}, ec)
+wash_sim  = polymerization.Simulation(polymerization.simple.NoOp, depoly,
+                                      hydro, {}, ec)
 
-s.run(polymerization.CompactStrand(10, 'd'))
+combined_sim = polymerization.SimulationSequence([build_sim, wash_sim])
+
+results = mp_sim.pool_sim(combined_sim, polymerization.CompactStrand(10, 'd'),
+                          16)
+
+# Separate first and second stages.
+results = zip(*results)
+print results[0]
+print
+print
+print results[1]

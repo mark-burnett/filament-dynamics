@@ -1,10 +1,25 @@
+#    Copyright (C) 2010 Mark Burnett
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 """
     This module contains a stochastic simulation object for actin strands.
 """
 
 import copy
 
-__all__ = ['Simulation']
+__all__ = ['Simulation', 'SimulationSequence']
 
 class Simulation(object):
     """
@@ -33,6 +48,12 @@ class Simulation(object):
         except:
             self.end = [self.end]
 
+    def __call__(self, initial_strand):
+        """
+        Calls self.run(initial_strand).
+        """
+        return self.run(initial_strand)
+
     def run(self, initial_strand):
         """
         Perform the actual simulation, starting with initial_strand.
@@ -51,7 +72,6 @@ class Simulation(object):
         # Copy end conditions to prevent threading problems.
         [e.reset() for e in self.end]
         while not any(e(**locals()) for e in self.end):
-            print strand
             poly_count += self.poly(strand)
             try:
                 depoly_count += self.depoly(strand)
@@ -65,4 +85,29 @@ class Simulation(object):
                 if result is not None:
                     data[key].append(result)
 
+        # Capture the final state of the simulation.
+        data['final_strand'] = strand
         return data
+
+class SimulationSequence(object):
+    """
+        This chains multiple simulations together, using the 'final_strand'
+    of each previous simulation as the initial_strand for the next.
+    """
+    def __init__(self, simulations):
+        self.simulations = simulations
+
+    def run(self, initial_strand):
+        current_strand = copy.copy(initial_strand)
+        results = []
+        for s in self.simulations:
+            results.append(s.run(current_strand))
+            current_strand = copy.copy(results[-1]['final_strand'])
+
+        return results
+
+    def __call__(self, initial_strand):
+        """
+        Calls self.run(initial_strand).
+        """
+        return self.run(initial_strand)
