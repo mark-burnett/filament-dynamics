@@ -23,10 +23,7 @@ import json
 import cPickle
 import time
 
-from collections import deque
-
 import polymerization
-import data_collectors
 import mp_sim
 
 @baker.command
@@ -61,31 +58,43 @@ def depolymerization(configuration_filename,
     config['true_length_sample_period'] =\
             config['length_sample_timesteps'] * config['dt']
 
-    # Construct polymerization and depolymerization rates.
-    poly_rates, depoly_rates = construct_rates(config['parameters'], barbed_end, pointed_end)
+    # Construct polymerization rates.
+    build_poly, build_depoly = polymerization.factories.rates(
+                                config['parameters'], config['dt'],
+                                config['concentrations'],
+                                barbed_end, pointed_end)
+
+    # Construct depolymerization rates.
+    empty_concentrations = dict((k, 0) for k in config['concentrations'].keys())
+    wash_poly, wash_depoly = polymerization.factories.rates(
+                                config['parameters'], config['dt'],
+                                empty_concentrations,
+                                barbed_end, pointed_end)
+
+    hydro_rates = polymerization.vectorial.Hydro(config['parameters']['hydrolysis_rates'])
 
     # Construct data collectors for depolymerization timecourse.
-    depoly_dc = {'length':data_collectors.record_periodic(
-                    data_collectors.strand_length,
+    depoly_dc = {'length':polymerization.data_collectors.RecordPeriodic(
+                    polymerization.data_collectors.strand_length,
                     config['length_sample_timesteps'])}
 
     # Construct simulation
-    if 'vectorial' == model_type:
-        sim = polymerization.vectorial.construct_depolymerization_simulation(
-                poly_rates, depoly_rates,
-                config['parameters'], # Contains hydrolysis parameters
-                {}, # Polymerization data collectors (empty)
-                depoly_dc,
-                config['polymerization_timesteps'],
-                config['depolymerization_timesteps'])
-    else:
-        raise NotImplementedError()
+    sim = polymerization.factories.depolymerization_simulation(
+            build_poly, build_depoly,
+            wash_poly, wash_depoly,
+            hydro_rates,
+            {}, # Polymerization data collectors (empty)
+            depoly_dc,
+            config['polymerization_timesteps'],
+            config['depolymerization_timesteps'],
+            model_type)
 
     # Construct initial_strand
-    initial_strand = construct_initial_strand(config, model_type)
+    initial_strand = polymerization.factories.initial_strand(config, model_type)
 
     # Run simulation
-    result = mp_sim.pool_sim(combined_simulation, initial_strand,
+#    result = [sim(initial_strand) for i in xrange(config['num_simulations'])]
+    result = mp_sim.pool_sim(sim, initial_strand,
                              num_simulations = config['num_simulations'],
                              num_processes   = config['num_processes'])
 

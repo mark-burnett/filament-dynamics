@@ -24,7 +24,7 @@ from compact_strand import cleanup_substrands
 
 from util import choose_state
 
-__all__ = ['Strand', 'Hydro']
+__all__ = ['Strand', 'Hydro', 'construct_depolymerization_simulation']
 
 class Hydro(object):
     """

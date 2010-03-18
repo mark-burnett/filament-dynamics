@@ -15,33 +15,22 @@
 
 import copy
 
-def record_periodic(f, interval):
+class RecordPeriodic(object):
     """
     A wrapper function that will calculate 'f' only every 'interval' timesteps.
     """
-    def _wrapper(**kwargs):
-        if not kwargs['step'] % interval:
-            return f(**kwargs)
-    return _wrapper
-
-def record_initial(f):
-    """
-    A wrapper function that will calculate 'f' only for the first timestep.
-    """
-    def _wrapper(**kwargs):
-        if not kwargs['step']:
-            return f(**kwargs)
-    return _wrapper
-
-def record_final(f, timesteps):
-    """
-    A wrapper function that will calculate 'f' only for the final timestep.
-    """
-    t = timesteps - 1
-    def _wrapper(**kwargs):
-        if kwargs['step'] == t:
-            return f(**kwargs)
-    return _wrapper
+    def __init__(self, f, interval):
+        self.f = f
+        self.interval = interval
+        self.count = 0
+    def reset(self):
+        self.count = 0
+    def __call__(mangled_self, **kwargs):
+        if mangled_self.interval == mangled_self.count:
+            mangled_self.count = 0
+            return mangled_self.f(**kwargs)
+        else:
+            mangled_self.count += 1
 
 # Various simple strand measurements.
 def strand_growth(**kwargs):

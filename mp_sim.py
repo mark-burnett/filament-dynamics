@@ -15,12 +15,12 @@
 
 import multiprocessing
 
-def pool_sim(simulation, argument, num_runs=None, num_processes=None):
+def pool_sim(simulation, argument, num_simulations=None, num_processes=None):
     """
     Uses multiprocessing to perform multiple simulations at once.
-    'argument' is either a single strand used for num_runs simulations
+    'argument' is either a single strand used for num_simulations simulations
         or it is a sequence of initial strands each used for one simulation.
-    'num_runs' is the number of simulations to perform, only use this if
+    'num_simulations' is the number of simulations to perform, only use this if
         'argument' is a single strand.
     'num_processes' determines the size of the multiprocessing pool
     """
@@ -32,9 +32,9 @@ def pool_sim(simulation, argument, num_runs=None, num_processes=None):
 
     try:
         results = None
-        if num_runs:
+        if num_simulations:
             results = [pool.apply_async(simulation, (argument,))
-                           for i in xrange(num_runs)]
+                           for i in xrange(num_simulations)]
             # Add a crazy long timeout (ms) to work around a python bug.
             # This lets us use CTRL-C to stop the program.
             results = [r.get(999999999999) for r in results]

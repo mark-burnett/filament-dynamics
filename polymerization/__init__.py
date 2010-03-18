@@ -18,6 +18,9 @@
 polymerization.
 
 Modules in this package include:
+    data_collectors
+    end_conditions
+    factories
     simple
     vectorial
 """
@@ -27,4 +30,8 @@ from compact_strand import CompactStrand
 
 import simple
 import vectorial
+
+import data_collectors
 import end_conditions
+
+import factories

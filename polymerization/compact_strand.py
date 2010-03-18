@@ -107,7 +107,7 @@ class CompactStrand(object):
             self.substrands[-1] = (end[0] - 1, st)
         if not self.substrands:
             print "holy shit batman, we emptied the reservior."
-            raise self
+            raise IndexError()
         return st
 
     def popleft(self):
@@ -122,7 +122,7 @@ class CompactStrand(object):
             self.substrands[0] = (end[0] - 1, st)
         if not self.substrands:
             print "holy shit batman, we emptied the reservior."
-            raise self
+            raise IndexError()
         return st
 
     # Misc list operators
