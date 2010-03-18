@@ -5,14 +5,14 @@
 "depolymerization_duration": 2400,
 "dt": 0.01,
 
-"length_sample_period": 20,
+"length_sample_period": 5,
 
 "num_simulations": 8,
 "num_processes": 8,
 
-"concentrations": {"t":0.1, "p": 0, "d": 0},
+"concentrations": {"t":30, "p": 0, "d": 0},
 
-"initial_size": 1000000,
+"initial_size": 10,
 "initial_state": "d",
 
 "parameters": {
@@ -22,7 +22,7 @@
     "barbed_depolymerization": {"t": 1.4, "p": 0.2, "d": 5.4},
 
     "pointed_polymerization":   [[1.3, "t"], [0.11, "p"], [0.09, "d"]],
-    "pointed_depolymerization": {"t": 1.4, "p": 0.2, "d": 5.4},
+    "pointed_depolymerization": {"t": 0.8, "p": 0.02, "d": 0.25},
 
     "hydrolysis_rates": {"t":[[1, "p"]], "p":[[0.57, "d"]], "d":[]}
     }

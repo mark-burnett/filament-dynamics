@@ -72,22 +72,28 @@ class Simulation(object):
         depoly_count = 0
 
         hydro_stats = None
-        # Copy end conditions to prevent threading problems.
-        [e.reset() for e in self.end]
-        while not any(e(**locals()) for e in self.end):
-            poly_count += self.poly(strand)
+        if len(initial_strand):
+            # Copy end conditions to prevent threading problems.
+            [e.reset() for e in self.end]
             try:
-                depoly_count += self.depoly(strand)
+                while not any(e(**locals()) for e in self.end):
+                    poly_count += self.poly(strand)
+                    try:
+                        depoly_count += self.depoly(strand)
+                    except IndexError:
+                        break
+                    hydro_stats = self.hydro(strand, hydro_stats)
+
+                    # Collect and store data
+                    for key, f in self.record.items():
+                        result = f(**locals())
+                        if result is not None:
+                            data[key].append(result)
+            # Capture the index error thrown when we depolymerize the whole strand.
             except IndexError:
-                break
-            hydro_stats = self.hydro(strand, hydro_stats)
-
-            # Collect and store data
-            for key, f in self.record.items():
-                result = f(**locals())
-                if result is not None:
-                    data[key].append(result)
-
+                pass
+            except StopIteration:
+                pass
         # Capture the final state of the simulation.
         data['final_strand'] = strand
         return data
