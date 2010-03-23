@@ -71,7 +71,10 @@ def depolymerization(configuration_filename,
                                 empty_concentrations,
                                 barbed_end, pointed_end)
 
-    hydro_rates = polymerization.vectorial.Hydro(config['parameters']['hydrolysis_rates'])
+    adjusted_hydro_rates = polymerization.factories.adjust_hydro_rates(
+            config['parameters']['hydrolysis_rates'], config['dt'])
+    if 'vectorial' == model_type.lower():
+        hydro_rates = polymerization.vectorial.Hydro(adjusted_hydro_rates)
 
     # Construct data collectors for depolymerization timecourse.
     depoly_dc = {'length':polymerization.data_collectors.RecordPeriodic(
@@ -93,10 +96,10 @@ def depolymerization(configuration_filename,
     initial_strand = polymerization.factories.initial_strand(config, model_type)
 
     # Run simulation
-    result = [sim(initial_strand) for i in xrange(config['num_simulations'])]
-#    result = mp_sim.pool_sim(sim, initial_strand,
-#                             num_simulations = config['num_simulations'],
-#                             num_processes   = config['num_processes'])
+#    result = [sim(initial_strand) for i in xrange(config['num_simulations'])]
+    result = mp_sim.pool_sim(sim, initial_strand,
+                             num_simulations = config['num_simulations'],
+                             num_processes   = config['num_processes'])
 
     # Reorganize results
     depoly_results = zip(*result)[1]

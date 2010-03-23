@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#    Copyright (C) 2009 Mark Burnett
+#    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -14,84 +14,77 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
+"""
+    This script performs analysis and generates plots.
+"""
+
 import cPickle
-from itertools import izip
-from multiprocessing import Pool, Process
+import baker
 
-from numpy import array, average
+import numpy
+import pylab
 
-from states import ChemicalState
-import diffusion
+from analysis.tools import make_timecourse_histogram, histogram_stats
 
-# Analysis parameters
-input_file_name = '0_1_160000s_8runs.pickle'
-trash_time = 2500
+@baker.command
+def length_profiles(input_filename):
+    results = cPickle.load(file(input_filename))
+    config = results['config']
+    length_profiles = results['length_profiles']
+    histograms = make_timecourse_histogram(length_profiles)
+    timecourse_avg, timecourse_std = histogram_stats(histograms)
+    time = numpy.linspace(0, config['true_depolymerization_duration'],
+                          float(config['true_depolymerization_duration'])/
+                          config['true_length_sample_period'] - 1)
+    print len(time), len(timecourse_avg)
+    time = time[:len(timecourse_avg)]
+    pylab.errorbar(time, timecourse_avg, timecourse_std)
+    pylab.show()
 
-def analyze(i, c, results):
-    strand, output = results
-    sample_period = output['sample_period']
-    trash_samples = int(trash_time/sample_period)
-    length = output['length'   ][ trash_samples: ]
-    cl     = output['cap_len'  ][ trash_samples: ]
-    ac     = output['ATP_cap'  ][ trash_samples: ]
-    ts     = output['tip_state'][ trash_samples: ]
-    tT  = float(sum(itertools.imap(lambda x: ChemicalState.ATP == x, ts))
-               )/len(ts)
-    tDp = float(sum(itertools.imap(lambda x: ChemicalState.ADPPi == x, ts))
-               )/len(ts)
-    tD  = float(sum(itertools.imap(lambda x: ChemicalState.ADP == x, ts))
-               )/len(ts)
+@baker.command
+def stability(input_filename):
+    results = cPickle.load(file(input_filename))
+    config = results['config']
+    length_profiles = results['length_profiles']
+    num_stable_samples = int(100/config['true_length_sample_period'])
 
-    # All our crazy v and d calculations
-    V, v_const  = diffusion.fit_velocity(length, sample_period)
-    tip_v = c * 11.6 - tT * 1.4 - tDp * 1.1 - tD * 7.2
-    end_v = (length[-1]-length[0])/(sample_length*len(length))
-    print i, V, tip_v, end_v
+    length_profiles2 = []
+    for lp in length_profiles:
+        if len(lp) > num_stable_samples:
+            length_profiles2.append(lp)
+    length_profiles = length_profiles2
 
-#    with file(str(i)+'win.dat', 'w') as outfile:
-#        for t_window_size in [10,25,50,75,100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2250,2500,2750,3000]:
-#            window_size = int(t_window_size/dt)
-#
-#            D    = diffusion.naive_diffusion(length, window_size, dt)
-#
-#            DgV  = diffusion.given_v_diffusion(length, V, window_size, dt)
-#            DsV  = diffusion.subtracted_v_diffusion(length, V, window_size, dt)
-#
-#            DgtV = diffusion.given_v_diffusion(length, tip_v, window_size, dt)
-#            DstV = diffusion.subtracted_v_diffusion(length, tip_v, window_size,
-#                                                    dt)
-#
-#            DgeV = diffusion.given_v_diffusion(length, end_v, window_size, dt)
-#            DseV = diffusion.subtracted_v_diffusion(length, end_v, window_size,
-#                                                    dt)
-#            outfile.write('%s %s %s %s %s %s %s %s\n' %
-#                          (t_window_size, D, DgV, DsV, DgtV, DstV, DgeV, DseV))
-#
-    cap_len = average(cl)
-    atp_len = average(ac)
-    map(lambda x: sys.stdout.write('%5.3f ' % x),
-            [c, tT, tDp, tD, tT+tDp+tD, cap_len, atp_len,
-             V, Vd, tip_v, D, Dg, Ds])
-    print
-    return V, Vd, tip_v, D, Dg, Ds
+# METHOD: only look at points 100s apart to check.
+    rate_profiles = [numpy.array(lp) - numpy.roll(lp, num_stable_samples) for lp in length_profiles]
 
-if '__main__' == __name__:
-    with file(input_file_name) as f:
-        results = cPickle.load(f)
-    p = Pool()
-    concentrations = results['concentrations']
-    data = results['data']
-    dt = results['dt']
-    try:
-        for (i,c), d in izip(enumerate(concentrations),data):
-            p.apply_async(analyze, (i, c, d))
-        p.close()
-        p.join()
-    except KeyboardInterrupt:
-        p.terminate()
-#    f = file('d_c.dat','w')
-#    for c, (V, Vd, tip_v, D, Dg, Ds) in zip(results['concentrations'],
-#                                              outputs):
-#        f.write('%s %s %s %s %s %s %s\n' % (c, V, Vd, tip_v, D, Dg, Ds))
-#    f.close()
+    stable_rate = 100
+    stable_profiles = [numpy.abs(rp) < stable_rate for rp in rate_profiles]
+
+    stable_histograms = make_timecourse_histogram(stable_profiles)
+    stable_fraction = [float(sum(sh))/len(sh) for sh in stable_histograms]
+
+    time = numpy.linspace(0, config['true_depolymerization_duration'],
+                          float(config['true_depolymerization_duration'])/
+                          config['true_length_sample_period'] - 1)
+    time = time[:len(stable_histograms)]
+    # Simulation
+    pylab.plot(numpy.array(time)/60.0, stable_fraction)
+    # Mitchison's data
+    mdata = -0.94 * numpy.exp(-(time-90)/(6.9 * 60))+0.94
+    pylab.plot(numpy.array(time)/60.0, mdata)
+    pylab.ylim(0, 1.1)
+    pylab.show()
+
+@baker.command
+def raw_plot(input_filename):
+    results = cPickle.load(file(input_filename))
+    config = results['config']
+    length_profiles = results['length_profiles']
+    length_profiles = [lp + [0 for i in xrange(int(config['true_depolymerization_duration']/config['true_length_sample_period']) - len(lp) - 1)] for lp in length_profiles]
+    time = numpy.linspace(0, config['true_depolymerization_duration'],
+                          float(config['true_depolymerization_duration'])/
+                          config['true_length_sample_period'] - 1)
+    [pylab.plot(numpy.array(time)/60.0, lp) for lp in length_profiles]
+    pylab.show()
+
+baker.run()

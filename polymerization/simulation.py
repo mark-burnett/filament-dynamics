@@ -18,7 +18,7 @@
 """
 
 import copy
-import random
+#import random
 
 __all__ = ['Simulation', 'SimulationSequence']
 
@@ -55,6 +55,7 @@ class Simulation(object):
         Sets the random seed, then calls self.run(initial_strand).
         """
 #        self.rng.seed()
+#        random.seed()
         return self.run(initial_strand)
 
     def run(self, initial_strand):
@@ -121,4 +122,6 @@ class SimulationSequence(object):
         Sets the random seed, then calls self.run(initial_strand).
         """
 #        self.rng.seed()
+#        random.seed()
+#        print random.random()
         return self.run(initial_strand)

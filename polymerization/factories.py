@@ -20,7 +20,8 @@ import vectorial
 import simulation
 import end_conditions
 
-__all__ = ['rates', 'initial_strand', 'depolymerization_simulation']
+__all__ = ['rates', 'initial_strand', 'depolymerization_simulation',
+           'adjust_hydro_rates']
 
 def rates(parameters, dt, concentrations, barbed_end, pointed_end):
     # Construct barbed end objects.
@@ -84,10 +85,17 @@ def depolymerization_simulation(build_poly, build_depoly,
                                 depoly_timesteps, model_type):
     if 'vectorial' == model_type.lower():
         poly_sim = simulation.Simulation(build_poly, build_depoly, hydro_rates,
-                        poly_dc, end_conditions.Counter(poly_timesteps))
+                        poly_dc, end_conditions.RandomCounter(poly_timesteps))
         depoly_sim = simulation.Simulation(wash_poly, wash_depoly, hydro_rates,
                         depoly_dc, end_conditions.Counter(depoly_timesteps))
         return simulation.SimulationSequence([poly_sim, depoly_sim])
 
     else:
         raise NotImplementedError("'model_type' = %s is not implemented." % model_type.lower())
+
+def adjust_hydro_rates(base_rates, dt):
+    result = {}
+    for state, rates in base_rates.items():
+        result[state] = [(dt * r, s) for r,s in rates]
+    return result
+

@@ -18,6 +18,7 @@
 """
 
 import datetime
+import random
 
 __all__ = ['Counter', 'Timer']
 
@@ -35,6 +36,23 @@ class Counter(object):
 
     def reset(self):
         self.num_left = self.num_starting
+
+class RandomCounter(object):
+    """
+    End condition to run a random number of iterations up to a maximum.
+    """
+    def __init__(self, max_iterations):
+        self.max_iterations = max_iterations
+        self.goal = random.randint(0, self.max_iterations)
+        self.num_left = self.goal
+
+    def __call__(self, **kwargs):
+        self.num_left -= 1
+        return 0 >= self.num_left
+
+    def reset(self):
+        self.goal = random.randint(0, self.max_iterations)
+        self.num_left = self.goal
 
 class Timer(object):
     """
