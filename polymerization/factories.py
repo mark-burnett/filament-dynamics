@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -14,88 +13,55 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import simple
-import vectorial
+import rates
+import models
 
-import simulation
+import data_collectors
 import end_conditions
+import simulation
 
-__all__ = ['rates', 'initial_strand', 'depolymerization_simulation',
-           'adjust_hydro_rates']
-
-def rates(parameters, dt, concentrations, barbed_end, pointed_end):
-    # Construct barbed end objects.
+def build_depolymerization_simulation(model_type, parameters,
+                                      dt, measurement_period,
+                                      polymerization_timesteps,
+                                      depolymerization_timesteps,
+                                      polymerization_concentrations,
+                                      barbed_end=True, pointed_end=False):
+    # Adjust raw on/off parameters by dt.
     if barbed_end:
-        # Polymerization
-        poly_rates = []
-        for species in parameters['barbed_polymerization']:
-            c = concentrations[species[1]]
-            if c:
-                rate = dt * c * species[0]
-                poly_rates.append((rate, species[1]))
-        bpoly = simple.BarbedPoly(poly_rates)
-        poly  = bpoly
+        barbed_poly_rates   = rates.polymerization.time_adjust(dt,
+                config['parameters']['barbed_polymerization'])
+        barbed_depoly_rates = rates.depolymerization.time_adjust(dt,
+                config['parameters']['barbed_depolymerization'])
+    else:
+        barbed_poly_rates   = None
+        barbed_depoly_rates = None
 
-        # Depolymerization
-        depoly_rates = {}
-        for k, v in parameters['barbed_depolymerization'].items():
-            if v:
-                depoly_rates[k] = dt * v
-        bdepoly = simple.BarbedDepoly(depoly_rates)
-        depoly  = bdepoly
-
-    # Construct pointed end objects.
     if pointed_end:
-        # Polymerization
-        poly_rates = []
-        for species in parameters['pointed_polymerization']:
-            c = concentrations[species[1]]
-            if c:
-                rate = dt * c * species[0]
-                poly_rates.append((rate, species[1]))
-        ppoly = simple.PointedPoly(poly_rates)
-        poly  = ppoly
-
-        # Depolymerization
-        depoly_rates = {}
-        for k, v in parameters['pointed_depolymerization'].items():
-            if v:
-                depoly_rates[k] = dt * v
-        pdepoly = simple.PointedDepoly(depoly_rates)
-        depoly  = pdepoly
-
-    # Combine if needed
-    if barbed_end and pointed_end:
-        poly   = simple.Collected_rates(bpoly, ppoly)
-        depoly = simple.Collected_rates(bdepoly, pdepoly)
-
-    return poly, depoly
-
-def initial_strand(config, model_type):
-    if 'vectorial' == model_type.lower():
-        return vectorial.Strand(config['initial_size'],
-                                config['initial_state'])
+        pointed_poly_rates   = rates.polymerization.time_adjust(dt,
+                config['parameters']['pointed_polymerization'])
+        pointed_depoly_rates = rates.depolymerization.time_adjust(dt,
+                config['parameters']['pointed_depolymerization'])
     else:
-        raise NotImplementedError("'model_type' = %s is not implemented." % model_type.lower())
+        pointed_poly_rates   = None
+        pointed_depoly_rates = None
+    
+    hydrolysis_rates = rates.hydrolysis.time_adjust(dt,
+            config['parameters']['hydrolysis_rates'])
 
-def depolymerization_simulation(build_poly, build_depoly,
-                                wash_poly, wash_depoly,
-                                hydro_rates,
-                                poly_dc, depoly_dc, poly_timesteps,
-                                depoly_timesteps, model_type):
-    if 'vectorial' == model_type.lower():
-        poly_sim = simulation.Simulation(build_poly, build_depoly, hydro_rates,
-                        poly_dc, end_conditions.RandomCounter(poly_timesteps))
-        depoly_sim = simulation.Simulation(wash_poly, wash_depoly, hydro_rates,
-                        depoly_dc, end_conditions.Counter(depoly_timesteps))
-        return simulation.SimulationSequence([poly_sim, depoly_sim])
+    # Convert rates to model objects.
+    poly   = rates.polymerization.fixed_concentration(barbed_poly_rates,
+                    pointed_poly_rates, polymerization_concentrations)
+    depoly = rates.depolymerization.independent(barbed_depoly_rates,
+                                                pointed_depoly_rates)
+    hydro  = models.hydrolysis[model_type](hydrolysis_rates)
 
-    else:
-        raise NotImplementedError("'model_type' = %s is not implemented." % model_type.lower())
+    # Construct data collectors.
+    dcs = {'length':data_collectors.RecordPeriodic(
+                    data_collectors.strand_length, measurement_period)}
 
-def adjust_hydro_rates(base_rates, dt):
-    result = {}
-    for state, rates in base_rates.items():
-        result[state] = [(dt * r, s) for r,s in rates]
-    return result
-
+    # Construct simulation.
+    return simulation.SimulationSequence([
+        simulation.Simulation(poly, depoly, hydro, {},
+            end_conditions.RandomCounter(polymerization_timesteps)),
+        simulation.Simulation(rates.NoOp(), depoly, hydro, dcs,
+            end_conditions.Counter(depolymerization_timesteps))])
