@@ -16,3 +16,31 @@
 import polymerization
 import depolymerization
 import hydrolysis
+
+def collect_time_adjusted(dt, parameters, barbed_end, pointed_end):
+    """
+    Extract raw rates from 'parameters' and adjust them by dt.
+    """
+    if barbed_end:
+        barbed_poly_rates   = polymerization.time_adjust(dt,
+                parameters['barbed_polymerization'])
+        barbed_depoly_rates = depolymerization.time_adjust(dt,
+                parameters['barbed_depolymerization'])
+    else:
+        barbed_poly_rates   = None
+        barbed_depoly_rates = None
+
+    if pointed_end:
+        pointed_poly_rates   = polymerization.time_adjust(dt,
+                parameters['pointed_polymerization'])
+        pointed_depoly_rates = depolymerization.time_adjust(dt,
+                parameters['pointed_depolymerization'])
+    else:
+        pointed_poly_rates   = None
+        pointed_depoly_rates = None
+    
+    hydrolysis_rates = hydrolysis.time_adjust(dt,
+            parameters['hydrolysis_rates'])
+
+    return (barbed_poly_rates, pointed_poly_rates, barbed_depoly_rates,
+            pointed_depoly_rates, hydrolysis_rates)

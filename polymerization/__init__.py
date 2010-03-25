@@ -18,20 +18,18 @@
 polymerization.
 
 Modules in this package include:
+    models
     data_collectors
     end_conditions
+    simulation
     factories
-    simple
-    vectorial
 """
 
-from simulation import *
-from compact_strand import CompactStrand
-
-import simple
-import vectorial
+import models
 
 import data_collectors
 import end_conditions
+
+import simulation
 
 import factories

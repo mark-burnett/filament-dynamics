@@ -12,3 +12,11 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+__all__ = ['time_adjust']
+
+def time_adjust(dt, rates):
+    out_rates = {}
+    for state, rlist in rates.items():
+        out_rates[state] = [(dt * r, s) for r, s in rates]
+    return out_rates

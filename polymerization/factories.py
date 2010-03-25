@@ -26,34 +26,19 @@ def build_depolymerization_simulation(model_type, parameters,
                                       depolymerization_timesteps,
                                       polymerization_concentrations,
                                       barbed_end=True, pointed_end=False):
-    # Adjust raw on/off parameters by dt.
-    if barbed_end:
-        barbed_poly_rates   = rates.polymerization.time_adjust(dt,
-                config['parameters']['barbed_polymerization'])
-        barbed_depoly_rates = rates.depolymerization.time_adjust(dt,
-                config['parameters']['barbed_depolymerization'])
-    else:
-        barbed_poly_rates   = None
-        barbed_depoly_rates = None
-
-    if pointed_end:
-        pointed_poly_rates   = rates.polymerization.time_adjust(dt,
-                config['parameters']['pointed_polymerization'])
-        pointed_depoly_rates = rates.depolymerization.time_adjust(dt,
-                config['parameters']['pointed_depolymerization'])
-    else:
-        pointed_poly_rates   = None
-        pointed_depoly_rates = None
-    
-    hydrolysis_rates = rates.hydrolysis.time_adjust(dt,
-            config['parameters']['hydrolysis_rates'])
+    # Grab rates from parameters.
+    (barbed_poly_rates, pointed_poly_rates,
+     barbed_depoly_rates, pointed_depoly_rates,
+     hydrolysis_rates) = rates.collect_time_adjusted(dt, parameters,
+                                                     barbed_end, pointed_end)
 
     # Convert rates to model objects.
     poly   = rates.polymerization.fixed_concentration(barbed_poly_rates,
                     pointed_poly_rates, polymerization_concentrations)
     depoly = rates.depolymerization.independent(barbed_depoly_rates,
                                                 pointed_depoly_rates)
-    hydro  = models.hydrolysis[model_type](hydrolysis_rates)
+    hydro  = models.hydrolysis[model_type](hydrolysis_rates,
+                                           barbed_end, pointed_end)
 
     # Construct data collectors.
     dcs = {'length':data_collectors.RecordPeriodic(
