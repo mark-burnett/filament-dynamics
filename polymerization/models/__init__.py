@@ -14,7 +14,10 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import vectorial
+import random_model
 
-hydrolysis = {'vectorial': vectorial.hydrolysis}
+hydrolysis = {'vectorial': vectorial.hydrolysis,
+              'random':    random_model.hydrolysis}
 
-strand = {'vectorial': vectorial.strand}
+strand = {'vectorial': vectorial.strand,
+          'random':    random_model.strand}

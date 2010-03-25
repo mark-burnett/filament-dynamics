@@ -70,10 +70,10 @@ def depolymerization(configuration_filename,
             pointed_end=config['pointed_end'])
 
     # Run simulation
-    result = [sim(initial_strand) for i in xrange(config['num_simulations'])]
-#    result = mp_sim.pool_sim(sim, initial_strand,
-#                             num_simulations = config['num_simulations'],
-#                             num_processes   = config['num_processes'])
+#    result = [sim(initial_strand) for i in xrange(config['num_simulations'])]
+    result = mp_sim.pool_sim(sim, initial_strand,
+                             num_simulations = config['num_simulations'],
+                             num_processes   = config['num_processes'])
 
     # Reorganize results
     depoly_results = zip(*result)[1]

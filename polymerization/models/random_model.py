@@ -13,46 +13,34 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import collections
 import random
-
-from compact_strand import CompactStrand
-from compact_strand import cleanup_substrands
 
 from polymerization.rates.util import choose_state
 
 __all__ = ['hydrolysis', 'strand']
 
 class Hydrolysis(object):
-    """
-    Hydrolysis object for a vectorial hydrolysis model.
-    """
     def __init__(self, rates):
         self.rates = rates
 
-    def __call__(self, strand):
-        new_substrands = []
-
-        for s in strand.substrands:
-            new_state = choose_state(self.rates[s[1]], random.random())
+    def __call__(self, s):
+        for i in xrange(len(s)):
+            new_state = choose_state(self.rates[s[i]], random.random())
             if new_state:
-                # Add the new element
-                new_substrands.append((1, new_state))
-                # Add the rest of this substrand
-                if s[0] > 1:
-                    new_substrands.append((s[0]-1, s[1]))
-            else:
-                new_substrands.append(s)
-        strand.substrands = cleanup_substrands(new_substrands)
+                s[i] = new_state
 
 # Lowercase alias
 hydrolysis = Hydrolysis
 
 def strand(initial_sequence=None, initial_state=None, initial_length=None,
         barbed_end=True, pointed_end=True):
-    if initial_sequence:
-        result = CompactStrand(0, None)
-        result.substrands = cleanup_substrands(
-                                [(1, x) for x in initial_sequence])
-        return result
+    if pointed_end:
+        result_type = collections.deque
+    else:
+        result_type = list
 
-    return CompactStrand(initial_length, initial_state)
+    if initial_sequence:
+        return result_type(initial_sequence)
+
+    return result_type([initial_state for i in xrange(initial_length)])

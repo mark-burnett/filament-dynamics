@@ -72,7 +72,7 @@ class Simulation(object):
         poly_count   = 0
         depoly_count = 0
 
-        hydro_stats = None
+#        hydro_stats = None
         if len(initial_strand):
             # Copy end conditions to prevent threading problems.
             [e.reset() for e in self.end]
@@ -83,7 +83,8 @@ class Simulation(object):
                         depoly_count += self.depoly(strand)
                     except IndexError:
                         break
-                    hydro_stats = self.hydro(strand, hydro_stats)
+                    self.hydro(strand)
+#                    hydro_stats = self.hydro(strand, hydro_stats)
 
                     # Collect and store data
                     for key, f in self.record.items():
