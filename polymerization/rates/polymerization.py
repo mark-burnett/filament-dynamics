@@ -47,7 +47,7 @@ def fixed_concentration(barbed_poly_rates, pointed_poly_rates, concentrations):
         poly  = bpoly
 
     # Combine if needed
-    if barbed_depoly_rates and pointed_depoly_rates:
+    if barbed_poly_rates and pointed_poly_rates:
         poly   = simple.Collected_rates(bpoly, ppoly)
 
     return poly

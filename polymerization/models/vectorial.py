@@ -13,12 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__all__ = ['hydrolysis', 'strand']
+import random
 
 from compact_strand import CompactStrand
 from compact_strand import cleanup_substrands
 
 from polymerization.rates.util import choose_state
+
+__all__ = ['hydrolysis', 'strand']
 
 class Hydrolysis(object):
     """
@@ -45,7 +47,8 @@ class Hydrolysis(object):
 # Lowercase alias
 hydrolysis = Hydrolysis
 
-def strand(initial_sequence=None, initial_state=None, initial_length=None):
+def strand(initial_sequence=None, initial_state=None, initial_length=None,
+        barbed_end=True, pointed_end=True):
     if initial_sequence:
         result = CompactStrand(0, None)
         result.substrands = cleanup_substrands(

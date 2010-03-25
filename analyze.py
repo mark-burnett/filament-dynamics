@@ -35,7 +35,7 @@ def length_profiles(input_filename):
     timecourse_avg, timecourse_std = histogram_stats(histograms)
     time = numpy.linspace(0, config['true_depolymerization_duration'],
                           float(config['true_depolymerization_duration'])/
-                          config['true_length_sample_period'] - 1)
+                          config['true_sample_period'] - 1)
     print len(time), len(timecourse_avg)
     time = time[:len(timecourse_avg)]
     pylab.errorbar(time, timecourse_avg, timecourse_std)
@@ -46,7 +46,7 @@ def stability(input_filename):
     results = cPickle.load(file(input_filename))
     config = results['config']
     length_profiles = results['length_profiles']
-    num_stable_samples = int(100/config['true_length_sample_period'])
+    num_stable_samples = int(100/config['true_sample_period'])
 
     length_profiles2 = []
     for lp in length_profiles:
@@ -65,7 +65,7 @@ def stability(input_filename):
 
     time = numpy.linspace(0, config['true_depolymerization_duration'],
                           float(config['true_depolymerization_duration'])/
-                          config['true_length_sample_period'] - 1)
+                          config['true_sample_period'] - 1)
     time = time[:len(stable_histograms)]
     # Simulation
     pylab.plot(numpy.array(time)/60.0, stable_fraction)
@@ -80,10 +80,10 @@ def raw_plot(input_filename):
     results = cPickle.load(file(input_filename))
     config = results['config']
     length_profiles = results['length_profiles']
-    length_profiles = [lp + [0 for i in xrange(int(config['true_depolymerization_duration']/config['true_length_sample_period']) - len(lp) - 1)] for lp in length_profiles]
+    length_profiles = [lp + [0 for i in xrange(int(config['true_depolymerization_duration']/config['true_sample_period']) - len(lp) - 1)] for lp in length_profiles]
     time = numpy.linspace(0, config['true_depolymerization_duration'],
                           float(config['true_depolymerization_duration'])/
-                          config['true_length_sample_period'] - 1)
+                          config['true_sample_period'] - 1)
     [pylab.plot(numpy.array(time)/60.0, lp) for lp in length_profiles]
     pylab.show()
 

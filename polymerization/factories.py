@@ -37,8 +37,7 @@ def build_depolymerization_simulation(model_type, parameters,
                     pointed_poly_rates, polymerization_concentrations)
     depoly = rates.depolymerization.independent(barbed_depoly_rates,
                                                 pointed_depoly_rates)
-    hydro  = models.hydrolysis[model_type](hydrolysis_rates,
-                                           barbed_end, pointed_end)
+    hydro  = models.hydrolysis[model_type](hydrolysis_rates)
 
     # Construct data collectors.
     dcs = {'length':data_collectors.RecordPeriodic(
@@ -48,5 +47,5 @@ def build_depolymerization_simulation(model_type, parameters,
     return simulation.SimulationSequence([
         simulation.Simulation(poly, depoly, hydro, {},
             end_conditions.RandomCounter(polymerization_timesteps)),
-        simulation.Simulation(rates.NoOp(), depoly, hydro, dcs,
+        simulation.Simulation(rates.simple.NoOp, depoly, hydro, dcs,
             end_conditions.Counter(depolymerization_timesteps))])

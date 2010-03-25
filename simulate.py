@@ -28,19 +28,14 @@ import mp_sim
 
 @baker.command
 def depolymerization(configuration_filename,
-                     output_filename='sim_results.pickle',
-                     model_type='vectorial',
-                     barbed_end=True,
-                     pointed_end=False):
+                     output_filename='sim_results.pickle'):
     """
     Simulate a depolymerization timecourse.
     :param output_filename: Default: 'sim_results.pickle'
-    :param model_type: Model to simulate. Allowed: 'vectorial'
-    :param barbed_end: Boolean, simulate barbed end?
-    :param pointed_end: Boolean, simulate pointed end?
     """
     # Read configuration
-    config = json.load(file(configuration_filename))
+    total_config = json.load(file(configuration_filename))
+    config = total_config['depolymerization_simulation']
 
     # Calculate some secondary parameters
     config['polymerization_timesteps'] = int(
@@ -53,53 +48,32 @@ def depolymerization(configuration_filename,
     config['true_depolymerization_duration'] =\
             config['depolymerization_timesteps'] * config['dt']
 
-    config['length_sample_timesteps'] = int(
-            config['length_sample_period']/config['dt'])
-    config['true_length_sample_period'] =\
-            config['length_sample_timesteps'] * config['dt']
+    config['sample_timesteps'] = int(
+            config['sample_period']/config['dt'])
+    config['true_sample_period'] =\
+            config['sample_timesteps'] * config['dt']
 
-    # Construct polymerization rates.
-    build_poly, build_depoly = polymerization.factories.rates(
-                                config['parameters'], config['dt'],
-                                config['concentrations'],
-                                barbed_end, pointed_end)
-
-    # Construct depolymerization rates.
-    empty_concentrations = dict((k, 0) for k in config['concentrations'].keys())
-    wash_poly, wash_depoly = polymerization.factories.rates(
-                                config['parameters'], config['dt'],
-                                empty_concentrations,
-                                barbed_end, pointed_end)
-
-    adjusted_hydro_rates = polymerization.factories.adjust_hydro_rates(
-            config['parameters']['hydrolysis_rates'], config['dt'])
-    if 'vectorial' == model_type.lower():
-        hydro_rates = polymerization.vectorial.Hydro(adjusted_hydro_rates)
-
-    # Construct data collectors for depolymerization timecourse.
-    depoly_dc = {'length':polymerization.data_collectors.RecordPeriodic(
-                    polymerization.data_collectors.strand_length,
-                    config['length_sample_timesteps'])}
-
-    # Construct simulation
-    sim = polymerization.factories.depolymerization_simulation(
-            build_poly, build_depoly,
-            wash_poly, wash_depoly,
-            hydro_rates,
-            {}, # Polymerization data collectors (empty)
-            depoly_dc,
+    # Construct simulation.
+    sim = polymerization.factories.build_depolymerization_simulation(
+            total_config['model_type'], total_config['parameters'],
+            config['dt'], config['sample_timesteps'],
             config['polymerization_timesteps'],
             config['depolymerization_timesteps'],
-            model_type)
+            config['polymerization_concentrations'],
+            config['barbed_end'], config['pointed_end'])
 
     # Construct initial_strand
-    initial_strand = polymerization.factories.initial_strand(config, model_type)
+    initial_strand = polymerization.models.strand[total_config['model_type']](
+            initial_length=config['initial_size'],
+            initial_state=config['initial_state'],
+            barbed_end=config['barbed_end'],
+            pointed_end=config['pointed_end'])
 
     # Run simulation
-#    result = [sim(initial_strand) for i in xrange(config['num_simulations'])]
-    result = mp_sim.pool_sim(sim, initial_strand,
-                             num_simulations = config['num_simulations'],
-                             num_processes   = config['num_processes'])
+    result = [sim(initial_strand) for i in xrange(config['num_simulations'])]
+#    result = mp_sim.pool_sim(sim, initial_strand,
+#                             num_simulations = config['num_simulations'],
+#                             num_processes   = config['num_processes'])
 
     # Reorganize results
     depoly_results = zip(*result)[1]
@@ -109,9 +83,6 @@ def depolymerization(configuration_filename,
     cPickle.dump({'simulation_type':'depolymerization',
                   'length_profiles':length_profiles,
                   'config':config,
-                  'model_type':model_type,
-                  'barbed_end':barbed_end,
-                  'pointed_end':pointed_end,
                   'timestamp':time.gmtime()},
                  file(output_filename, 'w'), -1)
 
