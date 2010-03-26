@@ -13,16 +13,24 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import vectorial
-import random_model
-import cooperative
+import random
 
-hydrolysis = {'vectorial':   vectorial.hydrolysis,
-              'random':      random_model.hydrolysis,
-              'cooperative': cooperative.hydrolysis,
-              'lipowsky':    cooperative.hydrolysis}
+from polymerization.rates.util import choose_state
 
-strand = {'vectorial':   vectorial.strand,
-          'random':      random_model.strand,
-          'cooperative': cooperative.strand,
-          'lipowsky':    cooperative.strand}
+__all__ = ['hydrolysis', 'strand']
+
+class Hydrolysis(object):
+    def __init__(self, rates):
+        self.rates = rates
+
+    def __call__(self, s):
+        for i in xrange(len(s) - 1):
+            new_state = choose_state(self.rates[s[i] + s[i+1]], random.random())
+            if new_state:
+                s[i] = new_state
+
+# Lowercase alias
+hydrolysis = Hydrolysis
+
+# Use the strand factory from random_model
+from random_model import strand
