@@ -28,7 +28,7 @@ def fixed_concentration(barbed_poly_rates, pointed_poly_rates, concentrations):
     if barbed_poly_rates:
         adjusted_barbed_rates = []
         for r, s in barbed_poly_rates:
-            c = concentrations[s]
+            c = concentrations[str(s)]
             if c:
                 rate = c * s
                 adjusted_barbed_rates.append((rate, s))
@@ -39,7 +39,7 @@ def fixed_concentration(barbed_poly_rates, pointed_poly_rates, concentrations):
     if pointed_poly_rates:
         adjusted_pointed_rates = []
         for r, s in pointed_poly_rates:
-            c = concentrations[s]
+            c = concentrations[str(s)]
             if c:
                 rate = c * s
                 adjusted_pointed_rates.append((rate, s))

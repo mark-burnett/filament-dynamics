@@ -20,6 +20,8 @@ import data_collectors
 import end_conditions
 import simulation
 
+__all__ = ['build_depolymerization_simulation']
+
 def build_depolymerization_simulation(model_type, parameters,
                                       dt, measurement_period,
                                       polymerization_timesteps,

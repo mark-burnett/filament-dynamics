@@ -28,7 +28,8 @@ import mp_sim
 
 @baker.command
 def depolymerization(configuration_filename,
-                     output_filename='sim_results.pickle'):
+                     output_filename='sim_results.pickle',
+                     multiprocess=True):
     """
     Simulate a depolymerization timecourse.
     :param output_filename: Default: 'sim_results.pickle'
@@ -70,10 +71,13 @@ def depolymerization(configuration_filename,
             pointed_end=config['pointed_end'])
 
     # Run simulation
-#    result = [sim(initial_strand) for i in xrange(config['num_simulations'])]
-    result = mp_sim.pool_sim(sim, initial_strand,
-                             num_simulations = config['num_simulations'],
-                             num_processes   = config['num_processes'])
+    if multiprocess:
+        result = mp_sim.pool_sim(sim, initial_strand,
+                                 num_simulations = config['num_simulations'],
+                                 num_processes   = config['num_processes'])
+    else:
+        result = [sim(initial_strand)
+                  for i in xrange(config['num_simulations'])]
 
     # Reorganize results
     depoly_results = zip(*result)[1]

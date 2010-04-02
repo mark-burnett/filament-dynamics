@@ -20,6 +20,7 @@ __all__ = ['time_adjust', 'independent']
 def time_adjust(dt, rates):
     out_rates = {}
     for s, r in rates.items():
+#        out_rates[int(s)] = dt * r
         out_rates[s] = dt * r
     return out_rates
 

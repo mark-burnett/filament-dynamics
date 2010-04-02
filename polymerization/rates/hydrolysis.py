@@ -18,5 +18,6 @@ __all__ = ['time_adjust']
 def time_adjust(dt, rates):
     out_rates = {}
     for state, rlist in rates.items():
+#        out_rates[int(state)] = [(dt * r, s) for r, s in rlist]
         out_rates[state] = [(dt * r, s) for r, s in rlist]
     return out_rates

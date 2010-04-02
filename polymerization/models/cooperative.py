@@ -24,10 +24,14 @@ class Hydrolysis(object):
         self.rates = rates
 
     def __call__(self, s):
+        rng = random.random
+        sr = self.rates
         for i in xrange(len(s) - 1):
-            new_state = choose_state(self.rates[s[i] + s[i+1]], random.random())
-            if new_state:
-                s[i] = new_state
+#            s[i] = choose_state(sr[10*s[i] + s[i+1]], rng(), s[i])
+            s[i] = choose_state(sr[s[i] + s[i+1]], rng(), s[i])
+#            new_state = choose_state(sr[s[i] + s[i+1]], rng())
+#            if new_state:
+#                s[i] = new_state
 
 # Lowercase alias
 hydrolysis = Hydrolysis
