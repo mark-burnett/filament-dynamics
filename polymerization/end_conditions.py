@@ -20,7 +20,37 @@
 import datetime
 import random
 
-__all__ = ['Counter', 'Timer']
+__all__ = ['Counter', 'Timer', 'MaxVariable', 'RandomMaxVariable']
+
+class MaxVariable(object):
+    """
+    End condition to end when value of 'var_name' exceeds 'var_max'.
+    """
+    def __init__(self, var_name, var_max):
+        self.var_max  = var_max
+        self.var_name = var_name
+
+    def reset(self):
+        pass
+
+    def __call__(self, **kwargs):
+        return self.var_max < kwargs[self.var_name]
+
+class RandomMaxVariable(object):
+    """
+        End condition to end when value of 'var_name' exceeds a random
+    value between 0 and 'var_max'.
+    """
+    def __init__(self, var_name, var_max):
+        self.var_max     = var_max
+        self.var_name    = var_name
+        self.var_current = random.uniform(0, self.var_max)
+
+    def reset(self):
+        self.var_current = random.uniform(0, self.var_max)
+
+    def __call__(self, **kwargs):
+        return self.var_max < kwargs[self.var_name]
 
 class Counter(object):
     """
