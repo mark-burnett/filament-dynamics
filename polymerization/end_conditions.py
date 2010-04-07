@@ -50,7 +50,7 @@ class RandomMaxVariable(object):
         self.var_current = random.uniform(0, self.var_max)
 
     def __call__(self, **kwargs):
-        return self.var_max < kwargs[self.var_name]
+        return self.var_current < kwargs[self.var_name]
 
 class Counter(object):
     """

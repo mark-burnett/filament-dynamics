@@ -18,6 +18,7 @@
     This is the main polymerization script.
 """
 
+import operator
 import baker
 import json
 import cPickle
@@ -62,11 +63,11 @@ def depolymerization(configuration_filename,
 #    depoly_results = zip(*result)[1]
 #    length_profiles = [d['length'] for d in depoly_results]
 #
-#    # Write output
-#    cPickle.dump({'simulation_type':'depolymerization',
-#                  'length_profiles':length_profiles,
-#                  'config':config,
-#                  'timestamp':time.gmtime()},
-#                 file(output_filename, 'w'), -1)
-#
+    # Write output
+    cPickle.dump({'simulation_type':'depolymerization',
+                  'results':map(operator.itemgetter(1), result),
+                  'config':config,
+                  'timestamp':time.gmtime()},
+                 file(output_filename, 'w'), -1)
+
 baker.run()

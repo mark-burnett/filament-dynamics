@@ -64,7 +64,7 @@ class Simulation(object):
         """
         Perform the actual simulation, starting with initial_strand.
         """
-        strand = copy.copy(initial_strand)
+        strand = copy.deepcopy(initial_strand)
         data = dict( (key, []) for key in self.dcs.keys() )
         # Alias
         transitions = self.transitions
@@ -72,7 +72,7 @@ class Simulation(object):
         # Initialize odds and ends
         [t.initialize(strand) for t in transitions]
         sim_time = 0
-        [e.reset for e in self.ecs]
+        [e.reset() for e in self.ecs]
 
         try:
             while not any(e(strand=strand,sim_time=sim_time) for e in self.ecs):
@@ -115,11 +115,11 @@ class SimulationSequence(object):
         self.simulations = simulations
 
     def run(self, initial_strand):
-        current_strand = copy.copy(initial_strand)
+        current_strand = initial_strand
         results = []
         for s in self.simulations:
             results.append(s.run(current_strand))
-            current_strand = copy.copy(results[-1]['final_strand'])
+            current_strand = results[-1]['final_strand']
 
         return results
 

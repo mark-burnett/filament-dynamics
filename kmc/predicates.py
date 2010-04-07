@@ -28,8 +28,8 @@ class Cooperative(object):
     def __init__(self, state, pointed_neighbor):
         self.state    = state
         self.neighbor = pointed_neighbor
-        self.barbed_range  = 0
-        self.pointed_range = 1
+        self.barbed_range  = 1
+        self.pointed_range = 0
 
     def __call__(self, strand, index):
         if len(strand) <= index:
