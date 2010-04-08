@@ -88,7 +88,7 @@ class Simulation(object):
 
                     # Collect and store data
                     for key, f in self.record.items():
-                        result = f(**locals())
+                        result = f(locals())
                         if result is not None:
                             data[key].append(result)
             # Capture the index error thrown when we depolymerize the whole strand.

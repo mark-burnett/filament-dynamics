@@ -46,8 +46,13 @@ def build_depolymerization_simulation(model_type, parameters,
                     data_collectors.strand_length, measurement_period)}
 
     # Construct simulation.
+#    return simulation.SimulationSequence([
+#        simulation.Simulation(poly, depoly, hydro, {},
+#            end_conditions.RandomCounter(polymerization_timesteps)),
+#        simulation.Simulation(rates.simple.NoOp, depoly, hydro, dcs,
+#            end_conditions.Counter(depolymerization_timesteps))])
     return simulation.SimulationSequence([
         simulation.Simulation(poly, depoly, hydro, {},
-            end_conditions.RandomCounter(polymerization_timesteps)),
+            end_conditions.Counter(polymerization_timesteps)),
         simulation.Simulation(rates.simple.NoOp, depoly, hydro, dcs,
             end_conditions.Counter(depolymerization_timesteps))])

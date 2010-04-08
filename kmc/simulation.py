@@ -66,18 +66,24 @@ class Simulation(object):
         """
         strand = copy.deepcopy(initial_strand)
         data = dict( (key, []) for key in self.dcs.keys() )
-        # Alias
+
+        # Aliases - for lame python speed boost
         transitions = self.transitions
+        secs = self.ecs
+        sdcs = self.dcs
+        mlog = math.log
+        runi = random.uniform
 
         # Initialize odds and ends
         [t.initialize(strand) for t in transitions]
         sim_time = 0
-        [e.reset() for e in self.ecs]
+
+        [e.reset() for e in secs]
 
         try:
-            while not any(e(strand=strand,sim_time=sim_time) for e in self.ecs):
+            while not any(e(strand=strand,sim_time=sim_time) for e in secs):
                 # Collect and store data
-                for key, f in self.dcs.items():
+                for key, f in sdcs.items():
                     result = f(locals())
                     if result is not None:
                         data[key].append(result)
@@ -88,9 +94,9 @@ class Simulation(object):
                 total_R = running_R[-1]
 
                 # calculate transition time
-                tau = math.log(1/random.uniform(0, 1)) / total_R
+                tau = mlog(1/runi(0, 1)) / total_R
                 # figure out which transition to perform
-                r = random.uniform(0, total_R)
+                r = runi(0, total_R)
                 j = bisect.bisect_left(running_R, r)
 
                 # perform transition
