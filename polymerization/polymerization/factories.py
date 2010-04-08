@@ -15,7 +15,7 @@
 
 import barbed_end
 
-__all__ = ['fixed_concentration']
+__all__ = ['fixed_concentration', 'fixed_reagents']
 
 def fixed_concentration(parameters, concentrations,
                         free_barbed_end, free_pointed_end):
@@ -25,6 +25,23 @@ def fixed_concentration(parameters, concentrations,
             if free_barbed_end:
                 barbed_rate = c * parameters['barbed_polymerization'][s]
                 results.append(barbed_end.FixedRate(barbed_rate, s))
+
+            if free_pointed_end:
+                raise NotImplementedError('Pointed end polymerization.')
+    return results
+
+def fixed_reagents(parameters, monomer_concentrations,
+                   filament_tip_concentration,
+                   free_barbed_end, free_pointed_end):
+    results = []
+    for s, c in monomer_concentrations.items():
+        if c: # Double check for zero concentration
+            if free_barbed_end:
+                amount = int(c / filament_tip_concentration)
+                barbed_rate = (parameters['barbed_polymerization'][s]
+                               * filament_tip_concentration)
+                results.append(barbed_end.FixedReagent(barbed_rate, amount, s))
+
             if free_pointed_end:
                 raise NotImplementedError('Pointed end polymerization.')
     return results

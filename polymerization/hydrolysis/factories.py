@@ -16,19 +16,19 @@
 import predicates
 from barbed_only import BarbedOnly
 
-def constant_random(parameters, free_barbed_end, free_pointed_end):
+def constant_random(rates, free_barbed_end, free_pointed_end):
     results = []
-    if free_barbed_end:
-        for state, (rate, out) in parameters['hydrolysis_rates'].items():
-            results.append(BarbedOnly(predicates.Random(state), rate, out))
     if free_pointed_end:
         raise NotImplementedError('Pointed end hydrolysis.')
+    elif free_barbed_end: # Barbed end only
+        for state, (rate, out) in rates.items():
+            results.append(BarbedOnly(predicates.Random(state), rate, out))
     return results
 
-def constrant_cooperative(parameters, free_barbed_end, free_pointed_end):
+def constrant_cooperative(rates, free_barbed_end, free_pointed_end):
     results = []
     if free_barbed_end:
-        for state, data in parameters['hydrolysis_rates'].items():
+        for state, data in rates.items():
             for neighbor, (rate, out) in data.items():
                 results.append(BarbedOnly(
                         predicates.Cooperative(state, neighbor), rate, out))
@@ -41,7 +41,7 @@ _factory_dispatch = {'random':      constant_random,
                      'cooperative': constrant_cooperative,
                      'lipowsky':    constrant_cooperative}
 
-def constant_rates(model_type, parameters, free_barbed_end, free_pointed_end):
-    return _factory_dispatch[model_type.lower()](parameters,
+def constant_rates(model_type, rates, free_barbed_end, free_pointed_end):
+    return _factory_dispatch[model_type.lower()](rates,
                                                  free_barbed_end,
                                                  free_pointed_end)

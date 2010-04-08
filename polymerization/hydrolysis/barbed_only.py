@@ -58,7 +58,7 @@ class BarbedOnly(object):
         sp = self.predicate
         si = self.indices
         effected_indices = xrange(full_index - sp.pointed_range,
-                                   full_index + sp.barbed_range + 1)
+                                  full_index + sp.barbed_range + 1)
         for i in effected_indices:
             if sp(self.strand, i):
                 si.add(i)
@@ -66,11 +66,11 @@ class BarbedOnly(object):
                 si.discard(i)
         self.R = self.rate * len(self.indices)
     
-    def _update_polymerization(self, end):
+    def _update_polymerization(self, value):
         # NOTE assumes barbed (ignores argument)
         return self._update_hydrolysis(len(self.strand)-1)
 
-    def _update_depolymerization(self, end):
+    def _update_depolymerization(self, value):
         # NOTE assumes barbed (ignores argument)
         self.indices.discard(len(self.strand))
         return self._update_hydrolysis(len(self.strand)-1)

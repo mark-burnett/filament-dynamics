@@ -77,6 +77,7 @@ class Simulation(object):
         # Initialize odds and ends
         [t.initialize(strand) for t in transitions]
         sim_time = 0
+        transition_output = (None, None)
 
         [e.reset() for e in secs]
 

@@ -12,8 +12,8 @@
     "pointed_polymerization":   {"t": 1.3, "p": 0.11, "d": 0.09},
     "pointed_depolymerization": {"t": 0.8, "p": 0.02, "d": 0.25},
 
-    "hydrolysis_rates": {"t":{"p": [1,       "p"],
-                              "d": [1,       "p"]},
+    "hydrolysis_rates": {"t":{"p": [60,       "p"],
+                              "d": [60,       "p"]},
                          "p":{"d": [0.57,    "d"]}}
     },
 
@@ -32,6 +32,26 @@
     "pointed_end": false,
 
     "initial_size": 10,
+    "initial_state": "d"
+    },
+
+"cleavage_simulation": {
+    "_comment": "Parameters specific to cleavage polymerization simulations.",
+
+    "duration": 40,
+
+    "num_simulations": 1000,
+    "num_processes": 8,
+
+    "monomer_concentrations": {"t": 6},
+    "filament_tip_concentration": 0.011,
+
+    "transition_from": "t",
+
+    "barbed_end":  true,
+    "pointed_end": false,
+
+    "initial_size": 500,
     "initial_state": "d"
     }
 }

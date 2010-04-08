@@ -15,10 +15,10 @@
 
 import barbed_end
 
-__all__ = ['fixed_concentration']
+__all__ = ['fixed_rates']
 
-def fixed_concentration(parameters, free_barbed_end, free_pointed_end):
+def fixed_rates(parameters, free_barbed_end, free_pointed_end):
     if free_barbed_end:
         return [barbed_end.FixedRates(parameters['barbed_depolymerization'])]
     if free_pointed_end:
-        raise NotImplementedError('Pointed end polymerization.')
+        raise NotImplementedError('Pointed end depolymerization.')

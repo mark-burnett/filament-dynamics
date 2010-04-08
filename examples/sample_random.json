@@ -31,5 +31,25 @@
 
     "initial_size": 10,
     "initial_state": "d"
+    },
+
+"cleavage_simulation": {
+    "_comment": "Parameters specific to cleavage polymerization simulations.",
+
+    "duration": 40,
+
+    "num_simulations": 1000,
+    "num_processes": 8,
+
+    "monomer_concentrations": {"t": 6},
+    "filament_tip_concentration": 0.011,
+
+    "transition_from": "t",
+
+    "barbed_end":  true,
+    "pointed_end": false,
+
+    "initial_size": 500,
+    "initial_state": "d"
     }
 }

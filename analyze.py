@@ -123,4 +123,14 @@ def stab_var(center_filename, down_filename, up_filename,
         pylab.title(title)
     pylab.show()
 
+@baker.command
+def cleavage(input_filename):
+    data = cPickle.load(file(input_filename))
+    time = data['results'][0]['time']
+    y = numpy.array(data['results'][0]['hydro_events']) *\
+            data['config']['cleavage_simulation']['filament_tip_concentration']
+    pylab.plot(time, y)
+#    pylab.plot(time, data['results'][0]['length'])
+    pylab.show()
+
 baker.run()

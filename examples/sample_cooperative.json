@@ -4,7 +4,7 @@
 "model_type": "cooperative",
 
 "parameters": {
-    "_comment": "These parameters are from Fujiwara.",
+    "_comment": "These parameters are from Li/Lipowsky.",
 
     "barbed_polymerization":   {"t": 11.6, "p": 3.4, "d": 2.9},
     "barbed_depolymerization": {"t": 2.2, "p": 0.2, "d": 2.7},
@@ -35,6 +35,26 @@
     "pointed_end": false,
 
     "initial_size": 10,
+    "initial_state": "d"
+    },
+
+"cleavage_simulation": {
+    "_comment": "Parameters specific to cleavage polymerization simulations.",
+
+    "duration": 40,
+
+    "num_simulations": 1000,
+    "num_processes": 8,
+
+    "monomer_concentrations": {"t": 6},
+    "filament_tip_concentration": 0.011,
+
+    "transition_from": "t",
+
+    "barbed_end":  true,
+    "pointed_end": false,
+
+    "initial_size": 500,
     "initial_state": "d"
     }
 }

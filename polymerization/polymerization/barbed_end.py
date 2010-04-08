@@ -17,6 +17,10 @@ __all__ = ['FixedRate']
 
 class FixedRate(object):
     def __init__(self, rate, state):
+        """
+            'rate' is the number per second of 'state' that are added to the
+        barbed end of the strand.
+        """
         self.rate  = rate
         self.state = state
         self.R     = rate
@@ -30,3 +34,35 @@ class FixedRate(object):
 
     def update(self, transition_output):
         pass
+
+class FixedReagent(object):
+    def __init__(self, rate_per_unit, amount, state):
+        """
+            'rate_per_unit' * 'amount' is the number of 'state' that are added
+        per second to the barbed end of the strand.
+        """
+        self.rate = rate_per_unit
+        self.amount = amount
+        self.state = state
+        assert(self.amount >= 0)
+    
+    def initialize(self, strand):
+        self.strand = strand
+        self.R = self.rate * self.amount
+
+    def perform(self, r):
+        assert(self.amount > 0)
+        self.strand.append(self.state)
+        self.amount -= 1
+        self.R = self.rate * self.amount
+#        self.R -= self.rate
+        return ('poly', 'barbed')
+
+    def update(self, transition_output):
+        command, value = transition_output
+        if 'depoly' == command:
+            end, state = value
+            if self.state == state:
+                self.amount += 1
+                self.R = self.rate * self.amount
+#                self.R += self.rate
