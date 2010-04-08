@@ -97,4 +97,4 @@ def build_hydrolysis_transitions(model_type, parameters):
                 'vectorial':   cooperative_hydrolysis_transitions,
                 'cooperative': cooperative_hydrolysis_transitions,
                 'lipowsky':    cooperative_hydrolysis_transitions}
-    return dispatch[model_type](parameters)
+    return dispatch[model_type.lower()](parameters)

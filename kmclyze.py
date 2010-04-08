@@ -79,16 +79,20 @@ def stability(input_filename,
     pylab.ylim(0, 1.1)
     pylab.xlabel('Depolymerization Time (min)')
     pylab.ylabel('Fraction of Stable Filaments')
+    if title:
+        pylab.title(title)
     pylab.show()
 
 @baker.command
-def raw_plot(input_filename, number=-1):
+def raw_plot(input_filename, number=-1, title=None):
     data = cPickle.load(file(input_filename))
     for r in data['results'][:number]:
         pylab.plot(numpy.array(r['time'])/60, r['length'])
 
     pylab.xlabel('Depolymerization Time (min)')
     pylab.ylabel('Filament Length (subunits)')
+    if title:
+        pylab.title(title)
     pylab.show()
 
 @baker.command
@@ -115,7 +119,8 @@ def stab_var(center_filename, down_filename, up_filename,
     pylab.ylim(0, 1.1)
     pylab.xlabel('Depolymerization Time (min)')
     pylab.ylabel('Fraction of Stable Filaments')
-    pylab.title(title)
+    if title:
+        pylab.title(title)
     pylab.show()
 
 baker.run()

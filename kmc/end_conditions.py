@@ -1,1 +1,0 @@
-../polymerization/end_conditions.py
