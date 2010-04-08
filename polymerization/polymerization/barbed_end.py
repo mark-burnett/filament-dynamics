@@ -13,25 +13,20 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-    This package contains kinetic monte carlo simulation models for (actin)
-strand polymerization.
+__all__ = ['FixedRate']
 
-Modules in this package include:
-    data_collectors
-    end_conditions
-    predicates
-    simulation
-    transitions
-    factories
-"""
+class FixedRate(object):
+    def __init__(self, rate, state):
+        self.rate  = rate
+        self.state = state
+        self.R     = rate
+    
+    def initialize(self, strand):
+        self.strand = strand
 
-import end_conditions
-import data_collectors
+    def perform(self, r):
+        self.strand.append(self.state)
+        return ('poly', 'barbed')
 
-import polymerization
-import depolymerization
-import hydrolysis
-
-import simulation
-import factories
+    def update(self, transition_output):
+        pass

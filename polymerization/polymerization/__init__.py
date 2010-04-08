@@ -13,11 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__all__ = ['time_adjust']
+import factories
+import barbed_end
 
-def time_adjust(dt, rates):
-    out_rates = {}
-    for state, rlist in rates.items():
-#        out_rates[int(state)] = [(dt * r, s) for r, s in rlist]
-        out_rates[state] = [(dt * r, s) for r, s in rlist]
-    return out_rates
+__all__ = ['factories', 'barbed_end']

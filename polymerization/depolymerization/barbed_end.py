@@ -13,28 +13,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import random
+__all__ = ['FixedRates']
 
-from polymerization.rates.util import choose_state
-
-__all__ = ['hydrolysis', 'strand']
-
-class Hydrolysis(object):
+class FixedRates(object):
     def __init__(self, rates):
-        self.rates = rates
+        self.rates  = rates
+    
+    def initialize(self, strand):
+        self.strand = strand
+        self.R      = self.rates[strand[-1]]
 
-    def __call__(self, s):
-        rng = random.random
-        sr = self.rates
-        for i in xrange(len(s) - 1):
-#            s[i] = choose_state(sr[10*s[i] + s[i+1]], rng(), s[i])
-            s[i] = choose_state(sr[s[i] + s[i+1]], rng(), s[i])
-#            new_state = choose_state(sr[s[i] + s[i+1]], rng())
-#            if new_state:
-#                s[i] = new_state
+    def perform(self, r):
+        return ('depoly', ('barbed', self.strand.pop()))
 
-# Lowercase alias
-hydrolysis = Hydrolysis
-
-# Use the strand factory from random_model
-from random_model import strand
+    def update(self, transition_output):
+        self.R = self.rates[self.strand[-1]]

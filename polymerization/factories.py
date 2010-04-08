@@ -13,46 +13,47 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import rates
-import models
+import polymerization.factories   as pf
+import depolymerization.factories as df
+import hydrolysis.factories       as hf
 
-import data_collectors
 import end_conditions
+import data_collectors
+
 import simulation
 
 __all__ = ['build_depolymerization_simulation']
 
-def build_depolymerization_simulation(model_type, parameters,
-                                      dt, measurement_period,
-                                      polymerization_timesteps,
-                                      depolymerization_timesteps,
+def build_depolymerization_simulation(model_type,
+                                      model_parameters,
+                                      polymerization_duration,
+                                      depolymerization_duration,
                                       polymerization_concentrations,
-                                      barbed_end=True, pointed_end=False):
-    # Grab rates from parameters.
-    (barbed_poly_rates, pointed_poly_rates,
-     barbed_depoly_rates, pointed_depoly_rates,
-     hydrolysis_rates) = rates.collect_time_adjusted(dt, parameters,
-                                                     barbed_end, pointed_end)
+                                      free_barbed_end=True,
+                                      free_pointed_end=False):
+    # Make poly and depoly transition objects
+    poly_trans   = pf.fixed_concentration(model_parameters,
+                                          polymerization_concentrations,
+                                          free_barbed_end, free_pointed_end)
+    depoly_trans = df.fixed_concentration(model_parameters,
+                                          free_barbed_end, free_pointed_end)
+    # Make hydrolysis transition objects
+    hydro_trans  = hf.constant_rates(model_type, model_parameters,
+                                     free_barbed_end, free_pointed_end)
 
-    # Convert rates to model objects.
-    poly   = rates.polymerization.fixed_concentration(barbed_poly_rates,
-                    pointed_poly_rates, polymerization_concentrations)
-    depoly = rates.depolymerization.independent(barbed_depoly_rates,
-                                                pointed_depoly_rates)
-    hydro  = models.hydrolysis[model_type](hydrolysis_rates)
+    # Make end conditions
+    poly_ecs = end_conditions.RandomMaxVariable('sim_time',
+                                                polymerization_duration)
+    depoly_ecs = end_conditions.MaxVariable('sim_time',
+                                            depolymerization_duration)
 
-    # Construct data collectors.
-    dcs = {'length':data_collectors.RecordPeriodic(
-                    data_collectors.strand_length, measurement_period)}
+    # Make data collectors
+    poly_dcs = {}
+    depoly_dcs = {'length':data_collectors.strand_length,
+                  'time':  data_collectors.Variable('sim_time')}
 
-    # Construct simulation.
-#    return simulation.SimulationSequence([
-#        simulation.Simulation(poly, depoly, hydro, {},
-#            end_conditions.RandomCounter(polymerization_timesteps)),
-#        simulation.Simulation(rates.simple.NoOp, depoly, hydro, dcs,
-#            end_conditions.Counter(depolymerization_timesteps))])
     return simulation.SimulationSequence([
-        simulation.Simulation(poly, depoly, hydro, {},
-            end_conditions.Counter(polymerization_timesteps)),
-        simulation.Simulation(rates.simple.NoOp, depoly, hydro, dcs,
-            end_conditions.Counter(depolymerization_timesteps))])
+        simulation.Simulation(poly_trans + depoly_trans + hydro_trans,
+                              poly_ecs, poly_dcs),
+        simulation.Simulation(depoly_trans + hydro_trans,
+                              depoly_ecs, depoly_dcs)])

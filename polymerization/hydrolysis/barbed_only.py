@@ -1,7 +1,8 @@
 #    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by #    the Free Software Foundation, either version 3 of the License, or
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
 #    This program is distributed in the hope that it will be useful,
@@ -12,18 +13,16 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import random
+__all__ = ['BarbedOnly']
 
-__all__ = ['Transition', 'BarbedPolymerization', 'BarbedDepolymerization']
-
-class Transition(object):
+class BarbedOnly(object):
     def __init__(self, predicate, rate, new_state):
         self.predicate = predicate
         self.rate = rate
         self.new_state = new_state
 
     def initialize(self, strand):
-        self._update_switch = {'transition': self._update_transition,
+        self._update_switch = {'hydrolysis': self._update_hydrolysis,
                                'poly':       self._update_polymerization,
                                'depoly':     self._update_depolymerization}
         self.strand = strand
@@ -49,13 +48,13 @@ class Transition(object):
         self.indices.remove(set_value)
 
         # Let everyone else know what changed
-        return ('transition', full_index)
+        return ('hydrolysis', full_index)
 
     def update(self, transition_output):
         command, value = transition_output
         return self._update_switch[command](value)
 
-    def _update_transition(self, full_index):
+    def _update_hydrolysis(self, full_index):
         sp = self.predicate
         si = self.indices
         effected_indices = xrange(full_index - sp.pointed_range,
@@ -68,44 +67,10 @@ class Transition(object):
         self.R = self.rate * len(self.indices)
     
     def _update_polymerization(self, end):
-        # FIXME assumes barbed (ignores argument)
-        return self._update_transition(len(self.strand)-1)
-#        index = len(self.strand) - 1
-#        if self.predicate(self.strand, index):
-#            self.indices.add(index)
+        # NOTE assumes barbed (ignores argument)
+        return self._update_hydrolysis(len(self.strand)-1)
 
     def _update_depolymerization(self, end):
-        # FIXME assumes barbed (ignores argument)
+        # NOTE assumes barbed (ignores argument)
         self.indices.discard(len(self.strand))
-        return self._update_transition(len(self.strand)-1)
-
-class BarbedPolymerization(object):
-    def __init__(self, rate, state):
-        self.rate  = rate
-        self.state = state
-        self.R     = rate
-    
-    def initialize(self, strand):
-        self.strand = strand
-
-    def perform(self, r):
-        self.strand.append(self.state)
-        return ('poly', 'barbed')
-
-    def update(self, transition_output):
-        pass
-
-class BarbedDepolymerization(object):
-    def __init__(self, rates):
-        self.rates  = rates
-    
-    def initialize(self, strand):
-        self.strand = strand
-        self.R      = self.rates[strand[-1]]
-
-    def perform(self, r):
-        self.strand.pop()
-        return ('depoly', 'barbed')
-
-    def update(self, transition_output):
-        self.R = self.rates[self.strand[-1]]
+        return self._update_hydrolysis(len(self.strand)-1)

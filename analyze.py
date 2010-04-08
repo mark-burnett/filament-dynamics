@@ -18,7 +18,9 @@
     This script performs analysis and generates plots.
 """
 
+import bisect
 import cPickle
+
 import baker
 
 import numpy
@@ -26,131 +28,99 @@ import pylab
 
 from analysis.tools import make_timecourse_histogram, histogram_stats
 
-@baker.command
-def length_profiles(input_filename):
-    results = cPickle.load(file(input_filename))
-    config = results['config']
-    length_profiles = results['length_profiles']
-    histograms = make_timecourse_histogram(length_profiles)
-    timecourse_avg, timecourse_std = histogram_stats(histograms)
-    time = numpy.linspace(0, config['true_depolymerization_duration'],
-                          float(config['true_depolymerization_duration'])/
-                          config['true_sample_period'] - 1)
-    time = time[:len(timecourse_avg)]
-    pylab.errorbar(time, timecourse_avg, timecourse_std)
-    pylab.show()
+def get_stability_values(input_filename, sample_period,
+                         stable_time, stable_variation):
+    data = cPickle.load(file(input_filename))
 
-@baker.command
-def stability(input_filename):
-    results = cPickle.load(file(input_filename))
-    config = results['config']
-    length_profiles = results['length_profiles']
-    num_stable_samples = int(100/config['true_sample_period'])
+    config = data['config']
+    time = numpy.linspace(0, config['depolymerization_duration'],
+                          float(config['depolymerization_duration'])/
+                          sample_period - 1)
 
-    length_profiles2 = []
-    for lp in length_profiles:
-        if len(lp) > num_stable_samples:
-            length_profiles2.append(lp)
-    length_profiles = length_profiles2
+    stable_samples = int(stable_time/sample_period)
+    # Sample the data
+    length_profiles = []
+    for r in data['results']:
+        # Use interpolation to figure out the values
+        lp = numpy.interp(time, r['time'], r['length'], right=-1)
+        final_i = -1
+        for i, v in enumerate(lp):
+            if -1 == v:
+                final_i = i
+                break
+        lp = lp[:final_i]
+        if stable_samples < len(lp):
+            length_profiles.append(lp)
 
-# METHOD: only look at points 100s apart to check.
-    rate_profiles = [numpy.array(lp) - numpy.roll(lp, num_stable_samples) for lp in length_profiles]
+    # Look at points stable_time seconds apart to check for stability.
+    rate_profiles = [numpy.array(lp) - numpy.roll(lp, stable_samples)
+                     for lp in length_profiles]
 
-    stable_rate = 100
-    stable_profiles = [numpy.abs(rp) < stable_rate for rp in rate_profiles]
+    stable_profiles = [numpy.abs(rp) < stable_variation for rp in rate_profiles]
 
     stable_histograms = make_timecourse_histogram(stable_profiles)
     stable_fraction = [float(sum(sh))/len(sh) for sh in stable_histograms]
 
-    time = numpy.linspace(0, config['true_depolymerization_duration'],
-                          float(config['true_depolymerization_duration'])/
-                          config['true_sample_period'] - 1)
-    time = time[:len(stable_histograms)]
+    time = time[:len(stable_fraction)]
+    return time, stable_fraction
+
+@baker.command
+def stability(input_filename,
+              title=None,
+              sample_period=20,
+              stable_time=100, stable_variation=100):
+    time, stable_fraction = get_stability_values(input_filename,
+                                sample_period, stable_time, stable_variation)
     # Simulation
-    pylab.plot(numpy.array(time)/60.0, stable_fraction)
+    pylab.plot(time/60.0, stable_fraction)
     # Mitchison's data
     mdata = -0.94 * numpy.exp(-(time-90)/(6.9 * 60))+0.94
     pylab.plot(numpy.array(time)/60.0, mdata)
     pylab.ylim(0, 1.1)
+    pylab.xlabel('Depolymerization Time (min)')
+    pylab.ylabel('Fraction of Stable Filaments')
+    if title:
+        pylab.title(title)
     pylab.show()
 
 @baker.command
-def raw_plot(input_filename, number=-1):
-    results = cPickle.load(file(input_filename))
-    config = results['config']
-    length_profiles = results['length_profiles']
-    length_profiles = [lp + [0 for i in xrange(int(config['true_depolymerization_duration']/config['true_sample_period']) - len(lp) - 1)] for lp in length_profiles]
-    time = numpy.linspace(0, config['true_depolymerization_duration'],
-                          float(config['true_depolymerization_duration'])/
-                          config['true_sample_period'] - 1)
-    if len(length_profiles) > 1:
-        [pylab.plot(numpy.array(time)/60.0, lp) for lp in length_profiles[:number]]
-    else:
-        pylab.plot(numpy.array(time)/60.0, length_profiles[0])
+def raw_plot(input_filename, number=-1, title=None):
+    data = cPickle.load(file(input_filename))
+    for r in data['results'][:number]:
+        pylab.plot(numpy.array(r['time'])/60, r['length'])
+
+    pylab.xlabel('Depolymerization Time (min)')
+    pylab.ylabel('Filament Length (subunits)')
+    if title:
+        pylab.title(title)
     pylab.show()
 
 @baker.command
 def stab_var(center_filename, down_filename, up_filename,
-             title='Stability Variation'):
-    cresults = cPickle.load(file(center_filename))
-    dresults = cPickle.load(file(down_filename))
-    uresults = cPickle.load(file(up_filename))
-    cconfig = cresults['config']
-    dconfig = dresults['config']
-    uconfig = uresults['config']
-    clength_profiles = cresults['length_profiles']
-    dlength_profiles = dresults['length_profiles']
-    ulength_profiles = uresults['length_profiles']
-    num_stable_samples = int(100/cconfig['true_sample_period'])
+             title=None,
+             sample_period=20,
+             stable_time=100, stable_variation=100):
 
-#    length_profiles2 = []
-#    for lp in length_profiles:
-#        if len(lp) > num_stable_samples:
-#            length_profiles2.append(lp)
-#    length_profiles = length_profiles2
-
-# METHOD: only look at points 100s apart to check.
-    crate_profiles = [numpy.array(lp) - numpy.roll(lp, num_stable_samples) for lp in clength_profiles]
-    drate_profiles = [numpy.array(lp) - numpy.roll(lp, num_stable_samples) for lp in dlength_profiles]
-    urate_profiles = [numpy.array(lp) - numpy.roll(lp, num_stable_samples) for lp in ulength_profiles]
-
-    stable_rate = 100
-    cstable_profiles = [numpy.abs(rp) < stable_rate for rp in crate_profiles]
-    dstable_profiles = [numpy.abs(rp) < stable_rate for rp in drate_profiles]
-    ustable_profiles = [numpy.abs(rp) < stable_rate for rp in urate_profiles]
-
-    cstable_histograms = make_timecourse_histogram(cstable_profiles)
-    cstable_fraction = [float(sum(sh))/len(sh) for sh in cstable_histograms]
-
-    dstable_histograms = make_timecourse_histogram(dstable_profiles)
-    dstable_fraction = [float(sum(sh))/len(sh) for sh in dstable_histograms]
-
-    ustable_histograms = make_timecourse_histogram(ustable_profiles)
-    ustable_fraction = [float(sum(sh))/len(sh) for sh in ustable_histograms]
-
-    ctime = numpy.linspace(0, cconfig['true_depolymerization_duration'],
-                          float(cconfig['true_depolymerization_duration'])/
-                          cconfig['true_sample_period'] - 1)
-    ctime = ctime[:len(cstable_histograms)]
-
-    dtime = numpy.linspace(0, dconfig['true_depolymerization_duration'],
-                          float(dconfig['true_depolymerization_duration'])/
-                          dconfig['true_sample_period'] - 1)
-    dtime = dtime[:len(dstable_histograms)]
-
-    utime = numpy.linspace(0, uconfig['true_depolymerization_duration'],
-                          float(uconfig['true_depolymerization_duration'])/
-                          uconfig['true_sample_period'] - 1)
-    utime = utime[:len(ustable_histograms)]
+    ctime, cstable_fraction = get_stability_values(center_filename,
+            sample_period, stable_time, stable_variation)
+    dtime, dstable_fraction = get_stability_values(down_filename,
+            sample_period, stable_time, stable_variation)
+    utime, ustable_fraction = get_stability_values(up_filename,
+            sample_period, stable_time, stable_variation)
 
     # Simulation
-    pylab.plot(numpy.array(ctime)/60.0, cstable_fraction, 'k')
-    pylab.plot(numpy.array(dtime)/60.0, dstable_fraction, 'b')
-    pylab.plot(numpy.array(utime)/60.0, ustable_fraction, 'r')
+    pylab.plot(ctime/60.0, cstable_fraction, 'k')
+    pylab.plot(utime/60.0, ustable_fraction, 'b')
+    pylab.plot(dtime/60.0, dstable_fraction, 'r')
+
     # Mitchison's data
     mdata = -0.94 * numpy.exp(-(ctime-90)/(6.9 * 60))+0.94
     pylab.plot(numpy.array(ctime)/60.0, mdata, 'g')
     pylab.ylim(0, 1.1)
+    pylab.xlabel('Depolymerization Time (min)')
+    pylab.ylabel('Fraction of Stable Filaments')
+    if title:
+        pylab.title(title)
     pylab.show()
 
 baker.run()

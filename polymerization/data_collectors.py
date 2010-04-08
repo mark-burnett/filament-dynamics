@@ -15,20 +15,6 @@
 
 import copy
 
-class RecordPeriodic(object):
-    def __init__(self, f, interval):
-        self.f = f
-        self.interval = interval
-        self.count = 0
-    def reset(self):
-        self.count = 0
-    def __call__(self, kwargs):
-        if self.interval == self.count:
-            self.count = 0
-            return self.f(kwargs)
-        else:
-            self.count += 1
-
 def strand_length(kwargs):
     return len(kwargs['strand'])
 

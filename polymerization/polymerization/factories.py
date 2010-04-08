@@ -13,12 +13,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def choose_state(probs, num, default=None):
-    """
-    Selects a state from probs given an already generated random number.
-    """
-    for rate, state in probs:
-        if num < rate:
-            return state
+import barbed_end
 
-    return default
+__all__ = ['fixed_concentration']
+
+def fixed_concentration(parameters, concentrations,
+                        free_barbed_end, free_pointed_end):
+    results = []
+    for s, c in concentrations.items():
+        if c: # Double check for zero concentration
+            if free_barbed_end:
+                barbed_rate = c * parameters['barbed_polymerization'][s]
+                results.append(barbed_end.FixedRate(barbed_rate, s))
+            if free_pointed_end:
+                raise NotImplementedError('Pointed end polymerization.')
+    return results

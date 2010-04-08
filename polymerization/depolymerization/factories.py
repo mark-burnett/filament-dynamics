@@ -13,30 +13,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import simple
+import barbed_end
 
-__all__ = ['time_adjust', 'independent']
+__all__ = ['fixed_concentration']
 
-def time_adjust(dt, rates):
-    out_rates = {}
-    for s, r in rates.items():
-#        out_rates[int(s)] = dt * r
-        out_rates[s] = dt * r
-    return out_rates
-
-def independent(barbed_depoly_rates, pointed_depoly_rates):
-    # Barbed end
-    if barbed_depoly_rates:
-        bdepoly = simple.BarbedDepoly(barbed_depoly_rates)
-        depoly  = bdepoly
-
-    # Pointed end
-    if pointed_depoly_rates:
-        pdepoly = simple.PointedDepoly(pointed_depoly_rates)
-        depoly  = pdepoly
-
-    # Combine if needed
-    if barbed_depoly_rates and pointed_depoly_rates:
-        depoly = simple.Collected_rates(bdepoly, pdepoly)
-
-    return depoly
+def fixed_concentration(parameters, free_barbed_end, free_pointed_end):
+    if free_barbed_end:
+        return [barbed_end.FixedRates(parameters['barbed_depolymerization'])]
+    if free_pointed_end:
+        raise NotImplementedError('Pointed end polymerization.')

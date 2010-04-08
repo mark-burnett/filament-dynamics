@@ -17,86 +17,98 @@
     This module contains a stochastic simulation object for actin strands.
 """
 
+import random
 import copy
-#import random
+import bisect
+
+import math
 
 __all__ = ['Simulation', 'SimulationSequence']
 
+def _running_total(values):
+    """
+    Generator that calculates a running total of a sequence.
+    """
+    total = 0
+    for v in values:
+        total += v
+        yield total
+
 class Simulation(object):
     """
-    Stochastic simulation object.
+    Kinetic Monte Carlo simulation object.
     """
-    def __init__(self, poly, depoly, hydro, record, end): #, rng=random):
+    def __init__(self, transitions, end_conditions, data_collectors):
         """
-        'poly', and 'depoly' are functions that modify the strand and return
-            the number of subunits added or removed from the strand
-        'hydro' is a callable that performs hydrolysis on the strand and
-            returns information about that process.
-        'record' is a dictionary with arbitrary keys, and callable values
+        'transitions' list of transition objects.  Each object represents
+            a set of possible state changes.
+        'end_conditions' is either a single end condition or an iterable of end
+            conditions (see 'end_conditions' module).
+        'data_collectors' is a dictionary with string keys, and callable values
             that accept **kwargs.  These callables are passed locals()
             at each step.  All return values that are not None are saved
             and returned when the simulation is performed by 'run' (below).
-        'end' is either a single end condition or an iterable of end
-            conditions (see 'end_conditions' module).
         """
-        self.poly   = poly
-        self.depoly = depoly
-        self.hydro  = hydro
-        self.record = record
-        self.end    = copy.deepcopy(end)
+        self.transitions = copy.deepcopy(transitions)
+        self.ecs = copy.deepcopy(end_conditions)
+        self.dcs = data_collectors
         try:
-            iter(self.end)
+            iter(self.ecs)
         except:
-            self.end = [self.end]
-#        self.rng = rng
+            self.ecs = [self.ecs]
 
     def __call__(self, initial_strand):
-        """
-        Sets the random seed, then calls self.run(initial_strand).
-        """
-#        self.rng.seed()
-#        random.seed()
         return self.run(initial_strand)
 
     def run(self, initial_strand):
         """
         Perform the actual simulation, starting with initial_strand.
         """
-        # Initialize strand
-        # Copy initial strand to avoid threading problems.
-        strand = copy.copy(initial_strand)
+        strand = copy.deepcopy(initial_strand)
+        data = dict( (key, []) for key in self.dcs.keys() )
 
-        # Initialize data storage dictionary
-        data = dict( (key, []) for key in self.record.keys() )
+        # Aliases - for lame python speed boost
+        transitions = self.transitions
+        secs = self.ecs
+        sdcs = self.dcs
+        mlog = math.log
+        runi = random.uniform
 
-        poly_count   = 0
-        depoly_count = 0
+        # Initialize odds and ends
+        [t.initialize(strand) for t in transitions]
+        sim_time = 0
 
-#        hydro_stats = None
-        if len(initial_strand):
-            # Copy end conditions to prevent threading problems.
-            [e.reset() for e in self.end]
-            try:
-                while not any(e(**locals()) for e in self.end):
-                    poly_count += self.poly(strand)
-                    try:
-                        depoly_count += self.depoly(strand)
-                    except IndexError:
-                        break
-                    self.hydro(strand)
-#                    hydro_stats = self.hydro(strand, hydro_stats)
+        [e.reset() for e in secs]
 
-                    # Collect and store data
-                    for key, f in self.record.items():
-                        result = f(locals())
-                        if result is not None:
-                            data[key].append(result)
-            # Capture the index error thrown when we depolymerize the whole strand.
-            except IndexError:
-                pass
-            except StopIteration:
-                pass
-        # Capture the final state of the simulation.
+        try:
+            while not any(e(strand=strand,sim_time=sim_time) for e in secs):
+                # Collect and store data
+                for key, f in sdcs.items():
+                    result = f(locals())
+                    if result is not None:
+                        data[key].append(result)
+
+                # calculate partial sums of transition probabilities
+                transition_R = [t.R for t in transitions]
+                running_R = list(_running_total(transition_R))
+                total_R = running_R[-1]
+
+                # calculate transition time
+                tau = mlog(1/runi(0, 1)) / total_R
+                # figure out which transition to perform
+                r = runi(0, total_R)
+                j = bisect.bisect_left(running_R, r)
+
+                # perform transition
+                transition_output = transitions[j].perform(running_R[j] - r)
+
+                # update transition probabilities
+                [a.update(transition_output) for a in transitions]
+                # update simulation time
+                sim_time += tau
+        except IndexError:
+            pass
+
         data['final_strand'] = strand
         return data
 
@@ -105,16 +117,15 @@ class SimulationSequence(object):
         This chains multiple simulations together, using the 'final_strand'
     of each previous simulation as the initial_strand for the next.
     """
-    def __init__(self, simulations): #, rng=random):
+    def __init__(self, simulations):
         self.simulations = simulations
-#        self.rng = rng
 
     def run(self, initial_strand):
-        current_strand = copy.copy(initial_strand)
+        current_strand = initial_strand
         results = []
         for s in self.simulations:
             results.append(s.run(current_strand))
-            current_strand = copy.copy(results[-1]['final_strand'])
+            current_strand = results[-1]['final_strand']
 
         return results
 
@@ -122,7 +133,4 @@ class SimulationSequence(object):
         """
         Sets the random seed, then calls self.run(initial_strand).
         """
-#        self.rng.seed()
-#        random.seed()
-#        print random.random()
         return self.run(initial_strand)

@@ -6,27 +6,25 @@
 "parameters": {
     "_comment": "These parameters are from Fujiwara.",
 
-    "barbed_polymerization":   [[11.4, "t"], [3.4, "p"], [2.9, "d"]],
+    "barbed_polymerization":   {"t": 11.4, "p": 3.4, "d": 2.9},
     "barbed_depolymerization": {"t": 2.2, "p": 0.2, "d": 2.7},
 
-    "pointed_polymerization":   [[1.3, "t"], [0.11, "p"], [0.09, "d"]],
+    "pointed_polymerization":   {"t": 1.3, "p": 0.11, "d": 0.09},
     "pointed_depolymerization": {"t": 0.8, "p": 0.02, "d": 0.25},
 
-    "hydrolysis_rates": {"t":[[0.3, "p"]], "p":[[0.003, "d"]], "d":[]}
+    "hydrolysis_rates": {"t":[0.3, "p"], "p":[0.003, "d"]}
     },
 
 "depolymerization_simulation": {
     "_comment": "These parameters are specific to depolymerization simulations.",
 
     "polymerization_duration": 60,
-    "depolymerization_duration": 4800,
-    "dt": 0.01,
-    "sample_period": 5,
+    "depolymerization_duration": 3000,
 
-    "num_simulations": 20,
+    "num_simulations": 1000,
     "num_processes": 8,
 
-    "polymerization_concentrations": {"t":6, "p": 0, "d": 0},
+    "polymerization_concentrations": {"t":3},
 
     "barbed_end":  true,
     "pointed_end": false,

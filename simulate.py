@@ -18,6 +18,7 @@
     This is the main polymerization script.
 """
 
+import operator
 import baker
 import json
 import cPickle
@@ -38,37 +39,16 @@ def depolymerization(configuration_filename,
     total_config = json.load(file(configuration_filename))
     config = total_config['depolymerization_simulation']
 
-    # Calculate some secondary parameters
-    config['polymerization_timesteps'] = int(
-            config['polymerization_duration']/config['dt'])
-    config['true_polymerization_duration'] =\
-            config['polymerization_timesteps'] * config['dt']
-
-    config['depolymerization_timesteps'] = int(
-            config['depolymerization_duration']/config['dt'])
-    config['true_depolymerization_duration'] =\
-            config['depolymerization_timesteps'] * config['dt']
-
-    config['sample_timesteps'] = int(
-            config['sample_period']/config['dt'])
-    config['true_sample_period'] =\
-            config['sample_timesteps'] * config['dt']
-
     # Construct simulation.
     sim = polymerization.factories.build_depolymerization_simulation(
             total_config['model_type'], total_config['parameters'],
-            config['dt'], config['sample_timesteps'],
-            config['polymerization_timesteps'],
-            config['depolymerization_timesteps'],
+            config['polymerization_duration'],
+            config['depolymerization_duration'],
             config['polymerization_concentrations'],
             config['barbed_end'], config['pointed_end'])
 
     # Construct initial_strand
-    initial_strand = polymerization.models.strand[total_config['model_type']](
-            initial_length=config['initial_size'],
-            initial_state=config['initial_state'],
-            barbed_end=config['barbed_end'],
-            pointed_end=config['pointed_end'])
+    initial_strand = [config['initial_state'] for i in xrange(config['initial_size'])]
 
     # Run simulation
     if multiprocess:
@@ -79,13 +59,9 @@ def depolymerization(configuration_filename,
         result = [sim(initial_strand)
                   for i in xrange(config['num_simulations'])]
 
-    # Reorganize results
-    depoly_results = zip(*result)[1]
-    length_profiles = [d['length'] for d in depoly_results]
-
     # Write output
     cPickle.dump({'simulation_type':'depolymerization',
-                  'length_profiles':length_profiles,
+                  'results':map(operator.itemgetter(1), result),
                   'config':config,
                   'timestamp':time.gmtime()},
                  file(output_filename, 'w'), -1)

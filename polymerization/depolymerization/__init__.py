@@ -13,16 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import vectorial
-import random_model
-import cooperative
+import factories
+import barbed_end
 
-hydrolysis = {'vectorial':   vectorial.hydrolysis,
-              'random':      random_model.hydrolysis,
-              'cooperative': cooperative.hydrolysis,
-              'lipowsky':    cooperative.hydrolysis}
-
-strand = {'vectorial':   vectorial.strand,
-          'random':      random_model.strand,
-          'cooperative': cooperative.strand,
-          'lipowsky':    cooperative.strand}
+__all__ = ['factories', 'barbed_end']

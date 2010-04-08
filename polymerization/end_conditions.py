@@ -52,38 +52,6 @@ class RandomMaxVariable(object):
     def __call__(self, **kwargs):
         return self.var_current < kwargs[self.var_name]
 
-class Counter(object):
-    """
-    End condition to specify a maximum number of iterations to run.
-    """
-    def __init__(self, num_iterations):
-        self.num_left     = num_iterations
-        self.num_starting = num_iterations
-
-    def __call__(self, **kwargs):
-        self.num_left -= 1
-        return 0 >= self.num_left
-
-    def reset(self):
-        self.num_left = self.num_starting
-
-class RandomCounter(object):
-    """
-    End condition to run a random number of iterations up to a maximum.
-    """
-    def __init__(self, max_iterations):
-        self.max_iterations = max_iterations
-        self.goal = random.randint(0, self.max_iterations)
-        self.num_left = self.goal
-
-    def __call__(self, **kwargs):
-        self.num_left -= 1
-        return 0 >= self.num_left
-
-    def reset(self):
-        self.goal = random.randint(0, self.max_iterations)
-        self.num_left = self.goal
-
 class Timer(object):
     """
     End condition to specify a maximum amount of time to run (approximate).
