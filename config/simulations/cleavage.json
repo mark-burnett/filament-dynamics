@@ -1,0 +1,24 @@
+{
+"simulation_name": "cleavage",
+"long_description": "Simulate cleaved phosphate count.",
+
+"_comment": "Simulation for Pollard Biochem. Vol. 41, No 2 (2002)",
+
+"stage_sequence": ["main"],
+
+"stages": {
+    "main":{
+        "end_conditions":[["duration", 40]],
+        "data_collectors":{"time":     "simulation_time",
+                           "length":   "strand_length",
+                           "cleavage": "cleavage_event_integral"},
+        "polymerization":{"t":{"type": "fixed_reagent",
+                               "monomer_concentration": 6,
+                               "filament_tip_concentration": 0.0112}}}},
+
+"barbed_end":  true,
+"pointed_end": false,
+
+"initial_size": 535,
+"initial_state": "d"
+}
