@@ -24,77 +24,97 @@ import data_collectors
 
 import simulation
 
-__all__ = ['build_initial_strand', 'build_depolymerization_simulation']
+__all__ = ['initial_strand', 'simulation']
 
-def build_initial_strand(size, state, free_barbed_end, free_pointed_end):
+def initial_strand(simulation_config):
     type = list
-    if free_pointed_end:
+    if simulation_config['pointed_end']:
         type = collections.deque
-    return type(state for i in xrange(size))
+    return type(simulation_config['initial_state']
+                for i in xrange(simulation_config['initial_size']))
 
-def build_depolymerization_simulation(model_type,
-                                      model_parameters,
-                                      polymerization_duration,
-                                      depolymerization_duration,
-                                      polymerization_concentrations,
-                                      free_barbed_end,
-                                      free_pointed_end):
-    # Make poly and depoly transition objects
-    poly_trans   = pf.fixed_concentration(model_parameters,
-                                          polymerization_concentrations,
-                                          free_barbed_end, free_pointed_end)
-    depoly_trans = df.fixed_rates(model_parameters,
-                                  free_barbed_end, free_pointed_end)
-    # Make hydrolysis transition objects
-    hydro_trans  = hf.constant_rates(model_type,
-                                     model_parameters['hydrolysis_rates'],
-                                     free_barbed_end, free_pointed_end)
+def build_simulation(model_config, simulation_config):
+    # Loop over stages in order and build them.
+    simulations = []
+    for stage_name in simulation_config['stage_sequence']:
+        stage = simulation_config['stages'][stage_name]
+        sim = single_sim(model_config, stage,
+                         simulation_config['barbed_end'],
+                         simulation_config['pointed_end'])
+        simulations.append(sim)
 
-    # Make end conditions
-    poly_ecs = end_conditions.RandomMaxVariable('sim_time',
-                                                polymerization_duration)
-    depoly_ecs = end_conditions.MaxVariable('sim_time',
-                                            depolymerization_duration)
+    # No need to make a simulation sequence if there is only one.
+    if 1 == len(simulations):
+        return simulations[0]
+    else:
+        return simulation.SimulationSequence(simulations)
 
-    # Make data collectors
-    poly_dcs = {}
-    depoly_dcs = {'length': data_collectors.strand_length,
-                  'time':   data_collectors.Variable('sim_time')}
+def single_sim(model_config, stage, free_barbed_end, free_pointed_end):
+    # End conditions
+    ecs = []
+    for end_signature in stage['end_conditions']:
+        ecs.append(single_end_condition(end_signature))
+    if not ecs:
+        raise RuntimeError('No end conditions specified.')
 
-    return simulation.SimulationSequence([
-        simulation.Simulation(poly_trans + depoly_trans + hydro_trans,
-                              poly_ecs, poly_dcs),
-        simulation.Simulation(depoly_trans + hydro_trans,
-                              depoly_ecs, depoly_dcs)])
+    # Polymerization transitions
+    poly_config = None
+    try:
+        poly_config =  stage['polymerization']
+    except KeyError:
+        pass
 
-def build_cleavage_simulation(model_type,
-                              model_parameters,
-                              duration,
-                              transition_from,
-                              monomer_concentrations,
-                              filament_tip_concentration,
-                              free_barbed_end,
-                              free_pointed_end):
-    # Make poly and depoly transition objects
-    poly   = pf.fixed_reagents(model_parameters,
-                               monomer_concentrations,
-                               filament_tip_concentration,
-                               free_barbed_end, free_pointed_end)
-    depoly = df.fixed_rates(model_parameters, free_barbed_end, free_pointed_end)
+    if poly_config:
+        poly = pf.normal(model_config['parameters'], poly_config,
+                         free_barbed_end, free_pointed_end)
+    else:
+        poly = []
 
-    # Make hydrolysis transition objects
-    hydro_rates = {}
-    hydro_rates[transition_from] = \
-                       model_parameters['hydrolysis_rates'][transition_from]
-    hydro  = hf.constant_rates(model_type, hydro_rates,
-                               free_barbed_end, free_pointed_end)
+    # Depolymerization transitions
+    depoly = df.normal(model_config['parameters'], free_barbed_end, free_pointed_end)
 
-    # Make end conditions
-    ecs = end_conditions.MaxVariable('sim_time', duration)
+    # Hydrolysis transitions
+    hydro = hf.constant_rates(model_config['model_type'],
+                              model_config['parameters']['hydrolysis_rates'],
+                              free_barbed_end, free_pointed_end)
 
-    # Make data collectors
-    dcs = {'length':       data_collectors.strand_length,
-           'time':         data_collectors.Variable('sim_time'),
-           'hydro_events': data_collectors.EventCounter('hydrolysis')}
+    # Data collectors
+    dcs = {}
+    for collector_name, collector_signature in stage['data_collectors'].items():
+        dcs[collector_name] = single_data_collector(collector_signature)
 
     return simulation.Simulation(poly + depoly + hydro, ecs, dcs)
+
+# End Conditions
+# ----------------------------------------------------------------------
+def _ec_duration(duration):
+    return end_conditions.MaxVariable('sim_time', duration)
+
+def _ec_random_duration(max_duration):
+    return end_conditions.RandomMaxVariable('sim_time', max_duration)
+
+_ec_signatures = {'duration':        _ec_duration,
+                  'random_duration': _ec_random_duration}
+
+def single_end_condition(signature):
+    return _ec_signatures[signature[0]](*signature[1:])
+
+# Data Collectors
+# ----------------------------------------------------------------------
+def _dc_simulation_time():
+    return data_collectors.Variable('sim_time')
+
+def _dc_strand_length():
+    return data_collectors.strand_length
+
+# FIXME this should crash, but that's OK because I really need to fix my
+#   event counting mechanism so I can count specific events.
+def _dc_cleavage_event():
+    return data_collectors.EventCounter('hydrolysis', 'p')
+
+_dc_signatures = {'simulation_time': _dc_simulation_time,
+                  'strand_length':   _dc_strand_length,
+                  'cleavage':        _dc_cleavage_event}
+
+def single_data_collector(signature):
+    return _dc_signatures[signature]()

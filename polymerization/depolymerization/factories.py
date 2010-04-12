@@ -15,10 +15,10 @@
 
 import barbed_end
 
-__all__ = ['fixed_rates']
+__all__ = ['normal']
 
-def fixed_rates(parameters, free_barbed_end, free_pointed_end):
+def normal(model_pars, free_barbed_end, free_pointed_end):
     if free_barbed_end:
-        return [barbed_end.FixedRates(parameters['barbed_depolymerization'])]
+        return [barbed_end.FixedRates(model_pars['barbed_depolymerization'])]
     if free_pointed_end:
         raise NotImplementedError('Pointed end depolymerization.')

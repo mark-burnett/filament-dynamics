@@ -1,10 +1,10 @@
 {
 "simulation_name": "depolymerization_timecourse",
-"long_description": "Two stage simulation: growth, and depolymerization."
+"long_description": "Two stage simulation: growth, and depolymerization.",
 
 "_comment": "Simulation for Mitchison PNAS Vol. 105, No. 43 (2008)",
 
-"stage_sequence": ["growth", "depolymerization"]
+"stage_sequence": ["growth", "depolymerization"],
 
 "stages": {
     "growth":{

@@ -15,33 +15,47 @@
 
 import barbed_end
 
-__all__ = ['fixed_concentration', 'fixed_reagents']
+__all__ = ['normal']
 
-def fixed_concentration(parameters, concentrations,
-                        free_barbed_end, free_pointed_end):
+def single_fixed_concentration(model_model_pars, state, pars,
+                               free_barbed_end, free_pointed_end):
     results = []
-    for s, c in concentrations.items():
-        if c: # Double check for zero concentration
-            if free_barbed_end:
-                barbed_rate = c * parameters['barbed_polymerization'][s]
-                results.append(barbed_end.FixedRate(barbed_rate, s))
+    c = pars['concentration']
 
-            if free_pointed_end:
-                raise NotImplementedError('Pointed end polymerization.')
+    if c: # Double check for zero concentration
+        if free_barbed_end:
+            barbed_rate = c * model_model_pars['barbed_polymerization'][state]
+            results.append(barbed_end.FixedRate(barbed_rate, state))
+
+        if free_pointed_end:
+            raise NotImplementedError('Pointed end polymerization.')
+
     return results
 
-def fixed_reagents(parameters, monomer_concentrations,
-                   filament_tip_concentration,
-                   free_barbed_end, free_pointed_end):
+def single_fixed_reagent(model_model_pars, state, pars,
+                         free_barbed_end, free_pointed_end):
+    c                          = pars['monomer_concentration']
+    filament_tip_concentration = pars['filament_tip_concentration']
     results = []
-    for s, c in monomer_concentrations.items():
-        if c: # Double check for zero concentration
-            if free_barbed_end:
-                amount = int(c / filament_tip_concentration)
-                barbed_rate = (parameters['barbed_polymerization'][s]
-                               * filament_tip_concentration)
-                results.append(barbed_end.FixedReagent(barbed_rate, amount, s))
+    if c: # Double check for zero concentration
+        if free_barbed_end:
+            amount = int(c / filament_tip_concentration)
+            barbed_rate = (model_model_pars['barbed_polymerization'][state]
+                           * filament_tip_concentration)
+            results.append(barbed_end.FixedReagent(barbed_rate, amount, state))
 
-            if free_pointed_end:
-                raise NotImplementedError('Pointed end polymerization.')
+        if free_pointed_end:
+            raise NotImplementedError('Pointed end polymerization.')
+    return results
+
+_factory_dispatch = {'fixed_concentration': single_fixed_concentration,
+                     'fixed_reagents':      single_fixed_reagent}
+
+def normal(model_model_pars, poly_model_pars, free_barbed_end, free_pointed_end):
+    results = []
+    for state, pars in poly_model_pars.items():
+        results.extend(_factory_dispatch[pars['type']](model_model_pars,
+                                                       state, pars,
+                                                       free_barbed_end,
+                                                       free_pointed_end))
     return results
