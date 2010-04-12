@@ -15,94 +15,57 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-    This is the main polymerization script.
+    This is the main simulation script.
 """
 
+import time
 import operator
-import baker
+
 import json
 import cPickle
-import time
 
-import polymerization
+import baker
+
+import hydro_sim
 import mp_sim
 
-def run_sim(sim, initial_strand, multiprocess,
-            output_file, simulation_type,
-            total_config, config):
+@baker.command(default=True)
+def hydrolysis(model_file, simulation_file,
+               N=100, processors=None,
+               output_file=None):
+    """
+    Perform hydrolysis simulation (default).
+    :param output_file: Filename for storing results.
+    :param processors:  Number of processors to use (default=autodetect).
+    :param N:           Number of simulations to run (default=100).
+    """
+    # Read model and simulation config files
+    model_config      = json.load(file(model_file))
+    simulation_config = json.load(file(simulation_file))
+
+    # Construct simulation
+    sim = hydro_sim.factories.build_simulation(model_config, simulation_config)
+
+    # Construct initial strand
+    initial_strand = hydro_sim.factories.initial_strand(simulation_config)
+
     # Run simulation
-    if multiprocess:
-        result = mp_sim.pool_sim(sim, initial_strand,
-                                 num_simulations = config['num_simulations'],
-                                 num_processes   = config['num_processes'])
+    if 1 == processors:
+        data = [sim(initial_strand) for i in xrange(N)]
     else:
-        result = [sim(initial_strand)
-                  for i in xrange(config['num_simulations'])]
+        data = mp_sim.pool_sim(sim, initial_strand, N, processors)
 
     # Write output
-    cPickle.dump({'simulation_type':simulation_type,
-#                  'results':map(operator.itemgetter(1), result),
-                  'results':result,
-                  'config':total_config,
-                  'timestamp':time.gmtime()},
-                 output_file, -1)
+    if output_file:
+        filename = output_file
+    else:
+        raise NotImplementedError('Figure out output filename.')
 
-
-@baker.command
-def depolymerization(configuration_filename,
-                     output_filename='depolymerization_results.pickle',
-                     multiprocess=True):
-    """
-    Simulate a depolymerization timecourse.
-    :param output_filename: Default: 'sim_results.pickle'
-    :param multiprocess: Whether to use multiple cores.
-    """
-    # Read configuration
-    total_config = json.load(file(configuration_filename))
-    config = total_config['depolymerization_simulation']
-
-    # Construct simulation.
-    sim = polymerization.factories.build_depolymerization_simulation(
-            total_config['model_type'], total_config['parameters'],
-            config['polymerization_duration'],
-            config['depolymerization_duration'],
-            config['polymerization_concentrations'],
-            config['barbed_end'], config['pointed_end'])
-
-    # Construct initial_strand
-    initial_strand = polymerization.factories.build_initial_strand(
-            config['initial_size'], config['initial_state'],
-            config['barbed_end'], config['pointed_end'])
-
-    # Run simulation
-    run_sim(sim, initial_strand, multiprocess,
-            file(output_filename, 'w'), 'depolymerization',
-            total_config, config)
-
-@baker.command
-def cleavage(configuration_filename,
-             output_filename='cleavage_results.pickle',
-             multiprocess=True):
-    # Read configuration
-    total_config = json.load(file(configuration_filename))
-    config = total_config['cleavage_simulation']
-
-    # Construct simulation.
-    sim = polymerization.factories.build_cleavage_simulation(
-            total_config['model_type'], total_config['parameters'],
-            config['duration'], config['transition_from'],
-            config['monomer_concentrations'],
-            config['filament_tip_concentration'],
-            config['barbed_end'], config['pointed_end'])
-
-    # Construct initial_strand
-    initial_strand = polymerization.factories.build_initial_strand(
-            config['initial_size'], config['initial_state'],
-            config['barbed_end'], config['pointed_end'])
-
-    # Run simulation
-    run_sim(sim, initial_strand, multiprocess,
-            file(output_filename, 'w'), 'cleavage_polymerization',
-            total_config, config)
+    with file(filename, 'w') as f:
+        cPickle.dump({'model_config': model_config,
+                      'simulation_config': simulation_config,
+                      'data': data,
+                      'timestamp':time.gmtime()},
+                     f, -1)
 
 baker.run()
