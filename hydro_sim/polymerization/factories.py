@@ -49,7 +49,7 @@ def single_fixed_reagent(model_model_pars, state, pars,
     return results
 
 _factory_dispatch = {'fixed_concentration': single_fixed_concentration,
-                     'fixed_reagents':      single_fixed_reagent}
+                     'fixed_reagent':      single_fixed_reagent}
 
 def normal(model_model_pars, poly_model_pars, free_barbed_end, free_pointed_end):
     results = []

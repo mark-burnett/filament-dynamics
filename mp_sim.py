@@ -15,7 +15,7 @@
 
 import multiprocessing
 
-def pool_sim(simulation, argument, num_simulations=None, num_processes=None):
+def pool_sim(simulation, argument, num_simulations, num_processes=None):
     """
     Uses multiprocessing to perform multiple simulations at once.
     'argument' is either a single strand used for num_simulations simulations

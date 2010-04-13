@@ -107,14 +107,12 @@ def _dc_simulation_time():
 def _dc_strand_length():
     return data_collectors.strand_length
 
-# FIXME this should crash, but that's OK because I really need to fix my
-#   event counting mechanism so I can count specific events.
 def _dc_cleavage_event():
-    return data_collectors.EventCounter('hydrolysis', 'p')
+    return data_collectors.SubEventCounter('hydrolysis', 'p')
 
 _dc_signatures = {'simulation_time': _dc_simulation_time,
                   'strand_length':   _dc_strand_length,
-                  'cleavage':        _dc_cleavage_event}
+                  'cleavage_events': _dc_cleavage_event}
 
 def single_data_collector(signature):
     return _dc_signatures[signature]()

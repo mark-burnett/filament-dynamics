@@ -33,6 +33,18 @@ class EventCounter(object):
             self.count += 1
         return self.count
 
+class SubEventCounter(object):
+    def __init__(self, event_name, subevent_name):
+        self.event_name    = event_name
+        self.subevent_name = subevent_name
+        self.count = 0
+    def __call__(self, kwargs):
+        command, value = kwargs['transition_output']
+        if self.event_name == command:
+            if self.subevent_name == value[0]:
+                self.count += 1
+        return self.count
+
 def count_not(neg_state, kwargs):
     """
     Counts the number of monomers in the strand not in 'state'.

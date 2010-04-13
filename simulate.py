@@ -31,7 +31,7 @@ import mp_sim
 
 @baker.command(default=True)
 def hydrolysis(model_file, simulation_file,
-               N=100, processors=None,
+               N=100, processes=0,
                output_file=None):
     """
     Perform hydrolysis simulation (default).
@@ -50,16 +50,18 @@ def hydrolysis(model_file, simulation_file,
     initial_strand = hydro_sim.factories.initial_strand(simulation_config)
 
     # Run simulation
-    if 1 == processors:
+    if 1 == processes:
         data = [sim(initial_strand) for i in xrange(N)]
     else:
-        data = mp_sim.pool_sim(sim, initial_strand, N, processors)
+        data = mp_sim.pool_sim(sim, initial_strand, N, processes)
 
     # Write output
     if output_file:
         filename = output_file
     else:
-        raise NotImplementedError('Figure out output filename.')
+#        raise NotImplementedError('Figure out output filename.')
+        filename = model_config['model_type'] + '_' +\
+                simulation_config['simulation_name'] + '_' + str(N) + '.pickle'
 
     with file(filename, 'w') as f:
         cPickle.dump({'model_config': model_config,

@@ -30,7 +30,7 @@ class FixedRate(object):
 
     def perform(self, r):
         self.strand.append(self.state)
-        return ('poly', 'barbed')
+        return ('poly', ('barbed', self.state))
 
     def update(self, transition_output):
         pass
@@ -55,8 +55,7 @@ class FixedReagent(object):
         self.strand.append(self.state)
         self.amount -= 1
         self.R = self.rate * self.amount
-#        self.R -= self.rate
-        return ('poly', 'barbed')
+        return ('poly', ('barbed', self.state))
 
     def update(self, transition_output):
         command, value = transition_output
@@ -65,4 +64,3 @@ class FixedReagent(object):
             if self.state == state:
                 self.amount += 1
                 self.R = self.rate * self.amount
-#                self.R += self.rate

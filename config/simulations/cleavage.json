@@ -11,7 +11,7 @@
         "end_conditions":[["duration", 40]],
         "data_collectors":{"time":     "simulation_time",
                            "length":   "strand_length",
-                           "cleavage": "cleavage_event_integral"},
+                           "cleavage": "cleavage_events"},
         "polymerization":{"t":{"type": "fixed_reagent",
                                "monomer_concentration": 6,
                                "filament_tip_concentration": 0.0112}}}},
