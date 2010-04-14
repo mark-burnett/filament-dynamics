@@ -38,20 +38,22 @@ def compare(*input_files, **kwargs):
     if 2 > len(input_files):
         raise RuntimeError('Must supply at least 2 input files to compare.')
     save = kwargs.get('save', False)
+    show = kwargs.get('show', False)
     dump = kwargs.get('dump', False)
-    print save, dump
+    print save, show, dump
     print input_files, kwargs
 
 @baker.command(default=True)
-def plot(input_file, show=False, save=True, dump=False, output_dir=None
+def plot(input_file, save=True, show=False, dump=False, output_dir=None,
          **kwargs):
     """
-    Generate plots for data in pickled input_file.
+    Generate plots for data in pickled input_file. (default)
 
     Additional key word arguments will be passed on to analysis tools.
 
     :param save:        Whether to save figures.
-    :param dump:        Whether to dump csv of plots.
+    :param show:        Whether to display figures on screen.
+    :param dump:        Whether to dump csv files of plots.
     """
     # Read file
     pickle = cPickle.load(file(input_file))
