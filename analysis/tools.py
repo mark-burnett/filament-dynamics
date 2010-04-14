@@ -14,9 +14,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import bisect
-import numpy
-
 def make_timecourse_histogram(timecourses):
     max_len = max(map(len, timecourses))
     histograms = []
@@ -29,8 +26,3 @@ def make_timecourse_histogram(timecourses):
                 pass
         histograms.append(hg)
     return histograms
-
-def histogram_stats(histograms):
-    averages = map(numpy.average, histograms)
-    stds = map(numpy.std, histograms)
-    return averages, stds

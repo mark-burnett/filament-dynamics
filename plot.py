@@ -20,6 +20,9 @@
 
 import os
 import operator
+import itertools
+
+import csv
 import cPickle
 
 import baker
@@ -58,7 +61,8 @@ def plot(input_file, save=True, show=False, dump=False, output_dir=None,
     :param dump:        Whether to dump csv files of plots.
     """
     # Read file
-    pickle = cPickle.load(file(input_file))
+    with file(input_file) as f:
+        pickle = cPickle.load(f)
 
     # Grab configs
     model_config      = pickle['model_config']
@@ -71,38 +75,62 @@ def plot(input_file, save=True, show=False, dump=False, output_dir=None,
     data    = pickle['data']
     results = []
     for i, stage_analyses in enumerate(analyses):
-        stage_results = None
+        stage_results = []
         for a in stage_analyses:
-            stage_results = [a.perform(d) for d in
-                             map(operator.itemgetter(i), data, **kwargs)]
+            try:
+                data[0].keys()
+                stage_results.append(a.perform(data, **kwargs))
+            except AttributeError:
+                stage_results.append(a.perform(map(operator.itemgetter(i), data)))
         results.append(stage_results)
 
     # Determine output directory
     if not output_dir:
-        output_dir = os.path.splitext(input_file)
+        output_dir = os.path.splitext(input_file)[0]
 
     # Create output directory
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
+    # Stage names are used to refine directories
+    stage_names = simulation_config['stage_sequence']
+
     # Write results to csv files.
     if dump:
-        for stage_results, stage_analyses in itertools.izip(results, analyses):
+        for stage_name, stage_results, stage_analyses in itertools.izip(
+                stage_names, results, analyses):
+            # Use a separate directory for each stage?
+            if len(stage_names) > 1:
+                stage_dir = os.path.join(output_dir, stage_name)
+                if not os.path.exists(stage_dir):
+                    os.mkdir(stage_dir)
+            else:
+                stage_dir = output_dir
+            # Convert results, and perform write.
             for r, a in itertools.izip(stage_results, stage_analyses):
-                with file(os.path.join(output_dir, a.filename), 'w') as f:
-                    w = csv.writer(f, a.csv(r))
+                with file(os.path.join(stage_dir,
+                                       a.filename + '.csv'), 'w') as f:
+                    w = csv.writer(f, delimiter=' ')
+                    w.writerows(a.csv(r, **kwargs))
 
     # Generate figures.
     if show or save:
         import pylab # Don't waste time importing for plain CSV dump
 
-        for stage_results, stage_analyses in itertools.izip(results, analyses):
+        for stage_name, stage_results, stage_analyses in itertools.izip(
+                stage_names, results, analyses):
             for r, a in itertools.izip(stage_results, stage_analyses):
                 pylab.figure()
                 a.plot(r, **kwargs)
                 # Save figure.
                 if save:
-                    pylab.savefig(os.path.join(output_dir, a.filename),
+                    if len(stage_names) > 1:
+                        stage_dir = os.path.join(output_dir, stage_name)
+                        if not os.path.exists(stage_dir):
+                            os.mkdir(stage_dir)
+                    else:
+                        stage_dir = output_dir
+                    pylab.savefig(os.path.join(stage_dir, a.filename + '.png'),
                                   **kwargs)
 
     # Display figures.

@@ -14,18 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import average_length_timecourse
-import length_timecourses
-import mitchison_stability
-import cleavage_integral
+import itertools
 
-__all__ = ['provided']
-
-provided = {'depolymerization_timecourse':
-                [[],
-                 [average_length_timecourse,
-                  length_timecourses,
-                  mitchison_stability]],
-            'cleavage': [[average_length_timecourse,
-                          length_timecourses,
-                          cleavage_integral]]}
+def csv(results, **kwargs):
+    return itertools.izip(*results)
