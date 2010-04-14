@@ -18,6 +18,8 @@
     This script performs analysis and generates plots.
 """
 
+import os
+import operator
 import cPickle
 
 import baker
@@ -62,40 +64,48 @@ def plot(input_file, save=True, show=False, dump=False, output_dir=None,
     model_config      = pickle['model_config']
     simulation_config = pickle['simulation_config']
 
-    # Determine which data collectors were used.
-    dcs = [simulation_config['stages'][sn]['data_collectors']
-           for sn in simulation_config['stage_sequence']]
-
     # Determine which analyses to perform.
-    # FIXME terrible function name
-    analyses = analysis.get_allowed(dcs)
+    analyses = analysis.provided[simulation_config['simulation_name']]
 
     # Perform those analyses.
     data    = pickle['data']
-    # FIXME should this be flat?
-    results = [analysis.perform(a, d) for a in stage_a
-                 for d, stage_a in itertools.izip(data, analyses)]
+    results = []
+    for i, stage_analyses in enumerate(analyses):
+        stage_results = None
+        for a in stage_analyses:
+            stage_results = [a.perform(d) for d in
+                             map(operator.itemgetter(i), data, **kwargs)]
+        results.append(stage_results)
 
+    # Determine output directory
+    if not output_dir:
+        output_dir = os.path.splitext(input_file)
+
+    # Create output directory
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+
+    # Write results to csv files.
     if dump:
-        # TODO dump results to a csv file
-        pass
+        for stage_results, stage_analyses in itertools.izip(results, analyses):
+            for r, a in itertools.izip(stage_results, stage_analyses):
+                with file(os.path.join(output_dir, a.filename), 'w') as f:
+                    w = csv.writer(f, a.csv(r))
 
-    # Plot that data.
+    # Generate figures.
     if show or save:
-        import pylab
+        import pylab # Don't waste time importing for plain CSV dump
 
-        # TODO convert results to plots yo.
+        for stage_results, stage_analyses in itertools.izip(results, analyses):
+            for r, a in itertools.izip(stage_results, stage_analyses):
+                pylab.figure()
+                a.plot(r, **kwargs)
+                # Save figure.
+                if save:
+                    pylab.savefig(os.path.join(output_dir, a.filename),
+                                  **kwargs)
 
-        for p in plot_data:
-            pylab.figure()
-            for d in p['data']:
-                p['function'](*d)
-            for label in p['labels']:
-                label['function'](*label['arguments'])
-            if save:
-                # TODO determine fig_file_name
-                pylab.savefig(fig_file_name)
-
+    # Display figures.
     if show:
         pylab.show()
 
