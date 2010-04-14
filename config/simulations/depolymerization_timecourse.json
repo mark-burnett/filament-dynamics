@@ -14,8 +14,8 @@
                                "concentration": 3}}},
     "depolymerization":{
         "end_conditions":[["duration", 3000]],
-        "data_collectors":{"time":   "simulation_time",
-                           "length": "strand_length"}}},
+        "data_collectors":["simulation_time",
+                           "strand_length"]}},
 
 "barbed_end":  true,
 "pointed_end": false,

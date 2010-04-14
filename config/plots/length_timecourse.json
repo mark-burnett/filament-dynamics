@@ -1,0 +1,9 @@
+{
+"plot_name": "length_timecourse",
+
+"required_data_collectors":["simulation_time", "strand_length"],
+
+"sample_period": 5,
+
+"num_simulations_default":10
+}

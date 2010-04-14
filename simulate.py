@@ -20,6 +20,7 @@
 
 import time
 import operator
+import os
 
 import json
 import cPickle
@@ -32,7 +33,8 @@ import mp_sim
 @baker.command(default=True)
 def hydrolysis(model_file, simulation_file,
                N=100, processes=0,
-               output_file=None):
+               output_file=None,
+               output_dir=None):
     """
     Perform hydrolysis simulation (default).
     :param output_file: Filename for storing results.
@@ -55,14 +57,18 @@ def hydrolysis(model_file, simulation_file,
     else:
         data = mp_sim.pool_sim(sim, initial_strand, N, processes)
 
-    # Write output
+    # Construct output filename
     if output_file:
         filename = output_file
     else:
-#        raise NotImplementedError('Figure out output filename.')
         filename = model_config['model_type'] + '_' +\
                 simulation_config['simulation_name'] + '_' + str(N) + '.pickle'
+    
+    # Adjust output path
+    if output_dir:
+        filename = os.path.join(output_dir, filename)
 
+    # Write output
     with file(filename, 'w') as f:
         cPickle.dump({'model_config': model_config,
                       'simulation_config': simulation_config,

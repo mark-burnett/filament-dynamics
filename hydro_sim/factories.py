@@ -80,8 +80,8 @@ def single_sim(model_config, stage, free_barbed_end, free_pointed_end):
 
     # Data collectors
     dcs = {}
-    for collector_name, collector_signature in stage['data_collectors'].items():
-        dcs[collector_name] = single_data_collector(collector_signature)
+    for collector_signature in stage['data_collectors']:
+        dcs[collector_signature] = single_data_collector(collector_signature)
 
     return simulation.Simulation(poly + depoly + hydro, ecs, dcs)
 

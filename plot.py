@@ -43,7 +43,7 @@ def compare(*input_files, **kwargs):
     print input_files, kwargs
 
 @baker.command(default=True)
-def plot(input_file, show=True, save=False, dump=False, output_dir='',
+def plot(input_file, show=False, save=True, dump=False, output_dir=None
          **kwargs):
     """
     Generate plots for data in pickled input_file.
@@ -54,22 +54,44 @@ def plot(input_file, show=True, save=False, dump=False, output_dir='',
     :param dump:        Whether to dump csv of plots.
     """
     # Read file
-    data = cPickle.load(file(input_file))
+    pickle = cPickle.load(file(input_file))
 
     # Grab configs
-    model_config      = data['model_config']
-    simulation_config = data['simulation_config']
+    model_config      = pickle['model_config']
+    simulation_config = pickle['simulation_config']
 
-    # generate plot data (can be multiprocessed if useful)
+    # Determine which data collectors were used.
+    dcs = [simulation_config['stages'][sn]['data_collectors']
+           for sn in simulation_config['stage_sequence']]
 
-    # Generate plots
+    # Determine which analyses to perform.
+    # FIXME terrible function name
+    analyses = analysis.get_allowed(dcs)
+
+    # Perform those analyses.
+    data    = pickle['data']
+    # FIXME should this be flat?
+    results = [analysis.perform(a, d) for a in stage_a
+                 for d, stage_a in itertools.izip(data, analyses)]
+
+    if dump:
+        # TODO dump results to a csv file
+        pass
+
+    # Plot that data.
     if show or save:
         import pylab
 
-        for p in plots:
+        # TODO convert results to plots yo.
+
+        for p in plot_data:
             pylab.figure()
-            pylab.plot(*p)
+            for d in p['data']:
+                p['function'](*d)
+            for label in p['labels']:
+                label['function'](*label['arguments'])
             if save:
+                # TODO determine fig_file_name
                 pylab.savefig(fig_file_name)
 
     if show:

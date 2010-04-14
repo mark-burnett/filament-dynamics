@@ -9,9 +9,9 @@
 "stages": {
     "main":{
         "end_conditions":[["duration", 40]],
-        "data_collectors":{"time":     "simulation_time",
-                           "length":   "strand_length",
-                           "cleavage": "cleavage_events"},
+        "data_collectors":["simulation_time",
+                           "strand_length",
+                           "cleavage_events"],
         "polymerization":{"t":{"type": "fixed_reagent",
                                "monomer_concentration": 6,
                                "filament_tip_concentration": 0.0112}}}},
