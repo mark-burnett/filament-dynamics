@@ -26,13 +26,17 @@ import simulation
 
 __all__ = ['initial_strand', 'simulation']
 
+# Initial strand
+# ----------------------------------------------------------------------
 def initial_strand(simulation_config, model_config):
     type = list
     if simulation_config['pointed_end']:
         type = collections.deque
-    return type(model_config['seed_state']
+    return type(model_config['seed_states'][simulation_config['seed_state']]
                 for i in xrange(simulation_config['initial_size']))
 
+# Simulations
+# ----------------------------------------------------------------------
 def build_simulation(model_config, simulation_config):
     # Loop over stages in order and build them.
     simulations = []
@@ -71,7 +75,8 @@ def single_sim(model_config, stage, free_barbed_end, free_pointed_end):
         poly = []
 
     # Depolymerization transitions
-    depoly = df.normal(model_config['parameters'], free_barbed_end, free_pointed_end)
+    depoly = df.normal(model_config['parameters'],
+                       free_barbed_end, free_pointed_end)
 
     # Hydrolysis transitions
     hydro = hf.constant_rates(model_config['model_type'],

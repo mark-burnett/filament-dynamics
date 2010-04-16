@@ -4,7 +4,7 @@
 
 "model_type": "random_bulk",
 
-"seed_state": "ds",
+"seed_states":{"active": "du", "beginning": "t", "inactive": "ds"},
 
 "parameters": {
     "_comment": "These parameters are from Fujiwara, where possible.",
@@ -17,7 +17,7 @@
 
     "hydrolysis_rates": {"t":  [0.3,        "p"],
                          "p":  [[0.003, 10], "du"],
-                         "ds": [1.53e-3,     "du"],
-                         "du": [8.87e-4,     "ds"]}
+                         "du": [3.78e-2,     "ds"],
+                         "ds": [2.42e-3,     "du"]}
     }
 }

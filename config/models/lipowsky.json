@@ -4,7 +4,7 @@
 
 "model_type": "cooperative",
 
-"seed_state": "d",
+"seed_states":{"active": "t", "beginning": "t", "inactive": "d"},
 
 "parameters": {
     "_comment": "These parameters are from Li/Lipowsky.",
