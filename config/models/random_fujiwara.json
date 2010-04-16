@@ -4,6 +4,8 @@
 
 "model_type": "random",
 
+"seed_state": "d",
+
 "parameters": {
     "_comment": "These parameters are from Fujiwara.",
 

@@ -49,7 +49,7 @@ def compare(*input_files, **kwargs):
     print input_files, kwargs
 
 @baker.command(default=True)
-def plot(input_file, save=True, show=False, dump=False, output_dir=None,
+def plot(input_file, save=False, show=False, dump=True, output_dir=None,
          **kwargs):
     """
     Generate plots for data in pickled input_file. (default)

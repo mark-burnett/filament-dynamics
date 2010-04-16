@@ -49,7 +49,8 @@ def hydrolysis(model_file, simulation_file,
     sim = hydro_sim.factories.build_simulation(model_config, simulation_config)
 
     # Construct initial strand
-    initial_strand = hydro_sim.factories.initial_strand(simulation_config)
+    initial_strand = hydro_sim.factories.initial_strand(simulation_config,
+                                                        model_config)
 
     # Run simulation
     if 1 == processes:
@@ -64,8 +65,11 @@ def hydrolysis(model_file, simulation_file,
         filename = model_config['model_type'] + '_' +\
                 simulation_config['simulation_name'] + '_' + str(N) + '.pickle'
     
-    # Adjust output path
     if output_dir:
+        # Create output directory
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+        # Adjust output path
         filename = os.path.join(output_dir, filename)
 
     # Write output

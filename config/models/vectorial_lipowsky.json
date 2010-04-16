@@ -4,14 +4,16 @@
 
 "model_type": "vectorial",
 
+"seed_state": "d",
+
 "parameters": {
-    "_comment": "These parameters are from Li/Lipowsky.",
+    "_comment": "These parameters are from Fujiwara and Li/Lipowsky.",
 
-    "barbed_polymerization":   {"t": 1.7},
-    "barbed_depolymerization": {"t": 5.1, "p": 0.2, "d": 5.0},
+    "barbed_polymerization":   {"t": 11.6},
+    "barbed_depolymerization": {"t": 1.4, "p": 0.2, "d": 5.4},
 
-    "hydrolysis_rates": {"t":{"p": [13.6,    "p"],
-                              "d": [13.6,    "p"]},
-                         "p":{"d": [0.57,    "d"]}}
+    "hydrolysis_rates": {"t":{"p": [1,    "p"],
+                              "d": [1,    "p"]},
+                         "p":{"d": [0.57, "d"]}}
     }
 }

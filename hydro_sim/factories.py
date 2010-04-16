@@ -26,11 +26,11 @@ import simulation
 
 __all__ = ['initial_strand', 'simulation']
 
-def initial_strand(simulation_config):
+def initial_strand(simulation_config, model_config):
     type = list
     if simulation_config['pointed_end']:
         type = collections.deque
-    return type(simulation_config['initial_state']
+    return type(model_config['seed_state']
                 for i in xrange(simulation_config['initial_size']))
 
 def build_simulation(model_config, simulation_config):

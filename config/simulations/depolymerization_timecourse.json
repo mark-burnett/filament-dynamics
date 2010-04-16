@@ -20,6 +20,5 @@
 "barbed_end":  true,
 "pointed_end": false,
 
-"initial_size": 10,
-"initial_state": "d"
+"initial_size": 10
 }

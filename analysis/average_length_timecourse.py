@@ -28,9 +28,11 @@ def perform(data, sample_period=0.5, **kwargs):
     raw_times   = [d['simulation_time'] for d in data]
     raw_lengths = [d['strand_length'] for d in data]
     max_time    = max(t[-1] for t in raw_times)
+
     sample_times    = numpy.arange(0, max_time, sample_period)
-    sampled_lengths = map(lambda t, d: numpy.interp(sample_times, t, d),
-                          raw_times, raw_lengths)
+    sampled_lengths = [numpy.interp(sample_times, t, d)
+                        for t, d in itertools.izip(raw_times, raw_lengths)]
+
     return sample_times, map(numpy.average, itertools.izip(*sampled_lengths))
 
 def plot(results, **kwargs):

@@ -14,13 +14,15 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Random(object):
-    def __init__(self, state):
+    def __init__(self, state, exclude_ends=0):
         self.state = state
         self.barbed_range  = 0
         self.pointed_range = 0
+        self.exclude_ends  = exclude_ends
 
     def __call__(self, strand, index):
-        if len(strand) <= index:
+        if (self.exclude_ends > index or
+            len(strand) - self.exclude_ends <= index):
             return False
         return self.state == strand[index]
 

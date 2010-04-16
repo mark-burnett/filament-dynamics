@@ -25,7 +25,27 @@ def constant_random(rates, free_barbed_end, free_pointed_end):
             results.append(BarbedOnly(predicates.Random(state), rate, out))
     return results
 
-def constrant_cooperative(rates, free_barbed_end, free_pointed_end):
+def constant_random_bulk(rates, free_barbed_end, free_pointed_end):
+    results = []
+    if free_pointed_end:
+        raise NotImplementedError('Pointed end hydrolysis.')
+    elif free_barbed_end: # Barbed end only
+        for state, (rate, out) in rates.items():
+            try:
+                # Multiple rates indicate a different tip rate.
+                iter(rate)
+                results.append(BarbedOnly(
+                    predicates.Random(state, 1), rate[0], out))
+                results.append(BarbedOnly(
+                    predicates.SingleIndex(state, -1), rate[1], out))
+                results.append(BarbedOnly(
+                    predicates.SingleIndex(state, 0), rate[1], out))
+            except TypeError: # rate is not iterable
+                # Single rate is the same as random.
+                results.append(BarbedOnly(predicates.Random(state), rate, out))
+    return results
+
+def constant_cooperative(rates, free_barbed_end, free_pointed_end):
     results = []
     if free_barbed_end:
         for state, data in rates.items():
@@ -37,9 +57,10 @@ def constrant_cooperative(rates, free_barbed_end, free_pointed_end):
     return results
 
 _factory_dispatch = {'random':      constant_random,
-                     'vectorial':   constrant_cooperative,
-                     'cooperative': constrant_cooperative,
-                     'lipowsky':    constrant_cooperative}
+                     'vectorial':   constant_cooperative,
+                     'cooperative': constant_cooperative,
+                     'lipowsky':    constant_cooperative,
+                     'random_bulk': constant_random_bulk}
 
 def constant_rates(model_type, rates, free_barbed_end, free_pointed_end):
     return _factory_dispatch[model_type.lower()](rates,
