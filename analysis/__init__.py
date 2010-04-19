@@ -26,6 +26,10 @@ provided = {'depolymerization_timecourse':
                  [average_length_timecourse,
                   length_timecourses,
                   mitchison_stability]],
+            'simple_depolymerization_timecourse':
+                [[average_length_timecourse,
+                  length_timecourses,
+                  mitchison_stability]],
             'cleavage': [[average_length_timecourse,
                           length_timecourses,
                           cleavage_integral]]}

@@ -34,9 +34,10 @@ def pool_sim(simulation, argument, num_simulations, num_processes=None):
     try:
         results = pool.map(simulation, itertools.repeat(argument,
                                                         num_simulations))
+        # XXX I broke this in order to use pool.map.  Is that worth it?
         # Add a crazy long timeout (ms) to work around a python bug.
         # This lets us use CTRL-C to stop the program.
-        results = [r.get(999999999999) for r in results]
+#        results = [r.get(999999999999) for r in results]
 
         # Multiprocessing cleanup
         pool.close()

@@ -1,12 +1,17 @@
 {
 "simulation_name": "depolymerization_timecourse",
-"long_description": "Reduced depolymerization timecourse simulaiton.",
+"long_description": "Two stage simulation: growth, and depolymerization.",
 
 "_comment": "Simulation for Mitchison PNAS Vol. 105, No. 43 (2008)",
 
-"stage_sequence": ["depolymerization"],
+"stage_sequence": ["growth", "depolymerization"],
 
 "stages": {
+    "growth":{
+        "end_conditions":[["random_duration", 60]],
+        "data_collectors":{},
+        "polymerization":{"t":{"type": "fixed_concentration",
+                               "concentration": 3}}},
     "depolymerization":{
         "end_conditions":[["duration", 3000]],
         "data_collectors":["simulation_time",
@@ -15,6 +20,6 @@
 "barbed_end":  true,
 "pointed_end": false,
 
-"initial_size": 1000,
-"seed_state": "active"
+"initial_size": 10,
+"seed_state": "inactive"
 }

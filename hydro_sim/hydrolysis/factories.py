@@ -34,8 +34,10 @@ def constant_random_bulk(rates, free_barbed_end, free_pointed_end):
             try:
                 # Multiple rates indicate a different tip rate.
                 iter(rate)
+                # Bulk rate.
                 results.append(BarbedOnly(
                     predicates.Random(state, 1), rate[0], out))
+                # Tip rate.
                 results.append(BarbedOnly(
                     predicates.SingleIndex(state, -1), rate[1], out))
                 results.append(BarbedOnly(
@@ -60,7 +62,7 @@ _factory_dispatch = {'random':      constant_random,
                      'vectorial':   constant_cooperative,
                      'cooperative': constant_cooperative,
                      'lipowsky':    constant_cooperative,
-                     'random_bulk': constant_random_bulk}
+                     'random_bulk': constant_random}
 
 def constant_rates(model_type, rates, free_barbed_end, free_pointed_end):
     return _factory_dispatch[model_type.lower()](rates,

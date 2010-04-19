@@ -42,8 +42,8 @@ def hydrolysis(model_file, simulation_file,
     :param N:           Number of simulations to run (default=100).
     """
     # Read model and simulation config files
-    model_config      = json.load(file(model_file))
-    simulation_config = json.load(file(simulation_file))
+    model_config      = json.load(open(model_file))
+    simulation_config = json.load(open(simulation_file))
 
     # Construct simulation
     sim = hydro_sim.factories.build_simulation(model_config, simulation_config)
@@ -73,7 +73,7 @@ def hydrolysis(model_file, simulation_file,
         filename = os.path.join(output_dir, filename)
 
     # Write output
-    with file(filename, 'w') as f:
+    with open(filename, 'w') as f:
         cPickle.dump({'model_config': model_config,
                       'simulation_config': simulation_config,
                       'data': data,

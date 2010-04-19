@@ -49,11 +49,10 @@ def compare(*input_files, **kwargs):
     print input_files, kwargs
 
 @baker.command(default=True)
-def plot(input_file, save=False, show=False, dump=True, output_dir=None,
+def plot(input_file, save=False, show=False, dump=True, output_dir='',
          **kwargs):
     """
-    Generate plots for data in pickled input_file. (default)
-
+    Generate plots for data in pickled input_file. (default) 
     Additional key word arguments will be passed on to analysis tools.
 
     :param save:        Whether to save figures.
@@ -61,7 +60,7 @@ def plot(input_file, save=False, show=False, dump=True, output_dir=None,
     :param dump:        Whether to dump csv files of plots.
     """
     # Read file
-    with file(input_file) as f:
+    with open(input_file) as f:
         pickle = cPickle.load(f)
 
     # Grab configs
@@ -108,7 +107,7 @@ def plot(input_file, save=False, show=False, dump=True, output_dir=None,
                 stage_dir = output_dir
             # Convert results, and perform write.
             for r, a in itertools.izip(stage_results, stage_analyses):
-                with file(os.path.join(stage_dir,
+                with open(os.path.join(stage_dir,
                                        a.filename + '.csv'), 'w') as f:
                     w = csv.writer(f, delimiter=' ')
                     w.writerows(a.csv(r, **kwargs))
