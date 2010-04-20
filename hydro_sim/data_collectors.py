@@ -25,26 +25,28 @@ class Variable(object):
     def __call__(self, kwargs):
         return kwargs[self.var_name]
 
-class EventCounter(object):
-    __slots__ = ['event_name', 'count']
-    def __init__(self, event_name):
-        self.event_name = event_name
-        self.count = 0
-    def __call__(self, kwargs):
-        if self.event_name == kwargs['transition_output'][0]:
-            self.count += 1
-        return self.count
+class HydrolysisEventCounter(object):
+    __slots__ = ['old_states', 'new_states', 'count']
+    def __init__(self, old_states, new_states):
+        try:
+            iter(old_states)
+            self.old_states = old_states
+        except TypeError:
+            self.old_states = [old_states]
 
-class SubEventCounter(object):
-    __slots__ = ['event_name', 'subevent_name', 'count']
-    def __init__(self, event_name, subevent_name):
-        self.event_name    = event_name
-        self.subevent_name = subevent_name
+        try:
+            iter(new_states)
+            self.new_states = new_states
+        except TypeError:
+            self.new_states = [new_states]
+
         self.count = 0
+
     def __call__(self, kwargs):
-        command, value = kwargs['transition_output']
-        if self.event_name == command:
-            if self.subevent_name == value[0]:
+        transition, value = kwargs['transition_output']
+        if 'hydrolysis' == transition:
+            (old, new), i = value
+            if old in self.old_states and new in self.new_states:
                 self.count += 1
         return self.count
 

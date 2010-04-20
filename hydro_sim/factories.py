@@ -47,11 +47,8 @@ def build_simulation(model_config, simulation_config):
                          simulation_config['pointed_end'])
         simulations.append(sim)
 
-    # No need to make a simulation sequence if there is only one.
-    if 1 == len(simulations):
-        return simulations[0]
-    else:
-        return simulation.SimulationSequence(simulations)
+    # Always use a simulation sequence, even for just one stage.
+    return simulation.SimulationSequence(simulations)
 
 def single_sim(model_config, stage, free_barbed_end, free_pointed_end):
     # End conditions
@@ -113,11 +110,15 @@ def _dc_strand_length():
     return data_collectors.strand_length
 
 def _dc_cleavage_event():
-    return data_collectors.SubEventCounter('hydrolysis', 'p')
+    return data_collectors.HydrolysisEventCounter('t', 'p')
+
+def _dc_release_event():
+    return data_collectors.HydrolysisEventCounter('p', ['d', 'du', 'ds'])
 
 _dc_signatures = {'simulation_time': _dc_simulation_time,
                   'strand_length':   _dc_strand_length,
-                  'cleavage_events': _dc_cleavage_event}
+                  'cleavage_events': _dc_cleavage_event,
+                  'release_events':  _dc_release_event}
 
 def single_data_collector(signature):
     return _dc_signatures[signature]()

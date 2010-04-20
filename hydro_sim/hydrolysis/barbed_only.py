@@ -43,37 +43,38 @@ class BarbedOnly(object):
         full_index = set_value
 
         # Update the strand
+        old_state = self.strand[full_index]
         self.strand[full_index] = self.new_state
 
         # Remove this index
         self.indices.remove(set_value)
 
         # Let everyone else know what changed
-        return ('hydrolysis', (self.new_state, full_index))
+        return ('hydrolysis', ((old_state, self.new_state), full_index))
 
     def update(self, transition_output):
         command, value = transition_output
         return self._update_switch[command](value)
 
     def _update_hydrolysis(self, value):
-        new_state, full_index = value
-        sp = self.predicate
-        si = self.indices
-        effected_indices = xrange(full_index - sp.pointed_range,
-                                  full_index + sp.barbed_range + 1)
+        (old_state, new_state), full_index = value
+#        sp = self.predicate
+#        si = self.indices
+        effected_indices = xrange(full_index - self.predicate.pointed_range,
+                                  full_index + self.predicate.barbed_range + 1)
         for i in effected_indices:
-            if sp(self.strand, i):
-                si.add(i)
+            if self.predicate(self.strand, i):
+                self.indices.add(i)
             else:
-                si.discard(i)
+                self.indices.discard(i)
         self.R = self.rate * len(self.indices)
     
     def _update_polymerization(self, value):
         end, state = value
         # NOTE assumes barbed (ignores argument)
-        return self._update_hydrolysis((state, len(self.strand)-1))
+        return self._update_hydrolysis(((None, state), len(self.strand)-1))
 
     def _update_depolymerization(self, value):
         # NOTE assumes barbed (ignores argument)
         self.indices.discard(len(self.strand))
-        return self._update_hydrolysis((None, len(self.strand)-1))
+        return self._update_hydrolysis(((None, None), len(self.strand)-1))

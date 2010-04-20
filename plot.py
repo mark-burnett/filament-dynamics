@@ -20,7 +20,7 @@
 
 import os
 import operator
-import itertools
+from itertools import izip
 
 import csv
 import cPickle
@@ -50,7 +50,7 @@ def compare(*input_files, **kwargs):
 
 @baker.command(default=True)
 def plot(input_file, save=False, show=False, dump=True, output_dir='',
-         **kwargs):
+         sample_period=5, **kwargs):
     """
     Generate plots for data in pickled input_file. (default) 
     Additional key word arguments will be passed on to analysis tools.
@@ -63,77 +63,85 @@ def plot(input_file, save=False, show=False, dump=True, output_dir='',
     with open(input_file) as f:
         pickle = cPickle.load(f)
 
-    # Grab configs
-    model_config      = pickle['model_config']
+    # Get config
     simulation_config = pickle['simulation_config']
 
-    # Determine which analyses to perform.
-    analyses = analysis.provided[simulation_config['simulation_name']]
+    # Get data.
+    data = pickle['data']
 
-    # Perform those analyses.
-    data    = pickle['data']
-    results = []
-    for i, stage_analyses in enumerate(analyses):
-        stage_results = []
-        for a in stage_analyses:
-            try:
-                data[0].keys()
-                stage_results.append(a.perform(data, **kwargs))
-            except AttributeError:
-                stage_results.append(a.perform(map(operator.itemgetter(i), data)))
+    # Get stage information.
+    stage_names     = simulation_config['stage_sequence']
+    stage_durations = [simulation_config['stages'][n]['duration']
+                       for n in stage_names]
+
+    # Loop over the stages and perform analyses.
+    downsampled_data = []
+    analyses         = []
+    results          = []
+    for i, duration in enumerate(stage_durations):
+        # Downsample the data using sample_period.
+        stage_data     = analysis.downsample([d[i] for d in data], sample_period,
+                                             duration)
+        # Figure out which more complicated analyses to perform.
+        stage_analyses = analysis.available(stage_data.keys)
+        # Perform those more complicated analyses.
+        stage_results  = [a.perform(stage_data, sample_period, **kwargs)
+                          for a in stage_analyses]
+        downsampled_data.append(stage_data)
+        analyses.append(stage_analyses)
         results.append(stage_results)
 
-    # Determine output directory
+    # Determine output directory.
     if not output_dir:
         output_dir = os.path.splitext(input_file)[0]
 
-    # Create output directory
+    # Create output directory.
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
-    # Stage names are used to refine directories
-    stage_names = simulation_config['stage_sequence']
-
     # Write results to csv files.
     if dump:
-        for stage_name, stage_results, stage_analyses in itertools.izip(
-                stage_names, results, analyses):
-            # Use a separate directory for each stage?
-            if len(stage_names) > 1:
-                stage_dir = os.path.join(output_dir, stage_name)
-                if not os.path.exists(stage_dir):
-                    os.mkdir(stage_dir)
-            else:
-                stage_dir = output_dir
-            # Convert results, and perform write.
-            for r, a in itertools.izip(stage_results, stage_analyses):
+        for stage_name, stage_data, stage_analyses, stage_results in izip(
+                stage_names, downsampled_data, analyses, results):
+            # Use a separate directory for each stage.
+            stage_dir = os.path.join(output_dir, stage_name)
+            if not os.path.exists(stage_dir):
+                os.mkdir(stage_dir)
+
+            # Write downsampled raw data.
+            with open(os.path.join(stage_dir, 'sampled_data.csv'), 'w') as f:
+                write_stage_data(f, stage_data)
+
+            # Write extended analyses.
+            for d, a, r in izip(stage_data, stage_analyses, stage_results):
                 with open(os.path.join(stage_dir,
                                        a.filename + '.csv'), 'w') as f:
                     w = csv.writer(f, delimiter=' ')
-                    w.writerows(a.csv(r, **kwargs))
+                    # Convert results, and perform write.
+                    w.writerows(a.csv(r, d, **kwargs))
 
-    # Generate figures.
-    if show or save:
-        import pylab # Don't waste time importing for plain CSV dump
-
-        for stage_name, stage_results, stage_analyses in itertools.izip(
-                stage_names, results, analyses):
-            for r, a in itertools.izip(stage_results, stage_analyses):
-                pylab.figure()
-                a.plot(r, **kwargs)
-                # Save figure.
-                if save:
-                    if len(stage_names) > 1:
-                        stage_dir = os.path.join(output_dir, stage_name)
-                        if not os.path.exists(stage_dir):
-                            os.mkdir(stage_dir)
-                    else:
-                        stage_dir = output_dir
-                    pylab.savefig(os.path.join(stage_dir, a.filename + '.png'),
-                                  **kwargs)
-
-    # Display figures.
-    if show:
-        pylab.show()
+#    # Generate figures.
+#    if show or save:
+#        import pylab # Don't waste time importing for plain CSV dump
+#
+#        for stage_name, stage_results, stage_analyses in izip(
+#                stage_names, results, analyses):
+#            for r, a in izip(stage_results, stage_analyses):
+#                pylab.figure()
+#                a.plot(r, **kwargs)
+#                # Save figure.
+#                if save:
+#                    if len(stage_names) > 1:
+#                        stage_dir = os.path.join(output_dir, stage_name)
+#                        if not os.path.exists(stage_dir):
+#                            os.mkdir(stage_dir)
+#                    else:
+#                        stage_dir = output_dir
+#                    pylab.savefig(os.path.join(stage_dir, a.filename + '.png'),
+#                                  **kwargs)
+#
+#    # Display figures.
+#    if show:
+#        pylab.show()
 
 baker.run()
