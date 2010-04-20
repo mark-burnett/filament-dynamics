@@ -26,6 +26,7 @@ class MaxVariable(object):
     """
     End condition to end when value of 'var_name' exceeds 'var_max'.
     """
+    __slots__ = ['var_name', 'var_max']
     def __init__(self, var_name, var_max):
         self.var_max  = var_max
         self.var_name = var_name
@@ -41,6 +42,7 @@ class RandomMaxVariable(object):
         End condition to end when value of 'var_name' exceeds a random
     value between 0 and 'var_max'.
     """
+    __slots__ = ['var_name', 'var_max', 'var_current']
     def __init__(self, var_name, var_max):
         self.var_max     = var_max
         self.var_name    = var_name
@@ -56,6 +58,7 @@ class Timer(object):
     """
     End condition to specify a maximum amount of time to run (approximate).
     """
+    __slots__ = ['run_duration', 'finish_time']
     def __init__(self, run_duration):
         """
         run_duration is the amount of time to run the simulation.

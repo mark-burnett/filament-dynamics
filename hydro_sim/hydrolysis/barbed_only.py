@@ -16,6 +16,7 @@
 __all__ = ['BarbedOnly']
 
 class BarbedOnly(object):
+    __slots__ = ['strand', 'indicies', 'R', 'predicate', 'rate', 'new_state', '_update_switch', 'indices']
     def __init__(self, predicate, rate, new_state):
         self.predicate = predicate
         self.rate = rate

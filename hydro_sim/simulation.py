@@ -38,6 +38,7 @@ class Simulation(object):
     """
     Kinetic Monte Carlo simulation object.
     """
+    __slots__ = ['transitions', 'ecs', 'dcs']
     def __init__(self, transitions, end_conditions, data_collectors):
         """
         'transitions' list of transition objects.  Each object represents

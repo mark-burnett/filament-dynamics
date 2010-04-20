@@ -19,12 +19,14 @@ def strand_length(kwargs):
     return len(kwargs['strand'])
 
 class Variable(object):
+    __slots__ = ['var_name']
     def __init__(self, var_name):
         self.var_name = var_name
     def __call__(self, kwargs):
         return kwargs[self.var_name]
 
 class EventCounter(object):
+    __slots__ = ['event_name', 'count']
     def __init__(self, event_name):
         self.event_name = event_name
         self.count = 0
@@ -34,6 +36,7 @@ class EventCounter(object):
         return self.count
 
 class SubEventCounter(object):
+    __slots__ = ['event_name', 'subevent_name', 'count']
     def __init__(self, event_name, subevent_name):
         self.event_name    = event_name
         self.subevent_name = subevent_name

@@ -16,6 +16,7 @@
 __all__ = ['FixedRates']
 
 class FixedRates(object):
+    __slots__ = ['rates', 'strand', 'R']
     def __init__(self, rates):
         self.rates  = rates
     

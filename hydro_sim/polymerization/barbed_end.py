@@ -16,6 +16,7 @@
 __all__ = ['FixedRate']
 
 class FixedRate(object):
+    __slots__ = ['rate', 'strand', 'state', 'R']
     def __init__(self, rate, state):
         """
             'rate' is the number per second of 'state' that are added to the
@@ -36,6 +37,7 @@ class FixedRate(object):
         pass
 
 class FixedReagent(object):
+    __slots__ = ['rate', 'strand', 'amount', 'state', 'R']
     def __init__(self, rate_per_unit, amount, state):
         """
             'rate_per_unit' * 'amount' is the number of 'state' that are added

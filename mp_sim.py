@@ -14,7 +14,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import multiprocessing
-import itertools
 
 def pool_sim(simulation, argument, num_simulations, num_processes=None):
     """
@@ -32,12 +31,18 @@ def pool_sim(simulation, argument, num_simulations, num_processes=None):
         pool = multiprocessing.Pool()
 
     try:
-        results = pool.map(simulation, itertools.repeat(argument,
-                                                        num_simulations))
-        # XXX I broke this in order to use pool.map.  Is that worth it?
-        # Add a crazy long timeout (ms) to work around a python bug.
-        # This lets us use CTRL-C to stop the program.
-#        results = [r.get(999999999999) for r in results]
+        results = None
+        if num_simulations:
+            results = [pool.apply_async(simulation, (argument,))
+                           for i in xrange(num_simulations)]
+            # Add a crazy long timeout (ms) to work around a python bug.
+            # This lets us use CTRL-C to stop the program.
+            results = [r.get(999999999999) for r in results]
+        else:
+            results = pool.map_async(simulation, argument)
+            # Add a crazy long timeout (ms) to work around a python bug.
+            # This lets us use CTRL-C to stop the program.
+            results = results.get(999999999999)
 
         # Multiprocessing cleanup
         pool.close()

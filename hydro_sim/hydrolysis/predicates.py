@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Random(object):
+    __slots__ = ['state', 'barbed_range', 'pointed_range', 'exclude_ends']
     def __init__(self, state, exclude_ends=0):
         self.state = state
         self.barbed_range  = 0
@@ -27,6 +28,7 @@ class Random(object):
         return self.state == strand[index]
 
 class Cooperative(object):
+    __slots__ = ['state', 'neighbor', 'barbed_range', 'pointed_range']
     def __init__(self, state, pointed_neighbor):
         self.state    = state
         self.neighbor = pointed_neighbor
@@ -42,6 +44,7 @@ class Cooperative(object):
                 self.neighbor == strand[index - 1])
 
 class SingleIndex(object):
+    __slots__ = ['state', 'index', 'barbed_range', 'pointed_range']
     def __init__(self, state, index):
         self.state = state
         self.index = index
