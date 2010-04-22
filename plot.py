@@ -123,12 +123,12 @@ def plot(input_file, save=False, show=False, dump=True, output_dir='',
                     analysis.io.write_summary(f, stage_summary)
 
             # Write extended analyses.
-            for d, a, r in izip(stage_data, stage_analyses, stage_results):
+            for a, r in izip(stage_analyses, stage_results):
                 with open(os.path.join(stage_dir,
                                        a.filename + '.csv'), 'w') as f:
                     w = csv.writer(f, delimiter=' ')
                     # Convert results, and perform write.
-                    w.writerows(a.csv(r, d, **kwargs))
+                    w.writerows(a.csv(r, stage_data, **kwargs))
 
 #    # Generate figures.
 #    if show or save:

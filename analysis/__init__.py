@@ -23,7 +23,7 @@ import tools
 __all__ = ['available']
 
 _available = {mitchison_stability:
-                  set(['simulation_time', 'strand_length'])}
+                  set(['time', 'strand_length'])}
 
 def available(keys):
     available_data = set(keys)

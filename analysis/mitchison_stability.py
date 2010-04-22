@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-#    Copyright (C) 2010 Mark Burnett
-#
+#    Copyright (C) 2010 Mark Burnett #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -15,31 +14,21 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import itertools
-import bisect
 
 import numpy
 
 import tools
-from simple import csv
 
 __all__ = ['filename', 'perform', 'csv', 'plot']
 
 filename = 'mitchison_stability'
 
-def perform(data, sample_period=1,
-            stable_time=100, stable_variation=100,
+def perform(data, sample_period, stable_time=100, stable_variation=100,
             **kwargs):
-    # Raw data
-    raw_times   = [d['simulation_time'] for d in data]
-    raw_lengths = [d['strand_length'] for d in data]
-    max_time   = max(t[-1] for t in raw_times)
-
-    # Sample the data using sample period.
-    sample_times    = numpy.arange(0, max_time, sample_period)
-    sampled_lengths = map(lambda t, d: numpy.interp(sample_times, t, d, -1),
-                          raw_times, raw_lengths)
-
+    # Num samples in stable time
     stable_samples  = int(stable_time/sample_period)
+
+    sampled_lengths = data['strand_length']
 
     # Cut off values past depolymerization point.
     cut_lengths = []
@@ -66,7 +55,11 @@ def perform(data, sample_period=1,
     stable_fractions  = [float(sum(sh))/len(sh) for sh in stable_histograms]
 
     # Throw away left over chaff (from numpy.roll).
-    return sample_times[:-stable_samples], stable_fractions[stable_samples:]
+    return stable_fractions[stable_samples:]
+
+def csv(stable_fractions, data):
+    time = data['time']
+    return itertools.izip(time, stable_fractions)
 
 def plot():
     raise NotImplementedError()
