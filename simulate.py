@@ -28,7 +28,7 @@ import cPickle
 import baker
 
 import hydro_sim
-import mp_sim
+import util.mp_sim
 
 @baker.command(default=True)
 def hydrolysis(model_file, simulation_file,
@@ -56,7 +56,7 @@ def hydrolysis(model_file, simulation_file,
     if 1 == processes:
         data = [sim(initial_strand) for i in xrange(N)]
     else:
-        data = mp_sim.pool_sim(sim, initial_strand, N, processes)
+        data = util.mp_sim.pool_sim(sim, initial_strand, N, processes)
 
     # Construct output filename
     if output_file:

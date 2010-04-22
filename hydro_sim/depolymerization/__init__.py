@@ -14,6 +14,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import factories
-import barbed_end
+import barbed
 
-__all__ = ['factories', 'barbed_end']
+__all__ = ['barbed']

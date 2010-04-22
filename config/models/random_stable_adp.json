@@ -10,14 +10,14 @@
     "_comment": "These parameters are from Fujiwara, where possible.",
 
     "barbed_polymerization":   {"t": 11.6, "p": 3.4, "du": 2.9},
-    "barbed_depolymerization": {"t": 1.4,  "p": 3, "du": 5.4, "ds": 0.2},
+    "barbed_depolymerization": {"t": 1.4,  "p": 2, "du": 3, "ds": 0.2},
 
     "pointed_polymerization":   {"t": 1.4, "p": 0.11, "du": 0.14},
     "pointed_depolymerization": {"t": 0.8, "p": 0.02, "du": 0.25, "ds": 0.02},
 
     "hydrolysis_rates": {"t":  [0.3,    "p"],
                          "p":  [[0.003, 2],  "du"],
-                         "du": [1.8e-3, "ds"],
-                         "ds": [7e-4,   "du"]}
+                         "du": [1.3e-3, "ds"],
+                         "ds": [4.5e-3,   "du"]}
     }
 }

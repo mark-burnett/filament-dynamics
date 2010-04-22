@@ -38,8 +38,9 @@ class Simulation(object):
     """
     Kinetic Monte Carlo simulation object.
     """
-    __slots__ = ['transitions', 'ecs', 'dcs']
-    def __init__(self, transitions, end_conditions, data_collectors):
+    __slots__ = ['transitions', 'concentrations', 'ecs', 'dcs']
+    def __init__(self, transitions, concentrations,
+                 end_conditions, data_collectors):
         """
         'transitions' list of transition objects.  Each object represents
             a set of possible state changes.
@@ -50,7 +51,9 @@ class Simulation(object):
             at each step.  All return values that are not None are saved
             and returned when the simulation is performed by 'run' (below).
         """
-        self.transitions = copy.deepcopy(transitions)
+        self.transitions = copy.copy(transitions)
+        # XXX remove deepcopy calls if possible
+        self.concentrations = copy.deepcopy(concentrations)
         self.ecs = copy.deepcopy(end_conditions)
         self.dcs = data_collectors
         try:
@@ -65,49 +68,45 @@ class Simulation(object):
         """
         Perform the actual simulation, starting with initial_strand.
         """
-        strand = copy.deepcopy(initial_strand)
+        strand = copy.copy(initial_strand)
         data = dict( (key, []) for key in self.dcs.keys() )
 
-        # Aliases - for lame python speed boost
-        transitions = self.transitions
-        secs = self.ecs
-        sdcs = self.dcs
-        mlog = math.log
-        runi = random.uniform
-
         # Initialize odds and ends
-        [t.initialize(strand) for t in transitions]
+        [t.initialize(strand, self.concentrations) for t in self.transitions]
         sim_time = 0
         transition_output = (None, None)
 
-        [e.reset() for e in secs]
+        [e.reset() for e in self.ecs]
 
+        local_vars = locals()
         try:
-            while not any(e(strand=strand,sim_time=sim_time) for e in secs):
+            while not any(e(local_vars) for e in self.ecs):
                 # Collect and store data
-                for key, f in sdcs.items():
-                    result = f(locals())
+                for key, f in self.dcs.items():
+                    result = f(local_vars)
                     if result is not None:
                         data[key].append(result)
 
                 # calculate partial sums of transition probabilities
-                transition_R = [t.R for t in transitions]
-                running_R = list(_running_total(transition_R))
-                total_R = running_R[-1]
+                transition_R = [t.R for t in self.transitions]
+                running_R    = list(_running_total(transition_R))
+                total_R      = running_R[-1]
 
-                # calculate transition time
-                tau = mlog(1/runi(0, 1)) / total_R
                 # figure out which transition to perform
-                r = runi(0, total_R)
+                r = random.uniform(0, total_R)
                 j = bisect.bisect_left(running_R, r)
 
                 # perform transition
-                transition_output = transitions[j].perform(running_R[j] - r)
+                transition_output = self.transitions[j].perform(running_R[j] - r)
 
-                # update transition probabilities
-                [a.update(transition_output) for a in transitions]
+# XXX this will take place via pubsub
+#                # update transition probabilities
+#                [a.update(transition_output) for a in self.transitions]
+
                 # update simulation time
-                sim_time += tau
+                tau = math.log(1/random.uniform(0, 1)) / total_R
+                sim_time  += tau
+                local_vars = locals()
         except IndexError:
             pass
 

@@ -13,9 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from barbed_only import BarbedOnly
 import predicates
 
-import factories
+from factories import Random
 
-__all__ = ['BarbedOnly', 'predicates', 'factories']
+__all__ = ['Random', 'predicates']

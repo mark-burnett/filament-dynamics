@@ -13,19 +13,25 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__all__ = ['FixedRates']
+from transitions import events
 
-class FixedRates(object):
-    __slots__ = ['rates', 'strand', 'R']
-    def __init__(self, rates):
-        self.rates  = rates
-    
+__all__ = ['FixedRate']
+
+class FixedRate(object):
+    def __init__(self, pub, state, rate):
+        self.pub   = pub
+        self.state = state
+        self.rate  = rate
+
     def initialize(self, strand):
         self.strand = strand
-        self.R      = self.rates[strand[-1]]
 
     def perform(self, r):
-        return ('depoly', ('barbed', self.strand.pop()))
+        pub.publish(events.depolymerization('barbed', self.strand.pop()))
 
-    def update(self, transition_output):
-        self.R = self.rates[self.strand[-1]]
+    @property
+    def R(self):
+        if state == self.strand[-1]:
+            return self.rate
+        else:
+            return 0
