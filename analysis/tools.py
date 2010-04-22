@@ -14,6 +14,40 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
+import numpy
+
+__all__ = ['summarize', 'downsample', 'make_timecourse_histogram']
+
+def summarize(data):
+    """
+    Return the average and standard deviation of each quantity.
+    """
+    time    = data['time']
+    results = {u'time': time}
+    for name, values in data.items():
+        if 'time' == name:
+            continue
+        results[name] = (map(numpy.average, itertools.izip(*values)),
+                         map(numpy.std,     itertools.izip(*values)))
+    return results
+
+def downsample(data, sample_period, duration):
+    """
+    Sample the raw data using sample_period.
+    """
+    sampled_time = numpy.arange(0, duration, sample_period)
+    sampled_data = {u'time': sampled_time}
+
+    raw_time     = [d['simulation_time'] for d in data]
+    for name in data[0].keys():
+        if 'simulation_time' == name or 'final_strand' == name:
+            continue
+        sampled_data[name] = [numpy.interp(sampled_time, t, d[name])
+                              for t, d in itertools.izip(raw_time, data)]
+
+    return sampled_data
+
 def make_timecourse_histogram(timecourses):
     max_len = max(map(len, timecourses))
     histograms = []

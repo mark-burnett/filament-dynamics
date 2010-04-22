@@ -62,7 +62,7 @@ _factory_dispatch = {'random':      constant_random,
                      'vectorial':   constant_cooperative,
                      'cooperative': constant_cooperative,
                      'lipowsky':    constant_cooperative,
-                     'random_bulk': constant_random}
+                     'random_bulk': constant_random_bulk}
 
 def constant_rates(model_type, rates, free_barbed_end, free_pointed_end):
     return _factory_dispatch[model_type.lower()](rates,

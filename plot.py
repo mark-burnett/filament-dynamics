@@ -76,18 +76,27 @@ def plot(input_file, save=False, show=False, dump=True, output_dir='',
 
     # Loop over the stages and perform analyses.
     downsampled_data = []
+    summary_data     = []
     analyses         = []
     results          = []
     for i, duration in enumerate(stage_durations):
         # Downsample the data using sample_period.
-        stage_data     = analysis.downsample([d[i] for d in data], sample_period,
+        stage_data = analysis.tools.downsample([d[i] for d in data], sample_period,
                                              duration)
+
+        # Get average and std devs of stage data.
+        stage_summary = analysis.tools.summarize(stage_data)
+
         # Figure out which more complicated analyses to perform.
-        stage_analyses = analysis.available(stage_data.keys)
+        stage_analyses = analysis.available(stage_data.keys())
+
         # Perform those more complicated analyses.
         stage_results  = [a.perform(stage_data, sample_period, **kwargs)
                           for a in stage_analyses]
+
+        # Save everything.
         downsampled_data.append(stage_data)
+        summary_data.append(stage_summary)
         analyses.append(stage_analyses)
         results.append(stage_results)
 
@@ -101,16 +110,17 @@ def plot(input_file, save=False, show=False, dump=True, output_dir='',
 
     # Write results to csv files.
     if dump:
-        for stage_name, stage_data, stage_analyses, stage_results in izip(
-                stage_names, downsampled_data, analyses, results):
+        for stage_name, stage_data, stage_summary, stage_analyses, stage_results in izip(
+                stage_names, downsampled_data, summary_data, analyses, results):
             # Use a separate directory for each stage.
             stage_dir = os.path.join(output_dir, stage_name)
             if not os.path.exists(stage_dir):
                 os.mkdir(stage_dir)
 
-            # Write downsampled raw data.
-            with open(os.path.join(stage_dir, 'sampled_data.csv'), 'w') as f:
-                write_stage_data(f, stage_data)
+            # Write downsampled average and stddev data.
+            if stage_summary:
+                with open(os.path.join(stage_dir, 'sampled_data.csv'), 'w') as f:
+                    analysis.io.write_summary(f, stage_summary)
 
             # Write extended analyses.
             for d, a, r in izip(stage_data, stage_analyses, stage_results):

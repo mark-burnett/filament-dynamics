@@ -1,18 +1,19 @@
 {
-"simulation_name": "cleavage",
-"long_description": "Simulate cleaved phosphate count.",
+"simulation_name": "mixed_100_0",
+"long_description": "Phosphate release of mixed ADP and ATP G-actin polymerization.",
 
-"_comment": "Simulation for Pollard Biochem. Vol. 41, No 2 (2002)",
+"_comment": "Pieper and Wegner, Biochemistry, Vol 35, No 14, 1996",
 
 "stage_sequence": ["main"],
 
 "stages": {
     "main":{
-        "duration": 40,
-        "end_conditions":[["duration", 40]],
+        "duration": 600,
+        "end_conditions":[["duration", 600]],
         "data_collectors":["simulation_time",
                            "strand_length",
-                           "cleavage_events"],
+                           "cleavage_events",
+                           "release_events"],
         "polymerization":{"t":{"type": "fixed_reagent",
                                "monomer_concentration": 6,
                                "filament_tip_concentration": 0.0112}}}},

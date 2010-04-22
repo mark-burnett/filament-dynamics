@@ -8,11 +8,13 @@
 
 "stages": {
     "growth":{
+        "duration": 60,
         "end_conditions":[["random_duration", 60]],
         "data_collectors":{},
         "polymerization":{"t":{"type": "fixed_concentration",
                                "concentration": 3}}},
     "depolymerization":{
+        "duration": 3000,
         "end_conditions":[["duration", 3000]],
         "data_collectors":["simulation_time",
                            "strand_length"]}},
