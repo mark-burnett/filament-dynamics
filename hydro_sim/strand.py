@@ -12,22 +12,3 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-"""
-    This package contains kinetic monte carlo simulation models for (actin)
-strand polymerization.
-
-Modules in this package include:
-    data_collectors
-    end_conditions
-    transitions
-    factories
-"""
-
-import data_collectors
-import concentrations
-import transitions
-
-import strands
-
-import factories

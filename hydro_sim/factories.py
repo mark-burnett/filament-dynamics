@@ -13,27 +13,88 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import collections
+import itertools
+import util
 
-import polymerization.factories   as pf
-import depolymerization.factories as df
-import hydrolysis.factories       as hf
+import kmc.end_conditions
+import kmc.generators
 
-import end_conditions
-import data_collectors
+import hydro_sim.concentrations
+import hydro_sim.transitions
+import hydro_sim.data_collectors
 
-import simulation
+__all__ = ['full_simulation_generator']
 
-__all__ = ['initial_strand', 'simulation']
+def single_generator_factory(model_states,
+                             conc_config, trans_config,
+                             dc_config, ec_config):
+    conc_fac  = concentrations_factory(model_states, conc_config)
+    trans_fac = transitions_factory(trans_config, conc_fac)
+    dc_fac    = data_collectors_factory(dc_config)
+    ec_fac    = end_conditions_factory(ec_config)
+    return kmc.generators.simulation(trans_fac, ec_fac dc_fac)
 
-# Initial strand
-# ----------------------------------------------------------------------
-def initial_strand(simulation_config, model_config):
-    type = list
-    if simulation_config['pointed_end']:
-        type = collections.deque
-    return type(model_config['seed_states'][simulation_config['seed_state']]
-                for i in xrange(simulation_config['initial_size']))
+def full_simulation_generator(model_config, simulation_config):
+    # Build generators for each stage.
+    model_states = model_config['states']
+    trans_config = model_config['transitions']
+    sim_gen = [single_generator_factory(model_states,
+                   stage['concentrations'], trans_config,
+                   stage['data_collectors'], stage['end_conditions'])
+               for stage in simulation_config['stages']]
+
+    while True:
+        # Make list of stage simulations and repositories
+        sims, data_repository = zip([sg.next() for sg in sim_gen])
+        yield util.compose(s.run for s in sims), data_repository
+
+def concentrations_factory(model_states, concentration_config):
+    config_states, config_functions = zip(concentration_config)
+    states    = [util.states.find_matching(model_states, cs)
+                 for cs in config_states]
+    factories = util.introspection.make_factories(config_functions,
+                                                  hydro_sim.concentrations)
+
+    def make_cs(pub):
+        return dict(state, f(pub, *args)
+                    for state, (f, args) in itertools.izip(states, factories))
+    return make_cs
+
+def transitions_factory(config_transitions, concentrations_factory):
+    factories = util.introspection.make_factories(config_transitions,
+                                                  hydro_sim.transitions)
+
+    def make_ts(pub):
+        # construct conditions/concentrations
+        concentrations = concentrations_factory.(pub)
+
+        # construct transitions
+        return [f(pub, concentrations, *args)
+               for f, args in transition_factories]
+    return make_ts
+
+def data_collectors_factory(dc_config):
+    # This is the stuff that gets reused.
+    dc_names = [name for name, junk in dc_config]
+    dc_factories = util.introspection.make_factories(dc_config,
+                                                     hydro_sim.data_collectors)
+
+    def make_dcs(pub):
+        # Create repository for data.
+        data_repositories = dict(name, [] for name in dc_names]
+        # Setup data collectors on that repository.
+        data_collectors   = [f(pub, dr[name], *args)
+                             for name, dr, (f, args) in itertools.izip(
+                                 dc_names, data_repositories, dc_factories)]
+        return data_repositories
+    return make_dcs
+
+def end_conditions_factory(ec_config):
+    ec_factories = util.introspection.make_factories(ec_config,
+                                                     kmc.end_conditions)
+    def make_ecs(pub):
+        return [f(pub, *args) for f in ec_factories]
+    return make_ecs
 
 # Simulations
 # ----------------------------------------------------------------------
@@ -49,76 +110,3 @@ def build_simulation(model_config, simulation_config):
 
     # Always use a simulation sequence, even for just one stage.
     return simulation.SimulationSequence(simulations)
-
-def single_sim(model_config, stage, free_barbed_end, free_pointed_end):
-    # End conditions
-    ecs = []
-    for end_signature in stage['end_conditions']:
-        ecs.append(single_end_condition(end_signature))
-    if not ecs:
-        raise RuntimeError('No end conditions specified.')
-
-    # Polymerization transitions
-    poly_config = None
-    try:
-        poly_config =  stage['polymerization']
-    except KeyError:
-        pass
-
-    if poly_config:
-        poly = pf.normal(model_config['parameters'], poly_config,
-                         free_barbed_end, free_pointed_end)
-    else:
-        poly = []
-
-    # Depolymerization transitions
-    depoly = df.normal(model_config['parameters'],
-                       free_barbed_end, free_pointed_end)
-
-    # Hydrolysis transitions
-    hydro = hf.constant_rates(model_config['model_type'],
-                              model_config['parameters']['hydrolysis_rates'],
-                              free_barbed_end, free_pointed_end)
-
-    # Data collectors
-    dcs = {}
-    for collector_signature in stage['data_collectors']:
-        dcs[collector_signature] = single_data_collector(collector_signature)
-
-    return simulation.Simulation(poly + depoly + hydro, ecs, dcs)
-
-# End Conditions
-# ----------------------------------------------------------------------
-def _ec_duration(duration):
-    return end_conditions.MaxVariable('sim_time', duration)
-
-def _ec_random_duration(max_duration):
-    return end_conditions.RandomMaxVariable('sim_time', max_duration)
-
-_ec_signatures = {'duration':        _ec_duration,
-                  'random_duration': _ec_random_duration}
-
-def single_end_condition(signature):
-    return _ec_signatures[signature[0]](*signature[1:])
-
-# Data Collectors
-# ----------------------------------------------------------------------
-def _dc_simulation_time():
-    return data_collectors.Variable('sim_time')
-
-def _dc_strand_length():
-    return data_collectors.strand_length
-
-def _dc_cleavage_event():
-    return data_collectors.HydrolysisEventCounter('t', 'p')
-
-def _dc_release_event():
-    return data_collectors.HydrolysisEventCounter('p', ['d', 'du', 'ds'])
-
-_dc_signatures = {'simulation_time': _dc_simulation_time,
-                  'strand_length':   _dc_strand_length,
-                  'cleavage_events': _dc_cleavage_event,
-                  'release_events':  _dc_release_event}
-
-def single_data_collector(signature):
-    return _dc_signatures[signature]()

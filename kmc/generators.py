@@ -16,9 +16,11 @@
 import util
 import kmc.simulation
 
-def simulation_generator(transitions_factory,
-                         end_conditions_factory,
-                         data_collectors_factory):
+__all__ ['simulation']
+
+def simulation(transitions_factory,
+               end_conditions_factory,
+               data_collectors_factory):
     while True:
         # Construct publisher.
         # This assures that each simulation acts independently.
@@ -34,4 +36,5 @@ def simulation_generator(transitions_factory,
         data_repository = data_collectors_factory(pub)
 
         # Construct simulation.
-        yield simulation.Simulation(transitions, end_conditions), data_repositories
+        yield (kmc.simulation.Simulation(transitions, end_conditions),
+               data_repositories)

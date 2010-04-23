@@ -25,7 +25,7 @@ import math
 
 from util.generators import running_total
 
-__all__ = ['Simulation', 'SimulationSequence']
+__all__ = ['Simulation']
 
 class Simulation(object):
     """

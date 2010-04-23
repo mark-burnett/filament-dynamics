@@ -14,20 +14,26 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-    This package contains kinetic monte carlo simulation models for (actin)
-strand polymerization.
-
-Modules in this package include:
-    data_collectors
-    end_conditions
-    transitions
-    factories
+    This module contains various end conditions for the simulations.
 """
 
-import data_collectors
-import concentrations
-import transitions
+import random
 
-import strands
+__all__ = ['Duration', 'RandomDuration']
 
-import factories
+class Duration(object):
+    def __init__(self, duration):
+        self.duration = duration
+
+    def reset(self):
+        pass
+
+    def __call__(self, time, data):
+        return time > self.duration
+
+class RandomDuration(Duration):
+    def __init__(self, max_duration):
+        self.max_duration
+
+    def reset(self):
+        self.duration = random.uniform(0, self.max_duration)
