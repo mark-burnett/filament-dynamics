@@ -38,16 +38,17 @@ class GeneralFixedRate(object):
 
     @property
     def R(self):
-        if state == self.strand[-1]:
+        if self.state == self.strand[-1]:
             return self.rate
         else:
             return 0
 
 class Barbed(GeneralFixedRate):
     def perform(self, r, time):
-        pub.publish(events.depolymerization('barbed', self.strand.pop(), time))
+        self.pub.publish(events.depolymerization('barbed', self.strand.pop(),
+                                                 time))
 
 class Pointed(GeneralFixedRate):
     def perform(self, r, time):
-        pub.publish(events.depolymerization('pointed', self.strand.popleft(),
-                                            time))
+        self.pub.publish(events.depolymerization('pointed',
+                                                 self.strand.popleft(), time))

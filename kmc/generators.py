@@ -27,7 +27,7 @@ def simulation(transitions_factory,
         pub = util.observer.Publisher()
 
         # Construct transitions.
-        transitions = transitions_factories(pub)
+        transitions = transitions_factory(pub)
 
         # Construct end conditions.
         end_conditions = end_conditions_factory(pub)
@@ -37,4 +37,4 @@ def simulation(transitions_factory,
 
         # Construct simulation.
         yield (kmc.simulation.Simulation(transitions, end_conditions),
-               data_repositories)
+               data_repository)

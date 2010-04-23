@@ -21,6 +21,7 @@
 import time
 import operator
 import os
+import itertools
 
 import json
 import cPickle
@@ -51,12 +52,12 @@ def hydrolysis(model_file, simulation_file,
 
     # Construct initial strand
     initial_strand_config = simulation_config['initial_strand']
-    strand_generator = hydro_sim.strand.factory(initial_strand_config,
-                                                model_config)
+    strand_generator = hydro_sim.factories.strand(initial_strand_config,
+                                                  model_config)
 
     # Run simulation
     if 1 == processes:
-        sims, data = zip(itertools.islice(sim_generator, N))
+        sims, data = zip(*list(itertools.islice(sim_generator, N)))
         strands    = itertools.islice(strand_generator, N)
         [sim(strand) for sim, strand in itertools.izip(sims, strands)]
     else:

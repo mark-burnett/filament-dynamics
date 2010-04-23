@@ -13,12 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import barbed_end
-
-__all__ = ['normal']
-
-def normal(model_pars, free_barbed_end, free_pointed_end):
-    if free_barbed_end:
-        return [barbed_end.FixedRates(model_pars['barbed_depolymerization'])]
-    if free_pointed_end:
-        raise NotImplementedError('Pointed end depolymerization.')
+class compose(object):
+    def __init__(self, functions):
+        self.functions = functions
+    def __call__(self, arg):
+        d = arg
+        for f in self.functions:
+            d = f(d)
+        return d

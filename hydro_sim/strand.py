@@ -12,3 +12,12 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import util
+import itertools
+
+def single_state(model_states, simulation_states, size):
+    state = util.states.match(model_states, simulation_states)
+    while True:
+        # XXX watch out for the list/deque problem (pointed end effects)
+        yield list(itertools.repeat(state, size))

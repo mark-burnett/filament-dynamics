@@ -12,3 +12,9 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+def fixed_concentration(pub, conc):
+    return lambda: conc
+
+def zero_concentration():
+    return 0

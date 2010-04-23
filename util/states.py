@@ -13,7 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def find_matching(iterable_states1, iterable_states2):
+def match(iterable_states1, iterable_states2):
     s1 = set(iterable_states1)
     s2 = set(iterable_states2)
     inter = s1.intersection(s2)

@@ -19,6 +19,7 @@ import mp_sim
 import observer
 import ordered_set
 import states
+import functional
 
 __all__ = ['generators', 'introspection', 'mp_sim', 'observer', 'ordered_set',
-           'states']
+           'states', 'functional']

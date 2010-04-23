@@ -14,6 +14,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import itertools
+import collections
+
 import util
 
 import kmc.end_conditions
@@ -22,6 +24,7 @@ import kmc.generators
 import hydro_sim.concentrations
 import hydro_sim.transitions
 import hydro_sim.data_collectors
+import hydro_sim.strand
 
 __all__ = ['full_simulation_generator']
 
@@ -45,19 +48,24 @@ def full_simulation_generator(model_config, simulation_config):
 
     while True:
         # Make list of stage simulations and repositories
-        sims, data_repository = zip([sg.next() for sg in sim_gen])
-        yield util.compose(s.run for s in sims), data_repository
+        sims, data_repository = zip(*[sg.next() for sg in sim_gen])
+        yield util.functional.compose(s.run for s in sims), data_repository
 
 def concentrations_factory(model_states, concentration_config):
-    config_states, config_functions = zip(concentration_config)
-    states    = [util.states.find_matching(model_states, cs)
-                 for cs in config_states]
-    factories = util.introspection.make_factories(config_functions,
-                                                  hydro_sim.concentrations)
+    if concentration_config:
+        config_states, config_functions = zip(*concentration_config)
+        states    = [util.states.match(model_states, cs)
+                     for cs in config_states]
+        factories = util.introspection.make_factories(config_functions,
+                                                      hydro_sim.concentrations)
+    else:
+        states, factories = [], []
 
     def make_cs(pub):
-        return dict((state, f(pub, *args))
+        d = dict((state, f(pub, *args))
                     for state, (f, args) in itertools.izip(states, factories))
+        return collections.defaultdict(lambda: hydro_sim.concentrations.zero_concentration, d)
+
     return make_cs
 
 def transitions_factory(config_transitions, concentrations_factory):
@@ -70,7 +78,7 @@ def transitions_factory(config_transitions, concentrations_factory):
 
         # construct transitions
         return [f(pub, concentrations, *args)
-               for f, args in transition_factories]
+               for f, args in factories]
     return make_ts
 
 def data_collectors_factory(dc_config):
@@ -83,9 +91,9 @@ def data_collectors_factory(dc_config):
         # Create repository for data.
         data_repositories = dict((name, []) for name in dc_names)
         # Setup data collectors on that repository.
-        data_collectors   = [f(pub, dr[name], *args)
-                             for name, dr, (f, args) in itertools.izip(
-                                 dc_names, data_repositories, dc_factories)]
+        data_collectors   = [f(pub, data_repositories[name], *args)
+                             for name, (f, args) in itertools.izip(
+                                 dc_names, dc_factories)]
         return data_repositories
     return make_dcs
 
@@ -93,20 +101,10 @@ def end_conditions_factory(ec_config):
     ec_factories = util.introspection.make_factories(ec_config,
                                                      kmc.end_conditions)
     def make_ecs(pub):
-        return [f(pub, *args) for f in ec_factories]
+        return [f(pub, *args) for f, args in ec_factories]
     return make_ecs
 
-# Simulations
-# ----------------------------------------------------------------------
-def build_simulation(model_config, simulation_config):
-    # Loop over stages in order and build them.
-    simulations = []
-    for stage_name in simulation_config['stage_sequence']:
-        stage = simulation_config['stages'][stage_name]
-        sim = single_sim(model_config, stage,
-                         simulation_config['barbed_end'],
-                         simulation_config['pointed_end'])
-        simulations.append(sim)
-
-    # Always use a simulation sequence, even for just one stage.
-    return simulation.SimulationSequence(simulations)
+def strand(initial_strand_config, model_config):
+    name, args = initial_strand_config
+    f = util.introspection.lookup_name(name, hydro_sim.strand)
+    return f(model_config['states'], *args)

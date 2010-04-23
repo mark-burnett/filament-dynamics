@@ -13,7 +13,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+def lookup_name(name, module):
+    m = module
+    for n in name.split('.'):
+        m = m.__getattribute__(n)
+    return m
+
 def make_factories(config_list, module):
-    return [(module.__getattribute__(name), args)
+    return [(lookup_name(name, module), args)
             for name, args in config_list]
 
