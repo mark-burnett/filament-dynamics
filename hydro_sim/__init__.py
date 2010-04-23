@@ -28,9 +28,7 @@ Modules in this package include:
 import end_conditions
 import data_collectors
 
-import polymerization
-import depolymerization
-import hydrolysis
+import transitions
 
 import simulation
 import factories

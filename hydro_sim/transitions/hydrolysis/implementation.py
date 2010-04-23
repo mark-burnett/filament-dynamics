@@ -38,10 +38,10 @@ class Hydrolysis(object):
                                   if self.predicate(self.strand, i))
         self.R = self.rate * len(self.indices)
 
-    def perform(self, r):
+    def perform(self, r, time):
         # Figure out what part of the strand to update
         set_index = int(r/self.rate)
-        set_value = self.indicies[set_index]
+        set_value = self.indices[set_index]
         full_index = set_value + self.offset
 
         # Update the strand
@@ -52,7 +52,7 @@ class Hydrolysis(object):
         self.indices.remove(set_value)
 
         # Let everyone else know what changed
-        self.pub.publish(events.hydrolysis(old_state, self.new_state, full_index))
+        self.pub.publish(events.hydrolysis(old_state, self.new_state, full_index, time))
 
     def _update_indices(self, position):
         effected_indices = xrange(position - self.offset - self.predicate.pointed_range,

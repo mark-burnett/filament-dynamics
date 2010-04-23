@@ -13,6 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import fixed_rate
+import events
+import polymerization
+import depolymerization
+import hydrolysis
 
-__all__ = ['fixed_rate']
+__all__ = ['events', 'polymerization', 'depolymerization', 'hydrolysis']

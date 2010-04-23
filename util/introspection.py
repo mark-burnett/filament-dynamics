@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import fixed_rate
+def make_factories(config_list, module):
+    return [module.__getattribute__(name), args
+            for name, args in config_list]
 
-__all__ = ['fixed_rate']

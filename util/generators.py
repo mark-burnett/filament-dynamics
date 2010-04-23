@@ -13,25 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from transitions import events
-
-__all__ = ['FixedRate']
-
-class FixedRate(object):
-    def __init__(self, pub, state, rate):
-        self.pub   = pub
-        self.state = state
-        self.rate  = rate
-
-    def initialize(self, strand):
-        self.strand = strand
-
-    def perform(self, r):
-        pub.publish(events.depolymerization('barbed', self.strand.pop()))
-
-    @property
-    def R(self):
-        if state == self.strand[-1]:
-            return self.rate
-        else:
-            return 0
+def running_total(values):
+    """
+    Generator that calculates a running total of a sequence.
+    """
+    total = 0
+    for v in values:
+        total += v
+        yield total
