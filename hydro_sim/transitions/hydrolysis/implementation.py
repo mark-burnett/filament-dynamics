@@ -15,9 +15,11 @@
 
 from util.ordered_set import OrderedSet
 
-__all__ = ['Random']
+__all__ = ['Hydrolysis']
 
-class Random(object):
+class Hydrolysis(object):
+    __slots__ = ['pub', 'predicate', 'rate', 'new_state', 'offset',
+                 'strand', 'indices', 'R']
     def __init__(self, pub, predicate, rate, new_state):
         self.pub       = pub
         self.predicate = predicate
