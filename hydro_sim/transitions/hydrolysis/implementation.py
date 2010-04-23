@@ -30,9 +30,9 @@ class Hydrolysis(object):
         self.offset    = 0
 
         # Subscribe to poly, depoly, and hydro events.
-        self.pub.add(events.polymerization,   self._update_polymerization)
-        self.pub.add(events.depolymerization, self._update_depolymerization)
-        self.pub.add(events.hydrolysis,       self._update_hydrolysis)
+        self.pub.add(self._update_polymerization,   events.polymerization)
+        self.pub.add(self._update_depolymerization, events.depolymerization) 
+        self.pub.add(self._update_hydrolysis,       events.hydrolysis)
 
     def initialize(self, strand):
         self.strand = strand
@@ -47,11 +47,17 @@ class Hydrolysis(object):
         full_index = set_value + self.offset
 
         # Update the strand
-        old_state = self.strand[full_index]
+        # XXX breaks here
+        try:
+            old_state = self.strand[full_index]
+        except:
+            print set_index, set_value, full_index, len(self.indices)
+            raise
         self.strand[full_index] = self.new_state
 
         # Remove this index
-        self.indices.remove(set_value)
+        # XXX i don't have to do this here, it will happen on update anyway..
+#        self.indices.remove(set_value)
 
         # Let everyone else know what changed
         self.pub.publish(events.hydrolysis(old_state, self.new_state, full_index, time))
@@ -71,17 +77,19 @@ class Hydrolysis(object):
     
     def _update_polymerization(self, event):
         if 'barbed' == event.end:
-            return self._update_hydrolysis(len(self.strand)-1)
+            self._update_indices(len(self.strand)-1)
         else:
             self.offset += 1
-            return self._update_hydrolysis(0)
+            self._update_indices(0)
 
-    def _update_depolymerization(self, value):
+    def _update_depolymerization(self, event):
         if 'barbed' == event.end:
             pos = len(self.strand)
             self.indices.discard(pos)
             return self._update_indices(pos - 1)
         else:
+            raise NotImplementedError()
+            # XXX this code is wrong for sure.
             self.offset -= 1
             self.indices.discard(0)
-            return self._update_hydrolysis(0)
+            self._update_indices(0)

@@ -1,0 +1,24 @@
+{
+"filename": "mitchison_depolymerization",
+
+"description": "Two stage simulation: growth, and depolymerization.",
+
+"_comment": "Mitchison PNAS Vol. 105, No. 43 (2008)",
+
+"stages": [
+    {"name": "growth",
+     "end_conditions": [
+         ["RandomDuration", [60]]],
+     "data_collectors": [],
+     "concentrations": [
+         [["t"], ["fixed_concentration", [3]]]]},
+    {"name": "depolymerization",
+     "end_conditions": [
+         ["Duration", [3000]],
+         ["DataLengthBelow", [1]]],
+     "data_collectors": [
+        ["LengthChange", []]],
+     "concentrations": []}],
+
+"initial_strand": ["single_state", [["d", "ds"], 10]]
+}

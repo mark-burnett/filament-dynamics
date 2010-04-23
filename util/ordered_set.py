@@ -25,10 +25,7 @@ class OrderedSet(object):
     def add(self, item):
         if item not in self._dict:
             self._dict[item] = len(self._list)
-            try:
-                self._list.append(item)
-            finally:
-                self._dict.pop(item)
+            self._list.append(item)
 
     def remove(self, item):
         i = self._dict.pop(item)
@@ -40,6 +37,8 @@ class OrderedSet(object):
             del self._list[i]
         except KeyError:
             pass
+        except IndexError:
+            pass
 
     def __getitem__(self, index):
         return self._list[index]
@@ -49,3 +48,6 @@ class OrderedSet(object):
 
     def __contains__(self, item):
         return item in self._dict
+
+    def __str__(self):
+        return str(self._list)

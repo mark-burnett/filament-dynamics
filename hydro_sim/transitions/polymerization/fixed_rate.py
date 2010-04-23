@@ -34,8 +34,9 @@ class GeneralFixedRate(object):
         self.R     = rate * self.concentration()
 
         # Subscribe to polymerization and depolymerization events.
-        self.pub.subscribe(self.update, events.polymerization)
-        self.pub.subscribe(self.update, events.depolymerization)
+        if self.rate:
+            self.pub.subscribe(self.update, events.polymerization)
+            self.pub.subscribe(self.update, events.depolymerization)
     
     def initialize(self, strand):
         self.strand = strand
