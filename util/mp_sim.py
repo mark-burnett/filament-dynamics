@@ -15,14 +15,12 @@
 
 import multiprocessing
 
-def pool_sim(simulation, argument, num_simulations, num_processes=None):
+def multi_map(functions, arguments, num_processes=None):
     """
-    Uses multiprocessing to perform multiple simulations at once.
-    'argument' is either a single strand used for num_simulations simulations
-        or it is a sequence of initial strands each used for one simulation.
-    'num_simulations' is the number of simulations to perform, only use this if
-        'argument' is a single strand.
-    'num_processes' determines the size of the multiprocessing pool
+    A multiprocessing version of:
+        [f(a) for f, a in zip(functions, arguments)]
+
+    'num_processes' determines the size of the multiprocessing pool.
     """
     pool = None
     if num_processes:
@@ -31,18 +29,11 @@ def pool_sim(simulation, argument, num_simulations, num_processes=None):
         pool = multiprocessing.Pool()
 
     try:
-        results = None
-        if num_simulations:
-            results = [pool.apply_async(simulation, (argument,))
-                           for i in xrange(num_simulations)]
-            # Add a crazy long timeout (ms) to work around a python bug.
-            # This lets us use CTRL-C to stop the program.
-            results = [r.get(999999999999) for r in results]
-        else:
-            results = pool.map_async(simulation, argument)
-            # Add a crazy long timeout (ms) to work around a python bug.
-            # This lets us use CTRL-C to stop the program.
-            results = results.get(999999999999)
+        results = [pool.apply_async(f, (a,))
+                       for f, a in itertools.izip(functions, arguments)]
+        # Add a crazy long timeout (ms) to work around a python bug.
+        # This lets us use CTRL-C to stop the program.
+        results = [r.get(999999999999) for r in results]
 
         # Multiprocessing cleanup
         pool.close()

@@ -16,7 +16,7 @@
 import util
 import kmc.simulation
 
-__all__ ['simulation']
+__all__ = ['simulation']
 
 def simulation(transitions_factory,
                end_conditions_factory,

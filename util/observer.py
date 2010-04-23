@@ -42,5 +42,5 @@ class Publisher(object):
         """
         Send "event" to all appropriate listeners.
         """
-        for l in self.registry[type(event)]
+        for l in self.registry[type(event)]:
             l(event)

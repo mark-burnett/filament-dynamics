@@ -16,18 +16,12 @@
 """
     This package contains kinetic monte carlo simulation models for (actin)
 strand polymerization.
-
-Modules in this package include:
-    data_collectors
-    end_conditions
-    transitions
-    factories
 """
 
 import data_collectors
 import concentrations
 import transitions
 
-import strands
+import strand
 
 import factories

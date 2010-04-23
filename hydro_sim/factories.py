@@ -32,7 +32,7 @@ def single_generator_factory(model_states,
     trans_fac = transitions_factory(trans_config, conc_fac)
     dc_fac    = data_collectors_factory(dc_config)
     ec_fac    = end_conditions_factory(ec_config)
-    return kmc.generators.simulation(trans_fac, ec_fac dc_fac)
+    return kmc.generators.simulation(trans_fac, ec_fac, dc_fac)
 
 def full_simulation_generator(model_config, simulation_config):
     # Build generators for each stage.
@@ -56,7 +56,7 @@ def concentrations_factory(model_states, concentration_config):
                                                   hydro_sim.concentrations)
 
     def make_cs(pub):
-        return dict(state, f(pub, *args)
+        return dict((state, f(pub, *args))
                     for state, (f, args) in itertools.izip(states, factories))
     return make_cs
 
@@ -66,7 +66,7 @@ def transitions_factory(config_transitions, concentrations_factory):
 
     def make_ts(pub):
         # construct conditions/concentrations
-        concentrations = concentrations_factory.(pub)
+        concentrations = concentrations_factory(pub)
 
         # construct transitions
         return [f(pub, concentrations, *args)
@@ -81,7 +81,7 @@ def data_collectors_factory(dc_config):
 
     def make_dcs(pub):
         # Create repository for data.
-        data_repositories = dict(name, [] for name in dc_names]
+        data_repositories = dict((name, []) for name in dc_names)
         # Setup data collectors on that repository.
         data_collectors   = [f(pub, dr[name], *args)
                              for name, dr, (f, args) in itertools.izip(

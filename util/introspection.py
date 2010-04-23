@@ -14,6 +14,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 def make_factories(config_list, module):
-    return [module.__getattribute__(name), args
+    return [(module.__getattribute__(name), args)
             for name, args in config_list]
 

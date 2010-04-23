@@ -20,7 +20,7 @@ class OrderedSet(object):
             self._list = list(iterable)
         else:
             self._list = []
-        self._dict = dict(v, i for i, v in enumerate(self._list))
+        self._dict = dict((v, i) for i, v in enumerate(self._list))
 
     def add(self, item):
         if item not in self._dict:

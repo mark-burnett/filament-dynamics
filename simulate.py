@@ -46,24 +46,30 @@ def hydrolysis(model_file, simulation_file,
     simulation_config = json.load(open(simulation_file))
 
     # Construct simulation
-    sim = hydro_sim.factories.build_simulation(model_config, simulation_config)
+    sim_generator = hydro_sim.factories.full_simulation_generator(model_config,
+            simulation_config)
 
     # Construct initial strand
-    initial_strand = hydro_sim.factories.initial_strand(simulation_config,
-                                                        model_config)
+    initial_strand_config = simulation_config['initial_strand']
+    strand_generator = hydro_sim.strand.factory(initial_strand_config,
+                                                model_config)
 
     # Run simulation
     if 1 == processes:
-        data = [sim(initial_strand) for i in xrange(N)]
+        sims, data = zip(itertools.islice(sim_generator, N))
+        strands    = itertools.islice(strand_generator, N)
+        [sim(strand) for sim, strand in itertools.izip(sims, strands)]
     else:
-        data = util.mp_sim.pool_sim(sim, initial_strand, N, processes)
+        sims, data = zip(itertools.islice(sim_generator, N))
+        strands    = itertools.islice(strand_generator, N)
+        util.mp.multi_map(sims, strands, processes)
 
     # Construct output filename
     if output_file:
         filename = output_file
     else:
-        filename = model_config['model_type'] + '_' +\
-                simulation_config['simulation_name'] + '_' + str(N) + '.pickle'
+        filename = '_'.join([model_config['filename'], simulation['filename'],
+                            str(N)]) + '.pickle'
     
     if output_dir:
         # Create output directory
