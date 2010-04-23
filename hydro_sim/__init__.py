@@ -20,7 +20,6 @@ strand polymerization.
 Modules in this package include:
     data_collectors
     end_conditions
-    predicates
     simulation
     transitions
     factories
