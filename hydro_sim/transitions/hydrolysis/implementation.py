@@ -15,7 +15,7 @@
 
 from hydro_sim.transitions import events
 
-from util.ordered_set import OrderedSet
+#from util.ordered_set import OrderedSet
 
 __all__ = ['Hydrolysis']
 
@@ -35,15 +35,16 @@ class Hydrolysis(object):
         self.pub.add(self._update_hydrolysis,       events.hydrolysis)
 
     def initialize(self, strand):
+        print 'initializing, pub =', self.pub
         self.strand = strand
-        self.indices = OrderedSet(i for i in xrange(len(self.strand))
-                                  if self.predicate(self.strand, i))
+        self.indices = set(i for i in xrange(len(self.strand))
+                             if self.predicate(self.strand, i))
         self.R = self.rate * len(self.indices)
 
     def perform(self, r, time):
         # Figure out what part of the strand to update
         set_index = int(r/self.rate)
-        set_value = self.indices[set_index]
+        set_value = list(self.indices)[set_index]
         full_index = set_value + self.offset
 
         # Update the strand

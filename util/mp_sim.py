@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
 import multiprocessing
 
 def multi_map(functions, arguments, num_processes=None):
@@ -29,7 +30,7 @@ def multi_map(functions, arguments, num_processes=None):
         pool = multiprocessing.Pool()
 
     try:
-        results = [pool.apply_async(f, (a,))
+        results = [pool.apply_async(f) #, (a,))
                        for f, a in itertools.izip(functions, arguments)]
         # Add a crazy long timeout (ms) to work around a python bug.
         # This lets us use CTRL-C to stop the program.

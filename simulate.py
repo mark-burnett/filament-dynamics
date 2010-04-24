@@ -31,6 +31,15 @@ import baker
 import hydro_sim
 import util.mp_sim
 
+class sim_container(object):
+    def __init__(self, run, repository, strand):
+        self.run = run
+        self.repository = repository
+        self.strand = strand
+    def __call__(self):
+        self.run(self.strand)
+        return self.repository
+
 @baker.command(default=True)
 def hydrolysis(model_file, simulation_file,
                N=100, processes=0,
@@ -61,16 +70,20 @@ def hydrolysis(model_file, simulation_file,
         strands    = itertools.islice(strand_generator, N)
         [sim(strand) for sim, strand in itertools.izip(sims, strands)]
     else:
-        sims, data = zip(itertools.islice(sim_generator, N))
+        sims, data = zip(*list(itertools.islice(sim_generator, N)))
         strands    = itertools.islice(strand_generator, N)
-        util.mp.multi_map(sims, strands, processes)
+        containers = [sim_container(s, d, t)
+                      for s, d, t in itertools.izip(sims, data, strands)]
+                
+        util.mp_sim.multi_map(containers, strands, processes)
 
     # Construct output filename
     if output_file:
         filename = output_file
     else:
-        filename = '_'.join([model_config['filename'], simulation['filename'],
-                            str(N)]) + '.pickle'
+        filename = '_'.join([model_config['filename'],
+                             simulation_config['filename'],
+                             str(N)]) + '.pickle'
     
     if output_dir:
         # Create output directory
