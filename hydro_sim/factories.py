@@ -49,7 +49,7 @@ def full_simulation_generator(model_config, simulation_config):
     while True:
         # Make list of stage simulations and repositories
         sims, data_repository = zip(*[sg.next() for sg in sim_gen])
-        yield util.functional.compose(s.run for s in sims), data_repository
+        yield util.functional.compose(sims), data_repository
 
 def concentrations_factory(model_states, concentration_config):
     if concentration_config:
@@ -64,7 +64,7 @@ def concentrations_factory(model_states, concentration_config):
     def make_cs(pub):
         d = dict((state, f(pub, *args))
                     for state, (f, args) in itertools.izip(states, factories))
-        return collections.defaultdict(lambda: hydro_sim.concentrations.zero_concentration, d)
+        return collections.defaultdict(hydro_sim.concentrations.zero_concentration, d)
 
     return make_cs
 
@@ -94,7 +94,7 @@ def data_collectors_factory(dc_config):
         data_collectors   = [f(pub, data_repositories[name], *args)
                              for name, (f, args) in itertools.izip(
                                  dc_names, dc_factories)]
-        return data_repositories
+        return data_collectors, data_repositories
     return make_dcs
 
 def end_conditions_factory(ec_config):

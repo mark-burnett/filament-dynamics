@@ -31,15 +31,16 @@ class Simulation(object):
     """
     Kinetic Monte Carlo simulation object.
     """
-    __slots__ = ['transitions', 'ecs']
-    def __init__(self, transitions, end_conditions):
+    __slots__ = ['transitions', 'ecs', 'measurements']
+    def __init__(self, transitions, measurements, end_conditions):
         """
         'transitions' list of transition objects.  Each object represents
             a set of possible state changes.
         'end_conditions' is either a single end condition or an iterable of end
             conditions (see 'end_conditions' module).
         """
-        self.transitions = transitions
+        self.transitions  = transitions
+        self.measurements = measurements
         self.ecs = end_conditions
         # Make sure end conditions are iterable.
         try:
@@ -47,17 +48,22 @@ class Simulation(object):
         except:
             self.ecs = [self.ecs]
 
+    def __call__(self, initial_data):
+        return self.run(initial_data)
+
     def run(self, initial_data):
         """
         Perform the actual simulation, starting with initial_data.
         """
         data = copy.copy(initial_data)
 
-        # Initialize odds and ends
+        # Initialize.
         time = 0
         [t.initialize(data) for t in self.transitions]
-        [e.reset() for e in self.ecs]
+        [m.initialize(data) for m in self.measurements]
 
+        # Reset end conditions.
+        [e.reset() for e in self.ecs]
         while not any(e(time, data) for e in self.ecs):
             # Calculate partial sums of transition probabilities
             transition_R = [t.R for t in self.transitions]

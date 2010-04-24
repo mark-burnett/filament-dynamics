@@ -13,8 +13,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def fixed_concentration(pub, conc):
-    return lambda: conc
+class fixed_concentration(object):
+    __slots__ = ['conc']
+    def __init__(self, pub, conc):
+        self.conc = conc
+    def __call__(self):
+        return self.conc
 
-def zero_concentration():
-    return 0
+class zero_concentration(object):
+    def __call__(self):
+        return 0

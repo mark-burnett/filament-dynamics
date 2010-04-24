@@ -21,8 +21,12 @@ class LengthChange(object):
         self.pub        = pub
         self.repository = repository
         self.count      = 0
-        pub.subscribe(self.increment, hydro_sim.transitions.events.polymerization)
-        pub.subscribe(self.decrement, hydro_sim.transitions.events.depolymerization)
+
+    def initialize(self, data):
+        self.pub.subscribe(self.increment,
+                      hydro_sim.transitions.events.polymerization)
+        self.pub.subscribe(self.decrement,
+                      hydro_sim.transitions.events.depolymerization)
 
     def increment(self, event):
         self.count += 1

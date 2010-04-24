@@ -29,17 +29,16 @@ class Hydrolysis(object):
         self.new_state = new_state
         self.offset    = 0
 
-        # Subscribe to poly, depoly, and hydro events.
-        self.pub.add(self._update_polymerization,   events.polymerization)
-        self.pub.add(self._update_depolymerization, events.depolymerization) 
-        self.pub.add(self._update_hydrolysis,       events.hydrolysis)
-
     def initialize(self, strand):
-        print 'initializing, pub =', self.pub
         self.strand = strand
         self.indices = set(i for i in xrange(len(self.strand))
                              if self.predicate(self.strand, i))
         self.R = self.rate * len(self.indices)
+
+        # Subscribe to poly, depoly, and hydro events.
+        self.pub.add(self._update_polymerization,   events.polymerization)
+        self.pub.add(self._update_depolymerization, events.depolymerization) 
+        self.pub.add(self._update_hydrolysis,       events.hydrolysis)
 
     def perform(self, r, time):
         # Figure out what part of the strand to update
@@ -48,17 +47,8 @@ class Hydrolysis(object):
         full_index = set_value + self.offset
 
         # Update the strand
-        # XXX breaks here
-        try:
-            old_state = self.strand[full_index]
-        except:
-            print set_index, set_value, full_index, len(self.indices)
-            raise
+        old_state = self.strand[full_index]
         self.strand[full_index] = self.new_state
-
-        # Remove this index
-        # XXX i don't have to do this here, it will happen on update anyway..
-#        self.indices.remove(set_value)
 
         # Let everyone else know what changed
         self.pub.publish(events.hydrolysis(old_state, self.new_state, full_index, time))

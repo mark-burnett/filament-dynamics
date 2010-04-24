@@ -20,7 +20,7 @@ __all__ = ['simulation']
 
 def simulation(transitions_factory,
                end_conditions_factory,
-               data_collectors_factory):
+               measuremets_factory):
     while True:
         # Construct publisher.
         # This assures that each simulation acts independently.
@@ -33,8 +33,9 @@ def simulation(transitions_factory,
         end_conditions = end_conditions_factory(pub)
 
         # Construct data_collectors.
-        data_repository = data_collectors_factory(pub)
+        measurements, data_repository = measuremets_factory(pub)
 
         # Construct simulation.
-        yield (kmc.simulation.Simulation(transitions, end_conditions),
+        yield (kmc.simulation.Simulation(transitions, measurements,
+                                         end_conditions),
                data_repository)

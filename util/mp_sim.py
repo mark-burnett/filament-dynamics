@@ -30,7 +30,7 @@ def multi_map(functions, arguments, num_processes=None):
         pool = multiprocessing.Pool()
 
     try:
-        results = [pool.apply_async(f) #, (a,))
+        results = [pool.apply_async(f, (a,))
                        for f, a in itertools.izip(functions, arguments)]
         # Add a crazy long timeout (ms) to work around a python bug.
         # This lets us use CTRL-C to stop the program.

@@ -36,6 +36,7 @@ class sim_container(object):
         self.run = run
         self.repository = repository
         self.strand = strand
+
     def __call__(self):
         self.run(self.strand)
         return self.repository
@@ -64,18 +65,18 @@ def hydrolysis(model_file, simulation_file,
     strand_generator = hydro_sim.factories.strand(initial_strand_config,
                                                   model_config)
 
+    sims, data = zip(*list(itertools.islice(sim_generator, N)))
+    strands    = list(itertools.islice(strand_generator, N))
     # Run simulation
     if 1 == processes:
-        sims, data = zip(*list(itertools.islice(sim_generator, N)))
-        strands    = itertools.islice(strand_generator, N)
+#        sims, data = zip(*list(itertools.islice(sim_generator, N)))
+#        strands    = itertools.islice(strand_generator, N)
         [sim(strand) for sim, strand in itertools.izip(sims, strands)]
     else:
-        sims, data = zip(*list(itertools.islice(sim_generator, N)))
-        strands    = itertools.islice(strand_generator, N)
-        containers = [sim_container(s, d, t)
-                      for s, d, t in itertools.izip(sims, data, strands)]
+#        containers = [sim_container(s, d, t)
+#                      for s, d, t in itertools.izip(sims, data, strands)]
                 
-        util.mp_sim.multi_map(containers, strands, processes)
+        util.mp_sim.multi_map(sims, strands, processes)
 
     # Construct output filename
     if output_file:
