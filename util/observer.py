@@ -15,19 +15,21 @@
 
 import collections
 
+# XXX Consider adding a way to subscribe_all (adding a separate registry)
+# XXX Consider supporting a co-publisher?
 class Publisher(object):
     __slots__ = ['registry']
     def __init__(self):
         self.registry = collections.defaultdict(set)
 
-    def add(self, listener, event_type):
+    def subscribe(self, listener, event_type):
         """
         Adds a "listener" for events of type "event_type."
         """
+        assert(callable(listener))
         self.registry[event_type].add(listener)
-    subscribe = add
 
-    def remove(self, listener, event_type=None):
+    def unsubscribe(self, listener, event_type=None):
         """
         Removes "listener" from receiving events of type "event_type."
         If "event_type" is None, removes "listener" from all types of events.
@@ -44,3 +46,7 @@ class Publisher(object):
         """
         for l in self.registry[type(event)]:
             l(event)
+
+    @property
+    def events(self):
+        return self.registry.keys()

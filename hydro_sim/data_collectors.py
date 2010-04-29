@@ -35,3 +35,24 @@ class LengthChange(object):
     def decrement(self, event):
         self.count -= 1
         self.repository.append((event.time, self.count))
+
+class HydrolysisEventCount(object):
+    def __init__(self, pub, repository, old_states, new_states):
+        """
+        old_states and new_states are containers of states.
+        """
+        self.pub        = pub
+        self.repository = repository
+        self.old_states = old_states
+        self.new_states = new_states
+        self.count      = 0
+
+    def initialize(self, data):
+        self.pub.subscribe(self.increment,
+                      hydro_sim.transitions.events.hydrolysis)
+
+    def increment(self, event):
+        if (event.old_state in self.old_states and
+            event.new_state in self.new_states):
+            self.count += 1
+            self.repository.append((event.time, self.count))

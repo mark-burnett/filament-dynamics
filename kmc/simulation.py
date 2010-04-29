@@ -48,23 +48,23 @@ class Simulation(object):
         except:
             self.ecs = [self.ecs]
 
-    def __call__(self, initial_data):
-        return self.run(initial_data)
+    def __call__(self, initial_state):
+        return self.run(initial_state)
 
-    def run(self, initial_data):
+    def run(self, initial_state):
         """
-        Perform the actual simulation, starting with initial_data.
+        Perform the actual simulation, starting with initial_state.
         """
-        data = copy.copy(initial_data)
+        state = copy.copy(initial_state)
 
         # Initialize.
         time = 0
-        [t.initialize(data) for t in self.transitions]
-        [m.initialize(data) for m in self.measurements]
+        [t.initialize(state) for t in self.transitions]
+        [m.initialize(state) for m in self.measurements]
 
         # Reset end conditions.
         [e.reset() for e in self.ecs]
-        while not any(e(time, data) for e in self.ecs):
+        while not any(e(time, state) for e in self.ecs):
             # Calculate partial sums of transition probabilities
             transition_R = [t.R for t in self.transitions]
             running_R    = list(running_total(transition_R))
@@ -80,4 +80,4 @@ class Simulation(object):
             # Perform transition
             self.transitions[j].perform(running_R[j] - r, time)
 
-        return data
+        return state

@@ -36,11 +36,13 @@ class Hydrolysis(object):
         self.R = self.rate * len(self.indices)
 
         # Subscribe to poly, depoly, and hydro events.
-        self.pub.add(self._update_polymerization,   events.polymerization)
-        self.pub.add(self._update_depolymerization, events.depolymerization) 
-        self.pub.add(self._update_hydrolysis,       events.hydrolysis)
+        self.pub.subscribe(self._update_polymerization, events.polymerization)
+        self.pub.subscribe(self._update_depolymerization,
+                           events.depolymerization)
+        self.pub.subscribe(self._update_hydrolysis, events.hydrolysis)
 
     def perform(self, r, time):
+        # XXX Speed limiting
         # Figure out what part of the strand to update
         set_index = int(r/self.rate)
         set_value = list(self.indices)[set_index]
@@ -54,8 +56,11 @@ class Hydrolysis(object):
         self.pub.publish(events.hydrolysis(old_state, self.new_state, full_index, time))
 
     def _update_indices(self, position):
-        effected_indices = xrange(position - self.offset - self.predicate.pointed_range,
-                                  position - self.offset + self.predicate.barbed_range + 1)
+        # XXX Speed limiting
+        effected_indices = xrange(position - self.offset
+                                      - self.predicate.pointed_range,
+                                  position - self.offset
+                                      + self.predicate.barbed_range + 1)
         for i in effected_indices:
             if self.predicate(self.strand, i):
                 self.indices.add(i)

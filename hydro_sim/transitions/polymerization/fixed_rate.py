@@ -31,22 +31,27 @@ class GeneralFixedRate(object):
         self.pub   = pub
         self.rate  = rate
         self.state = state
-        self.R     = rate * self.concentration()
     
     def initialize(self, strand):
         self.strand = strand
-
-        # Subscribe to polymerization and depolymerization events.
         if self.rate:
-            self.pub.subscribe(self.update, events.polymerization)
-            self.pub.subscribe(self.update, events.depolymerization)
+            self.pub.subscribe(self.update_poly, events.polymerization)
+            self.pub.subscribe(self.update_depoly, events.depolymerization)
+
+    def update_poly(self, event):
+        if event.state == self.state:
+            self.concentration.update_poly(event)
+
+    def update_depoly(self, event):
+        if event.state == self.state:
+            self.concentration.update_depoly(event)
 
     def perform(self, r):
         raise NotImplementedError()
 
-    def update(self, event):
-        if self.state == event.state:
-            self.R = self.rate * self.concentration()
+    @property
+    def R(self):
+        return self.rate * self.concentration()
 
 class Barbed(GeneralFixedRate):
     def perform(self, r, time):

@@ -18,7 +18,6 @@ from collections import namedtuple
 __all__ = ['depolymerization', 'polymerization', 'hydrolysis']
 
 depolymerization = namedtuple('depolymerization', 'end state time')
-# XXX polymerization transitions need to be notified of concentration changes.
 polymerization   = namedtuple('polymerization',   'end state time')
 
 hydrolysis = namedtuple('hydrolysis', 'old_state new_state position time')

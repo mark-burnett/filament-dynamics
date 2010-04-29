@@ -61,8 +61,8 @@ def concentrations_factory(model_states, concentration_config):
     else:
         states, factories = [], []
 
-    def make_cs(pub):
-        d = dict((state, f(pub, *args))
+    def make_cs():
+        d = dict((state, f(*args))
                     for state, (f, args) in itertools.izip(states, factories))
         return collections.defaultdict(hydro_sim.concentrations.zero_concentration, d)
 
@@ -74,7 +74,7 @@ def transitions_factory(config_transitions, concentrations_factory):
 
     def make_ts(pub):
         # construct conditions/concentrations
-        concentrations = concentrations_factory(pub)
+        concentrations = concentrations_factory()
 
         # construct transitions
         return [f(pub, concentrations, *args)

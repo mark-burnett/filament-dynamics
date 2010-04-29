@@ -13,13 +13,36 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class fixed_concentration(object):
+class Concentration(object):
+    def __call__(self):
+        raise NotImplementedError()
+    def update_poly(self, event):
+        pass
+    def update_depoly(self, event):
+        pass
+
+class fixed_concentration(Concentration):
     __slots__ = ['conc']
-    def __init__(self, pub, conc):
+    def __init__(self, conc):
         self.conc = conc
     def __call__(self):
         return self.conc
 
-class zero_concentration(object):
+class zero_concentration(Concentration):
     def __call__(self):
         return 0
+
+class fixed_reagent(Concentration):
+    __slots__ = ['monomer_conc', 'filament_tip_conc']
+    def __init__(self, initial_concentration, filament_tip_conc):
+        self.monomer_conc      = initial_concentration
+        self.filament_tip_conc = filament_tip_conc
+
+    def __call__(self):
+        return self.monomer_conc
+
+    def update_poly(self, event):
+        self.monomer_conc -= self.filament_tip_conc
+
+    def update_depoly(self, event):
+        self.monomer_conc += self.filament_tip_conc

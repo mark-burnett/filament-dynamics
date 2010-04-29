@@ -36,6 +36,11 @@ class GeneralFixedRate(object):
     def perform(self, r):
         raise NotImplementedError()
 
+class Barbed(GeneralFixedRate):
+    def perform(self, r, time):
+        self.pub.publish(events.depolymerization('barbed', self.strand.pop(),
+                                                 time))
+
     @property
     def R(self):
         if self.state == self.strand[-1]:
@@ -43,12 +48,14 @@ class GeneralFixedRate(object):
         else:
             return 0
 
-class Barbed(GeneralFixedRate):
-    def perform(self, r, time):
-        self.pub.publish(events.depolymerization('barbed', self.strand.pop(),
-                                                 time))
-
 class Pointed(GeneralFixedRate):
     def perform(self, r, time):
         self.pub.publish(events.depolymerization('pointed',
                                                  self.strand.popleft(), time))
+
+    @property
+    def R(self):
+        if self.state == self.strand[0]:
+            return self.rate
+        else:
+            return 0

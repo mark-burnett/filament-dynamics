@@ -1,0 +1,19 @@
+{
+"filename": "pollard_cleavage",
+
+"description": "Two stage simulation: growth, and depolymerization.",
+
+"_comment": "Blanchoin, Pollard, Biochemistry Vol 41 No 2 (2002)",
+
+"stages": [
+    {"name": "main",
+     "end_conditions": [
+         ["Duration", [40]]],
+     "data_collectors": [
+        ["LengthChange", []],
+        ["HydrolysisEventCount", [["t"], ["p"]]]],
+     "concentrations": [
+        [["t"], ["fixed_reagent", [6, 0.0112]]]]}],
+
+"initial_strand": ["single_state", [["d", "ds"], 535]]
+}
