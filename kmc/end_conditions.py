@@ -19,32 +19,34 @@
 
 import random
 
-__all__ = ['Duration', 'RandomDuration']
+__all__ = ['Duration', 'RandomDuration', 'StateLengthBelow']
 
 class Duration(object):
     __slots__ = ['duration']
-    def __init__(self, pub, duration):
+    def __init__(self, duration):
         self.duration = duration
 
-    def reset(self):
+    def initialize(self, pub, state):
         pass
 
-    def __call__(self, time, data):
+    def __call__(self, time, state):
         return time > self.duration
 
 class RandomDuration(Duration):
     __slots__ = ['max_duration']
-    def __init__(self, pub, max_duration):
+    def __init__(self, max_duration):
         self.max_duration = max_duration
 
-    def reset(self):
+    def initialize(self, pub, state):
         self.duration = random.uniform(0, self.max_duration)
 
-class DataLengthBelow(object):
+class StateLengthBelow(object):
     __slots__ = ['minimum_size']
-    def __init__(self, pub, minimum_size):
+    def __init__(self, minimum_size):
         self.minimum_size = minimum_size
-    def reset(self):
+
+    def initialize(self, pub, state):
         pass
-    def __call__(self, time, data):
-        return self.minimum_size > len(data)
+
+    def __call__(self, time, state):
+        return self.minimum_size > len(state)

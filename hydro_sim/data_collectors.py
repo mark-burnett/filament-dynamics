@@ -16,16 +16,15 @@
 import hydro_sim.transitions.events
 
 class LengthChange(object):
-    __slots__ = ['pub', 'repository', 'count']
-    def __init__(self, pub, repository):
-        self.pub        = pub
+    __slots__ = ['repository', 'count']
+    def __init__(self, repository):
         self.repository = repository
         self.count      = 0
 
-    def initialize(self, data):
-        self.pub.subscribe(self.increment,
+    def initialize(self, pub, strand):
+        pub.subscribe(self.increment,
                       hydro_sim.transitions.events.polymerization)
-        self.pub.subscribe(self.decrement,
+        pub.subscribe(self.decrement,
                       hydro_sim.transitions.events.depolymerization)
 
     def increment(self, event):
@@ -36,19 +35,18 @@ class LengthChange(object):
         self.count -= 1
         self.repository.append((event.time, self.count))
 
-class HydrolysisEventCount(object):
-    def __init__(self, pub, repository, old_states, new_states):
+class TransitionEventCount(object):
+    def __init__(self, repository, old_states, new_states):
         """
         old_states and new_states are containers of states.
         """
-        self.pub        = pub
         self.repository = repository
         self.old_states = old_states
         self.new_states = new_states
         self.count      = 0
 
-    def initialize(self, data):
-        self.pub.subscribe(self.increment,
+    def initialize(self, pub, strand):
+        pub.subscribe(self.increment,
                       hydro_sim.transitions.events.hydrolysis)
 
     def increment(self, event):

@@ -18,44 +18,38 @@ from hydro_sim.transitions import events
 __all__ = ['Barbed', 'Pointed']
 
 class GeneralFixedRate(object):
-    __slots__ = ['pub', 'state', 'rate', 'strand']
-    def __init__(self, pub, concentrations, state, rate):
+    __slots__ = ['pub', 'state', 'rate', 'strand', 'end_index']
+    def __init__(self, concentrations, state, rate):
         """
-        pub - publisher for transition events.
         concentrations - unused, but required for consistent interface
         state - state to depolymerize
         rate - depolymerization rate (constant)
         """
-        self.pub   = pub
         self.state = state
         self.rate  = rate
 
-    def initialize(self, strand):
+    def initialize(self, pub, strand):
+        self.pub    = pub
         self.strand = strand
 
     def perform(self, r):
         raise NotImplementedError()
 
+    @property
+    def R(self):
+        if self.state == self.strand[self.end_index]:
+            return self.rate
+        else:
+            return 0
+
 class Barbed(GeneralFixedRate):
+    self.end_index = -1
     def perform(self, r, time):
         self.pub.publish(events.depolymerization('barbed', self.strand.pop(),
                                                  time))
 
-    @property
-    def R(self):
-        if self.state == self.strand[-1]:
-            return self.rate
-        else:
-            return 0
-
 class Pointed(GeneralFixedRate):
+    self.end_index = 0
     def perform(self, r, time):
         self.pub.publish(events.depolymerization('pointed',
                                                  self.strand.popleft(), time))
-
-    @property
-    def R(self):
-        if self.state == self.strand[0]:
-            return self.rate
-        else:
-            return 0

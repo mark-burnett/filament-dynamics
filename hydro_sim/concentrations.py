@@ -16,6 +16,8 @@
 class Concentration(object):
     def __call__(self):
         raise NotImplementedError()
+    def initialize(self):
+        pass
     def update_poly(self, event):
         pass
     def update_depoly(self, event):
@@ -33,14 +35,17 @@ class zero_concentration(Concentration):
         return 0
 
 class fixed_reagent(Concentration):
-    __slots__ = ['monomer_conc', 'filament_tip_conc']
+    __slots__ = ['initial_concentration', 'monomer_conc', 'filament_tip_conc']
     def __init__(self, initial_concentration, filament_tip_conc):
-        self.monomer_conc      = initial_concentration
-        self.filament_tip_conc = filament_tip_conc
+        self.initial_concentration = initial_concentration
+        self.monomer_conc          = initial_concentration
+        self.filament_tip_conc     = filament_tip_conc
 
     def __call__(self):
         return self.monomer_conc
 
+    def initialize(self):
+        self.monomer_conc = self.initial_concentration
     def update_poly(self, event):
         self.monomer_conc -= self.filament_tip_conc
 

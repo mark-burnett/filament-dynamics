@@ -23,7 +23,7 @@ import bisect
 
 import math
 
-from util.generators import running_total
+import util
 
 __all__ = ['Simulation']
 
@@ -58,16 +58,16 @@ class Simulation(object):
         state = copy.copy(initial_state)
 
         # Initialize.
+        pub = util.observer.Publisher()
+        [t.initialize(pub, state) for t in self.transitions]
+        [m.initialize(pub, state) for m in self.measurements]
+        [e.initialize(pub, state) for e in self.ecs]
         time = 0
-        [t.initialize(state) for t in self.transitions]
-        [m.initialize(state) for m in self.measurements]
 
-        # Reset end conditions.
-        [e.reset() for e in self.ecs]
         while not any(e(time, state) for e in self.ecs):
             # Calculate partial sums of transition probabilities
             transition_R = [t.R for t in self.transitions]
-            running_R    = list(running_total(transition_R))
+            running_R    = list(util.generators.running_total(transition_R))
             total_R      = running_R[-1]
 
             # Update simulation time
@@ -79,5 +79,8 @@ class Simulation(object):
 
             # Perform transition
             self.transitions[j].perform(running_R[j] - r, time)
+
+            # Perform measurements
+            [m.perform(time, state) for m in self.measurements]
 
         return state

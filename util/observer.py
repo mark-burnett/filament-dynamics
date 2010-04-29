@@ -26,7 +26,8 @@ class Publisher(object):
         """
         Adds a "listener" for events of type "event_type."
         """
-        assert(callable(listener))
+        if not callable(listener) or type == type(listener):
+            raise RuntimeError('Invalid listener specified.')
         self.registry[event_type].add(listener)
 
     def unsubscribe(self, listener, event_type=None):
@@ -49,4 +50,8 @@ class Publisher(object):
 
     @property
     def events(self):
-        return self.registry.keys()
+        result = []
+        for e, listeners in self.registry.items():
+            if listeners:
+                result.append(e)
+        return result

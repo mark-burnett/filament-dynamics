@@ -22,4 +22,3 @@ def lookup_name(name, module):
 def make_factories(config_list, module):
     return [(lookup_name(name, module), args)
             for name, args in config_list]
-

@@ -21,21 +21,21 @@ class GeneralFixedRate(object):
     __slots__ = ['pub', 'rate', 'state', 'R', 'concentration', 'strand']
     def __init__(self, pub, concentrations, state, rate):
         """
-        'pub' is a publisher object,
         'concentrations' is a dictionary of the state concentration callables
         'rate' is the number per second per concentration of
         'state' that are added to the barbed end of the strand.
         """
         self.concentration = concentrations[state]
 
-        self.pub   = pub
         self.rate  = rate
         self.state = state
     
-    def initialize(self, strand):
+    def initialize(self, pub, strand):
+        self.pub    = pub
         self.strand = strand
+        self.concentration.initialize()
         if self.rate:
-            self.pub.subscribe(self.update_poly, events.polymerization)
+            self.pub.subscribe(self.update_poly,   events.polymerization)
             self.pub.subscribe(self.update_depoly, events.depolymerization)
 
     def update_poly(self, event):

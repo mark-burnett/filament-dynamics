@@ -22,15 +22,15 @@ __all__ = ['Hydrolysis']
 class Hydrolysis(object):
     __slots__ = ['pub', 'predicate', 'rate', 'new_state', 'offset',
                  'strand', 'indices', 'R']
-    def __init__(self, pub, predicate, rate, new_state):
-        self.pub       = pub
+    def __init__(self, predicate, rate, new_state):
         self.predicate = predicate
         self.rate      = rate
         self.new_state = new_state
         self.offset    = 0
 
-    def initialize(self, strand):
-        self.strand = strand
+    def initialize(self, pub, strand):
+        self.pub     = pub
+        self.strand  = strand
         self.indices = set(i for i in xrange(len(self.strand))
                              if self.predicate(self.strand, i))
         self.R = self.rate * len(self.indices)
