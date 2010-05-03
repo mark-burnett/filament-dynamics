@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2009 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,21 +13,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import copy
-import kmc.simulation
+class StateMeasurement(object):
+    __slots__ = ['label', 'data']
+    def __init__(self, label):
+        self.label = label
 
-__all__ = ['simulation']
+    def initialize(self, pub, state):
+        self.data = []
+        self.perform(0, state)
+    
+    def perform(self, time, state):
+        self.data.append((time, self.function(time, state)))
 
-def simulation(transitions, end_conditions, measuremets):
-    while True:
-        trans_copy = copy.deepcopy(transitions)
-        ec_copy    = copy.deepcopy(end_conditions)
-        meas_copy  = copy.deepcopy(measuremets)
+    def function(self, time, state):
+        raise NotImplementedError()
 
-        # Construct simulation.
-        yield kmc.simulation.Simulation(tc_copy, meas_copy, ec_copy)
-
-def sequence(simulation_generators):
-    while True:
-        yield kmc.simulation.SimulationSequence(
-                [sg() for sg in simulation_generators])
+class Length(StateMeasurement):
+    def function(self, time, state):
+        return len(state)

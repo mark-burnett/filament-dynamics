@@ -17,9 +17,8 @@ import generators
 import introspection
 import mp_sim
 import observer
-import ordered_set
 import states
 import functional
 
-__all__ = ['generators', 'introspection', 'mp_sim', 'observer', 'ordered_set',
+__all__ = ['generators', 'introspection', 'mp_sim', 'observer',
            'states', 'functional']

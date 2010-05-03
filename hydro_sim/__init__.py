@@ -18,7 +18,7 @@
 strand polymerization.
 """
 
-import data_collectors
+import measurements
 import concentrations
 import transitions
 

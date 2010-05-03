@@ -19,7 +19,7 @@ __all__ = ['Barbed', 'Pointed']
 
 class GeneralFixedRate(object):
     __slots__ = ['pub', 'rate', 'state', 'R', 'concentration', 'strand']
-    def __init__(self, pub, concentrations, state, rate):
+    def __init__(self, concentrations, state, rate):
         """
         'concentrations' is a dictionary of the state concentration callables
         'rate' is the number per second per concentration of

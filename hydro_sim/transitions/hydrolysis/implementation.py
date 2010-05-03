@@ -85,7 +85,7 @@ class Hydrolysis(object):
             return self._update_indices(pos - 1)
         else:
             raise NotImplementedError()
-            # XXX this code is wrong for sure.
+            # XXX These two lines may be out of order.
+            self.indices.discard(-self.offset)
             self.offset -= 1
-            self.indices.discard(0)
             self._update_indices(0)

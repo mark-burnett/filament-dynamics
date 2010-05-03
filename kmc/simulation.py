@@ -60,7 +60,7 @@ class Simulation(object):
         # Initialize.
         pub = util.observer.Publisher()
         [t.initialize(pub, state) for t in self.transitions]
-        [m.initialize(pub, state) for m in self.measurements]
+        [m.initialize(pub, state) for m in self.measurements.values()]
         [e.initialize(pub, state) for e in self.ecs]
         time = 0
 
@@ -83,4 +83,16 @@ class Simulation(object):
             # Perform measurements
             [m.perform(time, state) for m in self.measurements]
 
-        return state
+        return state, dict((name, m.data)
+                           for name, m in self.measurements.items())
+
+class SimulationSequence(object):
+    def __init__(self, simulations):
+        self.simulations = simulations
+
+    def __call__(self, initial_state):
+        state   = initial_state
+        results = []
+        for s in self.simulations:
+            state, data = s(state)
+            results.append(data)
