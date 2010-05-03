@@ -26,7 +26,10 @@ class Concentration(object):
 class fixed_concentration(Concentration):
     __slots__ = ['conc']
     def __init__(self, conc):
+        if conc < 0:
+            raise ValueError('Negative concentrations not allowed.')
         self.conc = conc
+
     def __call__(self):
         return self.conc
 
@@ -46,6 +49,7 @@ class fixed_reagent(Concentration):
 
     def initialize(self):
         self.monomer_conc = self.initial_concentration
+
     def update_poly(self, event):
         self.monomer_conc -= self.filament_tip_conc
 

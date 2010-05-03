@@ -22,13 +22,13 @@ class TransitionEventCount(object):
         """
         old_states and new_states are containers of states.
         """
-        self.label       = label
+        self.label      = label
         self.old_states = old_states
         self.new_states = new_states
         self.count      = 0
 
     def initialize(self, pub, strand):
-        self.data       = []
+        self.data = []
         pub.subscribe(self.increment,
                       hydro_sim.transitions.events.hydrolysis)
 
