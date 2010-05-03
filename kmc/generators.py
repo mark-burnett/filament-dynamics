@@ -25,9 +25,9 @@ def simulation(transitions, end_conditions, measuremets):
         meas_copy  = copy.deepcopy(measuremets)
 
         # Construct simulation.
-        yield kmc.simulation.Simulation(tc_copy, meas_copy, ec_copy)
+        yield kmc.simulation.Simulation(trans_copy, meas_copy, ec_copy)
 
 def sequence(simulation_generators):
     while True:
         yield kmc.simulation.SimulationSequence(
-                [sg() for sg in simulation_generators])
+                [next(sg) for sg in simulation_generators])

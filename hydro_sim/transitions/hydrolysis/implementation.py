@@ -20,8 +20,8 @@ from hydro_sim.transitions import events
 __all__ = ['Hydrolysis']
 
 class Hydrolysis(object):
-    __slots__ = ['pub', 'predicate', 'rate', 'new_state', 'offset',
-                 'strand', 'indices', 'R']
+#    __slots__ = ['pub', 'predicate', 'rate', 'new_state', 'offset',
+#                 'strand', 'indices', 'R']
     def __init__(self, predicate, rate, new_state):
         self.predicate = predicate
         self.rate      = rate

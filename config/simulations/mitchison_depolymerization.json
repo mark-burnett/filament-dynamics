@@ -9,7 +9,7 @@
     {"name": "growth",
      "end_conditions": [
          ["RandomDuration", [60]]],
-     "measurements": [],
+     "measurements": {},
      "concentrations": [
          [["t"], ["fixed_concentration", [3]]]]},
     {"name": "depolymerization",

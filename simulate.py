@@ -57,25 +57,20 @@ def hydrolysis(model_file, simulation_file,
     simulation_config = json.load(open(simulation_file))
 
     # Construct simulation
-    sim_generator = hydro_sim.factories.full_simulation_generator(model_config,
-            simulation_config)
+    sim_generator = hydro_sim.factories.make_simulation(model_config,
+                                                   simulation_config)
 
     # Construct initial strand
     initial_strand_config = simulation_config['initial_strand']
-    strand_generator = hydro_sim.factories.strand(initial_strand_config,
+    strand_generator = hydro_sim.factories.make_strand(initial_strand_config,
                                                   model_config)
 
-    sims, data = zip(*list(itertools.islice(sim_generator, N)))
-    strands    = list(itertools.islice(strand_generator, N))
     # Run simulation
     if 1 == processes:
-#        sims, data = zip(*list(itertools.islice(sim_generator, N)))
-#        strands    = itertools.islice(strand_generator, N)
-        [sim(strand) for sim, strand in itertools.izip(sims, strands)]
+        data = [sim(strand)
+                for sim, strand in itertools.islice(itertools.izip(sim_generator,
+                                                      strand_generator), N)]
     else:
-#        containers = [sim_container(s, d, t)
-#                      for s, d, t in itertools.izip(sims, data, strands)]
-                
         util.mp_sim.multi_map(sims, strands, processes)
 
     # Construct output filename

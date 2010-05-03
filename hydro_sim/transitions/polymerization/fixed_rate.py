@@ -18,7 +18,7 @@ from hydro_sim.transitions import events
 __all__ = ['Barbed', 'Pointed']
 
 class GeneralFixedRate(object):
-    __slots__ = ['pub', 'rate', 'state', 'R', 'concentration', 'strand']
+#    __slots__ = ['pub', 'rate', 'state', 'concentration', 'strand']
     def __init__(self, concentrations, state, rate):
         """
         'concentrations' is a dictionary of the state concentration callables

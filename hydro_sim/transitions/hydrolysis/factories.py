@@ -16,5 +16,5 @@
 import predicates
 from implementation import Hydrolysis
 
-def Random(pub, concentrations, old_state, rate, new_state):
-    return Hydrolysis(pub, predicates.Random(old_state), rate, new_state)
+def Random(concentrations, old_state, rate, new_state):
+    return Hydrolysis(predicates.Random(old_state), rate, new_state)
