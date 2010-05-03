@@ -78,7 +78,7 @@ class Simulation(object):
             j = bisect.bisect_left(running_R, r)
 
             # Perform transition
-            self.transitions[j].perform(running_R[j] - r, time)
+            self.transitions[j].perform(time, running_R[j] - r)
 
             # Perform measurements
             [m.perform(time, state) for m in self.measurements]
@@ -95,3 +95,4 @@ class SimulationSequence(object):
         for s in self.simulations:
             state, data = s(state)
             results.append(data)
+        return results

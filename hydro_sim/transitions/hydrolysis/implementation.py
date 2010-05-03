@@ -41,7 +41,7 @@ class Hydrolysis(object):
                            events.depolymerization)
         self.pub.subscribe(self._update_hydrolysis, events.hydrolysis)
 
-    def perform(self, r, time):
+    def perform(self, time, r):
         # XXX Speed limiting
         # Figure out what part of the strand to update
         set_index = int(r/self.rate)

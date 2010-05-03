@@ -24,6 +24,8 @@ __all__ = ['Duration', 'RandomDuration', 'StateLengthBelow']
 class Duration(object):
     __slots__ = ['duration']
     def __init__(self, duration):
+        if duration <= 0:
+            raise ValueError('Illegal duration.')
         self.duration = duration
 
     def initialize(self, pub, state):
@@ -35,6 +37,8 @@ class Duration(object):
 class RandomDuration(Duration):
     __slots__ = ['max_duration']
     def __init__(self, max_duration):
+        if max_duration <= 0:
+            raise ValueError('Illegal max_duration.')
         self.max_duration = max_duration
 
     def initialize(self, pub, state):

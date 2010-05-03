@@ -27,5 +27,10 @@ class ComposeTest(unittest.TestCase):
             for c, end in zip(sequences, evs):
                 self.assertEqual(end, c(start))
 
+def suite():
+    s = unittest.TestSuite()
+    s.addTest(ComposeTest('test_compose'))
+    return s
+
 if '__main__' == __name__:
     unittest.main()

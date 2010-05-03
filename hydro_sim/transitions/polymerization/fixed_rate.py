@@ -46,7 +46,7 @@ class GeneralFixedRate(object):
         if event.state == self.state:
             self.concentration.update_depoly(event)
 
-    def perform(self, r):
+    def perform(self, time, r):
         raise NotImplementedError()
 
     @property
@@ -54,11 +54,11 @@ class GeneralFixedRate(object):
         return self.rate * self.concentration()
 
 class Barbed(GeneralFixedRate):
-    def perform(self, r, time):
+    def perform(self, time, r):
         self.strand.append(self.state)
         self.pub.publish(events.polymerization('barbed', self.state, time))
 
 class Pointed(GeneralFixedRate):
-    def perform(self, r, time):
+    def perform(self, time, r):
         self.strand.appendleft(self.state)
         self.pub.publish(events.polymerization('pointed', self.state, time))

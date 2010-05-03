@@ -13,9 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class StateMeasurement(object):
+class Length(object):
     __slots__ = ['label', 'data']
     def __init__(self, label):
+        self.data = []
         self.label = label
 
     def initialize(self, pub, state):
@@ -23,11 +24,4 @@ class StateMeasurement(object):
         self.perform(0, state)
     
     def perform(self, time, state):
-        self.data.append((time, self.function(time, state)))
-
-    def function(self, time, state):
-        raise NotImplementedError()
-
-class Length(StateMeasurement):
-    def function(self, time, state):
-        return len(state)
+        self.data.append((time, len(state)))
