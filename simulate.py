@@ -31,16 +31,6 @@ import baker
 import hydro_sim
 import util.mp_sim
 
-class sim_container(object):
-    def __init__(self, run, repository, strand):
-        self.run = run
-        self.repository = repository
-        self.strand = strand
-
-    def __call__(self):
-        self.run(self.strand)
-        return self.repository
-
 @baker.command(default=True)
 def hydrolysis(model_file, simulation_file,
                N=100, processes=0,
@@ -63,13 +53,13 @@ def hydrolysis(model_file, simulation_file,
     # Construct initial strand
     initial_strand_config = simulation_config['initial_strand']
     strand_generator = hydro_sim.factories.make_strand(initial_strand_config,
-                                                  model_config)
+                                                       model_config['states'])
 
     # Run simulation
     if 1 == processes:
         data = [sim(strand)
-                for sim, strand in itertools.islice(itertools.izip(sim_generator,
-                                                      strand_generator), N)]
+                for sim, strand in itertools.islice(
+                    itertools.izip(sim_generator, strand_generator), N)]
     else:
         data = util.mp_sim.multi_map(itertools.islice(sim_generator, N),
                                      strand_generator, processes)

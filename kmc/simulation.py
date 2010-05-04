@@ -57,6 +57,11 @@ class Simulation(object):
         """
         state = copy.copy(initial_state)
 
+        # XXX Aliases for a small speedup.
+        ru  = random.uniform
+        ml  = math.log
+        bbl = bisect.bisect_left
+
         # Initialize.
         pub = util.observer.Publisher()
         [t.initialize(pub, state) for t in self.transitions]
@@ -71,11 +76,11 @@ class Simulation(object):
             total_R      = running_R[-1]
 
             # Update simulation time
-            time += math.log(1/random.uniform(0, 1)) / total_R
+            time += ml(1/ru(0, 1)) / total_R
 
             # Figure out which transition to perform
-            r = random.uniform(0, total_R)
-            j = bisect.bisect_left(running_R, r)
+            r = ru(0, total_R)
+            j = bbl(running_R, r)
 
             # Perform transition
             self.transitions[j].perform(time, running_R[j] - r)

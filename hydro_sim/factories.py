@@ -70,7 +70,7 @@ def make_measurements(measurements_config):
                 hydro_sim.measurements)(label, *args)
             for label, (name, args) in measurements_config.items()]
 
-def make_strand(initial_strand_config, model_config):
+def make_strand(initial_strand_config, model_states):
     name, args = initial_strand_config
     f = util.introspection.lookup_name(name, hydro_sim.strand)
-    return f(model_config['states'], *args)
+    return f(model_states, *args)

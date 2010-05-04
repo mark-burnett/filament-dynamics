@@ -20,8 +20,8 @@ from hydro_sim.transitions import events
 __all__ = ['Hydrolysis']
 
 class Hydrolysis(object):
-#    __slots__ = ['pub', 'predicate', 'rate', 'new_state', 'offset',
-#                 'strand', 'indices', 'R']
+    __slots__ = ['pub', 'predicate', 'rate', 'new_state', 'offset',
+                 'strand', 'indices', 'R']
     def __init__(self, predicate, rate, new_state):
         self.predicate = predicate
         self.rate      = rate
@@ -45,6 +45,7 @@ class Hydrolysis(object):
         # XXX Speed limiting
         # Figure out what part of the strand to update
         set_index = int(r/self.rate)
+        # XXX it's probably this statement that is speed limiting.
         set_value = list(self.indices)[set_index]
         full_index = set_value + self.offset
 
@@ -56,7 +57,7 @@ class Hydrolysis(object):
         self.pub.publish(events.hydrolysis(old_state, self.new_state, full_index, time))
 
     def _update_indices(self, position):
-        # XXX Speed limiting
+        # XXX This statement is speed limiting
         effected_indices = xrange(position - self.offset
                                       - self.predicate.pointed_range,
                                   position - self.offset
