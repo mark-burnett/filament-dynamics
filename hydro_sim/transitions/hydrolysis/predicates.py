@@ -42,17 +42,3 @@ class Cooperative(object):
             return False
         return (self.state == strand[index] and
                 self.neighbor == strand[index - 1])
-
-class SingleIndex(object):
-    __slots__ = ['state', 'index', 'barbed_range', 'pointed_range']
-    def __init__(self, state, index):
-        self.state = state
-        self.index = index
-        self.barbed_range  = 0
-        self.pointed_range = 0
-
-    def __call__(self, strand, index):
-        if index > len(strand):
-            return False
-        return (self.index == index and
-                self.state == strand[index])

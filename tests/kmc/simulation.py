@@ -70,14 +70,30 @@ class SimulationTest(unittest.TestCase):
         transitions  = [MockTransition( 1, 1),
                         MockTransition(-1, 1)]
         measurements = []
-        ecs          = [MockEndCondition(10000)]
+        ecs          = [MockEndCondition(1000)]
 
         sim = simulation.Simulation(transitions, measurements, ecs)
 
-        final_state, data = sim.run([10000])
+        final_state, data = sim.run([1000])
 
-        self.assertTrue(final_state[0] < 10201)
-        self.assertTrue(final_state[0] > 9799)
+        self.assertTrue(final_state[0] < 1064)
+        self.assertTrue(final_state[0] > 936)
+
+    def test_unbalanced_transition_stochastic(self):
+        """
+        NOTE: This test is probabilistic.
+        """
+        transitions  = [MockTransition( 1, 1),
+                        MockTransition(-1, 0.5)]
+        measurements = []
+        ecs          = [MockEndCondition(1000)]
+
+        sim = simulation.Simulation(transitions, measurements, ecs)
+
+        final_state, data = sim.run([1000])
+
+        self.assertTrue(final_state[0] < 1397)
+        self.assertTrue(final_state[0] > 1270)
 
     def test_triple_transition_stochastic(self):
         """
@@ -87,14 +103,14 @@ class SimulationTest(unittest.TestCase):
                         MockTransition(-1, 0.5),
                         MockTransition(-1, 0.5)]
         measurements = []
-        ecs          = [MockEndCondition(10000)]
+        ecs          = [MockEndCondition(1000)]
 
         sim = simulation.Simulation(transitions, measurements, ecs)
 
-        final_state, data = sim.run([10000])
+        final_state, data = sim.run([1000])
 
-        self.assertTrue(final_state[0] < 10201)
-        self.assertTrue(final_state[0] > 9799)
+        self.assertTrue(final_state[0] < 1064)
+        self.assertTrue(final_state[0] > 936)
 
     def test_typical_sequence(self):
         transitions1 = [MockTransition( 1, 1)]
