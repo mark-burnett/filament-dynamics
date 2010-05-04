@@ -71,7 +71,8 @@ def hydrolysis(model_file, simulation_file,
                 for sim, strand in itertools.islice(itertools.izip(sim_generator,
                                                       strand_generator), N)]
     else:
-        util.mp_sim.multi_map(sims, strands, processes)
+        data = util.mp_sim.multi_map(itertools.islice(sim_generator, N),
+                                     strand_generator, processes)
 
     # Construct output filename
     if output_file:
