@@ -1,0 +1,20 @@
+{
+"filename": "random_conformation_adp",
+
+"description": "The group's first real model.  ADP has 2 conformations which randomly change.",
+
+"_comment": "du is the unstable (fast depolymerizing) ADP state, ds is the stable one.",
+"states": ["t", "p", "du", "ds"],
+
+"transitions": [
+    [  "polymerization.fixed_rate.Barbed", ["t", 11.6]],
+    [  "polymerization.fixed_rate.Barbed", ["p",  3.4]],
+    [  "polymerization.fixed_rate.Barbed", ["d",  2.9]],
+    ["depolymerization.fixed_rate.Barbed", ["t",  1.4]],
+    ["depolymerization.fixed_rate.Barbed", ["p",  0.2]],
+    ["depolymerization.fixed_rate.Barbed", ["du", 5.4]],
+    ["hydrolysis.Random", ["t",   0.3,   "p"]],
+    ["hydrolysis.Random", ["p",  0.003,  "du"]],
+    ["hydrolysis.Random", ["du", 1.3e-3, "ds"]],
+    ["hydrolysis.Random", ["ds", 4.5e-3, "du"]]]
+}

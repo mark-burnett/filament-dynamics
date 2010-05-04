@@ -18,3 +18,7 @@ from implementation import Hydrolysis
 
 def Random(concentrations, old_state, rate, new_state):
     return Hydrolysis(predicates.Random(old_state), rate, new_state)
+
+def Cooperative(concentrations, old_state, pointed_neighbor, rate, new_state)
+    return Hydrolysis(predicates.Cooperative(old_state, pointed_neighbor),
+                      rate, new_state)

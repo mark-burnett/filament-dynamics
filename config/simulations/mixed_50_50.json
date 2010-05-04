@@ -1,32 +1,21 @@
 {
-"simulation_name": "mixed_50_50",
-"long_description": "Phosphate release of mixed ADP and ATP G-actin polymerization.",
+"filename": "mixed_50_50",
 
-"_comment": "Pieper and Wegner, Biochemistry, Vol 35, No 14, 1996",
+"description": "Mixed ATP/ADP polymerization."
 
-"stage_sequence": ["main"],
+"_comment": "Pieper & Wegner, Biochemistry, Vol 35, No 14, 1996",
 
-"stages": {
-    "main":{
-        "duration": 600,
-        "end_conditions":[["duration", 600]],
-        "data_collectors":["simulation_time",
-                           "strand_length",
-                           "cleavage_events",
-                           "release_events"],
-        "polymerization":{"t":{"type": "fixed_reagent",
-                               "monomer_concentration": 3,
-                               "filament_tip_concentration": 0.0112},
-                          "du":{"type": "fixed_reagent",
-                                "monomer_concentration": 3,
-                                "filament_tip_concentration": 0.0112}}}},
+"stages": [
+    {"name": "main",
+     "end_conditions": [
+         ["Duration", [600]],
+         ["StateLengthBelow", [1]]],
+     "measurements": {
+        "length": ["Length", []],
+        "phosphate_cleavage": ["TransitionEventCount", [["t"], ["p"]]]},
+        "phosphate_release":  ["TransitionEventCount", [["p"], ["d", "du", "ds"]]]},
+     "concentrations": [[["t"],       "fixed_reagent", [3, 0.0112]],
+                        [["d", "du"], "fixed_reagent", [3, 0.0112]]]}],
 
-"barbed_end":  true,
-"pointed_end": false,
-
-"additional_arguments": {"barbed_end": true, "pointed_end": false,
-                         "filament_tip_concentration": 0.0112},
-
-"initial_size": 535,
-"seed_state": "inactive"
+"initial_strand": ["single_state", [["d", "ds"], 535]]
 }

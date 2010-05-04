@@ -1,22 +1,18 @@
 {
-"long_description": "Strongly correlated hydrolysis, strongly correlated release.",
-"short_description": "Lipowsky Model",
+"filename": "lipowsky",
 
-"model_type": "cooperative",
+"description": "Li-Lipowsky model",
 
-"seed_states":{"active": "t", "beginning": "t", "inactive": "d"},
+"states": ["t", "p", "d"],
 
-"parameters": {
-    "_comment": "These parameters are from Li/Lipowsky.",
-
-    "barbed_polymerization":   {"t": 11.6},
-    "barbed_depolymerization": {"t": 2.2, "p": 0.1, "d": 2.7},
-
-    "hydrolysis_rates": {"t":{"t": [3e-6,    "p"],
-                              "p": [1,       "p"],
-                              "d": [1,       "p"]},
-                         "p":{"t": [1.14e-6, "d"],
-                              "p": [1.14e-6, "d"],
-                              "d": [0.57,    "d"]}}
-    }
+"transitions": [
+    [  "polymerization.fixed_rate.Barbed", ["t", 11.6]],
+    ["depolymerization.fixed_rate.Barbed", ["t",  2.2]],
+    ["depolymerization.fixed_rate.Barbed", ["p",  0.1]],
+    ["depolymerization.fixed_rate.Barbed", ["d",  2.7]],
+    ["hydrolysis.Random", ["t", 3.00e-6, "p"]],
+    ["hydrolysis.Random", ["p", 1.14e-6, "d"]],
+    ["hydrolysis.Cooperative", ["t", "p", 1.0,  "p"]],
+    ["hydrolysis.Cooperative", ["t", "d", 1.0,  "p"]],
+    ["hydrolysis.Cooperative", ["p", "d", 0.57, "d"]]]
 }
