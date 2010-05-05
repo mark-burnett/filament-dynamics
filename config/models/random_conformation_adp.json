@@ -13,6 +13,7 @@
     ["depolymerization.fixed_rate.Barbed", ["t",  1.4]],
     ["depolymerization.fixed_rate.Barbed", ["p",  0.2]],
     ["depolymerization.fixed_rate.Barbed", ["du", 5.4]],
+    ["depolymerization.fixed_rate.Barbed", ["ds", 0.1]],
     ["hydrolysis.Random", ["t",   0.3,   "p"]],
     ["hydrolysis.Random", ["p",  0.003,  "du"]],
     ["hydrolysis.Random", ["du", 1.3e-3, "ds"]],

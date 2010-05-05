@@ -28,7 +28,7 @@ class TransitionEventCount(object):
         self.count      = 0
 
     def initialize(self, pub, strand):
-        self.data = []
+        self.data = [(0, 0)]
         pub.subscribe(self.increment,
                       hydro_sim.transitions.events.hydrolysis)
 
@@ -40,3 +40,21 @@ class TransitionEventCount(object):
             event.new_state in self.new_states):
             self.count += 1
             self.data.append((event.time, self.count))
+
+class TipState(object):
+    __slots__ = ['label', 'index', 'data']
+    def __init__(self, label, end):
+        self.label = label
+        if 'barbed' == end.lower():
+            self.index = -1
+        elif 'pointed' == end.lower():
+            self.index = 0
+        else:
+            raise RuntimeError('Illegal end specified.')
+
+    def initialize(self, pub, strand):
+        self.data = []
+        self.perform(0, strand)
+
+    def perform(self, time, strand):
+        self.data.append((time, strand[self.index]))

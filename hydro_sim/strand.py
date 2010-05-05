@@ -15,9 +15,16 @@
 
 import util
 import itertools
+import random
 
 def single_state(model_states, simulation_states, size):
     state = util.states.match(model_states, simulation_states)
     while True:
         # XXX watch out for the list/deque problem (pointed end effects)
         yield list(itertools.repeat(state, size))
+
+def random_states(model_states, simulation_states, size):
+    states = [util.states.match(model_states, s) for s in simulation_states]
+    while True:
+        # XXX watch out for the list/deque problem (pointed end effects)
+        yield [random.choice(states) for n in xrange(size)]

@@ -1,0 +1,16 @@
+{
+"filename": "steady_state",
+
+"description": "Monitor the tip state in steady-state.",
+
+"stages": [
+    {"name": "main",
+     "end_conditions": [
+         ["Duration", [3000]],
+         ["StateLengthBelow", [1]]],
+     "measurements": {
+        "tip_state": ["TipState", ["barbed"]]},
+     "concentrations": []}],
+
+"initial_strand": ["random_states", [[["ds"], ["du"]], 3000]]
+}
