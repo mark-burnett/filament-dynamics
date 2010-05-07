@@ -58,15 +58,13 @@ class Hydrolysis(object):
 
     def _update_indices(self, position):
         # XXX This statement is speed limiting
-        effected_indices = xrange(position - self.offset
-                                      - self.predicate.pointed_range,
-                                  position - self.offset
-                                      + self.predicate.barbed_range + 1)
+        effected_indices = xrange(position - self.predicate.pointed_range,
+                                  position + self.predicate.barbed_range + 1)
         for i in effected_indices:
             if self.predicate(self.strand, i):
-                self.indices.add(i)
+                self.indices.add(i - self.offset)
             else:
-                self.indices.discard(i)
+                self.indices.discard(i - self.offset)
         self.R = self.rate * len(self.indices)
 
     def _update_hydrolysis(self, event):
@@ -76,6 +74,7 @@ class Hydrolysis(object):
         if 'barbed' == event.end:
             self._update_indices(len(self.strand)-1)
         else:
+            raise NotImplementedError()
             self.offset += 1
             self._update_indices(0)
 

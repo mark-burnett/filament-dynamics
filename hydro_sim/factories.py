@@ -45,13 +45,11 @@ def make_stage(model_config, stage_config):
 
 def make_concentrations(model_states, concentrations_config):
     conc_dict = {}
-    if concentrations_config:
-        config_states, config_functions = zip(*concentrations_config)
-        states = [util.states.match(model_states, cs) for cs in config_states]
-        factories = util.introspection.make_factories(config_functions,
-                                                      hydro_sim.concentrations)
-        conc_dict = dict((state, f(*args))
-                         for state, (f, args) in zip(states, factories))
+    for config_states, (config_function, config_args) in concentrations_config:
+        state = util.states.match(model_states, config_states)
+        f = util.introspection.lookup_name(config_function,
+                                           hydro_sim.concentrations)
+        conc_dict[state] = f(*config_args)
     return collections.defaultdict(hydro_sim.concentrations.zero_concentration,
                                    conc_dict)
 
