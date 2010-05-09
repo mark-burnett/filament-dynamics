@@ -14,7 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from kmc.measurements import *
-import hydro_sim.transitions.events
+from . import events
 
 class TransitionEventCount(object):
     __slots__ = ['data', 'label', 'old_states', 'new_states', 'count']
@@ -29,8 +29,7 @@ class TransitionEventCount(object):
 
     def initialize(self, pub, strand):
         self.data = [(0, 0)]
-        pub.subscribe(self.increment,
-                      hydro_sim.transitions.events.hydrolysis)
+        pub.subscribe(self.increment, events.state_change)
 
     def perform(self, time, strand):
         pass

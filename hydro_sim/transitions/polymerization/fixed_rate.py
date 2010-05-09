@@ -13,52 +13,37 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from hydro_sim.transitions import events
+from hydro_sim import events
 
-__all__ = ['Barbed', 'Pointed']
+__all__ = ['Barbed']
 
 class GeneralFixedRate(object):
-    __slots__ = ['pub', 'rate', 'state', 'concentration', 'strand']
-    def __init__(self, concentrations, state, rate):
+    __slots__ = ['rate', 'state', '_R', '_updated']
+    def __init__(self, state, rate):
         """
-        'concentrations' is a dictionary of the state concentration callables
-        'rate' is the number per second per concentration of
         'state' that are added to the barbed end of the strand.
+        'rate' is the number per second per concentration of
         """
-        self.concentration = concentrations[state]
-
-        self.rate  = rate
         self.state = state
+        self.rate  = rate
+        self._updated = True
 
     def initialize(self, pub, strand):
-        self.pub    = pub
-        self.strand = strand
-        self.concentration.initialize()
-        if self.rate:
-            self.pub.subscribe(self.update_poly,   events.polymerization)
-            self.pub.subscribe(self.update_depoly, events.depolymerization)
+        pub.subscribe(self._updated_concentration, events.concentration_change)
 
-    def update_poly(self, event):
-        if event.state == self.state:
-            self.concentration.update_poly(event)
+    def _updated_concentration(self, event):
+        if self.state == event.state:
+            self._updated = True
 
-    def update_depoly(self, event):
-        if event.state == self.state:
-            self.concentration.update_depoly(event)
+    def R(self, strand):
+        if self._updated:
+            self._updated = False
+            self._R = self.rate * strand.concentrations[self.state].value()
+        return self._R
 
-    def perform(self, time, r):
+    def perform(self, time, strand, r):
         raise NotImplementedError()
 
-    @property
-    def R(self):
-        return self.rate * self.concentration()
-
 class Barbed(GeneralFixedRate):
-    def perform(self, time, r):
-        self.strand.append(self.state)
-        self.pub.publish(events.polymerization('barbed', self.state, time))
-
-class Pointed(GeneralFixedRate):
-    def perform(self, time, r):
-        self.strand.appendleft(self.state)
-        self.pub.publish(events.polymerization('pointed', self.state, time))
+    def perform(self, time, strand, r):
+        strand.append(self.state)

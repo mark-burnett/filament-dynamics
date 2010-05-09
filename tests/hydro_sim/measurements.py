@@ -4,7 +4,7 @@ from hydro_sim import measurements
 
 # Use a real publisher object
 from util import observer
-from hydro_sim.transitions import events
+from hydro_sim import events
 
 class MeasurementTest(unittest.TestCase):
     def test_typical_transition_event_counter(self):
@@ -14,15 +14,15 @@ class MeasurementTest(unittest.TestCase):
         pub = observer.Publisher()
         tc.initialize(pub, None)
 
-        test_events = [events.hydrolysis('t', 'p', None, None),
-                       events.hydrolysis('p', 'p', None, None),
-                       events.hydrolysis('p', 'd', None, None),
-                       events.hydrolysis('d', 'd', None, None),
-                       events.hydrolysis('d', 'p', None, None),
-                       events.hydrolysis('d', 't', None, None),
-                       events.hydrolysis('s', 's', None, None),
-                       events.hydrolysis('a', 'b', None, None),
-                       events.hydrolysis( 1,   2,  None, None)]
+        test_events = [events.state_change(None, 't', 'p', None),
+                       events.state_change(None, 'p', 'p', None),
+                       events.state_change(None, 'p', 'd', None),
+                       events.state_change(None, 'd', 'd', None),
+                       events.state_change(None, 'd', 'p', None),
+                       events.state_change(None, 'd', 't', None),
+                       events.state_change(None, 's', 's', None),
+                       events.state_change(None, 'a', 'b', None),
+                       events.state_change(None,  1,   2 , None)]
         counts = [1, 2, 3, 3, 3, 3, 3, 3, 3]
         for e, count in zip(test_events, counts):
             pub.publish(e)

@@ -14,31 +14,53 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Random(object):
-    __slots__ = ['state', 'barbed_range', 'pointed_range', 'exclude_ends']
-    def __init__(self, state, exclude_ends=0):
+    __slots__ = ['state']
+    def __init__(self, state):
         self.state = state
-        self.barbed_range  = 0
-        self.pointed_range = 0
-        self.exclude_ends  = exclude_ends
 
-    def __call__(self, strand, index):
-        if (self.exclude_ends > index or
-            len(strand) - self.exclude_ends <= index):
-            return False
-        return self.state == strand[index]
+    def full_count(self, strand):
+        return len(strand.indices[self.state])
 
-class Cooperative(object):
-    __slots__ = ['state', 'neighbor', 'barbed_range', 'pointed_range']
+    def update_vicinity(self, index, strand, old_state):
+        if strand[index] == self.state:
+            return 1
+        elif old_state == self.state:
+            return -1
+        return 0
+
+class PointedNeighbor(object):
     def __init__(self, state, pointed_neighbor):
         self.state    = state
         self.neighbor = pointed_neighbor
-        self.barbed_range  = 1
-        self.pointed_range = 0
 
-    def __call__(self, strand, index):
-        if len(strand) <= index:
-            return False
-        if 0 == index:
-            return False
-        return (self.state == strand[index] and
-                self.neighbor == strand[index - 1])
+    def full_count(self, strand):
+        count = 0
+        for i in strand.indices[self.state]:
+            try:
+                if self.neighbor == strand[i - 1]:
+                    count += 1
+            except IndexError:
+                pass
+        return count
+
+    def update_vicinity(self, index, strand, old_state):
+        count = 0
+        try:
+            if self.neighbor == strand[index - 1]:
+                if strand[index] == self.state:
+                    count += 1
+                elif old_state == self.state:
+                    count -= 1
+        except IndexError:
+            pass
+
+        try:
+            if self.state == strand[index + 1]:
+                if self.neighbor == strand[index]:
+                    count += 1
+                elif self.neighbor == old_state:
+                    count -= 1
+        except IndexError:
+            pass
+
+        return count

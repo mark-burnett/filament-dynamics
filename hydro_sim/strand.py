@@ -17,7 +17,9 @@ import util
 import itertools
 import random
 
-def MySuperStrand(object):
+from hydro_sim import events
+
+def State(object):
     # contains states of positions
     # contains positions of states
     # contains concentrations (or # available subunits)
@@ -31,57 +33,43 @@ def MySuperStrand(object):
 
     # third allows polymerization/depolymerization transitions
 
-    class Concentrations(object):
-        __slots__ = ['_free_monomers', '_ftc']
-        def __init__(self, free_monomers, ftc):
-            self._free_monomers = free_monomers
-            self._ftc           = ftc
-
-        def __getitem__(self, state):
-            return self._ftc * self._free_monomers[state]
-
-    def __init__(self, allowed_states, initial_strand, initial_concentrations,
-                 filament_tip_concentration):
+    def __init__(self, allowed_states, initial_strand, concentrations):
         # XXX will not work for pointed end stuff
-        self._free_monomers = dict((s, int(initial_concentrations.get(s, 0)/
-                                           filament_tip_concentration))
-                                   for s in allowed_states)
-        self.concentrations = Concentrations(self._free_monomers,
-                                             filament_tip_concentration)
-
+        self.concentrations = concentrations
         self.strand         = initial_strand
         self.indices        = {}
         for s in allowed_states:
-            self.indices[s] = [i for i, v in self.strand if v == s]
+            self.indices[s] = [i for i, v in enumerate(self.strand) if v == s]
 
     def initialize(self, pub):
         self.pub = pub
+        for k in self.concentrations.keys():
+            self.concentrations[k].initialize(pub)
 
     def change_state(self, index, new_state):
         if old_state != new_state:
             old_state = self.strand[index]
-            # XXX remove might be slow (should be faster than making a new set)
+            # XXX remove might be slow (should be faster than making a new list)
+            # XXX i could probably speed this up by maintaining sorted lists
             self.indices[old_state].remove(index)
             self.indices[new_state].append(index)
             self.strand[index] = new_state
             self.pub.publish(events.state_change(index, old_state, new_state))
 
-    def append(self, new_state):
-        if self.free_monomers[new_state] <= 0:
-            raise RuntimeError('Not enough free monomers to polymerize %s.' % new_state)
-
-        self._free_monomers[new_state] -= 1
+    def polymerize(self, new_state):
         self.strand.append(new_state)
-        index = len(self.strand)-1
+        index = len(self.strand) - 1
         self.indices[new_state].append(index)
         self.pub.publish(events.polymerization(index, new_state))
 
-    def pop(self):
+    def depolymerize(self):
         state = self.strand.pop()
-        self._free_monomers[new_state] += 1
         index = len(self.strand)
         self.indices[state].remove(index)
         self.pub.publish(events.depolymerization(index, state))
+
+    def __len__(self):
+        return len(self.strand)
 
 def single_state(model_states, simulation_states, size):
     state = util.states.match(model_states, simulation_states)

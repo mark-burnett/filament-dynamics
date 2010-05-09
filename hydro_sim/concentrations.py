@@ -13,14 +13,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from hydro_sim import events
+
 class Concentration(object):
-    def __call__(self):
+    def value(self):
         raise NotImplementedError()
-    def initialize(self):
-        pass
-    def update_poly(self, event):
-        pass
-    def update_depoly(self, event):
+    def initialize(self, pub):
         pass
 
 class fixed_concentration(Concentration):
@@ -30,28 +28,38 @@ class fixed_concentration(Concentration):
             raise ValueError('Negative concentrations not allowed.')
         self.conc = conc
 
-    def __call__(self):
+    def value(self):
         return self.conc
 
 class zero_concentration(Concentration):
-    def __call__(self):
+    def value(self):
         return 0
 
 class fixed_reagent(Concentration):
-    __slots__ = ['initial_concentration', 'monomer_conc', 'filament_tip_conc']
-    def __init__(self, initial_concentration, filament_tip_conc):
-        self.initial_concentration = initial_concentration
-        self.monomer_conc          = initial_concentration
-        self.filament_tip_conc     = filament_tip_conc
+    __slots__ = ['pub', 'state', 'monomer_conc', 'filament_tip_conc']
+    def __init__(self, state, initial_concentration, filament_tip_conc):
+        self.state             = state
+        self.monomer_conc      = initial_concentration
+        self.filament_tip_conc = filament_tip_conc
 
-    def __call__(self):
+    def value(self):
         return self.monomer_conc
 
-    def initialize(self):
-        self.monomer_conc = self.initial_concentration
+    def initialize(self, pub):
+        self.pub = pub
+        pub.subscribe(self._update_poly,   events.polymerization)
+        pub.subscribe(self._update_depoly, events.depolymerization)
 
-    def update_poly(self, event):
-        self.monomer_conc -= self.filament_tip_conc
+    def _update_poly(self, event):
+        if self.state == event.state:
+            if self.monomer_conc >= self.filament_tip_conc:
+                self.monomer_conc -= self.filament_tip_conc
+                self.pub.publish(events.concentration_change(self.state))
+            else:
+                raise RuntimeError(
+                'Could not polymerize without going to negative concentration.')
 
-    def update_depoly(self, event):
-        self.monomer_conc += self.filament_tip_conc
+    def _update_depoly(self, event):
+        if self.state == event.state:
+            self.monomer_conc += self.filament_tip_conc
+            self.pub.publish(events.concentration_change(self.state))

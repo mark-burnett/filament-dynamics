@@ -13,79 +13,56 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from hydro_sim.transitions import events
-
-#from util.ordered_set import OrderedSet
+from hydro_sim import events
 
 __all__ = ['Hydrolysis']
 
 class Hydrolysis(object):
-    __slots__ = ['pub', 'predicate', 'rate', 'new_state', 'offset',
-                 'strand', 'indices', 'R']
+    __slots__ = ['predicate', 'rate', 'new_state', 'count',
+                 '_index_to_update', '_old_state']
     def __init__(self, predicate, rate, new_state):
         self.predicate = predicate
         self.rate      = rate
         self.new_state = new_state
-        self.offset    = 0
+        self.count     = 0
+
+        self._index_to_update = None
+        self._old_state       = None
 
     def initialize(self, pub, strand):
-        self.pub     = pub
-        self.strand  = strand
-        self.indices = set(i for i in xrange(len(self.strand))
-                             if self.predicate(self.strand, i))
-        self.R = self.rate * len(self.indices)
-
+        self.count = self.predicate.full_count(strand)
         # Subscribe to poly, depoly, and hydro events.
-        self.pub.subscribe(self._update_polymerization, events.polymerization)
-        self.pub.subscribe(self._update_depolymerization,
-                           events.depolymerization)
-        self.pub.subscribe(self._update_hydrolysis, events.hydrolysis)
+        pub.subscribe(self._update_polymerization, events.polymerization)
+        pub.subscribe(self._update_depolymerization,
+                      events.depolymerization)
+        pub.subscribe(self._update_hydrolysis, events.state_change)
 
-    def perform(self, time, r):
-        # XXX Speed limiting
-        # Figure out what part of the strand to update
-        set_index = int(r/self.rate)
-        # XXX it's probably this statement that is speed limiting.
-        set_value = list(self.indices)[set_index]
-        full_index = set_value + self.offset
+    def R(self, strand):
+        if self._index_to_update is not None:
+            self.count += self.predicate.update_vicinity(self._index_to_update,
+                                                         strand,
+                                                         self._old_state)
+            self._index_to_update = None
+            self._old_state       = None
+        return self.count * self.rate
 
-        # Update the strand
-        old_state = self.strand[full_index]
-        self.strand[full_index] = self.new_state
+    def perform(self, time, strand, r):
+        index = int(r / self.rate)
+        strand.change_state(index, self.new_state, time)
 
-        # Let everyone else know what changed
-        self.pub.publish(events.hydrolysis(old_state, self.new_state, full_index, time))
-
-    def _update_indices(self, position):
-        # XXX This statement is speed limiting
-        effected_indices = xrange(position - self.predicate.pointed_range,
-                                  position + self.predicate.barbed_range + 1)
-        for i in effected_indices:
-            if self.predicate(self.strand, i):
-                self.indices.add(i - self.offset)
-            else:
-                self.indices.discard(i - self.offset)
-        self.R = self.rate * len(self.indices)
-
+    # XXX it seems important to check nearby indices for effect.
     def _update_hydrolysis(self, event):
-        self._update_indices(event.position)
+        self._index_to_update = event.index
+        self._old_state = event.old_state
     
     def _update_polymerization(self, event):
         if 'barbed' == event.end:
-            self._update_indices(len(self.strand)-1)
+            self._index_to_update = len(self.strand) - 1
         else:
             raise NotImplementedError()
-            self.offset += 1
-            self._update_indices(0)
 
     def _update_depolymerization(self, event):
         if 'barbed' == event.end:
-            pos = len(self.strand)
-            self.indices.discard(pos)
-            return self._update_indices(pos - 1)
+            self._index_to_update = len(self.strand) - 1
         else:
             raise NotImplementedError()
-            # XXX These two lines may be out of order.
-            self.indices.discard(-self.offset)
-            self.offset -= 1
-            self._update_indices(0)

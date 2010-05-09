@@ -13,48 +13,31 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from hydro_sim.transitions import events
+from hydro_sim import events
 
-__all__ = ['Barbed', 'Pointed']
+__all__ = ['Barbed']
 
 class GeneralFixedRate(object):
-    __slots__ = ['pub', 'state', 'rate', 'strand', 'end_index']
-    def __init__(self, concentrations, state, rate):
+    __slots__ = ['state', 'rate']
+    def __init__(self, state, rate):
         """
-        concentrations - unused, but required for consistent interface
         state - state to depolymerize
-        rate - depolymerization rate (constant)
+        rate  - depolymerization rate (constant)
         """
         self.state = state
         self.rate  = rate
 
     def initialize(self, pub, strand):
-        self.pub    = pub
-        self.strand = strand
+        pass
 
-    def perform(self, time, r):
+    def R(self, strand):
+        if self.state == strand[-1]:
+            return self.rate
+        return 0
+
+    def perform(self, time, strand, r):
         raise NotImplementedError()
 
 class Barbed(GeneralFixedRate):
-    def perform(self, time, r):
-        self.pub.publish(events.depolymerization('barbed', self.strand.pop(),
-                                                 time))
-
-    @property
-    def R(self):
-        if self.state == self.strand[-1]:
-            return self.rate
-        else:
-            return 0
-
-class Pointed(GeneralFixedRate):
-    def perform(self, time, r):
-        self.pub.publish(events.depolymerization('pointed',
-                                                 self.strand.popleft(), time))
-
-    @property
-    def R(self):
-        if self.state == self.strand[0]:
-            return self.rate
-        else:
-            return 0
+    def perform(self, time, strand, r):
+        strand.pop()
