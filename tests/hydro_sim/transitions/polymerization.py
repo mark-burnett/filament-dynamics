@@ -2,7 +2,7 @@ import unittest
 import collections
 
 from util import observer
-from hydro_sim.transitions.polymerization import fixed_rate
+from hydro_sim.transitions import polymerization
 
 class MockConcentration(object):
     def __init__(self, value):
@@ -16,7 +16,7 @@ class MockStrand(list):
 
 class FixedRatePolymerizationTest(unittest.TestCase):
     def test_barbed(self):
-        fr = fixed_rate.Barbed('t', 0.3)
+        fr = polymerization.Barbed('t', 0.3)
 
         strand = MockStrand()
         strand.concentrations = {'t': MockConcentration(7)}

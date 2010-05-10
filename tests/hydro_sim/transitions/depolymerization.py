@@ -1,11 +1,11 @@
 import unittest
 import collections
 
-from hydro_sim.transitions.depolymerization import fixed_rate
+from hydro_sim.transitions import depolymerization
 
 class FixedRateDepolymerizationTest(unittest.TestCase):
     def test_barbed(self):
-        fr = fixed_rate.Barbed('d', 2.2)
+        fr = depolymerization.Barbed('d', 2.2)
 
         strand = ['n']
         self.assertEqual(0, fr.R(strand))

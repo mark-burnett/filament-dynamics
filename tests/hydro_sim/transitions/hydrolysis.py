@@ -2,7 +2,7 @@ import unittest
 import collections
 
 from hydro_sim import concentrations
-from hydro_sim.transitions.hydrolysis import implementation
+from hydro_sim.transitions import hydrolysis
 
 from hydro_sim import strand
 
@@ -12,8 +12,8 @@ class RandomHydrolysisTest(unittest.TestCase):
                                     ['d', 'd', 'p', 't', 'p', 't', 't'],
                                     collections.defaultdict(
                                         concentrations.zero_concentration))
-        self.tp_transition = implementation.Random('t', 1,   'p')
-        self.pd_transition = implementation.Random('p', 0.5, 'd')
+        self.tp_transition = hydrolysis.Random('t', 1,   'p')
+        self.pd_transition = hydrolysis.Random('p', 0.5, 'd')
 
     def tearDown(self):
         del self.strand
@@ -39,8 +39,8 @@ class PointedNeighborHydrolysisTest(unittest.TestCase):
                                     ['d', 'd', 'p', 't', 'p', 't', 't'],
                                     collections.defaultdict(
                                         concentrations.zero_concentration))
-        self.tp_transition = implementation.PointedNeighbor('t', 'p', 1,   'p')
-        self.pd_transition = implementation.PointedNeighbor('p', 'd', 0.5, 'd')
+        self.tp_transition = hydrolysis.PointedNeighbor('t', 'p', 1,   'p')
+        self.pd_transition = hydrolysis.PointedNeighbor('p', 'd', 0.5, 'd')
 
     def tearDown(self):
         del self.strand
