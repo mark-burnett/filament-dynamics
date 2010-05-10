@@ -20,9 +20,9 @@ __all__ = ['Hydrolysis']
 class Hydrolysis(object):
     __slots__ = ['predicate', 'rate', 'new_state', 'count',
                  '_index_to_update', '_old_state']
-    def __init__(self, predicate, rate, new_state):
-        self.predicate = predicate
+    def __init__(self, old_state, rate, new_state):
         self.rate      = rate
+        self.old_state = old_state
         self.new_state = new_state
         self.count     = 0
 
@@ -30,7 +30,7 @@ class Hydrolysis(object):
         self._old_state       = None
 
     def initialize(self, pub, strand):
-        self.count = self.predicate.full_count(strand)
+        self.count = self._full_count(strand)
         # Subscribe to poly, depoly, and hydro events.
         pub.subscribe(self._update_polymerization, events.polymerization)
         pub.subscribe(self._update_depolymerization,
@@ -39,15 +39,14 @@ class Hydrolysis(object):
 
     def R(self, strand):
         if self._index_to_update is not None:
-            self.count += self.predicate.update_vicinity(self._index_to_update,
-                                                         strand,
-                                                         self._old_state)
+            self.count += self._update_vicinity(strand)
             self._index_to_update = None
             self._old_state       = None
         return self.count * self.rate
 
     def perform(self, time, strand, r):
-        index = int(r / self.rate)
+        state_index = int(r / self.rate)
+        index = strand.indices[self.old_state][state_index]
         strand.change_state(index, self.new_state, time)
 
     # XXX it seems important to check nearby indices for effect.
@@ -56,13 +55,24 @@ class Hydrolysis(object):
         self._old_state = event.old_state
     
     def _update_polymerization(self, event):
-        if 'barbed' == event.end:
-            self._index_to_update = len(self.strand) - 1
+        if event.index > 0:
+            self._index_to_update = event.index - 1
         else:
             raise NotImplementedError()
 
     def _update_depolymerization(self, event):
-        if 'barbed' == event.end:
-            self._index_to_update = len(self.strand) - 1
+        if event.index > 0:
+            self._index_to_update = event.index - 1
         else:
             raise NotImplementedError()
+
+class Random(Hydrolysis):
+    def _full_count(self, strand):
+        return len(strand.indices[self.old_state])
+
+    def _update_vicinity(self, strand):
+        if strand[self._index_to_update] == self.old_state:
+            return 1
+        elif self._old_state == self.old_state:
+            return -1
+        return 0

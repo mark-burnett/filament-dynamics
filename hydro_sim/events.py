@@ -18,10 +18,10 @@ from collections import namedtuple
 __all__ = ['depolymerization', 'polymerization', 'state_change',
            'concentration_change']
 
-depolymerization = namedtuple('depolymerization', 'index state')
-polymerization   = namedtuple('polymerization',   'index state')
-state_change     = namedtuple('state_change', 'index old_state new_state time')
+depolymerization = namedtuple('depolymerization', 'index state strand')
+polymerization   = namedtuple('polymerization',   'index state strand')
+state_change     = namedtuple('state_change', 'index old_state new_state time strand')
 
-concentration_change = namedtuple('concentration_change', 'state')
+concentration_change = namedtuple('concentration_change', 'state strand')
 
 del namedtuple

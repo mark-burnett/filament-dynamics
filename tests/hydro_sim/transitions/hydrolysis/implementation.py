@@ -5,6 +5,8 @@ from hydro_sim import events
 from hydro_sim.transitions.hydrolysis import implementation
 from hydro_sim.transitions.hydrolysis import predicates
 
+from hydro_sim.state import State
+
 class MockPublisher(object):
     def subscribe(self, a, b):
         pass
@@ -31,48 +33,44 @@ class MockStrand(list):
         self[index] = new_state
 
 class HydrolysisImplementationTest(unittest.TestCase):
-    def test_simlpified(self):
-        strand = MockStrand(['t', 't', 't', 't', 't'])
-        ht = implementation.Hydrolysis(TruePredicate(), 1, 'd')
+#    def test_simlpified(self):
+#        strand = MockStrand(['t', 't', 't', 't', 't'])
+#        ht = implementation.Hydrolysis(TruePredicate(), 1, 'd')
+#
+#        ht.initialize(MockPublisher(), strand)
+#
+#        self.assertEqual(5, ht.R(strand))
+#
+#        ht.perform(None, strand, 1.9)
+#        self.assertEqual(['t', 'd', 't', 't', 't'], strand)
+#
+#        ht.perform(None, strand, 3.2)
+#        self.assertEqual(['t', 'd', 't', 'd', 't'], strand)
+#
+#        ht.perform(None, strand, 0.7)
+#        self.assertEqual(['d', 'd', 't', 'd', 't'], strand)
 
-        ht.initialize(MockPublisher(), strand)
+    def test_typical_alone(self):
+        strand = State(['t', 'd'], ['t', 't', 't', 't', 't'], {})
+        ht = implementation.Random('t', 1, 'd')
 
+        pub = observer.Publisher()
+        strand.initialize(pub)
+        ht.initialize(pub, strand)
         self.assertEqual(5, ht.R(strand))
 
         ht.perform(None, strand, 1.9)
-        self.assertEqual(['t', 'd', 't', 't', 't'], strand)
+        self.assertEqual(['t', 'd', 't', 't', 't'], strand.strand)
+        self.assertEqual(4, ht.R(strand))
 
-        ht.perform(None, strand, 3.2)
-        self.assertEqual(['t', 'd', 't', 'd', 't'], strand)
+        ht.perform(None, strand, 2.6)
+        self.assertEqual(['t', 'd', 't', 'd', 't'], strand.strand)
+        self.assertEqual(3, ht.R(strand))
 
-        ht.perform(None, strand, 0.7)
-        self.assertEqual(['d', 'd', 't', 'd', 't'], strand)
+        ht.perform(None, strand, 2.6)
+        self.assertEqual(['t', 'd', 't', 'd', 'd'], strand.strand)
+        self.assertEqual(2, ht.R(strand))
 
-#    def test_typical_alone(self):
-#        strand = ['t', 't', 't', 't', 't']
-#        ht = implementation.Hydrolysis(predicates.Random('t'), 1, 'd')
-#
-#        pub = observer.Publisher()
-#        ht.initialize(pub, strand)
-#        self.assertEqual(5, ht.R)
-#
-#        em = EventMonitor()
-#        pub.subscribe(em.record, events.hydrolysis)
-#
-#        ht.perform(None, 1.9)
-#        self.assertEqual(['t', 'd', 't', 't', 't'], strand)
-#        self.assertEqual(4, ht.R)
-#
-#        ht.perform(None, 2.6)
-#        self.assertEqual(['t', 'd', 't', 'd', 't'], strand)
-#        self.assertEqual(3, ht.R)
-#
-#        ht.perform(None, 2.6)
-#        self.assertEqual(['t', 'd', 't', 'd', 'd'], strand)
-#        self.assertEqual(2, ht.R)
-#
-#        self.assertEqual([1, 3, 4], [e.position for e in em.events])
-#
 #    def test_random_poly_depoly(self):
 #        strand = ['t', 't', 't', 't', 't']
 #        ht = implementation.Hydrolysis(predicates.Random('t'), 1, 'd')
