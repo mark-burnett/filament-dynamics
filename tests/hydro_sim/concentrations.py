@@ -1,13 +1,6 @@
 import unittest
 
 from hydro_sim import concentrations
-from hydro_sim import events
-
-class MockPublisher(object):
-    def subscribe(self, a, b):
-        pass
-    def publish(self, e):
-        pass
 
 class ConcentrationsTest(unittest.TestCase):
     def test_typical_fixed_concentration(self):
@@ -24,31 +17,27 @@ class ConcentrationsTest(unittest.TestCase):
         self.assertEqual(0, zc.value())
 
     def test_typical_fixed_reagent(self):
-        fr = concentrations.fixed_reagent('s', 3.0, 0.1)
-        fr.initialize(MockPublisher())
+        fr = concentrations.fixed_reagent(3.0, 0.1)
 
         self.assertEqual(3.0, fr.value())
         
-        d = events.polymerization(None, 's')
-        fr._update_depoly(d)
+        fr.depolymerize()
         self.assertEqual(3.1, fr.value())
 
-        p = events.polymerization(None, 's')
-        fr._update_poly(p)
-        fr._update_poly(p)
-        fr._update_poly(p)
-        fr._update_poly(p)
-        fr._update_poly(p)
-        fr._update_poly(p)
+        fr.polymerize()
+        fr.polymerize()
+        fr.polymerize()
+        fr.polymerize()
+        fr.polymerize()
+        fr.polymerize()
         # Messy looking, but avoids rounding errors.
         self.assertEqual(3.0 - 0.1 - 0.1 - 0.1 - 0.1 - 0.1, fr.value())
 
-        fr._update_depoly(p)
-        fr._update_depoly(p)
-        fr._update_depoly(p)
+        fr.depolymerize()
+        fr.depolymerize()
+        fr.depolymerize()
         # Messy looking, but avoids rounding errors.
         self.assertEqual(3.0 - 0.1 - 0.1, fr.value())
-
 
 if '__main__' == __name__:
     unittest.main()

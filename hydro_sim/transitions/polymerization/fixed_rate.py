@@ -13,12 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from hydro_sim import events
-
 __all__ = ['Barbed']
 
 class GeneralFixedRate(object):
-    __slots__ = ['rate', 'state', '_R', '_updated']
+    __slots__ = ['rate', 'state']
     def __init__(self, state, rate):
         """
         'state' that are added to the barbed end of the strand.
@@ -26,20 +24,9 @@ class GeneralFixedRate(object):
         """
         self.state = state
         self.rate  = rate
-        self._updated = True
-
-    def initialize(self, pub, strand):
-        pub.subscribe(self._updated_concentration, events.concentration_change)
-
-    def _updated_concentration(self, event):
-        if self.state == event.state:
-            self._updated = True
 
     def R(self, strand):
-        if self._updated:
-            self._updated = False
-            self._R = self.rate * strand.concentrations[self.state].value()
-        return self._R
+        return self.rate * strand.concentrations[self.state].value()
 
     def perform(self, time, strand, r):
         raise NotImplementedError()

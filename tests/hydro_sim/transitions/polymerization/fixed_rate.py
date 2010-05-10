@@ -11,19 +11,12 @@ class MockConcentration(object):
     def value(self):
         return self._value
 
-class MockPublisher(object):
-    def subscribe(self, a, b):
-        pass
-
 class MockStrand(list):
     pass
 
 class FixedRatePolymerizationTest(unittest.TestCase):
     def test_barbed(self):
-
         fr = fixed_rate.Barbed('t', 0.3)
-
-        fr.initialize(MockPublisher(), None)
 
         strand = MockStrand()
         strand.concentrations = {'t': MockConcentration(7)}

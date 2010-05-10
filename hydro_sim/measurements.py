@@ -14,46 +14,39 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from kmc.measurements import *
-from . import events
 
-class TransitionEventCount(object):
-    __slots__ = ['data', 'label', 'old_states', 'new_states', 'count']
-    def __init__(self, label, old_states, new_states):
-        """
-        old_states and new_states are containers of states.
-        """
-        self.label      = label
-        self.old_states = old_states
-        self.new_states = new_states
-        self.count      = 0
-
-    def initialize(self, pub, strand):
-        self.data = [(0, 0)]
-        pub.subscribe(self.increment, events.state_change)
+class StateFractions(object):
+    def __init__(self, label):
+        self.label = label
+        self.data  = []
 
     def perform(self, time, strand):
-        pass
+        results = {}
+        for k, indices in strand.state_indices.items():
+            results[k] = len(indices)
+        self.data.append((time, results))
 
-    def increment(self, event):
-        if (event.old_state in self.old_states and
-            event.new_state in self.new_states):
-            self.count += 1
-            self.data.append((event.time, self.count))
+class ConcentrationMonitor(object):
+    def __init__(self, label, state):
+        self.label = label
+        self.state = state
+        self.data  = []
+        self.last_concentration = -1
+
+    def perform(self, time, strand):
+        v = strand.concentrations[self.state].value()
+        if self.last_concentration != v:
+            self.data.append((time, v))
+
 
 class TipState(object):
-    __slots__ = ['label', 'index', 'data']
-    def __init__(self, label, end):
-        self.label = label
-        if 'barbed' == end.lower():
-            self.index = -1
-        elif 'pointed' == end.lower():
-            self.index = 0
-        else:
-            raise RuntimeError('Illegal end specified.')
-
-    def initialize(self, pub, strand):
-        self.data = []
-        self.perform(0, strand)
+    __slots__ = ['label', 'index', 'data', 'last_state']
+    def __init__(self, label, index):
+        self.label      = label
+        self.index      = index
+        self.last_state = None
+        self.data       = []
 
     def perform(self, time, strand):
-        self.data.append((time, strand[self.index]))
+        if self.last_state != strand[self.index]:
+            self.data.append((time, strand[self.index]))

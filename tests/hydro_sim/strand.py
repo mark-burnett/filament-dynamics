@@ -1,8 +1,140 @@
 import unittest
+import collections
 
 from hydro_sim import strand
+from hydro_sim import concentrations
 
 class StrandTest(unittest.TestCase):
+    def setUp(self):
+        self.strand = strand.Strand(['t', 'p', 'd'],
+                                    ['d', 'd', 'p', 't', 'p', 't', 't'],
+                                    collections.defaultdict(
+                                        concentrations.zero_concentration))
+
+    def tearDown(self):
+        del self.strand
+
+    def test_initial_state(self):
+        # Verify state indices.
+        self.assertEqual(3, len(self.strand.state_indices['t']))
+        self.assertEqual(2, len(self.strand.state_indices['p']))
+        self.assertEqual(2, len(self.strand.state_indices['d']))
+
+        # Verify boundary indices.
+        self.assertEqual(2, len(self.strand.boundary_indices['t']['p']))
+        self.assertEqual(0, len(self.strand.boundary_indices['t']['d']))
+        self.assertEqual(1, len(self.strand.boundary_indices['p']['d']))
+        self.assertEqual(1, len(self.strand.boundary_indices['p']['t']))
+
+    def test_append(self):
+        self.strand.append('p')
+
+        # Verify sequence.
+        self.assertEqual(['d', 'd', 'p', 't', 'p', 't', 't', 'p'],
+                         self.strand._sequence)
+
+        # Verify state indices.
+        self.assertEqual(3, len(self.strand.state_indices['t']))
+        self.assertEqual(3, len(self.strand.state_indices['p']))
+        self.assertEqual(2, len(self.strand.state_indices['d']))
+
+        # Verify boundary indices.
+        self.assertEqual(2, len(self.strand.boundary_indices['t']['p']))
+        self.assertEqual(0, len(self.strand.boundary_indices['t']['d']))
+        self.assertEqual(1, len(self.strand.boundary_indices['p']['d']))
+        self.assertEqual(2, len(self.strand.boundary_indices['p']['t']))
+
+    def test_pop(self):
+        self.strand.pop()
+
+        # Verify sequence.
+        self.assertEqual(['d', 'd', 'p', 't', 'p', 't'], self.strand._sequence)
+
+        # Verify state indices.
+        self.assertEqual(2, len(self.strand.state_indices['t']))
+        self.assertEqual(2, len(self.strand.state_indices['p']))
+        self.assertEqual(2, len(self.strand.state_indices['d']))
+
+        # Verify boundary indices.
+        self.assertEqual(2, len(self.strand.boundary_indices['t']['p']))
+        self.assertEqual(0, len(self.strand.boundary_indices['t']['d']))
+        self.assertEqual(1, len(self.strand.boundary_indices['p']['d']))
+        self.assertEqual(1, len(self.strand.boundary_indices['p']['t']))
+
+        # Pop again
+        self.strand.pop()
+
+        # Verify sequence.
+        self.assertEqual(['d', 'd', 'p', 't', 'p'], self.strand._sequence)
+
+        # Verify state indices.
+        self.assertEqual(1, len(self.strand.state_indices['t']))
+        self.assertEqual(2, len(self.strand.state_indices['p']))
+        self.assertEqual(2, len(self.strand.state_indices['d']))
+
+        # Verify boundary indices.
+        self.assertEqual(1, len(self.strand.boundary_indices['t']['p']))
+        self.assertEqual(0, len(self.strand.boundary_indices['t']['d']))
+        self.assertEqual(1, len(self.strand.boundary_indices['p']['d']))
+        self.assertEqual(1, len(self.strand.boundary_indices['p']['t']))
+
+    def test_getitem(self):
+        for i, v in enumerate(['d', 'd', 'p', 't', 'p', 't', 't']):
+            self.assertEqual(v, self.strand[i])
+
+    def test_setitem_middle(self):
+        self.strand[1] = 't'
+        # Verify sequence.
+        self.assertEqual(['d', 't', 'p', 't', 'p', 't', 't'], self.strand._sequence)
+
+        # Verify state indices.
+        self.assertEqual(4, len(self.strand.state_indices['t']))
+        self.assertEqual(2, len(self.strand.state_indices['p']))
+        self.assertEqual(1, len(self.strand.state_indices['d']))
+
+        # Verify boundary indices.
+        self.assertEqual(2, len(self.strand.boundary_indices['t']['p']))
+        self.assertEqual(1, len(self.strand.boundary_indices['t']['d']))
+        self.assertEqual(0, len(self.strand.boundary_indices['p']['d']))
+        self.assertEqual(2, len(self.strand.boundary_indices['p']['t']))
+
+    def test_setitem_barbed(self):
+        self.strand[-1] = 'd'
+        # Verify sequence.
+        self.assertEqual(['d', 'd', 'p', 't', 'p', 't', 'd'], self.strand._sequence)
+
+        # Verify state indices.
+        self.assertEqual(2, len(self.strand.state_indices['t']))
+        self.assertEqual(2, len(self.strand.state_indices['p']))
+        self.assertEqual(3, len(self.strand.state_indices['d']))
+
+        # Verify boundary indices.
+        self.assertEqual(2, len(self.strand.boundary_indices['t']['p']))
+        self.assertEqual(0, len(self.strand.boundary_indices['t']['d']))
+        self.assertEqual(1, len(self.strand.boundary_indices['d']['t']))
+        self.assertEqual(1, len(self.strand.boundary_indices['p']['d']))
+        self.assertEqual(1, len(self.strand.boundary_indices['p']['t']))
+
+    def test_setitem_pointed(self):
+        self.strand[0] = 'p'
+        # Verify sequence.
+        self.assertEqual(['p', 'd', 'p', 't', 'p', 't', 't'], self.strand._sequence)
+
+        # Verify state indices.
+        self.assertEqual(3, len(self.strand.state_indices['t']))
+        self.assertEqual(3, len(self.strand.state_indices['p']))
+        self.assertEqual(1, len(self.strand.state_indices['d']))
+
+        # Verify boundary indices.
+        self.assertEqual(2, len(self.strand.boundary_indices['t']['p']))
+        self.assertEqual(0, len(self.strand.boundary_indices['t']['d']))
+        self.assertEqual(0, len(self.strand.boundary_indices['d']['t']))
+        self.assertEqual(1, len(self.strand.boundary_indices['p']['d']))
+        self.assertEqual(1, len(self.strand.boundary_indices['d']['p']))
+        self.assertEqual(1, len(self.strand.boundary_indices['p']['t']))
+
+
+class StrandFactoryTest(unittest.TestCase):
     def test_typical_single_state_factory(self):
         strand_generator = strand.single_state(['t1', 't2'], ['t2', 't3'], 7)
         for i in xrange(10):

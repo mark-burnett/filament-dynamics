@@ -13,8 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import predicates
-from implementation import Hydrolysis
+#import predicates
+#from implementation import Hydrolysis
 
 def Random(concentrations, old_state, rate, new_state):
     return Hydrolysis(predicates.Random(old_state), rate, new_state)

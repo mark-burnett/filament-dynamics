@@ -7,8 +7,6 @@ class FixedRateDepolymerizationTest(unittest.TestCase):
     def test_barbed(self):
         fr = fixed_rate.Barbed('d', 2.2)
 
-        fr.initialize(None, None)
-
         strand = ['n']
         self.assertEqual(0, fr.R(strand))
 
