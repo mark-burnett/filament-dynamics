@@ -28,7 +28,7 @@ class Duration(object):
             raise ValueError('Illegal duration.')
         self.duration = duration
 
-    def initialize(self, pub, state):
+    def reset(self):
         pass
 
     def __call__(self, time, state):
@@ -41,7 +41,7 @@ class RandomDuration(Duration):
             raise ValueError('Illegal max_duration.')
         self.max_duration = max_duration
 
-    def initialize(self, pub, state):
+    def reset(self):
         self.duration = random.uniform(0, self.max_duration)
 
 class StateLengthBelow(object):
@@ -49,7 +49,7 @@ class StateLengthBelow(object):
     def __init__(self, minimum_size):
         self.minimum_size = minimum_size
 
-    def initialize(self, pub, state):
+    def reset(self):
         pass
 
     def __call__(self, time, state):

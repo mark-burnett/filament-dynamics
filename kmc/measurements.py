@@ -14,14 +14,13 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Length(object):
-    __slots__ = ['label', 'data']
+    __slots__ = ['label', 'data', 'last_length']
     def __init__(self, label):
-        self.data = []
+        self.data  = []
         self.label = label
+        self.last_length = None
 
-    def initialize(self, pub, state):
-        self.data = []
-        self.perform(0, state)
-    
     def perform(self, time, state):
-        self.data.append((time, len(state)))
+        length = len(state)
+        if self.last_length != length:
+            self.data.append((time, length))

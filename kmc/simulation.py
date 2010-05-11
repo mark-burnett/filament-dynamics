@@ -41,7 +41,7 @@ class Simulation(object):
         """
         self.transitions  = transitions
         self.measurements = measurements
-        self.ecs = end_conditions
+        self.ecs          = end_conditions
         # Make sure end conditions are iterable.
         try:
             iter(self.ecs)
@@ -51,27 +51,22 @@ class Simulation(object):
     def __call__(self, initial_state):
         return self.run(initial_state)
 
-    def run(self, initial_state):
+    def run(self, state):
         """
         Perform the actual simulation, starting with initial_state.
         """
-        state = copy.copy(initial_state)
-
         # XXX Aliases for a small speedup.
         ru  = random.uniform
         ml  = math.log
         bbl = bisect.bisect_left
 
         # Initialize.
-        pub = util.observer.Publisher()
-        [t.initialize(pub, state) for t in self.transitions]
-        [m.initialize(pub, state) for m in self.measurements]
-        [e.initialize(pub, state) for e in self.ecs]
+        [e.reset() for e in self.ecs]
         time = 0
 
         while not any(e(time, state) for e in self.ecs):
             # Calculate partial sums of transition probabilities
-            transition_R = [t.R for t in self.transitions]
+            transition_R = [t.R(state) for t in self.transitions]
             running_R    = list(util.generators.running_total(transition_R))
             total_R      = running_R[-1]
 
@@ -83,21 +78,9 @@ class Simulation(object):
             j = bbl(running_R, r)
 
             # Perform transition
-            self.transitions[j].perform(time, running_R[j] - r)
+            self.transitions[j].perform(time, state, running_R[j] - r)
 
             # Perform measurements
             [m.perform(time, state) for m in self.measurements]
 
         return state, dict((m.label, m.data) for m in self.measurements)
-
-class SimulationSequence(object):
-    def __init__(self, simulations):
-        self.simulations = simulations
-
-    def __call__(self, initial_state):
-        state   = initial_state
-        results = []
-        for s in self.simulations:
-            state, data = s(state)
-            results.append(data)
-        return results

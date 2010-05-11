@@ -21,10 +21,10 @@ import util
 import kmc.end_conditions
 import kmc.generators
 
-import hydro_sim.concentrations
-import hydro_sim.transitions
-import hydro_sim.measurements
-import hydro_sim.strand
+from . import concentrations
+from . import transitions
+from . import measurements
+from . import strand
 
 __all__ = ['full_simulation_generator']
 
@@ -38,8 +38,7 @@ def make_stage(model_config, stage_config):
     concentrations = make_concentrations(model_config['states'],
                                          stage_config['concentrations'])
     return kmc.generators.simulation(
-            make_transitions(model_config['transitions'],
-                             concentrations),
+            make_transitions(model_config['transitions'], concentrations),
             make_end_conditions(stage_config['end_conditions']),
             make_measurements(stage_config['measurements']))
 
@@ -47,15 +46,14 @@ def make_concentrations(model_states, concentrations_config):
     conc_dict = {}
     for config_states, (config_function, config_args) in concentrations_config:
         state = util.states.match(model_states, config_states)
-        f = util.introspection.lookup_name(config_function,
-                                           hydro_sim.concentrations)
+        f = util.introspection.lookup_name(config_function, concentrations)
         conc_dict[state] = f(*config_args)
-    return collections.defaultdict(hydro_sim.concentrations.zero_concentration,
+    return collections.defaultdict(concentrations.zero_concentration,
                                    conc_dict)
 
 def make_transitions(transitions_config, concentrations):
     factories = util.introspection.make_factories(transitions_config,
-                                                  hydro_sim.transitions)
+                                                  transitions)
     return [f(concentrations, *args) for f, args in factories]
 
 def make_end_conditions(ec_config):
@@ -65,10 +63,10 @@ def make_end_conditions(ec_config):
 
 def make_measurements(measurements_config):
     return [util.introspection.lookup_name(name,
-                hydro_sim.measurements)(label, *args)
+                measurements)(label, *args)
             for label, (name, args) in measurements_config.items()]
 
 def make_strand(initial_strand_config, model_states):
     name, args = initial_strand_config
-    f = util.introspection.lookup_name(name, hydro_sim.strand)
+    f = util.introspection.lookup_name(name, strand)
     return f(model_states, *args)
