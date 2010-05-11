@@ -13,15 +13,25 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-    This package contains kinetic monte carlo simulation models for (actin)
-strand polymerization.
-"""
-
-from . import measurements
-from . import concentrations
-from . import transitions
+import itertools
 
 from . import strand
 
-from . import factories
+class SimulationSequence(object):
+    def __init__(self, states, simulations, concentrations):
+        self.states         = states
+        self.simulations    = simulations
+        self.concentrations = concentrations
+
+    def __call__(self, initial_strand):
+        return self.run(initial_strand)
+
+    def run(self, initial_strand):
+        sequence = initial_strand
+        data = []
+        for s, c in itertools.izip(self.simulations,
+                                   self.concentrations):
+            state, sim_data = s.run(strand.Strand(self.states, sequence, c))
+            data.append(sim_data)
+            sequence = state._sequence
+        return data

@@ -47,13 +47,13 @@ def hydrolysis(model_file, simulation_file,
     simulation_config = json.load(open(simulation_file))
 
     # Construct simulation
-    sim_generator = hydro_sim.factories.make_simulation(model_config,
-                                                   simulation_config)
+    sim_generator = hydro_sim.factories.simulation_generator(model_config,
+                                                             simulation_config)
 
     # Construct initial strand
-    initial_strand_config = simulation_config['initial_strand']
-    strand_generator = hydro_sim.factories.make_strand(initial_strand_config,
-                                                       model_config['states'])
+    strand_generator = hydro_sim.factories.make_sequence_generator(
+                           simulation_config['initial_strand'],
+                           model_config['states'])
 
     # Run simulation
     if 1 == processes:

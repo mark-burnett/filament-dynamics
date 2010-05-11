@@ -13,34 +13,43 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import copy
 import itertools
 import collections
 
 import util
 
 import kmc.end_conditions
-import kmc.generators
+import kmc.simulation
+
+from . import simulation
 
 from . import concentrations
 from . import transitions
 from . import measurements
 from . import strand
 
-__all__ = ['full_simulation_generator']
+def simulation_generator(model_config, simulation_config):
+    sim = make_simulation(model_config, simulation_config)
+    while True:
+        yield copy.deepcopy(sim)
 
 def make_simulation(model_config, simulation_config):
-    stages = [make_stage(model_config, stage_config)
-              for stage_config in simulation_config['stages']]
+    model_states = model_config['states']
+    concentrations = []
+    stages = []
+    for stage_config in simulation_config['stages']:
+        stages.append(make_stage(model_config, stage_config))
+        concentrations.append(make_concentrations(model_states,
+                                              stage_config['concentrations']))
 
-    return kmc.generators.sequence(stages)
+    return simulation.SimulationSequence(model_states, stages, concentrations)
 
 def make_stage(model_config, stage_config):
-    concentrations = make_concentrations(model_config['states'],
-                                         stage_config['concentrations'])
-    return kmc.generators.simulation(
-            make_transitions(model_config['transitions'], concentrations),
-            make_end_conditions(stage_config['end_conditions']),
-            make_measurements(stage_config['measurements']))
+    return kmc.simulation.Simulation(
+            make_transitions(model_config['transitions']),
+            make_measurements(stage_config['measurements']),
+            make_end_conditions(stage_config['end_conditions']))
 
 def make_concentrations(model_states, concentrations_config):
     conc_dict = {}
@@ -51,10 +60,10 @@ def make_concentrations(model_states, concentrations_config):
     return collections.defaultdict(concentrations.zero_concentration,
                                    conc_dict)
 
-def make_transitions(transitions_config, concentrations):
+def make_transitions(transitions_config):
     factories = util.introspection.make_factories(transitions_config,
                                                   transitions)
-    return [f(concentrations, *args) for f, args in factories]
+    return [f(*args) for f, args in factories]
 
 def make_end_conditions(ec_config):
     ec_factories = util.introspection.make_factories(ec_config,
@@ -66,7 +75,7 @@ def make_measurements(measurements_config):
                 measurements)(label, *args)
             for label, (name, args) in measurements_config.items()]
 
-def make_strand(initial_strand_config, model_states):
+def make_sequence_generator(initial_strand_config, model_states):
     name, args = initial_strand_config
     f = util.introspection.lookup_name(name, strand)
     return f(model_states, *args)
