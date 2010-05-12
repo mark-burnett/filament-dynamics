@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -14,29 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
-import numpy
+def choose_stage(stages_config, stage_name):
+    stage_names = [s['name'] for s in stages_config]
+    return stage_names.index(stage_name)
 
-__all__ = ['summarize', 'downsample', 'make_timecourse_histogram']
-def downsample(sample_times, data):
-    x, y = zip(*data)
-
-    true_sample_times = []
-    for t in sample_times:
-        if x[0] < t < x[-1]:
-            true_sample_times.append(t)
-
-    return numpy.interp(true_sample_times, x, y)
-
-def make_timecourse_histogram(timecourses):
-    max_len = max(map(len, timecourses))
-    histograms = []
-    for i in xrange(max_len):
-        hg = []
-        for tc in timecourses:
-            try:
-                hg.append(tc[i])
-            except IndexError:
-                pass
-        histograms.append(hg)
-    return histograms
+def get_duration(ec_config):
+    ec_names = [ec[0] for ec in ec_config]
+    i = ec_names.index('Duration')
+    return ec_config[i][1][0]

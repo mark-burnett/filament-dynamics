@@ -1,5 +1,5 @@
 {
-"filename": "mixed_50_50",
+"filename": "mixed_90_10",
 
 "description": "Mixed ATP/ADP polymerization.",
 
@@ -12,10 +12,10 @@
          ["StateLengthBelow", [1]]],
      "measurements": {
         "length": ["Length", []],
-        "phosphate_cleavage": ["TransitionEventCount", ["t", "p"]],
+        "phosphate_cleavage": ["TransitionEventCount", ["t", "p"]]],
         "phosphate_release":  ["TransitionEventCount", ["p", "du"]]},
-     "concentrations": [[["t"],       ["fixed_reagent", [2, 0.0112]]],
-                        [["d", "du"], ["fixed_reagent", [2, 0.0112]]]]}],
+     "concentrations": [[["t"],       ["fixed_reagent", [3.6, 0.0112]]],
+                        [["d", "du"], ["fixed_reagent", [0.4, 0.0112]]]]}],
 
 "initial_strand": ["single_state", [["d", "ds"], 535]]
 }

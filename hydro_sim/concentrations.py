@@ -42,6 +42,8 @@ class fixed_reagent(Concentration):
         self.filament_tip_conc = filament_tip_conc
 
     def value(self):
+        if self.monomer_conc < self.filament_tip_conc:
+            return 0
         return self.monomer_conc
 
     def polymerize(self):

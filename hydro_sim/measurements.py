@@ -16,6 +16,7 @@
 from kmc.measurements import *
 
 class StateFractions(object):
+    __slots__ = ['label', 'data']
     def __init__(self, label):
         self.label = label
         self.data  = []
@@ -27,6 +28,7 @@ class StateFractions(object):
         self.data.append((time, results))
 
 class ConcentrationMonitor(object):
+    __slots__ = ['label', 'data', 'state', 'last_concentration']
     def __init__(self, label, state):
         self.label = label
         self.state = state
@@ -38,6 +40,30 @@ class ConcentrationMonitor(object):
         if self.last_concentration != v:
             self.data.append((time, v))
 
+class TransitionEventCount(object):
+    __slots__ = ['label', 'data', 'old_state', 'new_state', 'count',
+                 '_last_old_count', '_last_new_count']
+    def __init__(self, label, old_state, new_state):
+        self.label     = label
+        self.data      = [(0, 0)]
+        self.old_state = old_state
+        self.new_state = new_state
+
+        self.count = 0
+
+        self._last_old_count = -1
+        self._last_new_count = -1
+
+    def perform(self, time, strand):
+        old_count = len(strand.state_indices[self.old_state])
+        new_count = len(strand.state_indices[self.new_state])
+
+        if (self._last_old_count - 1 == old_count and
+            self._last_new_count + 1 == new_count):
+            self.data.append((time, self.count))
+        else:
+            self._last_old_count = old_count
+            self._last_new_count = new_count
 
 class TipState(object):
     __slots__ = ['label', 'index', 'data', 'last_state']

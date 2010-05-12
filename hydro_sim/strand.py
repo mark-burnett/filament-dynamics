@@ -19,6 +19,8 @@ import collections
 import util
 
 class Strand(object):
+    __slots__ = ['_sequence', 'concentrations',
+                 'state_indices', 'boundary_indices']
     def __init__(self, states, initial_strand, concentrations):
         self._sequence        = initial_strand
         self.concentrations   = concentrations
@@ -42,7 +44,7 @@ class Strand(object):
 
     def pop(self):
         old_state = self._sequence.pop()
-        self.concentrations[old_state].polymerize()
+        self.concentrations[old_state].depolymerize()
         self._update(len(self._sequence), old_state, None)
 
     def __getitem__(self, index):

@@ -9,9 +9,9 @@
     {"name": "main",
      "end_conditions": [
          ["Duration", [40]]],
-     "data_collectors": [
-        ["LengthChange", []],
-        ["HydrolysisEventCount", [["t"], ["p"]]]],
+     "measurements": {
+        "length": ["Length", []],
+        "phosphate_cleavage": ["TransitionEventCount", ["t", "p"]]},
      "concentrations": [
         [["t"], ["fixed_reagent", [6, 0.0112]]]]}],
 

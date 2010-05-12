@@ -7,8 +7,8 @@
 "states": ["du", "ds"],
 
 "transitions": [
-    ["depolymerization.fixed_rate.Barbed", ["ds", 0.1]],
-    ["depolymerization.fixed_rate.Barbed", ["du", 5.4]],
+    ["depolymerization.Barbed", ["ds", 0.1]],
+    ["depolymerization.Barbed", ["du", 5.4]],
     ["hydrolysis.Random", ["du", 1.3e-3, "ds"]],
     ["hydrolysis.Random", ["ds", 4.5e-3, "du"]]]
 }

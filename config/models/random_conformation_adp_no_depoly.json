@@ -1,5 +1,5 @@
 {
-"filename": "random_conformation_adp",
+"filename": "random_conformation_adp_no_depoly",
 
 "description": "The group's first real model.  ADP has 2 conformations which randomly change.",
 
@@ -8,13 +8,8 @@
 "states": ["t", "p", "du", "ds"],
 
 "transitions": [
-    [  "polymerization.Barbed", ["t", 11.6 ]],
-    [  "polymerization.Barbed", ["p",  3.4 ]],
-    [  "polymerization.Barbed", ["du", 2.9 ]],
-    ["depolymerization.Barbed", ["t",  1.4]],
-    ["depolymerization.Barbed", ["p",  0.2]],
-    ["depolymerization.Barbed", ["du", 5.4]],
-    ["depolymerization.Barbed", ["ds", 0.1]],
+    [  "polymerization.Barbed",  ["t", 11.6 ]],
+    [  "polymerization.Barbed",  ["d",  2.9 ]],
     ["hydrolysis.Random", ["t",   0.3,   "p"]],
     ["hydrolysis.Random", ["p",  0.003,  "du"]],
     ["hydrolysis.Random", ["du", 1.3e-3, "ds"]],

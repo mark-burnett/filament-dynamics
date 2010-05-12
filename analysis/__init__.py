@@ -14,11 +14,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import operator
+
 import io
 
 import mitchison_stability
 import tools
-
 
 __all__ = ['available']
 
@@ -32,3 +33,8 @@ def available(keys):
         if requirements.issubset(available_data):
             analyses.append(a)
     return analyses
+
+def duration(ec_config):
+    ec_names = [ec[0] for ec in ec_config]
+    i = ec_names.index("Duration")
+    return ec_config[i][1][0]

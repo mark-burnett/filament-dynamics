@@ -6,13 +6,13 @@
 "states": ["t", "p", "d"],
 
 "transitions": [
-    [  "polymerization.fixed_rate.Barbed", ["t", 11.6]],
-    [  "polymerization.fixed_rate.Barbed", ["p",  3.4]],
-    [  "polymerization.fixed_rate.Barbed", ["d",  2.9]],
-    ["depolymerization.fixed_rate.Barbed", ["t",  1.4]],
-    ["depolymerization.fixed_rate.Barbed", ["p",  0.2]],
-    ["depolymerization.fixed_rate.Barbed", ["d",  1.4]],
-    ["hydrolysis.Cooperative", ["t", "p", 1.0,  "p"]],
-    ["hydrolysis.Cooperative", ["t", "d", 1.0,  "p"]],
-    ["hydrolysis.Cooperative", ["p", "d", 0.57, "d"]]]
+    [  "polymerization.Barbed", ["t", 11.6]],
+    [  "polymerization.Barbed", ["p",  3.4]],
+    [  "polymerization.Barbed", ["d",  2.9]],
+    ["depolymerization.Barbed", ["t",  1.4]],
+    ["depolymerization.Barbed", ["p",  0.2]],
+    ["depolymerization.Barbed", ["d",  1.4]],
+    ["hydrolysis.PointedNeighbor", ["t", "p", 1.0,  "p"]],
+    ["hydrolysis.PointedNeighbor", ["t", "d", 1.0,  "p"]],
+    ["hydrolysis.PointedNeighbor", ["p", "d", 0.57, "d"]]]
 }

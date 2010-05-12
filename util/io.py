@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -14,29 +13,23 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
-import numpy
+import os
 
-__all__ = ['summarize', 'downsample', 'make_timecourse_histogram']
-def downsample(sample_times, data):
-    x, y = zip(*data)
+def make_filename(input_name, output_dir, output_name, supporting_text=None):
+    # If a user name was specified, use that.
+    if output_name:
+        if output_dir:
+            if not os.path.exists(output_dir):
+                os.mkdir(output_dir)
+            return os.path.join(output_dir, output_name)
+        else:
+            return output_name
 
-    true_sample_times = []
-    for t in sample_times:
-        if x[0] < t < x[-1]:
-            true_sample_times.append(t)
+    if not output_dir:
+        output_dir = os.path.splitext(input_name)[0]
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+    return os.path.join(output_dir, supporting_text)
 
-    return numpy.interp(true_sample_times, x, y)
-
-def make_timecourse_histogram(timecourses):
-    max_len = max(map(len, timecourses))
-    histograms = []
-    for i in xrange(max_len):
-        hg = []
-        for tc in timecourses:
-            try:
-                hg.append(tc[i])
-            except IndexError:
-                pass
-        histograms.append(hg)
-    return histograms
+def data_filename(analysis_name):
+    return os.path.join('/home/mark/a/trunk/data/experiments', analysis_name) + '.dat'

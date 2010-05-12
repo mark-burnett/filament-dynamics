@@ -14,54 +14,52 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import itertools
+import csv
 
 import numpy
 
-import tools
+from . import tools
 
-__all__ = ['filename', 'perform', 'csv', 'plot']
+def make_csv(data, sample_period=-1, duration=None,
+             stable_time=100, stable_rate=1,
+             data_file=None,
+             **kwargs):
+    """
+    sample_period = None -> use data file for time points
+    duration = None -> only needed if sample_period != None
+    """
+    if sample_period > 0:
+        sample_times = numpy.arange(stable_time + 1, duration, float(sample_period))
+    elif data_file:
+        # Read in data from file.
+        r = csv.reader(data_file, delimiter=' ')
+        sample_times = []
+        for row in r:
+            try:
+                value = float(row[0])
+            except:
+                value = float(row[1])
+            sample_times.append(value)
+        sample_times = numpy.array(sample_times)
+    else:
+        raise RuntimeError(
+                'Must have either sample period or data file to generate csv.')
 
-filename = 'mitchison_stability'
+    original_lengths = [d['length'] for d in data]
+    original_samples = [tools.downsample(sample_times, ol) for ol in original_lengths]
+    old_samples      = [tools.downsample(sample_times - stable_time, ol)
+                        for ol in original_lengths]
+    sampled_rates    = [(orig - old[:len(orig)]) / stable_time
+                        for orig, old in itertools.izip(original_samples,
+                                                        old_samples)]
+    timecourse_rates = tools.make_timecourse_histogram(sampled_rates)
 
-def perform(data, sample_period, stable_time=100, stable_variation=100,
-            **kwargs):
-    # Num samples in stable time
-    stable_samples  = int(stable_time/sample_period)
+    stable_count = [list(numpy.abs(r) < stable_rate).count(True)
+                    for r in timecourse_rates]
+    total_count  = [len(r) for r in timecourse_rates]
+    stable_frac  = [float(sc) / tc
+                    for sc, tc in itertools.izip(stable_count, total_count)]
+    stat_errors  = [frac / numpy.sqrt(tc)
+                    for frac, tc in itertools.izip(stable_frac, total_count)]
 
-    sampled_lengths = data['strand_length']
-
-    # Cut off values past depolymerization point.
-    cut_lengths = []
-    for sl in sampled_lengths:
-        index = len(sl)
-        for i, v in enumerate(sl):
-            if v <= 1:
-                index = i
-                break
-        # Discard unusable rate profiles (eg those that are not long enough).
-        if index > stable_samples:
-            cut_lengths.append(sl[:index])
-
-    # Calculate (poly/depoly) rates at each point.
-    rate_profiles   = [(cl - numpy.roll(cl, stable_samples))
-                       for cl in cut_lengths]
-
-    # Check stability critereon at each point.
-    stable_profiles = [numpy.abs(rp) < stable_variation for rp in rate_profiles]
-
-    # Determine the fraction that is stable at each timestep, throwing away
-    # filemants that have completely depolymerized.
-    stable_histograms = tools.make_timecourse_histogram(stable_profiles)
-    stable_fractions  = [float(sum(sh))/len(sh) for sh in stable_histograms]
-
-    # Throw away left over chaff (from numpy.roll).
-    return stable_fractions[stable_samples:]
-
-def csv(stable_fractions, data):
-    time = data['time']
-    return itertools.izip(time, stable_fractions)
-
-def plot():
-    raise NotImplementedError()
-    import pylab # Don't waste time importing for plain CSV dump
-    pass
+    return itertools.izip(sample_times, stable_frac, stat_errors)
