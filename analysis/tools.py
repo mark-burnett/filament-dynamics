@@ -18,13 +18,14 @@ import itertools
 import numpy
 
 __all__ = ['summarize', 'downsample', 'make_timecourse_histogram']
-def downsample(sample_times, data):
+
+def downsample(sample_times, data, extrapolate=False):
     x, y = zip(*data)
 
-    true_sample_times = []
-    for t in sample_times:
-        if x[0] < t < x[-1]:
-            true_sample_times.append(t)
+    if not extrapolate:
+        true_sample_times = [t for t in sample_times if x[0] <= t <= x[-1]]
+    else:
+        true_sample_times = sample_times
 
     return numpy.interp(true_sample_times, x, y)
 

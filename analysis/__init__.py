@@ -16,25 +16,8 @@
 
 import operator
 
-import io
-
+import average_length
+import pieper_wegner
+import pollard_cleavage
 import mitchison_stability
 import tools
-
-__all__ = ['available']
-
-_available = {mitchison_stability:
-                  set(['time', 'strand_length'])}
-
-def available(keys):
-    available_data = set(keys)
-    analyses = []
-    for a, requirements in _available.items():
-        if requirements.issubset(available_data):
-            analyses.append(a)
-    return analyses
-
-def duration(ec_config):
-    ec_names = [ec[0] for ec in ec_config]
-    i = ec_names.index("Duration")
-    return ec_config[i][1][0]

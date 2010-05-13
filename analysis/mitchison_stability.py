@@ -20,7 +20,7 @@ import numpy
 
 from . import tools
 
-def make_csv(data, sample_period=-1, duration=None,
+def make_csv(data, sample_period=-1.0, duration=-1.0,
              stable_time=100, stable_rate=1,
              data_file=None,
              **kwargs):
@@ -28,6 +28,7 @@ def make_csv(data, sample_period=-1, duration=None,
     sample_period = None -> use data file for time points
     duration = None -> only needed if sample_period != None
     """
+    stable_time = float(stable_time)
     if sample_period > 0:
         sample_times = numpy.arange(stable_time + 1, duration, float(sample_period))
     elif data_file:

@@ -42,12 +42,13 @@ class fixed_reagent(Concentration):
         self.filament_tip_conc = filament_tip_conc
 
     def value(self):
+        # We must ensure we never go to negative concentration.
         if self.monomer_conc < self.filament_tip_conc:
             return 0
         return self.monomer_conc
 
     def polymerize(self):
-        if self.monomer_conc >= self.filament_tip_conc:
+        if  self.monomer_conc >= self.filament_tip_conc:
             self.monomer_conc -= self.filament_tip_conc
         else:
             raise RuntimeError(

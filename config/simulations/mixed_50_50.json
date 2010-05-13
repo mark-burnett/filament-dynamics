@@ -12,8 +12,8 @@
          ["StateLengthBelow", [1]]],
      "measurements": {
         "length": ["Length", []],
-        "phosphate_cleavage": ["TransitionEventCount", ["t", "p"]],
-        "phosphate_release":  ["TransitionEventCount", ["p", "du"]]},
+        "phosphate_cleavage": ["TransitionCount", ["t", "p"]],
+        "phosphate_release":  ["TransitionCount", ["p", "du"]]},
      "concentrations": [[["t"],       ["fixed_reagent", [2, 0.0112]]],
                         [["d", "du"], ["fixed_reagent", [2, 0.0112]]]]}],
 

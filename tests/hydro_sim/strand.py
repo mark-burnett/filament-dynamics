@@ -4,6 +4,13 @@ import collections
 from hydro_sim import strand
 from hydro_sim import concentrations
 
+# This would be a decent test to adapt and add for good measure.
+#        # XXX DEBUG debug
+#        for s, l in self.state_indices.items():
+#            assert(len(l) == self._sequence.count(s))
+#            for i in l:
+#                assert(s == self._sequence[i])
+
 class StrandTest(unittest.TestCase):
     def setUp(self):
         self.strand = strand.Strand(['t', 'p', 'd'],

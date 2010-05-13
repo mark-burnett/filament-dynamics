@@ -15,7 +15,7 @@
 
 from kmc.measurements import *
 
-class StateFractions(object):
+class StateCounts(object):
     __slots__ = ['label', 'data']
     def __init__(self, label):
         self.label = label
@@ -27,20 +27,18 @@ class StateFractions(object):
             results[k] = len(indices)
         self.data.append((time, results))
 
-class ConcentrationMonitor(object):
-    __slots__ = ['label', 'data', 'state', 'last_concentration']
-    def __init__(self, label, state):
-        self.label = label
-        self.state = state
-        self.data  = []
-        self.last_concentration = -1
+# XXX DEBUG debug
+#class TransitionEventCount(object):
+#    def __init__(self, label, old_state, new_state):
+#        self.label = label
+#        self.count = 0
+#        self.data = [(0,0)]
+#    def perform(self, time, strand):
+#        if self.count != len(strand.state_indices['p']):
+#            self.count += 1
+#            self.data.append((time, self.count))
 
-    def perform(self, time, strand):
-        v = strand.concentrations[self.state].value()
-        if self.last_concentration != v:
-            self.data.append((time, v))
-
-class TransitionEventCount(object):
+class TransitionCount(object):
     __slots__ = ['label', 'data', 'old_state', 'new_state', 'count',
                  '_last_old_count', '_last_new_count']
     def __init__(self, label, old_state, new_state):
@@ -60,19 +58,7 @@ class TransitionEventCount(object):
 
         if (self._last_old_count - 1 == old_count and
             self._last_new_count + 1 == new_count):
+            self.count += 1
             self.data.append((time, self.count))
-        else:
-            self._last_old_count = old_count
-            self._last_new_count = new_count
-
-class TipState(object):
-    __slots__ = ['label', 'index', 'data', 'last_state']
-    def __init__(self, label, index):
-        self.label      = label
-        self.index      = index
-        self.last_state = None
-        self.data       = []
-
-    def perform(self, time, strand):
-        if self.last_state != strand[self.index]:
-            self.data.append((time, strand[self.index]))
+        self._last_old_count = old_count
+        self._last_new_count = new_count

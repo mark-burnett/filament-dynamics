@@ -11,7 +11,7 @@
          ["Duration", [40]]],
      "measurements": {
         "length": ["Length", []],
-        "phosphate_cleavage": ["TransitionEventCount", ["t", "p"]]},
+        "phosphate_cleavage": ["TransitionCount", ["t", "p"]]},
      "concentrations": [
         [["t"], ["fixed_reagent", [6, 0.0112]]]]}],
 

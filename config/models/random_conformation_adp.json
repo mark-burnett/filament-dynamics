@@ -15,8 +15,8 @@
     ["depolymerization.Barbed", ["p",  0.2]],
     ["depolymerization.Barbed", ["du", 5.4]],
     ["depolymerization.Barbed", ["ds", 0.1]],
-    ["hydrolysis.Random", ["t",   0.3,   "p"]],
-    ["hydrolysis.Random", ["p",  0.003,  "du"]],
+    ["hydrolysis.Random", ["t",  3.0e-1, "p"]],
+    ["hydrolysis.Random", ["p",  3.0e-3, "du"]],
     ["hydrolysis.Random", ["du", 1.3e-3, "ds"]],
     ["hydrolysis.Random", ["ds", 4.5e-3, "du"]]]
 }

@@ -12,9 +12,9 @@
          ["StateLengthBelow", [1]]],
      "measurements": {
         "length": ["Length", []],
-        "phosphate_cleavage": ["TransitionEventCount", ["t", "p"]],
-        "phosphate_release":  ["TransitionEventCount", ["p", "du"]]},
-     "concentrations": [[["t"], ["fixed_reagent", [4, 5.6e-4]]]]}],
+        "phosphate_cleavage": ["TransitionCount", ["t", "p"]],
+        "phosphate_release":  ["TransitionCount", ["p", "du"]]},
+     "concentrations": [[["t"], ["fixed_reagent", [4, 5.60e-4]]]]}],
 
-"initial_strand": ["single_state", [["d", "ds"], 535]]
+"initial_strand": ["single_state", [["d", "ds"], 10708]]
 }

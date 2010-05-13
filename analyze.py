@@ -53,7 +53,7 @@ def dump_csv(filename, stage_name, analysis_name,
 
     # Perform analysis
     output = a.make_csv(stage_data, duration=stage_duration,
-                        data_file=open(util.io.data_filename(analysis_name)),
+#                        data_file=open(util.io.data_filename(analysis_name)),
                         **kwargs)
 
     # Dump to csv file
