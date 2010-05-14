@@ -32,7 +32,8 @@ import hydro_sim
 import util.mp_sim
 
 @baker.command(default=True)
-def hydrolysis(model_file, simulation_file,
+def hydrolysis(model_template,      model_parameters,
+               experiment_template, experiment_parameters,
                N=100, processes=0,
                output_file=None,
                output_dir=None):
@@ -42,9 +43,20 @@ def hydrolysis(model_file, simulation_file,
     :param processors:  Number of processors to use (default=autodetect).
     :param N:           Number of simulations to run (default=100).
     """
+    try:
+        # Read template files -> strings.
+        pass
+    except:
+        # Print valid template names.
+        raise RuntimeError('Invalid template name.  Valid names are: %s.')
+
+    # Read parameter files.
+
+    # Complete templates.
+
     # Read model and simulation config files
-    model_config      = json.load(open(model_file))
-    simulation_config = json.load(open(simulation_file))
+#    model_config      = json.load(open(model_file))
+#    simulation_config = json.load(open(simulation_file))
 
     # Construct simulation
     sim_generator = hydro_sim.factories.simulation_generator(model_config,
