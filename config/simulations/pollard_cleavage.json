@@ -1,7 +1,7 @@
 {
 "filename": "pollard_cleavage",
 
-"description": "Two stage simulation: growth, and depolymerization.",
+"description": "Bulk polymerization.",
 
 "_comment": "Blanchoin, Pollard, Biochemistry Vol 41 No 2 (2002)",
 

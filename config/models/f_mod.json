@@ -1,0 +1,13 @@
+{
+"filename": "mod",
+
+"description": "Simplified Fujiwara Model",
+
+"states": ["t", "p", "d"],
+
+"_comment": "The p to p transition just prevents a divide by 0 error.",
+"transitions": [
+    ["polymerization.Barbed", ["t", 11.6]],
+    ["hydrolysis.Random", ["t", 0.3,   "p"]],
+    ["hydrolysis.Random", ["p", 1e-6, "p"]]]
+}

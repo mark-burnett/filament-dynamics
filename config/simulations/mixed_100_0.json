@@ -14,7 +14,8 @@
         "length": ["Length", []],
         "phosphate_cleavage": ["TransitionCount", ["t", "p"]],
         "phosphate_release":  ["TransitionCount", ["p", "du"]]},
-     "concentrations": [[["t"], ["fixed_reagent", [4, 5.60e-4]]]]}],
+     "concentrations": [[["t"], ["fixed_reagent",       [4, 5.60e-4]]],
+                        [["d", "du"], ["fixed_reagent", [0, 5.60e-4]]]]}],
 
 "initial_strand": ["single_state", [["d", "ds"], 10708]]
 }
