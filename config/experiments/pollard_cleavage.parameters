@@ -1,0 +1,14 @@
+{
+"description": "Blanchoin, Pollard, Biochemistry Vol. 41 No. 2 (2002)",
+
+"experiment": {
+    "seed_concentration":         6,
+    "filament_tip_concentration": 0.0112},
+
+"stages": {
+    "bulk_polymerization": {
+        "duration": 40,
+        "initial_t_concentration":  6,
+        "initial_d_concentration":  0,
+        "initial_Pi_concentration": 0}}
+}

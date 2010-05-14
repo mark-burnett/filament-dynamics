@@ -1,0 +1,14 @@
+{
+"description": "Pieper, Wegner 100 % G-ATP-Actin",
+
+"experiment": {
+    "seed_concentration":         6,
+    "filament_tip_concentration": 5.60e-4},
+
+"stages": {
+    "bulk_polymerization": {
+        "duration": 600,
+        "initial_t_concentration":  4,
+        "initial_d_concentration":  0,
+        "initial_Pi_concentration": 0}}
+}

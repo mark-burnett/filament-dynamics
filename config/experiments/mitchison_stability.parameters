@@ -1,0 +1,13 @@
+{
+"description": "Mitchison PNAS Vol. 105, No. 43 (2008)",
+
+"experiment": {
+    "seed_length": 10},
+
+"stages": {
+    "random_polymerization": {
+        "max_duration": 60,
+        "t_concentration": 3},
+    "clean_depolymerization": {
+        "duration": 3000}}
+}

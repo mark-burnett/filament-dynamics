@@ -1,0 +1,18 @@
+{
+"description": "Cooperative Hydrolysis Model.",
+
+"states": ["t", "p", "d"],
+
+"transitions": [
+    [  "polymerization.Barbed", ["t", %(t_on_rate)s]],
+    [  "polymerization.Barbed", ["p", %(p_on_rate)s]],
+    [  "polymerization.Barbed", ["d", %(d_on_rate)s]],
+    ["depolymerization.Barbed", ["t", %(t_off_rate)s]],
+    ["depolymerization.Barbed", ["p", %(p_off_rate)s]],
+    ["depolymerization.Barbed", ["d", %(d_off_rate)s]],
+    ["hydrolysis.Random", ["t", %(random_cleavage_rate)s, "p"]],
+    ["hydrolysis.Random", ["p", %(random_release_rate)s,  "d"]],
+    ["hydrolysis.PointedNeighbor", ["t", "p", %(vectorial_cleavage_rate)s, "p"]],
+    ["hydrolysis.PointedNeighbor", ["t", "d", %(vectorial_cleavage_rate)s, "p"]],
+    ["hydrolysis.PointedNeighbor", ["p", "d", %(vectorial_release_rate)s,  "d"]]]
+}

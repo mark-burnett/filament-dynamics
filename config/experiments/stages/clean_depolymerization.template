@@ -1,0 +1,12 @@
+{
+"description": "Depolymerize for a fixed time at zero concentration.",
+
+"end_conditions": [
+    ["Duration",         [%(duration)s]]],
+    ["StateLengthBelow", [1]]],
+
+"measurements": {
+    "length": ["Length", []]},
+
+"concentrations": []
+}

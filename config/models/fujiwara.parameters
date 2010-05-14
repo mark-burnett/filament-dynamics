@@ -1,0 +1,14 @@
+{
+"description": "Random hydrolysis model parameters taken from Fujiwara (2007).",
+
+"t_on_rate": 11.6,
+"p_on_rate":  3.4,
+"d_on_rate":  2.9,
+
+"t_off_rate": 1.4,
+"p_off_rate": 0.2,
+"d_off_rate": 5.4,
+
+"cleavage_rate": 0.3,
+"release_rate":  0.003
+}

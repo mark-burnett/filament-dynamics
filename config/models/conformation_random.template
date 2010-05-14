@@ -1,0 +1,19 @@
+{
+"description": "Random conformational changes.",
+
+"_comment": "du is the unstable (fast depolymerizing) ADP state, ds is the stable one.",
+"states": ["t", "p", "du", "ds"],
+
+"transitions": [
+    [  "polymerization.Barbed", ["t",  %(t_on_rate)s]],
+    [  "polymerization.Barbed", ["p",  %(p_on_rate)s]],
+    [  "polymerization.Barbed", ["du", %(du_on_rate)s]],
+    ["depolymerization.Barbed", ["t",  %(t_off_rate)s]],
+    ["depolymerization.Barbed", ["p",  %(p_off_rate)s]],
+    ["depolymerization.Barbed", ["du", %(du_off_rate)s]],
+    ["depolymerization.Barbed", ["ds", %(ds_off_rate)s]],
+    ["hydrolysis.Random", ["t",  %(cleavage_rate)s,        "p"]],
+    ["hydrolysis.Random", ["p",  %(release_rate)s,         "du"]],
+    ["hydrolysis.Random", ["du", %(stablization_rate)s,    "ds"]],
+    ["hydrolysis.Random", ["ds", %(destabilization_rate)s, "du"]]]
+}

@@ -1,0 +1,12 @@
+{
+"description": "Polymerize for a random time at a fixed concentration.",
+
+"end_conditions": [
+    ["RandomDuration", [%(max_duration)s]]],
+
+"measurements": {
+    "length": ["Length", []]},
+
+"concentrations": [
+    [["t"], ["fixed_concentration", [%(t_concentration)s]]]]
+}

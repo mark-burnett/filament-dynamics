@@ -1,0 +1,9 @@
+{
+"description": "Bulk polymerization allows measurement of several rates.",
+
+"stages": ["bulk_polymerization"],
+
+"initial_strand": ["single_state", ["d", "ds"], {
+                       "seed_concentration": %(seed_concentration)s,
+                       "filament_tip_concentration": %(filament_tip_concentration)s}]
+}

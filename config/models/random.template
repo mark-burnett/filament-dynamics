@@ -1,0 +1,17 @@
+{
+"description": "Three state, random hydrolysis model.",
+
+"states": ["t", "p", "d"],
+
+"transitions": [
+    [  "polymerization.Barbed", ["t", %(t_on_rate)s]],
+    [  "polymerization.Barbed", ["p", %(p_on_rate)s]],
+    [  "polymerization.Barbed", ["d", %(d_on_rate)s]],
+
+    ["depolymerization.Barbed", ["t", %(t_off_rate)s]],
+    ["depolymerization.Barbed", ["p", %(p_off_rate)s]],
+    ["depolymerization.Barbed", ["d", %(d_off_rate)s]],
+
+    ["hydrolysis.Random", ["t", %(cleavage_rate)s, "p"]],
+    ["hydrolysis.Random", ["p", %(release_rate)s,  "d"]]]
+}
