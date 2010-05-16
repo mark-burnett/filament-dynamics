@@ -2,31 +2,40 @@
 "description": "Polymerize for a fixed time using limited reagents.",
 
 "end_conditions": [
-    ["Duration", [%(duration)s] []]],
+    ["Duration", {"duration": ${duration}}]],
 
 "measurements": {
-    "length":                  ["Length",          []],
-    "phosphate_cleavage":      ["TransitionCount", ["t", "p"]],
-    "phosphate_concentration": ["Concentration",   ["Pi"]]},
-
-"states": ["Pi"],
+    "length":                  ["Length",          {}],
+    "phosphate_cleavage":      ["TransitionCount", {"old_state": "t",
+                                                    "new_state": "p"}],
+    "phosphate_concentration": ["Concentration",   {"species": "Pi"}]},
 
 "transitions": [
-    "concentrations.FixedRate", [["p"],  %(in_solution_release_rate)s,
-                                 ["d", "du"]],
-    "concentrations.FixedRate", {"old_state":["p"],
-                                 "rate": %(something)s,
-                                 "new_state":["d", "du"]},
-    "concentrations.FixedRate", [["ds"], %(in_solution_destabilization_rate)s,
-                                 ["du"]],
+    "concentrations.FixedRate", {"old_state": "p",
+                                 "rate":      ${in_solution_release_rate},
+                                 "new_state": ${util.states.match(["d", "du"], model_states)}}
+    % if "ds" in model_states:
+        , "concentrations.FixedRate", {"old_state": "ds",
+                                       "rate":      ${in_solution_destabilization_rate},
+                                       "new_state": "du"}
+    % endif
+    ],
 
 "concentrations": [
-    [["t"],       ["FixedReagent", [%(initial_t_concentration)s,
-                                    %(filament_tip_concentration)s]]],
-    [["d", "du"], ["FixedReagent", [%(initial_d_concentration)s,
-                                    %(filament_tip_concentration)s]]],
-    [["ds"],      ["FixedReagent", [0,
-                                    %(filament_tip_concentration)s]]],
-    [["Pi"],      ["FixedReagent", [%(initial_Pi_concentration)s,
-                                    %(filament_tip_concentration)s]]]]
+    ## Non-zero initial concentrations:
+    ["t", ["FixedReagent", {"initial_concentration":      ${initial_t_concentration},
+                            "filament_tip_concentration": ${filament_tip_concentration}}]],
+    [${util.states.match(["d", "du"], model_states)},
+          ["FixedReagent", {"initial_concentration":      ${initial_d_concentration},
+                            "filament_tip_concentration": ${filament_tip_concentration}}]],
+
+    ## Zero initial concentrations:
+    % if "ds" in model_states:
+        ["ds", ["FixedReagent", {"initial_concentration":      0,
+                                 "filament_tip_concentration": ${filament_tip_concentration}}]],
+    % endif
+    ["p",  ["FixedReagent", {"initial_concentration":      0,
+                             "filament_tip_concentration": ${filament_tip_concentration}}]],
+    ["Pi", ["FixedReagent", {"initial_concentration":      0,
+                             "filament_tip_concentration": ${filament_tip_concentration}}]]]
 }

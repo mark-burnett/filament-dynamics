@@ -4,15 +4,31 @@
 "states": ["t", "p", "d"],
 
 "transitions": [
-    [  "polymerization.Barbed", ["t", %(t_on_rate)s]],
-    [  "polymerization.Barbed", ["p", %(p_on_rate)s]],
-    [  "polymerization.Barbed", ["d", %(d_on_rate)s]],
-    ["depolymerization.Barbed", ["t", %(t_off_rate)s]],
-    ["depolymerization.Barbed", ["p", %(p_off_rate)s]],
-    ["depolymerization.Barbed", ["d", %(d_off_rate)s]],
-    ["hydrolysis.Random", ["t", %(random_cleavage_rate)s, "p"]],
-    ["hydrolysis.Random", ["p", %(random_release_rate)s,  "d"]],
-    ["hydrolysis.PointedNeighbor", ["t", "p", %(vectorial_cleavage_rate)s, "p"]],
-    ["hydrolysis.PointedNeighbor", ["t", "d", %(vectorial_cleavage_rate)s, "p"]],
-    ["hydrolysis.PointedNeighbor", ["p", "d", %(vectorial_release_rate)s,  "d"]]]
+    [  "polymerization.Barbed", {"state": "t", "rate": ${t_on_rate}}],
+    [  "polymerization.Barbed", {"state": "p", "rate": ${p_on_rate}}],
+    [  "polymerization.Barbed", {"state": "d", "rate": ${d_on_rate}}],
+
+    ["depolymerization.Barbed", {"state": "t", "rate": ${t_off_rate}}],
+    ["depolymerization.Barbed", {"state": "p", "rate": ${p_off_rate}}],
+    ["depolymerization.Barbed", {"state": "d", "rate": ${d_off_rate}}],
+
+    ["hydrolysis.Random", {"old_state": "t",
+                           "rate":      ${random_cleavage_rate},
+                           "new_state": "p"}],
+    ["hydrolysis.Random", {"old_state": "p",
+                           "rate":      ${random_release_rate},
+                           "new_state": "d"}],
+
+    ["hydrolysis.PointedNeighbor", {"old_state":        "t",
+                                    "pointed_neighbor": "p",
+                                    "rate":             ${vectorial_cleavage_rate - random_cleavage_rate},
+                                    "new_state":        "p"}],
+    ["hydrolysis.PointedNeighbor", {"old_state":        "t",
+                                    "pointed_neighbor": "d",
+                                    "rate":             ${vectorial_cleavage_rate - random_cleavage_rate},
+                                    "new_state":        "p"}],
+    ["hydrolysis.PointedNeighbor", {"old_state":        "p",
+                                    "pointed_neighbor": "d",
+                                    "rate":             ${vectorial_release_rate - random_release_rate},
+                                    "new_state":        "d"}]]
 }

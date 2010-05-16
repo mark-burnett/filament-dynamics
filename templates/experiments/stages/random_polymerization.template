@@ -2,15 +2,17 @@
 "description": "Polymerize for a random time at a fixed concentration.",
 
 "end_conditions": [
-    ["RandomDuration", [%(max_duration)s]]],
+    ["RandomDuration", {"max_duration": ${max_duration}}]],
 
 "measurements": {
-    "length": ["Length", []]},
+    "length": ["Length", {}]},
 
 "states": [],
 
 "transitions": [],
 
 "concentrations": [
-    [["t"], ["fixed_concentration", [%(t_concentration)s]]]]
+    ["t", ["FixedConcentration", {"concentration": ${t_concentration}}]],
+    [${util.states.match(["d", "du"]), model_states)},
+          ["FixedConcentration", {"concentration": ${d_concentration}}]]]
 }
