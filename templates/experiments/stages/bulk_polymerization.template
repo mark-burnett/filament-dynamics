@@ -9,10 +9,23 @@
     "phosphate_cleavage":      ["TransitionCount", ["t", "p"]],
     "phosphate_concentration": ["Concentration",   ["Pi"]]},
 
+"states": ["Pi"],
+
+"transitions": [
+    "concentrations.FixedRate", [["p"],  %(in_solution_release_rate)s,
+                                 ["d", "du"]],
+    "concentrations.FixedRate", {"old_state":["p"],
+                                 "rate": %(something)s,
+                                 "new_state":["d", "du"]},
+    "concentrations.FixedRate", [["ds"], %(in_solution_destabilization_rate)s,
+                                 ["du"]],
+
 "concentrations": [
     [["t"],       ["FixedReagent", [%(initial_t_concentration)s,
-                                   %(filament_tip_concentration)s]]],
+                                    %(filament_tip_concentration)s]]],
     [["d", "du"], ["FixedReagent", [%(initial_d_concentration)s,
+                                    %(filament_tip_concentration)s]]],
+    [["ds"],      ["FixedReagent", [0,
                                     %(filament_tip_concentration)s]]],
     [["Pi"],      ["FixedReagent", [%(initial_Pi_concentration)s,
                                     %(filament_tip_concentration)s]]]]

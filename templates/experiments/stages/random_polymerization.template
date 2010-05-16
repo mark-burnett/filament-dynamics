@@ -7,6 +7,10 @@
 "measurements": {
     "length": ["Length", []]},
 
+"states": [],
+
+"transitions": [],
+
 "concentrations": [
     [["t"], ["fixed_concentration", [%(t_concentration)s]]]]
 }

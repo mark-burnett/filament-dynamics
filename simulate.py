@@ -29,42 +29,61 @@ import cPickle
 import baker
 
 import hydro_sim
-import util.mp_sim
+import util
 
 @baker.command(default=True)
-def hydrolysis(model_template,      model_parameters,
-               experiment_template, experiment_parameters,
+def hydrolysis(model_template_name,      model_parameters_filename,
+               experiment_template_name, experiment_parameters_filename,
                N=100, processes=0,
                output_file=None,
-               output_dir=None):
+               output_dir=None,
+               template_dir='templates'):
     """
     Perform hydrolysis simulation (default).
     :param output_file: Filename for storing results.
     :param processors:  Number of processors to use (default=autodetect).
     :param N:           Number of simulations to run (default=100).
     """
+    # Read model template.
     try:
-        # Read template files -> strings.
-        pass
+        model_template = util.config.load_template(model_template_name,
+                                                   os.join(template_dir,
+                                                           'models',
+                                                           model_template_name))
     except:
+        # XXX
+        # Read template files -> strings.
         # Print valid template names.
-        raise RuntimeError('Invalid template name.  Valid names are: %s.')
+        raise RuntimeError('Invalid model template name.  Valid names are: %s.')
+
+    # Read experiment template.
+    try:
+        experiment_template = util.config.load_template(
+                experiment_template_name, os.join(template_dir, 'experiments',
+                                                  experiment_template_name))
+    except:
+        # XXX
+        # Read template files -> strings.
+        # Print valid template names.
+        raise RuntimeError('Invalid experiment template name.  Valid names are: %s.')
 
     # Read parameter files.
+    model_parameters      = json.load(open(model_parameters_filename))
+    experiment_parameters = json.load(open(experiment_parameters_filename))
 
     # Complete templates.
-
-    # Read model and simulation config files
-#    model_config      = json.load(open(model_file))
-#    simulation_config = json.load(open(simulation_file))
+    model_config      = util.config.fill_model_template(model_template,
+                                                        model_parameters)
+    experiment_config = util.config.fill_experiment_template(
+                            experiment_template, experiment_parameters)
 
     # Construct simulation
     sim_generator = hydro_sim.factories.simulation_generator(model_config,
-                                                             simulation_config)
+                                                             experiment_config)
 
     # Construct initial strand
     strand_generator = hydro_sim.factories.make_sequence_generator(
-                           simulation_config['initial_strand'],
+                           experiment_config['initial_strand'],
                            model_config['states'])
 
     # Run simulation

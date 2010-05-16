@@ -8,5 +8,9 @@
 "measurements": {
     "length": ["Length", []]},
 
+"states": [],
+
+"transitions": [],
+
 "concentrations": []
 }

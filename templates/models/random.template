@@ -4,14 +4,24 @@
 "states": ["t", "p", "d"],
 
 "transitions": [
-    [  "polymerization.Barbed", ["t", %(t_on_rate)s]],
-    [  "polymerization.Barbed", ["p", %(p_on_rate)s]],
-    [  "polymerization.Barbed", ["d", %(d_on_rate)s]],
+    [  "polymerization.Barbed", {"state": "t",
+                                 "rate":  ${t_on_rate}}],
+    [  "polymerization.Barbed", {"state": "p",
+                                 "rate":  ${p_on_rate}}],
+    [  "polymerization.Barbed", {"state": "d",
+                                 "rate":  ${d_on_rate}}],
 
-    ["depolymerization.Barbed", ["t", %(t_off_rate)s]],
-    ["depolymerization.Barbed", ["p", %(p_off_rate)s]],
-    ["depolymerization.Barbed", ["d", %(d_off_rate)s]],
+    ["depolymerization.Barbed", {"state": "t",
+                                 "rate":  ${t_off_rate}}],
+    ["depolymerization.Barbed", {"state": "p",
+                                 "rate":  ${p_off_rate}}],
+    ["depolymerization.Barbed", {"state": "d",
+                                 "rate":  ${d_off_rate}}],
 
-    ["hydrolysis.Random", ["t", %(cleavage_rate)s, "p"]],
-    ["hydrolysis.Random", ["p", %(release_rate)s,  "d"]]]
+    ["hydrolysis.Random", {"old_state": "t",
+                           "rate":      ${cleavage_rate},
+                           "new_state": "p"}}],
+    ["hydrolysis.Random", {"old_state": "p",
+                           "rate":      ${release_rate},
+                           "new_state": "d"}}]]
 }
