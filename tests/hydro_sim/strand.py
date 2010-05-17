@@ -16,7 +16,7 @@ class StrandTest(unittest.TestCase):
         self.strand = strand.Strand(['t', 'p', 'd'],
                                     ['d', 'd', 'p', 't', 'p', 't', 't'],
                                     collections.defaultdict(
-                                        concentrations.zero_concentration))
+                                        concentrations.ZeroConcentration))
 
     def tearDown(self):
         del self.strand

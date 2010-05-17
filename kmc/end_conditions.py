@@ -54,3 +54,6 @@ class StateLengthBelow(object):
 
     def __call__(self, time, state):
         return self.minimum_size > len(state)
+
+def EmptyState():
+    return StateLengthBelow(1)

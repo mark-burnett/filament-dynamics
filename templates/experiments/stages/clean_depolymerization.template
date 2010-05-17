@@ -3,7 +3,7 @@
 
 "end_conditions": [
     ["Duration",    {"duration": ${duration}}],
-    ["EmptyStrand", {}]],
+    ["EmptyState", {}]],
 
 "measurements": {
     "length": ["Length", {}]},

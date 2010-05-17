@@ -3,21 +3,21 @@ import unittest
 from hydro_sim import concentrations
 
 class ConcentrationsTest(unittest.TestCase):
-    def test_typical_fixed_concentration(self):
+    def test_typical_FixedConcentration(self):
         values = [3.1, 0.0001, 7]
         for v in values:
-            fc = concentrations.fixed_concentration(v)
+            fc = concentrations.FixedConcentration(v)
             self.assertEqual(v, fc.value())
 
-    def test_negative_fixed_concentration(self):
-        self.assertRaises(ValueError, concentrations.fixed_concentration, -0.5)
+    def test_negative_FixedConcentration(self):
+        self.assertRaises(ValueError, concentrations.FixedConcentration, -0.5)
 
-    def test_zero_concentration(self):
-        zc = concentrations.zero_concentration()
+    def test_ZeroConcentration(self):
+        zc = concentrations.ZeroConcentration()
         self.assertEqual(0, zc.value())
 
-    def test_typical_fixed_reagent(self):
-        fr = concentrations.fixed_reagent(3.0, 0.1)
+    def test_typical_FixedReagent(self):
+        fr = concentrations.FixedReagent(3.0, 0.1)
 
         self.assertEqual(3.0, fr.value())
         

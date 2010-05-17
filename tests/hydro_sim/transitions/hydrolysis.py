@@ -11,7 +11,7 @@ class RandomHydrolysisTest(unittest.TestCase):
         self.strand = strand.Strand(['t', 'p', 'd'],
                                     ['d', 'd', 'p', 't', 'p', 't', 't'],
                                     collections.defaultdict(
-                                        concentrations.zero_concentration))
+                                        concentrations.ZeroConcentration))
         self.tp_transition = hydrolysis.Random('t', 1,   'p')
         self.pd_transition = hydrolysis.Random('p', 0.5, 'd')
 
@@ -38,7 +38,7 @@ class PointedNeighborHydrolysisTest(unittest.TestCase):
         self.strand = strand.Strand(['t', 'p', 'd'],
                                     ['d', 'd', 'p', 't', 'p', 't', 't'],
                                     collections.defaultdict(
-                                        concentrations.zero_concentration))
+                                        concentrations.ZeroConcentration))
         self.tp_transition = hydrolysis.PointedNeighbor('t', 'p', 1,   'p')
         self.pd_transition = hydrolysis.PointedNeighbor('p', 'd', 0.5, 'd')
 

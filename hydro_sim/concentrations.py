@@ -21,23 +21,23 @@ class Concentration(object):
     def depolymerize(self):
         pass
 
-class fixed_concentration(Concentration):
+class FixedConcentration(Concentration):
     __slots__ = ['conc']
-    def __init__(self, conc):
-        if conc < 0:
+    def __init__(self, concentration=-1):
+        if concentration < 0:
             raise ValueError('Negative concentrations not allowed.')
-        self.conc = conc
+        self.concentration = concentration
 
     def value(self):
-        return self.conc
+        return self.concentration
 
-class zero_concentration(Concentration):
+class ZeroConcentration(Concentration):
     def value(self):
         return 0
 
-class fixed_reagent(Concentration):
+class FixedReagent(Concentration):
     __slots__ = ['monomer_conc', 'filament_tip_conc']
-    def __init__(self, initial_concentration, filament_tip_conc):
+    def __init__(self, initial_concentration=None, filament_tip_conc=None):
         self.monomer_conc      = initial_concentration
         self.filament_tip_conc = filament_tip_conc
 

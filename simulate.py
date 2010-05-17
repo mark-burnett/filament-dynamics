@@ -75,7 +75,6 @@ def hydrolysis(model_template_name,      model_parameters_filename,
     # Construct simulation generators.
     sim_generator = hydro_sim.factories.simulation_generator(
                                                   model_config,
-                                                  experiment_config['stages'],
                                                   stage_configs)
 
     strand_generator = hydro_sim.factories.make_sequence_generator(
@@ -94,9 +93,11 @@ def hydrolysis(model_template_name,      model_parameters_filename,
     if output_file:
         filename = output_file
     else:
-        filename = '_'.join([model_config['filename'],
-                             simulation_config['filename'],
-                             str(N)]) + '.pickle'
+        filename = util.io.make_output_filename(model_template_name,
+                                                model_parameters_filename,
+                                                experiment_template_name,
+                                                experiment_parameters_filename,
+                                                N=N)
 
     if output_dir:
         # Create output directory
@@ -107,13 +108,13 @@ def hydrolysis(model_template_name,      model_parameters_filename,
 
     # Write output
     with open(filename, 'w') as f:
-        cPickle.dump({'model_config': model_config,
-                      'experiment_config': experiment_config,
-                      'stage_configs': stage_configs,
-                      'model_parameters': model_parameters,
+        cPickle.dump({'model_config':          model_config,
+                      'experiment_config':     experiment_config,
+                      'stage_configs':         stage_configs,
+                      'model_parameters':      model_parameters,
                       'experiment_parameters': experiment_parameters,
-                      'data': data,
-                      'timestamp':time.gmtime()},
+                      'data':                  data,
+                      'timestamp':             time.gmtime()},
                      f, -1)
 
 baker.run()

@@ -15,6 +15,20 @@
 
 import os
 
+def make_output_filename(model_template_name, model_parameters_filename,
+                         experiment_template_name, experiment_parameters_filename,
+                         N=None, extension='.pickle'):
+    bare_model_par_filename = os.path.split(os.path.splitext(
+                                    model_parameters_filename)[0])[1]
+    bare_experiment_par_filename = os.path.split(os.path.splitext(
+                                    experiment_parameters_filename)[0])[1]
+    name = (model_template_name + '_' + bare_model_par_filename + '_' +
+            experiment_template_name + '_' + bare_experiment_par_filename)
+
+    if N is not None:
+        name += '_' + str(N)
+    return name + extension
+
 def make_filename(input_name, output_dir, output_name, supporting_text=None):
     # If a user name was specified, use that.
     if output_name:

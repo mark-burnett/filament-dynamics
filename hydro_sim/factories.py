@@ -29,53 +29,59 @@ from . import transitions
 from . import measurements
 from . import strand
 
-def simulation_generator(model_config, simulation_config):
-    sim = make_simulation(model_config, simulation_config)
+def simulation_generator(model_config, stage_configs):
+    sim = make_simulation(model_config, stage_configs)
     while True:
         yield copy.deepcopy(sim)
 
-def make_simulation(model_config, simulation_config):
+def make_simulation(model_config, stage_configs):
     model_states = model_config['states']
-    concentrations = []
     stages = []
-    for stage_config in simulation_config['stages']:
-        stages.append(make_stage(model_config, stage_config))
+    concentrations = []
+    for stage_config in stage_configs:
+        stages.append(make_stage(model_config['transitions'], stage_config))
         concentrations.append(make_concentrations(model_states,
                                               stage_config['concentrations']))
 
     return simulation.SimulationSequence(model_states, stages, concentrations)
 
-def make_stage(model_config, stage_config):
+def make_stage(model_transitions, stage_config):
     return kmc.simulation.Simulation(
-            make_transitions(model_config['transitions']),
+            make_transitions(model_transitions
+                             + stage_config['transitions']),
             make_measurements(stage_config['measurements']),
             make_end_conditions(stage_config['end_conditions']))
 
 def make_concentrations(model_states, concentrations_config):
     conc_dict = {}
-    for config_states, (config_function, config_args) in concentrations_config:
-        state = util.states.match(model_states, config_states)
-        f = util.introspection.lookup_name(config_function, concentrations)
-        conc_dict[state] = f(*config_args)
-    return collections.defaultdict(concentrations.zero_concentration,
-                                   conc_dict)
+    for state, (function_name, kwargs) in concentrations_config:
+        f = util.introspection.lookup_name(function_name, concentrations)
+        # XXX python 2.6.4 limitation
+        ascii_args = dict((str(k),v) for k, v in kwargs.items())
+        conc_dict[state] = f(**ascii_args)
+    return collections.defaultdict(concentrations.ZeroConcentration, conc_dict)
 
 def make_transitions(transitions_config):
     factories = util.introspection.make_factories(transitions_config,
                                                   transitions)
-    return [f(*args) for f, args in factories]
+    # XXX python 2.6.4 limitation
+    return [f(**dict((str(k), v) for k, v in kwargs.items())) for f, kwargs in factories]
 
 def make_end_conditions(ec_config):
     ec_factories = util.introspection.make_factories(ec_config,
                                                      kmc.end_conditions)
-    return [f(*args) for f, args in ec_factories]
+    # XXX python 2.6.4 limitation
+    return [f(**dict((str(k), v) for k, v in kwargs.items())) for f, kwargs in ec_factories]
 
 def make_measurements(measurements_config):
+    # XXX python 2.6.4 limitation
     return [util.introspection.lookup_name(name,
-                measurements)(label, *args)
-            for label, (name, args) in measurements_config.items()]
+                measurements)(label, **dict((str(k), v) for k, v in kwargs.items()))
+            for label, (name, kwargs) in measurements_config.items()]
 
-def make_sequence_generator(initial_strand_config, model_states):
-    name, args = initial_strand_config
+def make_sequence_generator(initial_strand_config):
+    name, kwargs = initial_strand_config
+    # XXX python 2.6.4 limitation
+    ascii_args = dict((str(k),v) for k, v in kwargs.items())
     f = util.introspection.lookup_name(name, strand)
-    return f(model_states, *args)
+    return f(**ascii_args)
