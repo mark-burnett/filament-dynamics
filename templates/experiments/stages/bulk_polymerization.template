@@ -13,7 +13,7 @@
 "transitions": [
     "concentrations.FixedRate", {"old_state": "p",
                                  "rate":      ${in_solution_release_rate},
-                                 "new_state": ${util.states.match(["d", "du"], model_states)}}
+                                 "new_state": ${match_states(["d", "du"], model_states)}}
     % if "ds" in model_states:
         , "concentrations.FixedRate", {"old_state": "ds",
                                        "rate":      ${in_solution_destabilization_rate},
@@ -25,7 +25,7 @@
     ## Non-zero initial concentrations:
     ["t", ["FixedReagent", {"initial_concentration":      ${initial_t_concentration},
                             "filament_tip_concentration": ${filament_tip_concentration}}]],
-    [${util.states.match(["d", "du"], model_states)},
+    [${match_states(["d", "du"], model_states)},
           ["FixedReagent", {"initial_concentration":      ${initial_d_concentration},
                             "filament_tip_concentration": ${filament_tip_concentration}}]],
 

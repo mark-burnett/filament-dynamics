@@ -13,11 +13,58 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def choose_stage(stages_config, stage_name):
-    stage_names = [s['name'] for s in stages_config]
-    return stage_names.index(stage_name)
+import os
+import json
 
-def get_duration(ec_config):
-    ec_names = [ec[0] for ec in ec_config]
-    i = ec_names.index('Duration')
-    return ec_config[i][1][0]
+from mako.template import Template
+
+def match_states(iterable1, iterable2):
+    s1 = set(iterable1)
+    s2 = set(iterable2)
+    inter = s1.intersection(s2)
+    if inter:
+        return '"%s"' % list(inter)[0]
+    else:
+        raise RuntimeError('No matching states found.')
+
+def get_model_config(parameters, template_name,
+                     template_dir, template_extension):
+    model_template = Template(filename=os.path.join(template_dir, 'models',
+                                  template_name + template_extension))
+    ascii_parameters = dict((str(k), v) for k, v in parameters.items())
+
+    return json.loads(model_template.render(**ascii_parameters))
+    
+def get_experiment_config(model_states, parameters, template_name,
+                          template_dir, template_extension):
+    experiment_template = Template(filename=os.path.join(template_dir,
+                                       'experiments',
+                                       template_name + template_extension))
+
+    template_parameters = {'model_states': model_states,
+                           'match_states': match_states}
+    template_parameters.update(parameters['experiment'])
+
+    ascii_parameters = dict((str(k), v) for k, v in template_parameters.items())
+
+    return json.loads(experiment_template.render(**ascii_parameters))
+
+def get_stage_configs(model_states, experiment_config, experiment_parameters,
+                      template_dir, template_extension):
+    stage_configs = []
+    for stage_name in experiment_config['stages']:
+        stage_template = Template(filename=os.path.join(template_dir,
+                            'experiments', 'stages',
+                            stage_name + template_extension))
+        
+        template_parameters = {'model_states': model_states,
+                               'match_states': match_states}
+        template_parameters.update(experiment_parameters['experiment'])
+        template_parameters.update(experiment_parameters['stages'][stage_name])
+
+        ascii_parameters = dict((str(k), v) for k, v in template_parameters.items())
+
+        stage_configs.append(json.loads(stage_template.render(
+            **ascii_parameters)))
+
+    return stage_configs

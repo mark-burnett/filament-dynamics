@@ -3,6 +3,7 @@
 
 "stages": ["random_polymerization", "clean_depolymerization"],
 
-"initial_strand": ["single_state", ${util.states.match(["d", "ds"], model_states)},
-                      {"length": ${seed_length}}]
+"initial_strand": ["single_state",
+                       {"state":  ${match_states(["d", "ds"], model_states)},
+                        "length": ${seed_length}}]
 }

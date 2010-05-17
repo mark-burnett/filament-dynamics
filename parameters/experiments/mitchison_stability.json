@@ -6,8 +6,9 @@
 
 "stages": {
     "random_polymerization": {
-        "max_duration": 60,
-        "t_concentration": 3},
+        "max_duration":    60,
+        "t_concentration":  3,
+        "d_concentration":  0},
     "clean_depolymerization": {
         "duration": 3000}}
 }

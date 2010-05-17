@@ -1,20 +1,20 @@
 {
 "description": "Random conformational changes.",
 
-## du is the unstable (fast depolymerizing) ADP state, ds is the stable one.
 "states": ["t", "p", "du", "ds"],
 
+## du is the unstable (fast depolymerizing) ADP state, ds is the stable one.
 "transitions": [
     [  "polymerization.Barbed", {"state": "t",  "rate": ${t_on_rate}}],
     [  "polymerization.Barbed", {"state": "p",  "rate": ${p_on_rate}}],
-    [  "polymerization.Barbed", {"state": "du", "rate": ${du_on_rate}}}],
+    [  "polymerization.Barbed", {"state": "du", "rate": ${du_on_rate}}],
 
     ["depolymerization.Barbed", {"state": "t",  "rate": ${t_off_rate}}],
     ["depolymerization.Barbed", {"state": "p",  "rate": ${p_off_rate}}],
     ["depolymerization.Barbed", {"state": "du", "rate": ${du_off_rate}}],
     ["depolymerization.Barbed", {"state": "ds", "rate": ${ds_off_rate}}],
 
-    ## Normal hydrolysis.
+## Normal hydrolysis.
     ["hydrolysis.Random", {"old_state": "t",
                            "rate":      ${cleavage_rate},
                            "new_state": "p"}],
@@ -22,7 +22,7 @@
                            "rate":      ${release_rate},
                            "new_state": "du"}],
 
-    ## Stable/unstable switching
+## Stability changes.
     ["hydrolysis.Random", {"old_state": "du",
                            "rate":      ${stablization_rate},
                            "new_state": "ds"}],

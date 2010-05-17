@@ -9,6 +9,5 @@
     "bulk_polymerization": {
         "duration": 40,
         "initial_t_concentration":  6,
-        "initial_d_concentration":  0,
-        "initial_Pi_concentration": 0}}
+        "initial_d_concentration":  0}}
 }

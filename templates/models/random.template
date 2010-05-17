@@ -14,8 +14,8 @@
 
     ["hydrolysis.Random", {"old_state": "t",
                            "rate":      ${cleavage_rate},
-                           "new_state": "p"}}],
+                           "new_state": "p"}],
     ["hydrolysis.Random", {"old_state": "p",
                            "rate":      ${release_rate},
-                           "new_state": "d"}}]]
+                           "new_state": "d"}]]
 }

@@ -13,6 +13,6 @@
 
 "concentrations": [
     ["t", ["FixedConcentration", {"concentration": ${t_concentration}}]],
-    [${util.states.match(["d", "du"]), model_states)},
+    [${match_states(["d", "du"], model_states)},
           ["FixedConcentration", {"concentration": ${d_concentration}}]]]
 }

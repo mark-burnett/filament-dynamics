@@ -85,14 +85,34 @@ class Strand(object):
             if new_state is not None and new_state != barbed_neighbor:
                 self.boundary_indices[barbed_neighbor][new_state].append(index + 1)
 
-def single_state(model_states, simulation_states, size):
-    state = util.states.match(model_states, simulation_states)
+def single_state(state=None, length=None, seed_concentration=None,
+                 filament_tip_concentration=None):
+    if not state:
+        raise RuntimeError("'state' not specified.")
+
+    if length:
+        size = int(length)
+    elif seed_concentration and filament_tip_concentration:
+        size = int(seed_concentration / filament_tip_concentration)
+    else:
+        raise RuntimeError('Indeterminite size.')
+
     while True:
         # XXX watch out for the list/deque problem (pointed end effects)
         yield list(itertools.repeat(state, size))
 
-def random_states(model_states, simulation_states, size):
-    states = [util.states.match(model_states, s) for s in simulation_states]
+def random_states(states=None, length=None, seed_concentration=None,
+                  filament_tip_concentration=None):
+    if not states:
+        raise RuntimeError("'states' not specified.")
+
+    if length:
+        size = int(length)
+    elif seed_concentration and filament_tip_concentration:
+        size = int(seed_concentration / filament_tip_concentration)
+    else:
+        raise RuntimeError('Indeterminite size.')
+
     while True:
         # XXX watch out for the list/deque problem (pointed end effects)
         yield [random.choice(states) for n in xrange(size)]
