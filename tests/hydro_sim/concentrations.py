@@ -21,21 +21,21 @@ class ConcentrationsTest(unittest.TestCase):
 
         self.assertEqual(3.0, fr.value())
         
-        fr.depolymerize()
+        fr.add_monomer()
         self.assertEqual(3.1, fr.value())
 
-        fr.polymerize()
-        fr.polymerize()
-        fr.polymerize()
-        fr.polymerize()
-        fr.polymerize()
-        fr.polymerize()
+        fr.remove_monomer()
+        fr.remove_monomer()
+        fr.remove_monomer()
+        fr.remove_monomer()
+        fr.remove_monomer()
+        fr.remove_monomer()
         # Messy looking, but avoids rounding errors.
         self.assertEqual(3.0 - 0.1 - 0.1 - 0.1 - 0.1 - 0.1, fr.value())
 
-        fr.depolymerize()
-        fr.depolymerize()
-        fr.depolymerize()
+        fr.add_monomer()
+        fr.add_monomer()
+        fr.add_monomer()
         # Messy looking, but avoids rounding errors.
         self.assertEqual(3.0 - 0.1 - 0.1, fr.value())
 

@@ -27,17 +27,6 @@ class StateCounts(object):
             results[k] = len(indices)
         self.data.append((time, results))
 
-# XXX DEBUG debug
-#class TransitionEventCount(object):
-#    def __init__(self, label, old_state, new_state):
-#        self.label = label
-#        self.count = 0
-#        self.data = [(0,0)]
-#    def perform(self, time, strand):
-#        if self.count != len(strand.state_indices['p']):
-#            self.count += 1
-#            self.data.append((time, self.count))
-
 class TransitionCount(object):
     __slots__ = ['label', 'data', 'old_state', 'new_state', 'count',
                  '_last_old_count', '_last_new_count']
@@ -62,3 +51,17 @@ class TransitionCount(object):
             self.data.append((time, self.count))
         self._last_old_count = old_count
         self._last_new_count = new_count
+
+class Concentration(object):
+    __slots__ = ['label', 'species', 'data', 'previous_value']
+    def __init__(self, label, species):
+        self.label          = label
+        self.species        = species
+        self.data           = []
+        self.previous_value = -1
+
+    def perform(self, time, strand):
+        current_value = strand.concentrations[self.species].value()
+        if self.previous_value != current_value:
+            self.previous_value = current_value
+            self.data.append((time, current_value))

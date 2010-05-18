@@ -38,13 +38,13 @@ class Strand(object):
                                                    self._sequence[i - 1] == sp]
 
     def append(self, item):
-        self.concentrations[item].polymerize()
+        self.concentrations[item].remove_monomer()
         self._sequence.append(item)
         self._update(len(self._sequence) - 1, None, item)
 
     def pop(self):
         old_state = self._sequence.pop()
-        self.concentrations[old_state].depolymerize()
+        self.concentrations[old_state].add_monomer()
         self._update(len(self._sequence), old_state, None)
 
     def __getitem__(self, index):

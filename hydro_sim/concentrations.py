@@ -16,9 +16,9 @@
 class Concentration(object):
     def value(self):
         raise NotImplementedError()
-    def polymerize(self):
+    def remove_monomer(self):
         pass
-    def depolymerize(self):
+    def add_monomer(self):
         pass
 
 class FixedConcentration(Concentration):
@@ -47,12 +47,12 @@ class FixedReagent(Concentration):
             return 0
         return self.monomer_conc
 
-    def polymerize(self):
+    def remove_monomer(self):
         if  self.monomer_conc >= self.filament_tip_conc:
             self.monomer_conc -= self.filament_tip_conc
         else:
             raise RuntimeError(
             'Could not polymerize without going to negative concentration.')
 
-    def depolymerize(self):
+    def add_monomer(self):
         self.monomer_conc += self.filament_tip_conc

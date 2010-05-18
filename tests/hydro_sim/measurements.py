@@ -9,9 +9,9 @@ from hydro_sim import strand
 class MockConcentration(object):
     def value(self):
         return None
-    def polymerize(self):
+    def remove_monomer(self):
         pass
-    def depolymerize(self):
+    def add_monomer(self):
         pass
 
 class TransitionCountTest(unittest.TestCase):
