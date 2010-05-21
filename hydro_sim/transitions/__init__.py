@@ -16,5 +16,6 @@
 from . import polymerization
 from . import depolymerization
 from . import hydrolysis
+from . import concentrations
 
-__all__ = ['polymerization', 'depolymerization', 'hydrolysis']
+__all__ = ['polymerization', 'depolymerization', 'hydrolysis', 'concentrations']

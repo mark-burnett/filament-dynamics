@@ -20,9 +20,9 @@ class FixedRate(object):
         self.rate      = rate
         self.new_state = new_state
     
-    def R(self, strand):
-        return self.rate * strand.concentrations[self.old_state]
+    def R(self, sim_state):
+        return self.rate * sim_state.strand.concentrations[self.old_state].value()
 
-    def perform(self, time, strand, r):
-        strand.concentrations[self.old_state].remove_monomer()
-        strand.concentrations[self.new_state].add_monomer()
+    def perform(self, time, sim_state, r):
+        sim_state.strand.concentrations[self.old_state].remove_monomer()
+        sim_state.strand.concentrations[self.new_state].add_monomer()

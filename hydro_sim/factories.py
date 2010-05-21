@@ -43,7 +43,7 @@ def make_simulation(model_config, stage_configs):
         concentrations.append(make_concentrations(model_states,
                                               stage_config['concentrations']))
 
-    return simulation.SimulationSequence(model_states, stages, concentrations)
+    return simulation.SimulationSequence(stages, concentrations)
 
 def make_stage(model_transitions, stage_config):
     return kmc.simulation.Simulation(
@@ -56,32 +56,25 @@ def make_concentrations(model_states, concentrations_config):
     conc_dict = {}
     for state, (function_name, kwargs) in concentrations_config:
         f = util.introspection.lookup_name(function_name, concentrations)
-        # XXX python 2.6.4 limitation
-        ascii_args = dict((str(k),v) for k, v in kwargs.items())
-        conc_dict[state] = f(**ascii_args)
+        conc_dict[state] = f(**util.introspection.make_kwargs_ascii(kwargs))
     return collections.defaultdict(concentrations.ZeroConcentration, conc_dict)
 
 def make_transitions(transitions_config):
     factories = util.introspection.make_factories(transitions_config,
                                                   transitions)
-    # XXX python 2.6.4 limitation
-    return [f(**dict((str(k), v) for k, v in kwargs.items())) for f, kwargs in factories]
+    return [f(**util.introspection.make_kwargs_ascii(kwargs)) for f, kwargs in factories]
 
 def make_end_conditions(ec_config):
     ec_factories = util.introspection.make_factories(ec_config,
                                                      kmc.end_conditions)
-    # XXX python 2.6.4 limitation
-    return [f(**dict((str(k), v) for k, v in kwargs.items())) for f, kwargs in ec_factories]
+    return [f(**util.introspection.make_kwargs_ascii(kwargs)) for f, kwargs in ec_factories]
 
 def make_measurements(measurements_config):
-    # XXX python 2.6.4 limitation
-    return [util.introspection.lookup_name(name,
-                measurements)(label, **dict((str(k), v) for k, v in kwargs.items()))
+    return [util.introspection.lookup_name(name, measurements)(label,
+                **util.introspection.make_kwargs_ascii(kwargs))
             for label, (name, kwargs) in measurements_config.items()]
 
 def make_sequence_generator(initial_strand_config):
     name, kwargs = initial_strand_config
-    # XXX python 2.6.4 limitation
-    ascii_args = dict((str(k),v) for k, v in kwargs.items())
     f = util.introspection.lookup_name(name, strand)
-    return f(**ascii_args)
+    return f(**util.introspection.make_kwargs_ascii(kwargs))

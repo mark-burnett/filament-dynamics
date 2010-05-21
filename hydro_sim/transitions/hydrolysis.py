@@ -22,27 +22,65 @@ class Random(object):
         self.rate      = rate
         self.new_state = new_state
 
-    def R(self, strand):
-        return self.rate * len(strand.state_indices[self.old_state])
+    def R(self, sim_state):
+        return self.rate * len(sim_state.strand.state_indices[self.old_state])
 
-    def perform(self, time, strand, r):
+    def perform(self, time, sim_state, r):
         state_index = int(r / self.rate)
-        index = strand.state_indices[self.old_state][state_index]
-        strand[index] = self.new_state
+        index = sim_state.strand.state_indices[self.old_state][state_index]
+        sim_state.strand[index] = self.new_state
 
 class PointedNeighbor(object):
+    __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'new_state']
     def __init__(self, old_state, pointed_neighbor, rate, new_state):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
         self.rate             = rate
         self.new_state        = new_state
 
-    def R(self, strand):
-        return self.rate * len(strand.boundary_indices[self.old_state]
+    def R(self, sim_state):
+        return self.rate * len(sim_state.strand.boundary_indices[self.old_state]
                                                       [self.pointed_neighbor])
 
-    def perform(self, time, strand, r):
+    def perform(self, time, sim_state, r):
         state_index = int(r / self.rate)
-        index = (strand.boundary_indices[self.old_state]
+        index = (sim_state.strand.boundary_indices[self.old_state]
                                         [self.pointed_neighbor][state_index])
-        strand[index] = self.new_state
+        sim_state.strand[index] = self.new_state
+
+class RandomWithByproduct(object):
+    __slots__ = ['old_state', 'rate', 'new_state', 'byproduct']
+    def __init__(self, old_state, rate, new_state, byproduct):
+        self.old_state = old_state
+        self.rate      = rate
+        self.new_state = new_state
+        self.byproduct = byproduct
+
+    def R(self, sim_state):
+        return self.rate * len(sim_state.strand.state_indices[self.old_state])
+
+    def perform(self, time, sim_state, r):
+        state_index = int(r / self.rate)
+        index = sim_state.strand.state_indices[self.old_state][state_index]
+        sim_state.strand[index] = self.new_state
+        sim_state.concentrations[byproduct].add_monomer()
+
+class PointedNeighborWithByproduct(object):
+    __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'new_state', 'byproduct']
+    def __init__(self, old_state, pointed_neighbor, rate, new_state):
+        self.old_state        = old_state
+        self.pointed_neighbor = pointed_neighbor
+        self.rate             = rate
+        self.new_state        = new_state
+        self.byproduct        = byproduct
+
+    def R(self, sim_state):
+        return self.rate * len(sim_state.strand.boundary_indices[self.old_state]
+                                                      [self.pointed_neighbor])
+
+    def perform(self, time, sim_state, r):
+        state_index = int(r / self.rate)
+        index = (sim_state.strand.boundary_indices[self.old_state]
+                                        [self.pointed_neighbor][state_index])
+        sim_state.strand[index] = self.new_state
+        sim_state.concentrations[byproduct].add_monomer()

@@ -19,14 +19,12 @@
 """
 
 import time
-import operator
 import os
 import itertools
 
 import json
 import cPickle
 
-from mako.template import Template
 import baker
 
 import hydro_sim
@@ -36,14 +34,15 @@ import util
 def hydrolysis(model_template_name,      model_parameters_filename,
                experiment_template_name, experiment_parameters_filename,
                N=100, processes=0,
-               output_file=None,
-               output_dir=None,
+               output_file='',
+               output_dir='',
                template_dir='templates',
                template_extension='.template'):
     """
     Perform hydrolysis simulation (default).
     :param output_file:  Filename for storing results.
-    :param processors:   Number of processors to use (default=autodetect).
+    :param output_dir:   Directory in which to store results
+    :param processes:    Number of processors to use (default=autodetect).
     :param N:            Number of simulations to run (default=100).
     :param template_dir: Location of templates to use.
     :param template_extension: Filename extension for tempalte files (default='.template').

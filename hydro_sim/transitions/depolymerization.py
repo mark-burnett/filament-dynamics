@@ -25,17 +25,14 @@ class GeneralFixedRate(object):
         self.state = state
         self.rate  = rate
 
-    def initialize(self, pub, strand):
-        pass
-
-    def R(self, strand):
-        if self.state == strand[-1]:
+    def R(self, sim_state):
+        if self.state == sim_state[-1]:
             return self.rate
         return 0
 
-    def perform(self, time, strand, r):
+    def perform(self, time, sim_state, r):
         raise NotImplementedError()
 
 class Barbed(GeneralFixedRate):
-    def perform(self, time, strand, r):
-        strand.pop()
+    def perform(self, time, sim_state, r):
+        sim_state.pop()

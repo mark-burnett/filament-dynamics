@@ -24,7 +24,7 @@
 
 ## Stability changes.
     ["hydrolysis.Random", {"old_state": "du",
-                           "rate":      ${stablization_rate},
+                           "rate":      ${stabilization_rate},
                            "new_state": "ds"}],
     ["hydrolysis.Random", {"old_state": "ds",
                            "rate":      ${destabilization_rate},

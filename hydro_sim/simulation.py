@@ -15,11 +15,10 @@
 
 import itertools
 
-from . import strand
+from . import simulation_state
 
 class SimulationSequence(object):
-    def __init__(self, states, simulations, concentrations):
-        self.states         = states
+    def __init__(self, simulations, concentrations):
         self.simulations    = simulations
         self.concentrations = concentrations
 
@@ -31,7 +30,7 @@ class SimulationSequence(object):
         data = []
         for s, c in itertools.izip(self.simulations,
                                    self.concentrations):
-            state, sim_data = s.run(strand.Strand(self.states, sequence, c))
+            state, sim_data = s.run(simulation_state.SimulationState(sequence, c))
             data.append(sim_data)
-            sequence = state._sequence
+            sequence = state.strand
         return data

@@ -6,21 +6,10 @@ from hydro_sim import strand
 # Because the measurements operate/couple tightly with strand, we will use
 # real strand objects for testing instead of mocks.
 
-class MockConcentration(object):
-    def value(self):
-        return None
-    def remove_monomer(self):
-        pass
-    def add_monomer(self):
-        pass
-
 class TransitionCountTest(unittest.TestCase):
     def setUp(self):
         self.strand = strand.Strand(['t', 'p', 'd'],
-                            ['d', 'd', 'p', 'd', 'p', 't', 'p', 'd', 'p', 'p', 't', 't'],
-                            {'t': MockConcentration(),
-                             'p': MockConcentration(),
-                             'd': MockConcentration()})
+                            ['d', 'd', 'p', 'd', 'p', 't', 'p', 'd', 'p', 'p', 't', 't'])
     
     def tearDown(self):
         del self.strand

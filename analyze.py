@@ -14,6 +14,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 import cPickle
 import csv
 import baker
@@ -31,8 +33,8 @@ def dump_csv(filename, stage_name, analysis_name,
     :param filename: Pickle file containing simulation results.
     :param analysis_name: Which analysis to perform.
     :param stage_name: Which stage to analyze.
-    :param output_filename: Where to write results, ''=default
-    :param output_dir: Where to write results, ''=default
+    :param output_filename: Where to write results.
+    :param output_dir: Where to write results, default='.'
     """
     # Figure out what analysis to perform
     a = util.introspection.lookup_name(analysis_name, analysis)
@@ -41,21 +43,22 @@ def dump_csv(filename, stage_name, analysis_name,
     with open(filename) as f:
         sim_results = cPickle.load(f)
 
-    # Determine which stage to analyze
-    simulation_config = sim_results['simulation_config']
-    stage_index = util.config.choose_stage(simulation_config['stages'],
-                                           stage_name)
+    # Grab stage parameters.
+    kwargs.update(sim_results['experiment_parameters']['experiment'])
+    kwargs.update(sim_results['experiment_parameters']['stages'][stage_name])
 
     # Extract stage data.
+    stage_index    = sim_results['experiment_config']['stages'].index(stage_name)
     stage_data     = [d[stage_index] for d in sim_results['data']]
-    stage_duration = util.config.get_duration(
-            simulation_config['stages'][stage_index]['end_conditions'])
 
     # Perform analysis
-    output = a.make_csv(stage_data, duration=stage_duration,
+    output = a.make_csv(stage_data,# duration=stage_duration,
 #                        data_file=open(util.io.data_filename(analysis_name)),
-                        **kwargs)
+                        **util.introspection.make_kwargs_ascii(kwargs))
 
+    if output_dir:
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
     # Dump to csv file
     with open(util.io.make_filename(filename, output_dir,
                             output_filename, analysis_name) + '.csv', 'w') as f:

@@ -27,7 +27,7 @@ def make_csv(data, sample_period=-1.0, duration=-1.0, filament_tip_concentration
     filament_tip_concentration = float(filament_tip_concentration)
 
     sample_times = numpy.arange(0, duration, sample_period)
-    release_data = [d['phosphate_release'] for d in data]
+    release_data = [d['phosphate_concentration'] for d in data]
     sampled_data  = zip(*[tools.downsample(sample_times, rd, extrapolate=True)
                           for rd in release_data])
     averages = [numpy.average(sd) * filament_tip_concentration

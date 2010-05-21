@@ -13,24 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__all__ = ['Barbed']
+from collections import namedtuple
 
-class GeneralFixedRate(object):
-    __slots__ = ['rate', 'state']
-    def __init__(self, state, rate):
-        """
-        'state' that are added to the barbed end of the strand.
-        'rate' is the number per second per concentration of
-        """
-        self.state = state
-        self.rate  = rate
+SimulationState = namedtuple('SimulationState', 'strand concentrations')
 
-    def R(self, sim_state):
-        return self.rate * sim_state.concentrations[self.state].value()
-
-    def perform(self, time, sim_state, r):
-        raise NotImplementedError()
-
-class Barbed(GeneralFixedRate):
-    def perform(self, time, sim_state, r):
-        sim_state.append(self.state)
+del namedtuple

@@ -16,52 +16,39 @@
 import itertools
 import collections
 
-import util
-
-class Strand(object):
-    __slots__ = ['_sequence', 'concentrations',
-                 'state_indices', 'boundary_indices']
-    def __init__(self, states, initial_strand, concentrations):
-        self._sequence        = initial_strand
-        self.concentrations   = concentrations
+class Strand(list):
+    __slots__ = ['state_indices', 'boundary_indices']
+    def __init__(self, states, initial_strand):
+        self.extend(initial_strand)
         self.state_indices    = {}
         self.boundary_indices = collections.defaultdict(dict)
 
         for s in states:
-            self.state_indices[s] = [i for i, v in enumerate(self._sequence)
-                                       if v == s]
+            self.state_indices[s] = [i for i, v in enumerate(self) if v == s]
 
         for sb, sp in itertools.product(states, states):
             if sb != sp:
                 self.boundary_indices[sb][sp] = [i for i in self.state_indices[sb]
                                                    if i > 0 and
-                                                   self._sequence[i - 1] == sp]
+                                                   self[i - 1] == sp]
 
     def append(self, item):
-        self.concentrations[item].remove_monomer()
-        self._sequence.append(item)
-        self._update(len(self._sequence) - 1, None, item)
+        list.append(self, item)
+        self._update(len(self) - 1, None, item)
 
     def pop(self):
-        old_state = self._sequence.pop()
-        self.concentrations[old_state].add_monomer()
-        self._update(len(self._sequence), old_state, None)
-
-    def __getitem__(self, index):
-        return self._sequence[index]
+        old_state = list.pop(self)
+        self._update(len(self), old_state, None)
 
     def __setitem__(self, index, value):
-        old_state = self._sequence[index]
-        self._sequence[index] = value
+        old_state = self[index]
+        list.__setitem__(self, index, value)
         while index < 0:
-            index = index + len(self._sequence)
+            index = index + len(self)
         self._update(index, old_state, value)
 
-    def __len__(self):
-        return len(self._sequence)
-
     def _update(self, index, old_state, new_state):
-        self._update_state_indices(index, old_state, new_state)
+        self._update_state_indices(   index, old_state, new_state)
         self._update_boundary_indices(index, old_state, new_state)
 
     def _update_state_indices(self, index, old_state, new_state):
@@ -72,14 +59,14 @@ class Strand(object):
 
     def _update_boundary_indices(self, index, old_state, new_state):
         if index > 0:
-            pointed_neighbor = self._sequence[index - 1]
+            pointed_neighbor = self[index - 1]
             if old_state is not None and old_state != pointed_neighbor:
                 self.boundary_indices[old_state][pointed_neighbor].remove(index)
             if new_state is not None and new_state != pointed_neighbor:
                 self.boundary_indices[new_state][pointed_neighbor].append(index)
 
-        if index < len(self._sequence) - 1:
-            barbed_neighbor  = self._sequence[index + 1]
+        if index < len(self) - 1:
+            barbed_neighbor  = self[index + 1]
             if old_state is not None and old_state != barbed_neighbor:
                 self.boundary_indices[barbed_neighbor][old_state].remove(index + 1)
             if new_state is not None and new_state != barbed_neighbor:

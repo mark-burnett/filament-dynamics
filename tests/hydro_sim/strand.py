@@ -14,9 +14,7 @@ from hydro_sim import concentrations
 class StrandTest(unittest.TestCase):
     def setUp(self):
         self.strand = strand.Strand(['t', 'p', 'd'],
-                                    ['d', 'd', 'p', 't', 'p', 't', 't'],
-                                    collections.defaultdict(
-                                        concentrations.ZeroConcentration))
+                                    ['d', 'd', 'p', 't', 'p', 't', 't'])
 
     def tearDown(self):
         del self.strand
@@ -37,8 +35,7 @@ class StrandTest(unittest.TestCase):
         self.strand.append('p')
 
         # Verify sequence.
-        self.assertEqual(['d', 'd', 'p', 't', 'p', 't', 't', 'p'],
-                         self.strand._sequence)
+        self.assertEqual(['d', 'd', 'p', 't', 'p', 't', 't', 'p'], self.strand)
 
         # Verify state indices.
         self.assertEqual(3, len(self.strand.state_indices['t']))
@@ -55,7 +52,7 @@ class StrandTest(unittest.TestCase):
         self.strand.pop()
 
         # Verify sequence.
-        self.assertEqual(['d', 'd', 'p', 't', 'p', 't'], self.strand._sequence)
+        self.assertEqual(['d', 'd', 'p', 't', 'p', 't'], self.strand)
 
         # Verify state indices.
         self.assertEqual(2, len(self.strand.state_indices['t']))
@@ -72,7 +69,7 @@ class StrandTest(unittest.TestCase):
         self.strand.pop()
 
         # Verify sequence.
-        self.assertEqual(['d', 'd', 'p', 't', 'p'], self.strand._sequence)
+        self.assertEqual(['d', 'd', 'p', 't', 'p'], self.strand)
 
         # Verify state indices.
         self.assertEqual(1, len(self.strand.state_indices['t']))
@@ -92,7 +89,7 @@ class StrandTest(unittest.TestCase):
     def test_setitem_middle(self):
         self.strand[1] = 't'
         # Verify sequence.
-        self.assertEqual(['d', 't', 'p', 't', 'p', 't', 't'], self.strand._sequence)
+        self.assertEqual(['d', 't', 'p', 't', 'p', 't', 't'], self.strand)
 
         # Verify state indices.
         self.assertEqual(4, len(self.strand.state_indices['t']))
@@ -108,7 +105,7 @@ class StrandTest(unittest.TestCase):
     def test_setitem_barbed(self):
         self.strand[-1] = 'd'
         # Verify sequence.
-        self.assertEqual(['d', 'd', 'p', 't', 'p', 't', 'd'], self.strand._sequence)
+        self.assertEqual(['d', 'd', 'p', 't', 'p', 't', 'd'], self.strand)
 
         # Verify state indices.
         self.assertEqual(2, len(self.strand.state_indices['t']))
@@ -125,7 +122,7 @@ class StrandTest(unittest.TestCase):
     def test_setitem_pointed(self):
         self.strand[0] = 'p'
         # Verify sequence.
-        self.assertEqual(['p', 'd', 'p', 't', 'p', 't', 't'], self.strand._sequence)
+        self.assertEqual(['p', 'd', 'p', 't', 'p', 't', 't'], self.strand)
 
         # Verify state indices.
         self.assertEqual(3, len(self.strand.state_indices['t']))

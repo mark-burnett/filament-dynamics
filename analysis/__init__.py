@@ -17,7 +17,7 @@
 import operator
 
 import average_length
-import pieper_wegner
-import pollard_cleavage
+import phosphate_release
+import phosphate_cleavage
 import mitchison_stability
 import tools

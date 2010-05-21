@@ -8,6 +8,8 @@
 "stages": {
     "bulk_polymerization": {
         "duration": 600,
+        "in_solution_release_rate": 10,
+        "in_solution_destabilization_rate": 10,
         "initial_t_concentration":  4,
         "initial_d_concentration":  0}}
 }

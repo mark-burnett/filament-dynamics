@@ -4,7 +4,7 @@
 "stages": ["bulk_polymerization"],
 
 "initial_strand": ["single_state",
-                   {"state": ${states.match(["d", "ds"], model_states)},
+                   {"state": ${match_states(["d", "ds"], model_states)},
                    "seed_concentration":         ${seed_concentration},
                    "filament_tip_concentration": ${filament_tip_concentration}}]
 }

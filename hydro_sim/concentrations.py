@@ -37,22 +37,22 @@ class ZeroConcentration(Concentration):
 
 class FixedReagent(Concentration):
     __slots__ = ['monomer_conc', 'filament_tip_conc']
-    def __init__(self, initial_concentration=None, filament_tip_conc=None):
-        self.monomer_conc      = initial_concentration
-        self.filament_tip_conc = filament_tip_conc
+    def __init__(self, initial_concentration=None, filament_tip_concentration=None):
+        self.monomer_concentration      = initial_concentration
+        self.filament_tip_concentration = filament_tip_concentration
 
     def value(self):
         # We must ensure we never go to negative concentration.
-        if self.monomer_conc < self.filament_tip_conc:
+        if self.monomer_concentration < self.filament_tip_concentration:
             return 0
-        return self.monomer_conc
+        return self.monomer_concentration
 
     def remove_monomer(self):
-        if  self.monomer_conc >= self.filament_tip_conc:
-            self.monomer_conc -= self.filament_tip_conc
+        if  self.monomer_concentration >= self.filament_tip_concentration:
+            self.monomer_concentration -= self.filament_tip_concentration
         else:
             raise RuntimeError(
             'Could not polymerize without going to negative concentration.')
 
     def add_monomer(self):
-        self.monomer_conc += self.filament_tip_conc
+        self.monomer_concentration += self.filament_tip_concentration
