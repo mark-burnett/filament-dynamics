@@ -12,10 +12,13 @@
     ["depolymerization.Barbed", {"state": "p", "rate":  ${p_off_rate}}],
     ["depolymerization.Barbed", {"state": "d", "rate":  ${d_off_rate}}],
 
-    ["hydrolysis.Random", {"old_state": "t",
-                           "rate":      ${cleavage_rate},
-                           "new_state": "p"}],
-    ["hydrolysis.Random", {"old_state": "p",
-                           "rate":      ${release_rate},
-                           "new_state": "d"}]]
+    ["hydrolysis.Random",
+        {"old_state": "t",
+         "rate":      ${cleavage_rate},
+         "new_state": "p"}],
+    ["hydrolysis.RandomWithByproduct",
+        {"old_state": "p",
+         "rate":      ${release_rate},
+         "new_state": "d",
+         "byproduct": "Pi"}]]
 }

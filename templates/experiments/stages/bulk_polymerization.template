@@ -5,23 +5,23 @@
     ["Duration", {"duration": ${duration}}]],
 
 "measurements": {
-    "length":                     ["Length",          {}],
-    "phosphate_cleavage":         ["TransitionCount", {"old_state": "t",
-                                                       "new_state": "p"}],
-    "phosphate_strand_release":   ["TransitionCount", {"old_state": "p",
-                                                       "new_state": "du"}],
-    "phosphate_solution_release": ["SolutionTransitionCount", {"old_state": "p",
-                                                               "new_state": "du"}]},
-##    "phosphate_concentration": ["Concentration",   {"species": "Pi"}]},
+    "length":             ["Length",          {}],
+    "phosphate_cleavage": ["TransitionCount", {"old_state": "t",
+                                               "new_state": "p"}],
+    "phosphate_release":  ["Concentration", {"species": "Pi"}],
+    "t_concentration":    ["Concentration", {"species": "t"}],
+    "p_concentration":    ["Concentration", {"species": "p"}],
+    "d_concentration":    ["Concentration", {"species": ${match_states(["d", "du"], model_states)}}]},
 
 "transitions": [
-    ["concentrations.FixedRate", {"old_state": "p",
-                                  "rate":      ${in_solution_release_rate},
-                                  "new_state": ${match_states(["d", "du"], model_states)}}]
+    ["concentrations.WithByproduct", {"old_state": "p",
+                                      "rate":      ${in_solution_release_rate},
+                                      "new_state": ${match_states(["d", "du"], model_states)},
+                                      "byproduct": "Pi"}]
     % if "ds" in model_states:
-        , ["concentrations.FixedRate", {"old_state": "ds",
-                                        "rate":      ${in_solution_destabilization_rate},
-                                        "new_state": "du"}]
+        , ["concentrations.Simple", {"old_state": "ds",
+                                     "rate":      ${in_solution_destabilization_rate},
+                                     "new_state": "du"}]
     % endif
     ],
 

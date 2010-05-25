@@ -74,7 +74,7 @@ def make_measurements(measurements_config):
                 **util.introspection.make_kwargs_ascii(kwargs))
             for label, (name, kwargs) in measurements_config.items()]
 
-def make_sequence_generator(initial_strand_config):
+def make_sequence_generator(model_states, initial_strand_config):
     name, kwargs = initial_strand_config
     f = util.introspection.lookup_name(name, strand)
-    return f(**util.introspection.make_kwargs_ascii(kwargs))
+    return f(model_states, **util.introspection.make_kwargs_ascii(kwargs))

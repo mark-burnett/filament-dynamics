@@ -15,18 +15,23 @@
     ["depolymerization.Barbed", {"state": "ds", "rate": ${ds_off_rate}}],
 
 ## Normal hydrolysis.
-    ["hydrolysis.Random", {"old_state": "t",
-                           "rate":      ${cleavage_rate},
-                           "new_state": "p"}],
-    ["hydrolysis.Random", {"old_state": "p",
-                           "rate":      ${release_rate},
-                           "new_state": "du"}],
+    ["hydrolysis.Random",
+        {"old_state": "t",
+         "rate":      ${cleavage_rate},
+         "new_state": "p"}],
+    ["hydrolysis.RandomWithByproduct",
+        {"old_state": "p",
+         "rate":      ${release_rate},
+         "new_state": "du",
+         "byproduct": "Pi"}],
 
 ## Stability changes.
-    ["hydrolysis.Random", {"old_state": "du",
-                           "rate":      ${stabilization_rate},
-                           "new_state": "ds"}],
-    ["hydrolysis.Random", {"old_state": "ds",
-                           "rate":      ${destabilization_rate},
-                           "new_state": "du"}]]
+    ["hydrolysis.Random",
+        {"old_state": "du",
+         "rate":      ${stabilization_rate},
+         "new_state": "ds"}],
+    ["hydrolysis.Random",
+        {"old_state": "ds",
+         "rate":      ${destabilization_rate},
+         "new_state": "du"}]]
 }

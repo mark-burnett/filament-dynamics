@@ -13,7 +13,20 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from kmc.measurements import *
+class StrandLength(object):
+    __slots__ = ['label', 'data', 'last_length']
+    def __init__(self, label):
+        self.label = label
+        self.data  = []
+        self.last_length = None
+    
+    def perform(self, time, sim_state):
+        length = len(sim_state.strand)
+        if self.last_length != length:
+            self.last_length = length
+            self.data.append((time, length))
+
+Length = StrandLength
 
 class StateCounts(object):
     __slots__ = ['label', 'data']
@@ -21,9 +34,9 @@ class StateCounts(object):
         self.label = label
         self.data  = []
 
-    def perform(self, time, strand):
+    def perform(self, time, sim_state):
         results = {}
-        for k, indices in strand.state_indices.items():
+        for k, indices in sim_state.strand.state_indices.items():
             results[k] = len(indices)
         self.data.append((time, results))
 
@@ -41,9 +54,9 @@ class TransitionCount(object):
         self._last_old_count = -1
         self._last_new_count = -1
 
-    def perform(self, time, strand):
-        old_count = len(strand.state_indices[self.old_state])
-        new_count = len(strand.state_indices[self.new_state])
+    def perform(self, time, sim_state):
+        old_count = len(sim_state.strand.state_indices[self.old_state])
+        new_count = len(sim_state.strand.state_indices[self.new_state])
 
         if (self._last_old_count - 1 == old_count and
             self._last_new_count + 1 == new_count):
@@ -60,8 +73,8 @@ class Concentration(object):
         self.data           = []
         self.previous_value = -1
 
-    def perform(self, time, strand):
-        current_value = strand.concentrations[self.species].value()
+    def perform(self, time, sim_state):
+        current_value = sim_state.concentrations[self.species].value
         if self.previous_value != current_value:
             self.previous_value = current_value
             self.data.append((time, current_value))

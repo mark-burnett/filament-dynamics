@@ -24,4 +24,4 @@ def make_factories(config_list, module):
             for name, args in config_list]
 
 def make_kwargs_ascii(kwargs):
-    return dict((str(k, v) for k, v in kwargs.items()))
+    return dict((str(k), v) for k, v in kwargs.items())

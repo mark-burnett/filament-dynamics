@@ -20,7 +20,7 @@ import numpy
 
 from . import tools
 
-def make_csv(data, sample_period=-1.0, duration=-1.0,
+def make_csv(data, sample_period=None, duration=-1.0,
              stable_time=100, stable_rate=1,
              data_file=None,
              **kwargs):
@@ -29,22 +29,28 @@ def make_csv(data, sample_period=-1.0, duration=-1.0,
     duration = None -> only needed if sample_period != None
     """
     stable_time = float(stable_time)
-    if sample_period > 0:
-        sample_times = numpy.arange(stable_time + 1, duration, float(sample_period))
-    elif data_file:
-        # Read in data from file.
-        r = csv.reader(data_file, delimiter=' ')
-        sample_times = []
-        for row in r:
-            try:
-                value = float(row[0])
-            except:
-                value = float(row[1])
-            sample_times.append(value)
-        sample_times = numpy.array(sample_times)
-    else:
-        raise RuntimeError(
-                'Must have either sample period or data file to generate csv.')
+
+    if sample_period is None:
+        raise ValueError('sample_period not specified.')
+    sample_period = float(sample_period)
+    assert sample_period > 0
+
+#    if sample_period > 0:
+#        sample_times = numpy.arange(stable_time + 1, duration, float(sample_period))
+#    elif data_file:
+#        # Read in data from file.
+#        r = csv.reader(data_file, delimiter=' ')
+#        sample_times = []
+#        for row in r:
+#            try:
+#                value = float(row[0])
+#            except:
+#                value = float(row[1])
+#            sample_times.append(value)
+#        sample_times = numpy.array(sample_times)
+#    else:
+#        raise RuntimeError(
+#                'Must have either sample period or data file to generate csv.')
 
     original_lengths = [d['length'] for d in data]
     original_samples = [tools.downsample(sample_times, ol) for ol in original_lengths]

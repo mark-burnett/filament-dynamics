@@ -63,7 +63,7 @@ class RandomWithByproduct(object):
         state_index = int(r / self.rate)
         index = sim_state.strand.state_indices[self.old_state][state_index]
         sim_state.strand[index] = self.new_state
-        sim_state.concentrations[byproduct].add_monomer()
+        sim_state.concentrations[self.byproduct].add_monomer()
 
 class PointedNeighborWithByproduct(object):
     __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'new_state', 'byproduct']
@@ -83,4 +83,4 @@ class PointedNeighborWithByproduct(object):
         index = (sim_state.strand.boundary_indices[self.old_state]
                                         [self.pointed_neighbor][state_index])
         sim_state.strand[index] = self.new_state
-        sim_state.concentrations[byproduct].add_monomer()
+        sim_state.concentrations[self.byproduct].add_monomer()

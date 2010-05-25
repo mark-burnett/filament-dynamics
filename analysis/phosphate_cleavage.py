@@ -19,11 +19,14 @@ import numpy
 
 from . import tools
 
-def make_csv(data, sample_period=-1.0, duration=-1.0, filament_tip_concentration=None, **kwargs):
+def make_csv(data, sample_period=None, duration=-1.0, filament_tip_concentration=None, **kwargs):
     if filament_tip_concentration is None:
         raise RuntimeError('filament_tip_concentration required.')
 
+    if sample_period is None:
+        raise ValueError('sample_period not specified.')
     sample_period = float(sample_period)
+    assert sample_period > 0
     filament_tip_concentration = float(filament_tip_concentration)
 
     sample_times = numpy.arange(0, duration, sample_period)

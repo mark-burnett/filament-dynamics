@@ -5,6 +5,6 @@
 
 "initial_strand": ["single_state",
                    {"state": ${match_states(["d", "ds"], model_states)},
-                   "seed_concentration":         ${seed_concentration},
-                   "filament_tip_concentration": ${filament_tip_concentration}}]
+                    "seed_concentration":         ${seed_concentration},
+                    "filament_tip_concentration": ${filament_tip_concentration}}]
 }

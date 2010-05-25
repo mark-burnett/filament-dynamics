@@ -26,11 +26,12 @@ class GeneralFixedRate(object):
         self.rate  = rate
 
     def R(self, sim_state):
-        return self.rate * sim_state.concentrations[self.state].value()
+        return self.rate * sim_state.concentrations[self.state].value
 
     def perform(self, time, sim_state, r):
         raise NotImplementedError()
 
 class Barbed(GeneralFixedRate):
     def perform(self, time, sim_state, r):
-        sim_state.append(self.state)
+        sim_state.strand.append(self.state)
+        sim_state.concentrations[self.state].remove_monomer()

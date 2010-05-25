@@ -13,7 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class FixedRate(object):
+class Simple(object):
     __slots__ = ['old_state', 'rate', 'new_state']
     def __init__(self, old_state, rate, new_state):
         self.old_state = old_state
@@ -21,8 +21,24 @@ class FixedRate(object):
         self.new_state = new_state
     
     def R(self, sim_state):
-        return self.rate * sim_state.strand.concentrations[self.old_state].value()
+        return self.rate * sim_state.concentrations[self.old_state].value
 
     def perform(self, time, sim_state, r):
-        sim_state.strand.concentrations[self.old_state].remove_monomer()
-        sim_state.strand.concentrations[self.new_state].add_monomer()
+        sim_state.concentrations[self.old_state].remove_monomer()
+        sim_state.concentrations[self.new_state].add_monomer()
+
+class WithByproduct(object):
+    __slots__ = ['old_state', 'rate', 'new_state', 'byproduct']
+    def __init__(self, old_state, rate, new_state, byproduct):
+        self.old_state = old_state
+        self.rate      = rate
+        self.new_state = new_state
+        self.byproduct = byproduct
+
+    def R(self, sim_state):
+        return self.rate * sim_state.concentrations[self.old_state].value
+
+    def perform(self, time, sim_state, r):
+        sim_state.concentrations[self.old_state].remove_monomer()
+        sim_state.concentrations[self.new_state].add_monomer()
+        sim_state.concentrations[self.byproduct].add_monomer()

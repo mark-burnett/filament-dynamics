@@ -35,4 +35,5 @@ class GeneralFixedRate(object):
 
 class Barbed(GeneralFixedRate):
     def perform(self, time, sim_state, r):
-        sim_state.pop()
+        sim_state.strand.pop()
+        sim_state.concentrations[self.state].add_monomer()

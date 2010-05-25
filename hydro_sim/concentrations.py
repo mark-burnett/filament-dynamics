@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Concentration(object):
+    @property
     def value(self):
         raise NotImplementedError()
     def remove_monomer(self):
@@ -28,10 +29,12 @@ class FixedConcentration(Concentration):
             raise ValueError('Negative concentrations not allowed.')
         self.concentration = concentration
 
+    @property
     def value(self):
         return self.concentration
 
 class ZeroConcentration(Concentration):
+    @property
     def value(self):
         return 0
 
@@ -41,6 +44,7 @@ class FixedReagent(Concentration):
         self.monomer_concentration      = initial_concentration
         self.filament_tip_concentration = filament_tip_concentration
 
+    @property
     def value(self):
         # We must ensure we never go to negative concentration.
         if self.monomer_concentration < self.filament_tip_concentration:

@@ -19,7 +19,8 @@ import collections
 class Strand(list):
     __slots__ = ['state_indices', 'boundary_indices']
     def __init__(self, states, initial_strand):
-        self.extend(initial_strand)
+        list.__init__(self, initial_strand)
+#        self.extend(initial_strand)
         self.state_indices    = {}
         self.boundary_indices = collections.defaultdict(dict)
 
@@ -72,8 +73,8 @@ class Strand(list):
             if new_state is not None and new_state != barbed_neighbor:
                 self.boundary_indices[barbed_neighbor][new_state].append(index + 1)
 
-def single_state(state=None, length=None, seed_concentration=None,
-                 filament_tip_concentration=None):
+def single_state(model_states, state=None, length=None,
+                 seed_concentration=None, filament_tip_concentration=None):
     if not state:
         raise RuntimeError("'state' not specified.")
 
@@ -85,11 +86,10 @@ def single_state(state=None, length=None, seed_concentration=None,
         raise RuntimeError('Indeterminite size.')
 
     while True:
-        # XXX watch out for the list/deque problem (pointed end effects)
-        yield list(itertools.repeat(state, size))
+        yield Strand(model_states, itertools.repeat(state, size))
 
-def random_states(states=None, length=None, seed_concentration=None,
-                  filament_tip_concentration=None):
+def random_states(model_states, states=None, length=None,
+                  seed_concentration=None, filament_tip_concentration=None):
     if not states:
         raise RuntimeError("'states' not specified.")
 
@@ -101,5 +101,4 @@ def random_states(states=None, length=None, seed_concentration=None,
         raise RuntimeError('Indeterminite size.')
 
     while True:
-        # XXX watch out for the list/deque problem (pointed end effects)
-        yield [random.choice(states) for n in xrange(size)]
+        yield Strand(model_states, (random.choice(states) for n in xrange(size)))

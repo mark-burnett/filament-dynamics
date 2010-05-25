@@ -77,6 +77,7 @@ def hydrolysis(model_template_name,      model_parameters_filename,
                                                   stage_configs)
 
     strand_generator = hydro_sim.factories.make_sequence_generator(
+                           model_states,
                            experiment_config['initial_strand'])
 
     # Run simulations.
