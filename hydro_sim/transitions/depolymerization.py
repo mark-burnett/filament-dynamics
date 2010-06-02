@@ -26,7 +26,7 @@ class GeneralFixedRate(object):
         self.rate  = rate
 
     def R(self, sim_state):
-        if self.state == sim_state[-1]:
+        if self.state == sim_state.strand[-1]:
             return self.rate
         return 0
 

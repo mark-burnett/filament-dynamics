@@ -14,9 +14,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Concentration(object):
-    @property
-    def value(self):
-        raise NotImplementedError()
     def remove_monomer(self):
         pass
     def add_monomer(self):

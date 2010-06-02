@@ -6,29 +6,34 @@ from hydro_sim.transitions import polymerization
 
 class MockConcentration(object):
     def __init__(self, value):
-        self._value = value
+        self.value = value
 
-    def value(self):
-        return self._value
+    def remove_monomer(self):
+        pass
 
-class MockStrand(list):
-    pass
+    def add_monomer(self):
+        pass
+
+class MockState(object):
+    def __init__(self):
+        self.strand = []
+#        self.concentrations = collections.defaultdict(MockConcentration)
 
 class FixedRatePolymerizationTest(unittest.TestCase):
     def test_barbed(self):
         fr = polymerization.Barbed('t', 0.3)
 
-        strand = MockStrand()
-        strand.concentrations = {'t': MockConcentration(7)}
-        self.assertEqual(7*0.3, fr.R(strand))
+        state = MockState()
+        state.concentrations = {'t': MockConcentration(7)}
+        self.assertEqual(7*0.3, fr.R(state))
 
-        fr.perform(None, strand, None)
-        self.assertEqual(7*0.3, fr.R(strand))
-        self.assertEqual(['t'], strand)
+        fr.perform(None, state, None)
+        self.assertEqual(7*0.3, fr.R(state))
+        self.assertEqual(['t'], state.strand)
 
-        fr.perform(None, strand, None)
-        self.assertEqual(7*0.3, fr.R(strand))
-        self.assertEqual(['t', 't'], strand)
+        fr.perform(None, state, None)
+        self.assertEqual(7*0.3, fr.R(state))
+        self.assertEqual(['t', 't'], state.strand)
 
 if '__main__' == __name__:
     unittest.main()

@@ -140,7 +140,7 @@ class StrandTest(unittest.TestCase):
 
 class StrandFactoryTest(unittest.TestCase):
     def test_typical_single_state_factory(self):
-        strand_generator = strand.single_state(state='t2', length=7)
+        strand_generator = strand.single_state(['t2'], state='t2', length=7)
         for i in xrange(10):
             self.assertEqual(['t2']*7, next(strand_generator))
 
