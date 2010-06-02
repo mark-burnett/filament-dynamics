@@ -23,20 +23,17 @@ class Concentration(object):
         pass
 
 class FixedConcentration(Concentration):
-    __slots__ = ['conc']
+    __slots__ = ['value']
     def __init__(self, concentration=-1):
         if concentration < 0:
             raise ValueError('Negative concentrations not allowed.')
-        self.concentration = concentration
+        self.value = concentration
 
-    @property
-    def value(self):
-        return self.concentration
 
 class ZeroConcentration(Concentration):
-    @property
-    def value(self):
-        return 0
+    __slots__ = ['value']
+    def __init__(self):
+        self.value = 0
 
 class FixedReagent(Concentration):
     __slots__ = ['monomer_conc', 'filament_tip_conc']

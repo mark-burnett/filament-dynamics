@@ -3,7 +3,7 @@
 
 "experiment": {
     "seed_concentration":         6,
-    "filament_tip_concentration": 1.49-3},
+    "filament_tip_concentration": 1.49e-3},
 
 "stages": {
     "bulk_polymerization": {
