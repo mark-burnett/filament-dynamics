@@ -1,7 +1,6 @@
 import unittest
 import collections
 
-from util import observer
 from hydro_sim.transitions import polymerization
 
 class MockConcentration(object):

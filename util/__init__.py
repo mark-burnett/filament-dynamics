@@ -16,10 +16,9 @@
 import generators
 import introspection
 import mp_sim
-import observer
 import functional
 import config
 import io
 
-__all__ = ['generators', 'introspection', 'mp_sim', 'observer',
+__all__ = ['generators', 'introspection', 'mp_sim',
            'states', 'functional']
