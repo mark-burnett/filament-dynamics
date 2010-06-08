@@ -14,55 +14,71 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
+import itertools
 
-import cPickle
-import csv
 import baker
 
-import util
-import analysis
+import numpy
 
-@baker.command(default=True)
-def dump_csv(filename, stage_name, analysis_name,
-             output_filename='',
-             output_dir='',
-             **kwargs):
+import analysis.io
+import analysis.sampling
+import analysis.statistics
+
+@baker.command
+def statistics(input_filename, stage_name, property_name, sample_period,
+               output_dir=None, output_filename=None):
     """
-    Dump analysis results to csv file.
-    :param filename: Pickle file containing simulation results.
-    :param analysis_name: Which analysis to perform.
-    :param stage_name: Which stage to analyze.
-    :param output_filename: Where to write results.
-    :param output_dir: Where to write results, default='.'
+    Calculate average and standard deviation of 'property_name' measurement
+    at time steps specified by 'sample_period'.
     """
-    # Figure out what analysis to perform
-    a = util.introspection.lookup_name(analysis_name, analysis)
+    with open(input_filename) as f:
+        sim_data, sim_parameters = analysis.io.get_stage_data(f, stage_name)
 
-    # Read in file
-    with open(filename) as f:
-        sim_results = cPickle.load(f)
+    # Setup calculations
+    property_data = [d[property_name] for d in sim_data]
+    sample_times = numpy.arange(0, sim_parameters['duration'],
+                                float(sample_period))
 
-    # Grab stage parameters.
-    kwargs.update(sim_results['experiment_parameters']['experiment'])
-    kwargs.update(sim_results['experiment_parameters']['stages'][stage_name])
+    sampled_property_data = analysis.sampling.downsample_each(sample_times,
+                                                              property_data)
 
-    # Extract stage data.
-    stage_index    = sim_results['experiment_config']['stages'].index(stage_name)
-    stage_data     = [d[stage_index] for d in sim_results['data']]
+    averages, std_devs = analysis.statistics.avg_std(sample_times,
+                                                     sampled_property_data)
 
-    # Perform analysis
-    output = a.make_csv(stage_data,# duration=stage_duration,
-#                        data_file=open(util.io.data_filename(analysis_name)),
-                        **util.introspection.make_kwargs_ascii(kwargs))
+    default_filename = 'statistics_%s.csv' % property_name
+    output_filename = analysis.io.create_output_filename(input_filename,
+            stage_name, default_filename, output_dir, output_filename)
+    
+    analysis.io.make_leading_directories(output_filename)
 
-    if output_dir:
-        if not os.path.exists(output_dir):
-            os.mkdir(output_dir)
-    # Dump to csv file
-    with open(util.io.make_filename(filename, output_dir,
-                            output_filename, analysis_name) + '.csv', 'w') as f:
-        w = csv.writer(f, delimiter=' ')
-        w.writerows(output)
+    with open(output_filename, 'w') as of:
+        analysis.io.write_csv(of, itertools.izip(sample_times, averages,
+                                                 std_devs))
+
+@baker.command
+def filament_concentration(input_filename, stage_name, sample_period,
+                           luminance_parameter_filename,
+                           output_dir=None, output_name=None):
+    pass
+
+@baker.command
+def mitchison_stability(input_filename, stage_name, sample_period,
+                        output_dir=None, output_name=None):
+    pass
+
+@baker.command
+def phosphate_cleavage(input_filename, stage_name, sample_period,
+                       output_dir=None, output_name=None):
+    pass
+
+@baker.command
+def phosphate_release(input_filename, stage_name, sample_period,
+                      output_dir=None, output_name=None):
+    pass
+
+@baker.command
+def tip_diffusion(input_filename, stage_name, sample_period,
+                  output_dir=None, output_name=None):
+    pass
 
 baker.run()

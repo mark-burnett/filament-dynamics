@@ -12,3 +12,14 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import numpy
+
+def avg_std(times, data):
+    averages = []
+    stds = []
+    for di in data:
+        averages.append(numpy.average(di))
+        stds.append(numpy.std(di))
+
+    return averages, stds

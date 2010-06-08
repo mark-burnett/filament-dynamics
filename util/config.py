@@ -18,6 +18,8 @@ import json
 
 from mako.template import Template
 
+from util.introspection import make_kwargs_ascii
+
 def match_states(iterable1, iterable2):
     s1 = set(iterable1)
     s2 = set(iterable2)
@@ -31,9 +33,7 @@ def get_model_config(parameters, template_name,
                      template_dir, template_extension):
     model_template = Template(filename=os.path.join(template_dir, 'models',
                                   template_name + template_extension))
-    ascii_parameters = dict((str(k), v) for k, v in parameters.items())
-
-    return json.loads(model_template.render(**ascii_parameters))
+    return json.loads(model_template.render(**make_kwargs_ascii(parameters)))
     
 def get_experiment_config(model_states, parameters, template_name,
                           template_dir, template_extension):
@@ -45,9 +45,7 @@ def get_experiment_config(model_states, parameters, template_name,
                            'match_states': match_states}
     template_parameters.update(parameters['experiment'])
 
-    ascii_parameters = dict((str(k), v) for k, v in template_parameters.items())
-
-    return json.loads(experiment_template.render(**ascii_parameters))
+    return json.loads(experiment_template.render(**make_kwargs_ascii(template_parameters)))
 
 def get_stage_configs(model_states, experiment_config, experiment_parameters,
                       template_dir, template_extension):
@@ -62,9 +60,7 @@ def get_stage_configs(model_states, experiment_config, experiment_parameters,
         template_parameters.update(experiment_parameters['experiment'])
         template_parameters.update(experiment_parameters['stages'][stage_name])
 
-        ascii_parameters = dict((str(k), v) for k, v in template_parameters.items())
-
         stage_configs.append(json.loads(stage_template.render(
-            **ascii_parameters)))
+            **make_kwargs_ascii(template_parameters))))
 
     return stage_configs

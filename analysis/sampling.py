@@ -12,3 +12,14 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import itertools
+import numpy
+
+def downsample(sample_times, data):
+    x, y = zip(*data)
+    return numpy.interp(sample_times, x, y)
+
+def downsample_each(sample_times, data_collection):
+    return itertools.izip(*[downsample(sample_times, data)
+                            for data in data_collection])
