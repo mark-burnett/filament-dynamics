@@ -21,7 +21,6 @@ import baker
 import numpy
 
 import analysis.io
-import analysis.sampling
 import analysis.statistics
 
 @baker.command
@@ -34,74 +33,20 @@ def statistics(input_filename, stage_name, property_name, sample_period,
     with open(input_filename) as f:
         sim_data, sim_parameters = analysis.io.get_stage_data(f, stage_name)
 
-    # Setup calculations
-    property_data = [d[property_name] for d in sim_data]
-    sample_times = numpy.arange(0, sim_parameters['duration'],
-                                float(sample_period))
-
-    sampled_property_data = analysis.sampling.downsample_each(sample_times,
-                                                              property_data)
-
-    averages, std_devs = analysis.statistics.avg_std(sample_times,
-                                                     sampled_property_data)
+    averages, std_devs = analysis.statistics.statistical_analysis(sim_data,
+            property_name, sim_parameters['duration'])
 
     default_filename = 'statistics_%s.csv' % property_name
     output_filename = analysis.io.create_output_filename(input_filename,
             stage_name, default_filename, output_dir, output_filename)
     
-    analysis.io.make_leading_directories(output_filename)
-
-    with open(output_filename, 'w') as of:
-        analysis.io.write_csv(of, itertools.izip(sample_times, averages,
-                                                 std_devs))
+    analysis.io.write_csv_to_filename(output_filename,
+            itertools.izip(sample_times, averages, std_devs))
 
 @baker.command
 def filament_concentration(input_filename, stage_name, sample_period,
                            luminance_parameter_filename,
                            output_dir=None, output_name=None):
-    pass
-
-@baker.command
-def mitchison_stability(input_filename, stage_name, sample_period,
-                        output_dir=None, output_name=None):
-    pass
-
-#@baker.command
-#def phosphate_cleavage(input_filename, stage_name, sample_period,
-#                       output_dir=None, output_name=None):
-#    with open(input_filename) as f:
-#        sim_data, sim_parameters = analysis.io.get_stage_data(f, stage_name)
-#
-#    # Setup calculations
-#    property_data = [d['phosphate_cleavage'] for d in sim_data]
-#    sample_times = numpy.arange(0, sim_parameters['duration'],
-#                                float(sample_period))
-#    sampled_property_data = analysis.sampling.downsample_each(sample_times,
-#                                                              property_data)
-#    filament_tip_concentration = sim_parameters['filament_tip_concentration']
-#
-#
-#    # XXX do stuff
-#    cleavage_conc
-#
-#    default_filename = 'phosphate_cleavage.csv'
-#    output_filename = analysis.io.create_output_filename(input_filename,
-#            stage_name, default_filename, output_dir, output_filename)
-#    
-#    analysis.io.make_leading_directories(output_filename)
-#
-#    with open(output_filename, 'w') as of:
-#        analysis.io.write_csv(of, itertools.izip(sample_times, averages,
-#                                                 std_devs))
-#
-#@baker.command
-#def phosphate_release(input_filename, stage_name, sample_period,
-#                      output_dir=None, output_name=None):
-#    pass
-
-@baker.command
-def tip_diffusion(input_filename, stage_name, sample_period,
-                  output_dir=None, output_name=None):
     pass
 
 baker.run()

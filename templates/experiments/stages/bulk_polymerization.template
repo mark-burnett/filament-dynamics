@@ -5,13 +5,27 @@
     ["Duration", {"duration": ${duration}}]],
 
 "measurements": {
-    "length":             ["Length",          {}],
+    "length": ["Length",          {}],
+
     "phosphate_cleavage": ["TransitionCount", {"old_state": "t",
                                                "new_state": "p"}],
-    "phosphate_release":  ["Concentration", {"species": "Pi"}],
-    "t_concentration":    ["Concentration", {"species": "t"}],
-    "p_concentration":    ["Concentration", {"species": "p"}],
-    "d_concentration":    ["Concentration", {"species": ${match_states(["d", "du"], model_states)}}]},
+    "phosphate_release":
+        ["TransitionCount", {"old_state": "p",
+                             "new_state": ${match_states(["d", "du"],
+                                                         model_states)}}],
+    "phosphate_concentration": ["Concentration", {"species": "Pi"}],
+
+    "t_strand_count": ["StrandCount", {"species": "t"}],
+    "p_strand_count": ["StrandCount", {"species": "p"}],
+    "d_strand_count":
+        ["StrandCount", {"species": ${match_states(["d", "du"],
+                                                   model_states)}}],
+
+    "t_concentration": ["Concentration", {"species": "t"}],
+    "p_concentration": ["Concentration", {"species": "p"}],
+    "d_concentration":
+        ["Concentration", {"species": ${match_states(["d", "du"],
+                                                     model_states)}}]},
 
 "transitions": [
     ["concentrations.WithByproduct", {"old_state": "p",

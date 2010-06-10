@@ -13,39 +13,25 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class StrandLength(object):
-    __slots__ = ['label', 'data', 'last_length']
-    def __init__(self, label):
-        self.label = label
-        self.data  = []
-        self.last_length = None
-    
+from kmc.measurement import SimpleMeasurement, ChangingMeasurement
+
+class StrandLength(ChangingMeasurement):
     def perform(self, time, sim_state):
-        length = len(sim_state.strand)
-        if self.last_length != length:
-            self.last_length = length
-            self.data.append((time, length))
+        self.append(time, len(sim_state.strand))
 
-Length = StrandLength
-
-class StateCounts(object):
-    __slots__ = ['label', 'data']
-    def __init__(self, label):
-        self.label = label
-        self.data  = []
+class StrandCount(ChangingMeasurement):
+    __slots__ = ['species']
+    def __init__(self, label, species):
+        self.species = species
+        ChangingMeasurement.__init__(self, label)
 
     def perform(self, time, sim_state):
-        results = {}
-        for k, indices in sim_state.strand.state_indices.items():
-            results[k] = len(indices)
-        self.data.append((time, results))
+        self.append(time, len(sim_state.strand.state_indices[species_count]))
 
-class TransitionCount(object):
-    __slots__ = ['label', 'data', 'old_state', 'new_state', 'count',
+class TransitionCount(SimpleMeasurement):
+    __slots__ = ['old_state', 'new_state', 'count',
                  '_last_old_count', '_last_new_count']
     def __init__(self, label, old_state, new_state):
-        self.label     = label
-        self.data      = [(0, 0)]
         self.old_state = old_state
         self.new_state = new_state
 
@@ -53,6 +39,7 @@ class TransitionCount(object):
 
         self._last_old_count = -1
         self._last_new_count = -1
+        SimpleMeasurement.__init__(self, label, [(0, 0)])
 
     def perform(self, time, sim_state):
         old_count = len(sim_state.strand.state_indices[self.old_state])
@@ -61,20 +48,15 @@ class TransitionCount(object):
         if (self._last_old_count - 1 == old_count and
             self._last_new_count + 1 == new_count):
             self.count += 1
-            self.data.append((time, self.count))
+            self.append(time, self.count)
         self._last_old_count = old_count
         self._last_new_count = new_count
 
-class Concentration(object):
-    __slots__ = ['label', 'species', 'data', 'previous_value']
+class Concentration(ChangingMeasurement):
+    __slots__ = ['species']
     def __init__(self, label, species):
-        self.label          = label
-        self.species        = species
-        self.data           = []
-        self.previous_value = -1
+        self.species = species
+        ChangingMeasurement.__init__(self, label)
 
     def perform(self, time, sim_state):
-        current_value = sim_state.concentrations[self.species].value
-        if self.previous_value != current_value:
-            self.previous_value = current_value
-            self.data.append((time, current_value))
+        self.append(time, sim_state.concentrations[self.species].value)

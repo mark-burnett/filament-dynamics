@@ -54,3 +54,9 @@ def make_leading_directories(output_filename):
 def write_csv(file_, output_iterator):
         w = csv.writer(file_, delimiter=' ')
         w.writerows(output_iterator)
+
+def write_csv_to_filename(output_filename, output_iterator):
+    analysis.io.make_leading_directories(output_filename)
+
+    with open(output_filename, 'w') as of:
+        analysis.io.write_csv(of, output_iterator)
