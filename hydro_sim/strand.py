@@ -20,7 +20,6 @@ class Strand(list):
     __slots__ = ['state_indices', 'boundary_indices']
     def __init__(self, states, initial_strand):
         list.__init__(self, initial_strand)
-#        self.extend(initial_strand)
         self.state_indices    = {}
         self.boundary_indices = collections.defaultdict(dict)
 
@@ -29,9 +28,9 @@ class Strand(list):
 
         for sb, sp in itertools.product(states, states):
             if sb != sp:
-                self.boundary_indices[sb][sp] = [i for i in self.state_indices[sb]
-                                                   if i > 0 and
-                                                   self[i - 1] == sp]
+                self.boundary_indices[sb][sp] = [i
+                                                 for i in self.state_indices[sb]
+                                                 if i > 0 and self[i - 1] == sp]
 
     def append(self, item):
         list.append(self, item)
@@ -69,9 +68,9 @@ class Strand(list):
         if index < len(self) - 1:
             barbed_neighbor  = self[index + 1]
             if old_state is not None and old_state != barbed_neighbor:
-                self.boundary_indices[barbed_neighbor][old_state].remove(index + 1)
+               self.boundary_indices[barbed_neighbor][old_state].remove(index+1)
             if new_state is not None and new_state != barbed_neighbor:
-                self.boundary_indices[barbed_neighbor][new_state].append(index + 1)
+               self.boundary_indices[barbed_neighbor][new_state].append(index+1)
 
 def single_state(model_states, state=None, length=None,
                  seed_concentration=None, filament_tip_concentration=None):

@@ -72,7 +72,7 @@ def make_end_conditions(ec_config):
 def make_measurements(measurements_config):
     return [util.introspection.lookup_name(name, measurements)(label,
                 **util.introspection.make_kwargs_ascii(kwargs))
-            for label, (name, kwargs) in measurements_config.items()]
+            for label, (name, kwargs) in measurements_config.iteritems()]
 
 def make_sequence_generator(model_states, initial_strand_config):
     name, kwargs = initial_strand_config

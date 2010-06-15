@@ -1,0 +1,18 @@
+{
+"description": "Parameters taken from Fujiwara (2007) and guessed analytically.",
+
+"t_on_rate":  11.6,
+"p_on_rate":   3.4,
+"du_on_rate":  2.9,
+
+"t_off_rate":  1.4,
+"p_off_rate":  0.2,
+"du_off_rate": 5.4,
+"ds_off_rate": 0.1,
+
+"cleavage_rate": 0.3,
+"release_rate":  0.03,
+
+"stabilization_rate":   1.3e-3,
+"destabilization_rate": 4.5e-3
+}

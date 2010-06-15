@@ -1,0 +1,15 @@
+{
+"t_on_rate": 11.6,
+"p_on_rate":  0,
+"d_on_rate":  0,
+
+"t_off_rate": 2.2,
+"p_off_rate": 0.1,
+"d_off_rate": 2.7,
+
+"random_cleavage_rate": 0.01,
+"random_release_rate":  0,
+
+"vectorial_cleavage_rate": 20,
+"vectorial_release_rate":  0
+}
