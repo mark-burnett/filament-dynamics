@@ -5,7 +5,7 @@
     ["Duration", {"duration": ${duration}}]],
 
 "measurements": {
-    "length": ["Length",          {}],
+    "length": ["StrandLength", {}],
 
     "phosphate_cleavage": ["TransitionCount", {"old_state": "t",
                                                "new_state": "p"}],

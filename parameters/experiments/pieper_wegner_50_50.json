@@ -1,5 +1,5 @@
 {
-"description": "Pieper, Wegner 100 % G-ATP-Actin",
+"description": "Pieper, Wegner 50% G-ATP-Actin, 50%, G-ADP-Actin",
 
 "experiment": {
     "seed_concentration":         6,
@@ -7,9 +7,9 @@
 
 "stages": {
     "bulk_polymerization": {
-        "duration": 600,
-        "in_solution_release_rate": 10,
-        "in_solution_destabilization_rate": 10,
+        "duration": 400,
+        "in_solution_release_rate": 50,
+        "in_solution_destabilization_rate": 50,
         "initial_t_concentration":  2,
         "initial_d_concentration":  2}}
 }

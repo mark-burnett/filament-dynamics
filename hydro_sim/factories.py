@@ -32,7 +32,7 @@ from . import strand
 def simulation_generator(model_config, stage_configs):
     sim = make_simulation(model_config, stage_configs)
     while True:
-        yield copy.deepcopy(sim)
+        yield copy.copy(sim)
 
 def make_simulation(model_config, stage_configs):
     model_states = model_config['states']
@@ -42,7 +42,6 @@ def make_simulation(model_config, stage_configs):
         stages.append(make_stage(model_config['transitions'], stage_config))
         concentrations.append(make_concentrations(model_states,
                                               stage_config['concentrations']))
-
     return simulation.SimulationSequence(stages, concentrations)
 
 def make_stage(model_transitions, stage_config):

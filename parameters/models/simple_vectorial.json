@@ -1,14 +1,14 @@
 {
 "description": "Parameters from Li Lipowsky.",
 
-"t_on_rate": 11.6,
+"t_on_rate": 30.0,
 "p_on_rate":  0,
-"d_on_rate":  0,
+"d_on_rate":  2.9,
 
 "t_off_rate": 2.2,
 "p_off_rate": 0.1,
 "d_off_rate": 2.7,
 
 "vectorial_cleavage_rate": 30.00,
-"vectorial_release_rate":  0.57
+"vectorial_release_rate":  20.0
 }

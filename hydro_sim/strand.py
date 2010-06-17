@@ -92,12 +92,17 @@ def random_states(model_states, states=None, length=None,
     if not states:
         raise RuntimeError("'states' not specified.")
 
+    size = determine_seed_length(length, seed_concentration, filament_tip_concentration)
+
+    while True:
+        yield Strand(model_states, (random.choice(states) for n in xrange(size)))
+
+def determine_seed_length(length=None, seed_concentration=None,
+                          filament_tip_concentration=None, **kwargs):
     if length:
         size = int(length)
     elif seed_concentration and filament_tip_concentration:
         size = int(seed_concentration / filament_tip_concentration)
     else:
         raise RuntimeError('Indeterminite size.')
-
-    while True:
-        yield Strand(model_states, (random.choice(states) for n in xrange(size)))
+    return size

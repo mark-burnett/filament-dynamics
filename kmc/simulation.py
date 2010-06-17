@@ -83,4 +83,4 @@ class Simulation(object):
             # Perform measurements
             [m.perform(time, state) for m in self.measurements]
 
-        return state, dict((m.label, m.data) for m in self.measurements)
+        return state, dict((m.label, m) for m in self.measurements)

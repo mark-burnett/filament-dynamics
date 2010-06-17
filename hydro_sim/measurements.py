@@ -20,13 +20,13 @@ class StrandLength(ChangingMeasurement):
         self.append(time, len(sim_state.strand))
 
 class StrandCount(ChangingMeasurement):
-    __slots__ = ['species']
+    __slots__ = ['_species']
     def __init__(self, label, species):
-        self.species = species
+        self._species = species
         ChangingMeasurement.__init__(self, label)
 
     def perform(self, time, sim_state):
-        self.append(time, len(sim_state.strand.state_indices[species_count]))
+        self.append(time, len(sim_state.strand.state_indices[self._species]))
 
 class TransitionCount(SimpleMeasurement):
     __slots__ = ['old_state', 'new_state', 'count',

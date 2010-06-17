@@ -26,11 +26,11 @@ def avg_std(times, data):
 
     return averages, stds
 
-def statistical_analysis(sim_data, property_name, duration):
+def statistical_analysis(sim_data, property_name, duration, sample_period):
     property_data = [d[property_name] for d in sim_data]
     sample_times = numpy.arange(0, duration, float(sample_period))
 
     sampled_property_data = sampling.downsample_each(sample_times,
                                                      property_data)
 
-    return avg_std(sample_times, sampled_property_data)
+    return sample_times, avg_std(sample_times, sampled_property_data)
