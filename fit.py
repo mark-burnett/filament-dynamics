@@ -97,9 +97,17 @@ def surface(model_template_name, fit_parameters_filename,
                                          strand_generator, processes)
 
         # Perform analysis
+        cleavage_data = [d['phosphate_cleavage'] for d in data]
+        sampled_data = analysis.sampling.downsample_each(experiment_times, cleavage_data)
+        cleavage_avg, cleavage_std = analysis.statistics.avg_std(cleavage_data)
 
         # Calculate residual
-        results.append([pv for pv in par_values] + residual)
+        # add simulation variance to experiment variance
+        residual_std = numpy.sqrt(cleavage_std**2 + experiment_std**2)
+        residual = fitpy.algorithms.utils.residuals.chi_squared(
+                experiment_times, experiment_data, residual_std, cleavage_avg)
+        results.append([pv for pv in par_values] + [residual])
+
     # Write csv file
 
 #

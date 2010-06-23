@@ -17,7 +17,7 @@ import numpy
 
 from . import sampling
 
-def avg_std(times, data):
+def avg_std(data):
     averages = []
     stds = []
     for di in data:
@@ -33,4 +33,4 @@ def statistical_analysis(sim_data, property_name, duration, sample_period):
     sampled_property_data = sampling.downsample_each(sample_times,
                                                      property_data)
 
-    return sample_times, avg_std(sample_times, sampled_property_data)
+    return sample_times, avg_std(sampled_property_data)
