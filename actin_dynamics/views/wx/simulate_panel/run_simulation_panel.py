@@ -53,10 +53,10 @@ class RunSimulationPanel(wx.Panel):
         psg_label = wx.StaticText(parent=self, label='Parameter Set Group:')
         psg_label.SetFont(config.font('label'))
         outer_vertical_sizer.Add(psg_label,
-                                 flag=(config.sizer('aligned')|wx.ALIGN_RIGHT),
+                                 flag=config.sizer('basic'),
                                  border=config.border('item'))
         outer_vertical_sizer.Add(self.psg_text,
-                                 flag=(config.sizer('aligned')|wx.ALIGN_LEFT),
+                                 flag=config.sizer('basic'),
                                  border=config.border('item'))
 
         ps_label_sizer = wx.BoxSizer(orient=wx.HORIZONTAL)
@@ -98,6 +98,7 @@ class RunSimulationPanel(wx.Panel):
         go_row_sizer.Add(num_label, flag=config.sizer('basic'),
                          border=config.border('item'))
         go_row_sizer.Add(self.num_text,
+                         proportion=1,
                          flag=config.sizer('basic'),
                          border=config.border('item'))
 

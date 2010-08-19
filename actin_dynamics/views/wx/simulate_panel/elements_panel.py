@@ -93,6 +93,7 @@ class ElementsPanel(wx.Panel):
                                  
 
         outer_vertical_sizer.Add(InfoPanel(parent=self, config=config,
-                                           publisher=publisher),
+                                           publisher=publisher,
+                                           style=config.style('minor_section')),
                                  proportion=25, flag=config.sizer('basic'),
                                  border=config.border('item'))

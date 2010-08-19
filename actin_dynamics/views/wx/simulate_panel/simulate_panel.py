@@ -34,7 +34,7 @@ class SimulatePanel(wx.Panel):
 
         sizer.Add(ElementsPanel(parent=self, config=config,
                                 publisher=publisher,
-                                style=wx.SIMPLE_BORDER),
+                                style=config.style('major_section')),
                   proportion=45,
                   flag=config.sizer('basic'),
                   border=config.border('major_section'))

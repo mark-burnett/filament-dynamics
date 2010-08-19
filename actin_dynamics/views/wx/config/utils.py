@@ -20,6 +20,9 @@ def get_flags(flag_text, prefix='', postfix='', module=None):
     return flags
 
 def _force_iterable(item):
+    if isinstance(item, basestring):
+        return [item]
+
     try:
         i = iter(item)
     except TypeError:

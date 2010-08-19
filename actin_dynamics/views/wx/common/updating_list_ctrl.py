@@ -96,6 +96,9 @@ class UpdatingListCtrl(wx.grid.Grid):
         self.SetRowLabelSize(0)
         self.SetColLabelSize(wx.grid.GRID_AUTOSIZE)
 
+        # XXX it might be nice to add something like this, but better
+#        if selection_message is None:
+#            self.Disable()
         
         self.publisher = publisher
         self.selection_message = selection_message
