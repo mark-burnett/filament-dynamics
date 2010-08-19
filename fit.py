@@ -18,8 +18,26 @@ import baker
 
 import json
 import csv
+import os
+
+import itertools
+import copy
 
 from mako.template import Template
+
+import numpy
+
+import hydro_sim.factories
+
+import util.config
+import util.mp_sim
+from util.introspection import make_kwargs_ascii
+
+import analysis.sampling
+import analysis.statistics
+
+from fitpy.utils import meshes
+import fitpy.algorithms.common.residuals
 
 @baker.command
 def surface(model_template_name, fit_parameters_filename,
@@ -38,7 +56,7 @@ def surface(model_template_name, fit_parameters_filename,
 
     # Create example model config so we can get model states.
     example_model_parameters = fit_parameters['fixed']
-    for par_name, (low_value, high_value) in fit_parameters['variable']:
+    for par_name, (low_value, high_value) in fit_parameters['variable'].items():
         example_model_parameters[par_name] = low_value
     example_model_config = json.loads(model_template.render(
         **make_kwargs_ascii(example_model_parameters)))
@@ -65,16 +83,35 @@ def surface(model_template_name, fit_parameters_filename,
 
     # Create parameter meshes
     parameter_meshes = {}
-    for par_name, (low_value, high_value) in fit_parameters['variable']:
-        parameter_meshes[par_name] = make_parameter_mesh(low_value, high_value,
-                                                         parameter_mesh_size)
+    for par_name, (low_value, high_value) in fit_parameters['variable'].iteritems():
+        parameter_meshes[par_name] = meshes.logmesh(low_value, high_value,
+                                                    parameter_mesh_size)
 
     # XXX Load data
+    experiment_times = []
+    experiment_data = []
+    experiment_std = []
+
+    with open('data/experiments/pollard_cleavage.dat') as f:
+        for et, ed, lower_bound, upper_bound in csv.reader(f, delimiter=' ', skipinitialspace=True):
+            experiment_times.append(float(et))
+            experiment_data.append(float(ed))
+
+            std = (float(upper_bound) - float(lower_bound)) / 2
+            experiment_std.append(std)
+
+    experiment_times = numpy.array(experiment_times)
+    experiment_data = numpy.array(experiment_data)
+    experiment_std = numpy.array(experiment_std)
 
     # Base model parameters
     base_model_parameters = fit_parameters['fixed']
+
     # Loop over variable parameteres
-    for par_names, par_values in something:
+    par_names = parameter_meshes.keys()
+    results = []
+    min_residual = 1.0e100
+    for par_values in itertools.product(*[parameter_meshes[n] for n in par_names]):
         # Generate model config
         model_parameters = copy.copy(base_model_parameters)
         for pn, pv in itertools.izip(par_names, par_values):
@@ -97,23 +134,73 @@ def surface(model_template_name, fit_parameters_filename,
                                          strand_generator, processes)
 
         # Perform analysis
-        cleavage_data = [d['phosphate_cleavage'] for d in data]
+        cleavage_data = [d[0]['phosphate_cleavage'] for d in data]
+#        cleavage_data = [0.0112 * numpy.array(cd) for cd in cleavage_data]
         sampled_data = analysis.sampling.downsample_each(experiment_times, cleavage_data)
-        cleavage_avg, cleavage_std = analysis.statistics.avg_std(cleavage_data)
+        sampled_data = [0.0112 * numpy.array(sd) for sd in sampled_data]
+        cleavage_avg, cleavage_std = analysis.statistics.avg_std(sampled_data)
 
         # Calculate residual
         # add simulation variance to experiment variance
         residual_std = numpy.sqrt(cleavage_std**2 + experiment_std**2)
-        residual = fitpy.algorithms.utils.residuals.chi_squared(
-                experiment_times, experiment_data, residual_std, cleavage_avg)
+#        residual_std = experiment_std
+        residual = fitpy.algorithms.common.residuals.chi_squared(
+                experiment_times, experiment_data, residual_std, cleavage_avg) / len(cleavage_avg)
+        if min_residual > residual:
+            min_residual = residual
+            print 'new min resid:', residual, 'pars:', par_values
+#            best_length_avg, best_length_std = analysis.statistics.avg_std(
+#                                analysis.sampling.downsample_each(experiment_times,
+#                                    [d[0]['length'] for d in data]))
+            best_cleavage_avg = cleavage_avg
+            best_cleavage_std = cleavage_std
+            best_par_values = par_values
+
+#            best_d_concentration_avg, best_d_concentration_std = analysis.statistics.avg_std(
+#                                analysis.sampling.downsample_each(experiment_times,
+#                                    [d[0]['d_concentration'] for d in data]))
+#
+#            best_p_strand_count_avg, best_p_strand_count_std = analysis.statistics.avg_std(
+#                                analysis.sampling.downsample_each(experiment_times,
+#                                    [d[0]['p_strand_count'] for d in data]))
+#
+#            best_d_strand_count_avg, best_d_strand_count_std = analysis.statistics.avg_std(
+#                                analysis.sampling.downsample_each(experiment_times,
+#                                    [d[0]['d_strand_count'] for d in data]))
         results.append([pv for pv in par_values] + [residual])
 
     # Write csv file
+    with open('test_output_file.csv', 'w') as f:
+        # Write par names in order as comment
+        f.write('#')
+        for name in par_names:
+            f.write(' %s' % name)
+        f.write(' residual\n')
 
-#
-#@baker.command
-#def fit(model_template_name,
-#        fit_parameters_file,
-#        experiment_template_name,
-#        experiment_parameters_filename):
-#    pass
+        # Write data
+        w = csv.writer(f, delimiter=' ', lineterminator='\n')
+        last_p1_value = None
+        for row in results:
+            if row[0] != last_p1_value:
+                f.write('\n')
+            w.writerow(row)
+            last_p1_value = row[0]
+
+    with open('cl_data.csv', 'w') as f:
+        f.write('#')
+        for name in par_names:
+            f.write(' %s' % name)
+        f.write('\n#')
+        for par in best_par_values:
+            f.write(' %f' % par)
+        f.write('\n')
+
+        w = csv.writer(f, delimiter=' ', lineterminator='\n')
+        w.writerows(itertools.izip(experiment_times, experiment_data, experiment_std,
+            best_cleavage_avg, best_cleavage_std))
+#            best_length_avg, best_length_std,
+#            best_d_concentration_avg, best_d_concentration_std,
+#            best_p_strand_count_avg, best_p_strand_count_std,
+#            best_d_strand_count_avg, best_d_strand_count_std))
+
+baker.run()

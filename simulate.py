@@ -108,6 +108,7 @@ def hydrolysis(model_template_name,      model_parameters_filename,
 
     # Write output
     with open(filename, 'w') as f:
+#    f = open(filename, 'w')
         cPickle.dump({'model_config':          model_config,
                       'experiment_config':     experiment_config,
                       'stage_configs':         stage_configs,

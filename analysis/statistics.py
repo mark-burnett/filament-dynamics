@@ -23,6 +23,8 @@ def avg_std(data):
     for di in data:
         averages.append(numpy.average(di))
         stds.append(numpy.std(di))
+    averages = numpy.array(averages)
+    stds = numpy.array(stds)
 
     return averages, stds
 

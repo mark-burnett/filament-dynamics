@@ -26,13 +26,12 @@ class MockEndCondition(object):
             return True
         return False
 
-class MockMeasurement(object):
+class MockMeasurement(list):
     def __init__(self, label):
         self.label = label
-        self.data  = []
 
     def perform(self, time, state):
-        self.data.append(state[0])
+        self.append(state[0])
 
 class SimulationTest(unittest.TestCase):
     def test_single_simulation(self):

@@ -20,7 +20,7 @@ class Random(object):
     __slots__ = ['old_state', 'rate', 'new_state']
     def __init__(self, old_state, rate, new_state):
         self.old_state = old_state
-        self.rate      = rate
+        self.rate      = max(rate, 0)
         self.new_state = new_state
 
     def R(self, sim_state):
@@ -36,7 +36,7 @@ class PointedNeighbor(object):
     def __init__(self, old_state, pointed_neighbor, rate, new_state):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
-        self.rate             = rate
+        self.rate             = max(rate, 0)
         self.new_state        = new_state
 
     def R(self, sim_state):
