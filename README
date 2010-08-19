@@ -1,0 +1,25 @@
+------------------------------------------------------------------------
+- License                                                              -
+------------------------------------------------------------------------
+
+This software package is licensed under the GNU GPL.
+See the LICENSE file for more details.
+
+------------------------------------------------------------------------
+- Requirements                                                         -
+------------------------------------------------------------------------
+
+Python version 2.6 or 2.7 (Not 3.x ready yet.)
+    (Version 2.5 is missing the multiprocessing module.)
+
+Python Packages:
+argparse (if using python 2.6)
+configobj
+elixir
+psycopg2 (to use postgresql)
+sqlalchemy
+twisted
+wxpython
+
+External Requirements:
+postgresql
