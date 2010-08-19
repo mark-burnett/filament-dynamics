@@ -1,9 +1,0 @@
-{
-"description": "Two stage simulation: random duration growth, followed by zero concentration depolymerization.",
-
-"stages": ["random_polymerization", "clean_depolymerization"],
-
-"initial_strand": ["single_state",
-                       {"state":  ${match_states(["d", "ds"], model_states)},
-                        "length": ${seed_length}}]
-}

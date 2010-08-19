@@ -1,7 +1,0 @@
-import unittest
-
-class Dummy(unittest.TestCase):
-    pass
-
-if '__main__' == __name__:
-    unittest.main()
