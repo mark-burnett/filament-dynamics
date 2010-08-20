@@ -36,7 +36,7 @@ class TitledListPanel(wx.Panel):
         sizer.Add(text, flag=config.sizer('heading'),
                   border=config.border('sub_heading'))
 
-        sizer.Add(UpdatingListCtrl(parent=self,
+        self.list_ctrl = UpdatingListCtrl(parent=self,
                                    publisher=publisher,
                                    column_names=column_names,
                                    update_message=update_message,
@@ -44,7 +44,8 @@ class TitledListPanel(wx.Panel):
                                    selection_message=selection_message,
                                    clear_selection_message=clear_selection_message,
                                    config=config,
-                                   style=wx.SUNKEN_BORDER),
+                                   style=wx.SUNKEN_BORDER)
+        sizer.Add(self.list_ctrl,
                   proportion=1,
                   flag=config.sizer('basic'),
                   border=config.border('item'))

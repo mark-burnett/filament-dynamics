@@ -22,9 +22,13 @@ from .basic_sim_info_panel import BasicSimulationInfo
 from .parameters_panel import ParametersPanel
 from .run_simulation_panel import RunSimulationPanel
 
+from .elements_panel import ElementsPanel
+
 class SelectionPanel(wx.Panel):
     def __init__(self, publisher=None, parent=None, config=None, **kwargs):
         wx.Panel.__init__(self, parent=parent, **kwargs)
+        self.publisher = publisher
+        self.config = config
 
         outer_vertical_sizer = wx.BoxSizer(orient=wx.VERTICAL)
         self.SetSizer(outer_vertical_sizer, wx.EXPAND)
@@ -39,15 +43,26 @@ class SelectionPanel(wx.Panel):
                                  flag=config.sizer('basic'),
                                  border=config.border('item'))
 
-        first_row_sizer.Add(
-                TitledListPanel(title='Simulations', parent=self,
-                                publisher=publisher, config=config,
-                                column_names=['Name', 'Description'],
-                                update_message=messages.SimulationList,
-                                selection_message=messages.SimulationRequest),
+        first_row_vertical_sizer = wx.BoxSizer(orient=wx.VERTICAL)
+        first_row_sizer.Add(first_row_vertical_sizer,
                             proportion=65,
                             flag=config.sizer('basic'),
                             border=config.border('item'))
+        self.tlp = TitledListPanel(title='Simulations', parent=self,
+                                publisher=publisher, config=config,
+                                column_names=['Name', 'Description'],
+                                update_message=messages.SimulationList,
+                                selection_message=messages.SimulationRequest)
+        first_row_vertical_sizer.Add(self.tlp,
+                            proportion=65,
+                            flag=config.sizer('basic'),
+                            border=config.border('item'))
+        details_button = wx.Button(parent=self, label='Simulation Details')
+        details_button.Bind(wx.EVT_BUTTON, self.display_details)
+        first_row_vertical_sizer.Add(details_button,
+                                     flag=config.sizer('basic'),
+                                     border=config.border('item'))
+
         first_row_sizer.Add(
                 TitledListPanel(title='Measurements', parent=self,
                                 publisher=publisher, config=config,
@@ -73,3 +88,23 @@ class SelectionPanel(wx.Panel):
                                                  config=config),
                                  proportion=1, flag=config.sizer('basic'),
                                  border=config.border('minor_section'))
+
+    def display_details(self, event):
+        dlg = ElementsDialog(parent=self, publisher=self.publisher,
+                             config=self.config)
+        grid = self.tlp.list_ctrl
+        row = grid.selected_row
+        dlg.CenterOnScreen()
+        self.publisher.publish(grid.selection_message(grid.table_base.get_data(row)))
+        dlg.ShowModal()
+        dlg.Destroy()
+
+class ElementsDialog(wx.Dialog):
+    def __init__(self, parent=None, publisher=None, config=None, **kwargs):
+        wx.Dialog.__init__(self, parent=parent, size=(1024, 768), **kwargs)
+        sizer = wx.BoxSizer(orient=wx.HORIZONTAL)
+        self.SetSizer(sizer, wx.EXPAND)
+        sizer.Add(ElementsPanel(publisher=publisher, config=config,
+                                parent=self),
+                  flag=config.sizer('basic'),
+                  border=config.border('item'))

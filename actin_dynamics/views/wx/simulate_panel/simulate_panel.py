@@ -18,23 +18,26 @@ import wx
 from .elements_panel import ElementsPanel
 from .selection_panel import SelectionPanel
 
-class SimulatePanel(wx.Panel):
-    def __init__(self, publisher, config, **kwargs):
-        wx.Panel.__init__(self, **kwargs)
-        self.publisher = publisher
-
-        sizer = wx.BoxSizer(orient=wx.HORIZONTAL)
-        self.SetSizer(sizer, wx.EXPAND)
-        
-        sizer.Add(SelectionPanel(parent=self, config=config,
-                                 publisher=publisher),
-                  proportion=55,
-                  flag=config.sizer('basic'),
-                  border=config.border('major_section'))
-
-        sizer.Add(ElementsPanel(parent=self, config=config,
-                                publisher=publisher,
-                                style=config.style('major_section')),
-                  proportion=45,
-                  flag=config.sizer('basic'),
-                  border=config.border('major_section'))
+def SimulatePanel(publisher, config, parent=None, **kwargs):
+    return SelectionPanel(parent=parent, config=config,
+                          publisher=publisher, **kwargs)
+#class SimulatePanel(wx.Panel):
+#    def __init__(self, publisher, config, **kwargs):
+#        wx.Panel.__init__(self, **kwargs)
+#        self.publisher = publisher
+#
+#        sizer = wx.BoxSizer(orient=wx.HORIZONTAL)
+#        self.SetSizer(sizer, wx.EXPAND)
+#        
+#        sizer.Add(SelectionPanel(parent=self, config=config,
+#                                 publisher=publisher),
+#                  proportion=55,
+#                  flag=config.sizer('basic'),
+#                  border=config.border('major_section'))
+#
+#        sizer.Add(ElementsPanel(parent=self, config=config,
+#                                publisher=publisher,
+#                                style=config.style('major_section')),
+#                  proportion=45,
+#                  flag=config.sizer('basic'),
+#                  border=config.border('major_section'))
