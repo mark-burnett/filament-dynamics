@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 #    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -15,14 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-echo 'Dropping old database.'
-sudo -u postgres dropdb actin_dynamics
+from actin_dynamics.gui_starter import publisher
+from actin_dynamics.presenters import messages as presenter_messages
+from actin_dynamics.views.wx import messages as view_messages
 
-echo 'Creating new database.'
-sudo -u postgres createdb -O aduser actin_dynamics
-
-echo 'Creating tables.'
-python adtools/create_tables.py
-
-echo 'Creating test data.'
-python adtools/create_test_data.py
+def printer(value):
+    print value

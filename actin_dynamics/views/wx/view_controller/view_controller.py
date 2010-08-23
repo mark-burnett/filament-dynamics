@@ -13,10 +13,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys as _sys
+
 from .message_tracker import MessageTracker as _MessageTracker
 
 from actin_dynamics.presenters import messages as presenter_messages
-from actin_dynamics.view.wx import messages as view_messages
+from actin_dynamics.views.wx import messages as view_messages
 
 class ViewController(object):
     def __init__(self, trackers):
@@ -25,8 +27,9 @@ class ViewController(object):
     @classmethod
     def from_configobj(cls, publisher=None, configobj=None):
         trackers = []
-        for section_name in configobj.sections():
-            section = configobj[section_name]
+        message_tracker_config = configobj['message_trackers']
+        for section_name in message_tracker_config.sections:
+            section = message_tracker_config[section_name]
 
             update_message = _get_object_from_module(
                     section['update_message'], section['update_message_module'])
@@ -35,10 +38,11 @@ class ViewController(object):
                     section['request_message_module'])
 
             trackers.append(_MessageTracker(publisher, update_message,
-                                            update_message_field,
+                                            section['update_message_field'],
                                             request_message))
         return cls(trackers)
 
+_this_module = _sys.modules[__name__]
 def _get_object_from_module(object_name, module_name):
-    module = getattr(module_name, __module__)
-    return getattr(object_name, module)
+    module = getattr(_this_module, module_name)
+    return getattr(module, object_name)

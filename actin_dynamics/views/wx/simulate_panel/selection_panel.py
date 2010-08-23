@@ -94,10 +94,10 @@ class SelectionPanel(wx.Panel):
                              config=self.config)
         grid = self.tlp.list_ctrl
         row = grid.selected_row
-        dlg.CenterOnScreen()
         self.publisher.publish(grid.selection_message(grid.table_base.get_data(row)))
         dlg.ShowModal()
-        dlg.Destroy()
+        # XXX this seems to delete the c++ instances, leaving empty SWIG shells.
+#        dlg.Destroy()
 
 class ElementsDialog(wx.Dialog):
     def __init__(self, parent=None, publisher=None, config=None, **kwargs):

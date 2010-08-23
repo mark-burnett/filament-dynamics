@@ -33,8 +33,9 @@ from actin_dynamics import presenters
 from actin_dynamics.common.publisher import Publisher
 
 
+# XXX this is so that we can use the publisher in the wx.py.shell
+publisher = Publisher()
 def go(config):
-    publisher = Publisher()
 
     view = views.wxView(publisher, config)
 

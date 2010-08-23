@@ -34,7 +34,13 @@ class _ListTableBase(wx.grid.PyGridTableBase):
 
         self.grid = grid
 
+        self.publisher = publisher
+        self.update_message = update_message
         publisher.subscribe(self.update, update_message)
+
+    # XXX necessary?
+#    def __del__(self):
+#        self.publisher.unsubscribe(self.update, self.update_message)
 
     def GetColLabelValue(self, col):
         return self.column_names[col]
@@ -114,6 +120,7 @@ class UpdatingListCtrl(wx.grid.Grid):
         else:
             self.SetDefaultCellFont(config.font('item'))
 
+        self.clear_selection_message = clear_selection_message
         if clear_selection_message is not None:
             self.publisher.subscribe(self._clear_selection,
                                      clear_selection_message)
@@ -122,6 +129,13 @@ class UpdatingListCtrl(wx.grid.Grid):
 
         # events to ignore
         self.Bind(wx.grid.EVT_GRID_LABEL_LEFT_CLICK, self._ignore_event)
+
+#    def __del__(self):
+#        item = self.GetTable()
+#        print item
+#        del item
+#        self.publisher.unsubscribe(self._clear_selection,
+#                                   self.clear_selection_message)
 
     def _on_click(self, event):
         if self.selection_message is not None:

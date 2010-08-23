@@ -70,12 +70,6 @@ class GUIHandler(object):
         self.publisher.publish(messages.StrandFactoryList.from_simulation(sim))
         self.publisher.publish(messages.TransitionList.from_simulation(sim))
 
-        # Publish blank TransitionInfo, etc. to clear controls.
-#        self.publisher.publish(messages.TransitionInfo())
-#        self.publisher.publish(messages.ConcentrationInfo())
-#        self.publisher.publish(messages.ExplicitMeasurementInfo())
-#        self.publisher.publish(messages.EndConditionInfo())
-
 
     def concentration_requested(self, message):
         c = dbm.Concentration.get(message.id)

@@ -18,3 +18,5 @@ from collections import namedtuple as _nt
 _BasicCallback = _nt('BasicCallback', 'callback')
 
 class CurrentSimulationIdCallback(_BasicCallback): pass
+class CurrentParameterSetIdCallback(_BasicCallback): pass
+class CurrentParameterSetGroupIdCallback(_BasicCallback): pass
