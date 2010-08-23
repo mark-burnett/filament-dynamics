@@ -27,4 +27,4 @@ class MessageTracker(object):
                                      None)
 
     def request(self, request_message):
-        request_message.function(self.current_value)
+        request_message.callback(self.current_value)

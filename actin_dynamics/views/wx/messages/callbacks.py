@@ -15,6 +15,6 @@
 
 from collections import namedtuple as _nt
 
-_BasicCallback = _nt('BasicCallback', 'function')
+_BasicCallback = _nt('BasicCallback', 'callback')
 
 class CurrentSimulationIdCallback(_BasicCallback): pass
