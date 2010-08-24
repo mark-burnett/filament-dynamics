@@ -22,6 +22,14 @@ class MeasurementLabel(_elixir.Entity):
     description = _elixir.Field(_elixir.UnicodeText)
     measurement_data = _elixir.OneToMany('MeasurementData')
 
+    @classmethod
+    def from_xml(cls, element):
+        result = cls.get_by(name=element.attrib['name'])
+        if not result:
+            result = cls()
+            result.from_dict(element.attrib)
+        return result
+
 class MeasurementData(_elixir.Entity):
     _elixir.using_options(tablename='measurement_data')
 

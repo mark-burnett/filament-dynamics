@@ -1,0 +1,4 @@
+<!ELEMENT hydrolysis_states (hydrolysis_state*)>
+<!ELEMENT hydrolysis_state EMPTY>
+    <!ATTLIST hydrolysis_state name CDATA #REQUIRED>
+    <!ATTLIST hydrolysis_state description CDATA #IMPLIED>

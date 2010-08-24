@@ -1,0 +1,39 @@
+<!ELEMENT simulations (simulation*)>
+    <!ELEMENT simulation (strand_factory, concentrations, end_conditions,
+                          explicit_measurements, transitions)>
+        <!ATTLIST simulation name CDATA #REQUIRED>
+        <!ATTLIST simulation description CDATA #IMPLIED>
+
+
+<!ELEMENT binding (parameter_mappings, state_mappings)>
+    <!ATTLIST binding class_name CDATA #REQUIRED>
+
+<!ELEMENT parameter_mappings (parameter_mapping*)>
+<!ELEMENT parameter_mapping EMPTY>
+    <!ATTLIST parameter_mapping parameter_label_name CDATA #REQUIRED>
+    <!ATTLIST parameter_mapping local_name CDATA #REQUIRED>
+
+<!ELEMENT state_mappings (state_mapping*)>
+<!ELEMENT state_mapping EMPTY>
+    <!ATTLIST state_mapping state_name CDATA #REQUIRED>
+    <!ATTLIST state_mapping local_name CDATA #REQUIRED>
+
+
+<!ELEMENT strand_factory (binding)>
+
+<!ELEMENT concentrations (concentration*)>
+    <!ELEMENT concentration (binding)>
+        <!ATTLIST concentration state_name CDATA #REQUIRED>
+        <!ATTLIST concentration measurement_label_name CDATA #REQUIRED>
+
+<!ELEMENT end_conditions (end_condition)>
+    <!ELEMENT end_condition (binding)>
+
+<!ELEMENT explicit_measurements (explicit_measurement)>
+    <!ELEMENT explicit_measurement (binding)>
+        <!ATTLIST explicit_measurement measurement_label_name CDATA #REQUIRED>
+
+<!ELEMENT transitions (transition*)>
+    <!ELEMENT transition (binding)>
+        <!ATTLIST transition name CDATA #REQUIRED>
+        <!ATTLIST transition measurement_label_name CDATA #REQUIRED>

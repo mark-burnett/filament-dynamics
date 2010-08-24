@@ -1,0 +1,4 @@
+<!ELEMENT parameter_labels (parameter_label*)>
+<!ELEMENT parameter_label EMPTY>
+    <!ATTLIST parameter_label name CDATA #REQUIRED>
+    <!ATTLIST parameter_label description CDATA #IMPLIED>

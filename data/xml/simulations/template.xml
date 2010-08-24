@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE simulations SYSTEM '../dtd/simulations.dtd'>
+
+<simulations>
+    <simulation
+        name=''
+        description=''>
+
+        <!-- Initial strand setup -->
+        <strand_factory>
+            <binding class_name=''>
+                <parameter_mappings>
+                    <parameter_mapping
+                        parameter_label_name=''
+                        local_name=''/>
+                    <parameter_mapping
+                        parameter_label_name=''
+                        local_name=''/>
+
+                </parameter_mappings>
+
+                <state_mappings>
+                    <state_mapping
+                        state_name=''
+                        local_name=''/>
+                    <state_mapping
+                        state_name=''
+                        local_name=''/>
+
+                </state_mappings>
+            </binding>
+        </strand_factory>
+
+
+        <!-- Concentrations -->
+        <concentrations>
+            <concentration
+                state_name=''
+                measurement_label_name=''>
+
+                <binding class_name=''>
+                    <parameter_mappings>
+                        <parameter_mapping
+                            parameter_label_name=''
+                            local_name=''/>
+                        <parameter_mapping
+                            parameter_label_name=''
+                            local_name=''/>
+
+                    </parameter_mappings>
+
+                    <state_mappings>
+                        <!-- State mappings are rare for concentrations -->
+                        <state_mapping
+                            state_name=''
+                            local_name=''/>
+                        <state_mapping
+                            state_name=''
+                            local_name=''/>
+
+                    </state_mappings>
+                </binding>
+            </concentration>
+
+        </concentrations>
+
+
+        <!-- End Conditions -->
+        <end_conditions>
+            <end_condition>
+                <binding class_name=''>
+                    <parameter_mappings>
+                        <parameter_mapping
+                            parameter_label_name=''
+                            local_name=''/>
+                        <parameter_mapping
+                            parameter_label_name=''
+                            local_name=''/>
+
+                    </parameter_mappings>
+
+                    <state_mappings>
+                        <state_mapping
+                            state_name=''
+                            local_name=''/>
+                        <state_mapping
+                            state_name=''
+                            local_name=''/>
+
+                    </state_mappings>
+                </binding>
+            </end_condition>
+
+        </end_conditions>
+
+
+        <!-- Explicit Measurements -->
+        <explicit_measurements>
+            <explicit_measurement
+                measurement_label_name=''>
+
+                <binding class_name=''>
+                    <parameter_mappings>
+                        <parameter_mapping
+                            parameter_label_name=''
+                            local_name=''/>
+                        <parameter_mapping
+                            parameter_label_name=''
+                            local_name=''/>
+
+                    </parameter_mappings>
+
+                    <state_mappings>
+                        <state_mapping
+                            state_name=''
+                            local_name=''/>
+                        <state_mapping
+                            state_name=''
+                            local_name=''/>
+
+                    </state_mappings>
+                </binding>
+            </explicit_measurement>
+
+        </explicit_measurements>
+
+
+        <!-- Transitions -->
+        <transitions>
+            <transition
+                name=''
+                measurement_label_name=''>
+
+                <binding class_name=''>
+                    <parameter_mappings>
+                        <parameter_mapping
+                            parameter_label_name=''
+                            local_name=''/>
+                        <parameter_mapping
+                            parameter_label_name=''
+                            local_name=''/>
+
+                    </parameter_mappings>
+
+                    <state_mappings>
+                        <state_mapping
+                            state_name=''
+                            local_name=''/>
+                        <state_mapping
+                            state_name=''
+                            local_name=''/>
+
+                    </state_mappings>
+                </binding>
+            </transition>
+
+        </transitions>
+    </simulation>
+</simulations>

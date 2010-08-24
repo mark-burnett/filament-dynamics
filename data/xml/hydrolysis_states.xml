@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hydrolysis_states SYSTEM 'dtd/hydrolysis_states.dtd'>
+
+<hydrolysis_states>
+    <hydrolysis_state
+        name='ATP'
+        description='Globular or filamentous ATP-actin.'/>
+
+    <hydrolysis_state
+        name='ADP'
+        description='Globular or filamentous ADP-actin.'/>
+
+    <hydrolysis_state
+        name='ADP-Pi'
+        description='Globular or filamentous ADP-Pi-actin.'/>
+
+    <hydrolysis_state
+        name='Pi'
+        description='Inorganic phosphate.'/>
+
+    <hydrolysis_state
+        name='U-ADP'
+        description='Globular or filamentous unstable-ADP-actin.'/>
+
+    <hydrolysis_state
+        name='S-ADP'
+        description='Globular or filamentous stable-ADP-actin.'/>
+
+
+</hydrolysis_states>

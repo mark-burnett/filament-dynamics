@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE measurement_labels SYSTEM 'dtd/measurement_labels.dtd'>
+
+<measurement_labels>
+    <!-- Concentration Measurements -->
+    <measurement_label
+        name='ATP Actin Concentration'
+        description='Concentration of ATP-actin in solution.'/>
+
+    <measurement_label
+        name='ADP Actin Concentration'
+        description='Concentration of ADP-actin in solution.'/>
+
+    <measurement_label
+        name='ADP-Pi Actin Concentration'
+        description='Concentration of ADP-Pi-actin in solution.'/>
+
+
+    <!-- Hydrolysis Transition Counts -->
+    <measurement_label
+        name='Cleavage Count'
+        description='Count of phosphate cleavage events.'/>
+
+    <measurement_label
+        name='Release Count'
+        description='Count of phosphate release events.'/>
+
+
+    <!-- Polymerization/Depolymerization Transition Counts -->
+    <measurement_label
+        name='Barbed ATP Polymerization Count'
+        description='Count of ATP polymerization events at the barbed end.'/>
+
+    <measurement_label
+        name='Barbed ADP Polymerization Count'
+        description='Count of ADP polymerization events at the barbed end.'/>
+
+    <measurement_label
+        name='Barbed ADP-Pi Polymerization Count'
+        description='Count of ADP-Pi polymerization events at the barbed end.'/>
+
+    <measurement_label
+        name='Barbed ATP Depolymerization Count'
+        description='Count of ATP depolymerization events at the barbed end.'/>
+
+    <measurement_label
+        name='Barbed ADP Depolymerization Count'
+        description='Count of ADP depolymerization events at the barbed end.'/>
+
+    <measurement_label
+        name='Barbed ADP-Pi Depolymerization Count'
+        description='Count of ADP-Pi depolymerization events at the barbed end.'/>
+
+    <measurement_label
+        name='Pointed ATP Polymerization Count'
+        description='Count of ATP polymerization events at the pointed end.'/>
+
+    <measurement_label
+        name='Pointed ADP Polymerization Count'
+        description='Count of ADP polymerization events at the pointed end.'/>
+
+    <measurement_label
+        name='Pointed ADP-Pi Polymerization Count'
+        description='Count of ADP-Pi polymerization events at the pointed end.'/>
+
+    <measurement_label
+        name='Pointed ATP Depolymerization Count'
+        description='Count of ATP depolymerization events at the pointed end.'/>
+
+    <measurement_label
+        name='Pointed ADP Depolymerization Count'
+        description='Count of ADP depolymerization events at the pointed end.'/>
+
+    <measurement_label
+        name='Pointed ADP-Pi Depolymerization Count'
+        description='Count of ADP-Pi depolymerization events at the pointed end.'/>
+
+
+    <!-- Explicit Measurements -->
+    <measurement_label
+        name='Strand Length'
+        description='Length of the strand.'/>
+</measurement_labels>
