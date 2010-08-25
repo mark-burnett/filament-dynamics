@@ -38,8 +38,7 @@ def _parse_all_files(class_name, config_filename, filenames):
         et = etree.parse(filename, parser=xml_parser)
         results = _parse_root(et.getroot(), class_name)
 
-    # XXX Uncomment this line to really check things out.
-        elixir.session.commit()
+    elixir.session.commit()
 
 
 class MeasurementLabelsAction(argparse.Action):
@@ -56,10 +55,15 @@ class HydrolysisStatesAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         _parse_all_files('HydrolysisState', namespace.config, values)
 
+class ParameterSetGroupsAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        _parse_all_files('ParameterSetGroup', namespace.config, values)
+
 
 class SimulationsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         _parse_all_files('Simulation', namespace.config, values)
+
 
 def parse_command_line():
     parser = argparse.ArgumentParser()
@@ -71,6 +75,8 @@ def parse_command_line():
                                action=ParameterLabelsAction)
     command_group.add_argument('-hs', '--hydrolysis_states', nargs='+',
                                action=HydrolysisStatesAction)
+    command_group.add_argument('-psg', '--parameter_set_groups', nargs='+',
+                               action=ParameterSetGroupsAction)
     command_group.add_argument('-s', '--simulations', nargs='+',
                                action=SimulationsAction)
 

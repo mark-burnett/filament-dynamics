@@ -1,5 +1,5 @@
 #    Copyright (C) 2010 Mark Burnett
-# #    This program is free software: you can redistribute it and/or modify
+#    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
@@ -19,6 +19,9 @@ from explicit_measurements import *
 from hydrolysis_states import *
 from measurements import *
 from parameters import *
+from parameter_labels import *
+from parameter_mappings import *
+from parameter_sets import *
 from simulations import *
 from strand_factories import *
 from transitions import *
@@ -34,6 +37,9 @@ del explicit_measurements
 del hydrolysis_states
 del measurements
 del parameters
+del parameter_labels
+del parameter_mappings
+del parameter_sets
 del simulations
 del strand_factories
 del transitions

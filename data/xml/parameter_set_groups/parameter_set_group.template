@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE simulations SYSTEM '../dtd/parameter_set_groups.dtd'>
+
+<paramter_set_groups>
+    <paramter_set_group
+        name=''
+        description=''
+        simulation_name=''>
+        <parameter_set
+            name=''>
+            <parameter
+                parameter_label_name=''
+                value=''/>
+            <parameter
+                parameter_label_name=''
+                value=''/>
+
+        </parameter_set>
+
+        <parameter_set
+            name=''>
+            <parameter
+                parameter_label_name=''
+                value=''/>
+            <parameter
+                parameter_label_name=''
+                value=''/>
+
+        </parameter_set>
+
+    </paramter_set_group>
+</paramter_set_groups>

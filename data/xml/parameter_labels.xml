@@ -16,6 +16,10 @@
         description='Initial concentration of ATP in solution.'/>
 
     <parameter_label
+        name='Initial ADP-Pi Concentration'
+        description='Initial concentration of ADP-Pi in solution.'/>
+
+    <parameter_label
         name='Initial ADP Concentration'
         description='Initial concentration of ADP in solution.'/>
 
@@ -33,6 +37,10 @@
     <parameter_label
         name='Release Rate'
         description='Rate of phosphate release.'/>
+
+    <parameter_label
+        name='Release Rate In Solution'
+        description='Rate of phosphate release in solution.'/>
 
 
     <!-- Polymerization/Depolymerization Transition Rates -->
@@ -98,4 +106,9 @@
     <parameter_label
         name='Filament Tip Concentration'
         description='Concentration of filaments.'/>
+
+    <parameter_label
+        name='Seed Concentration'
+        description='Concentration of seed filaments.'/>
+
 </parameter_labels>

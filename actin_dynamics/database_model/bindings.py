@@ -15,7 +15,7 @@
 
 import elixir as _elixir
 
-from .parameters import ParameterMapping as _ParameterMapping
+from .parameter_mappings import ParameterMapping as _ParameterMapping
 from .hydrolysis_states import HydrolysisStateMapping as _HydrolysisStateMapping 
 
 class Binding(_elixir.Entity):

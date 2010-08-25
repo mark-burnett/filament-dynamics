@@ -17,20 +17,14 @@ import elixir as _elixir
 
 from .parameter_labels import ParameterLabel as _ParameterLabel
 
-class Parameter(_elixir.Entity):
-    _elixir.using_options(tablename='parameter')
+class ParameterMapping(_elixir.Entity):
+    _elixir.using_options(tablename='parameter_mapping')
 
-    # NOTE This is probably the most compilcated snippet of elixir code.
-    label = _elixir.ManyToOne('ParameterLabel', column_kwargs=dict(index=True))
-    parameter_set = _elixir.ManyToOne('ParameterSet',
-                                      column_kwargs=dict(index=True))
-    _elixir.using_table_options(_elixir.sqlalchemy.UniqueConstraint(
-        'label_id', 'parameter_set_id'))
-
-    value = _elixir.Field(_elixir.Float)
+    binding = _elixir.ManyToOne('Binding')
+    parameter_label = _elixir.ManyToOne('ParameterLabel')
+    local_name  = _elixir.Field(_elixir.Unicode(50))
 
     @classmethod
     def from_xml(cls, element):
         pl = _ParameterLabel.get_by(name=element.get('parameter_label_name'))
-        return cls(label=pl, value=float(element.get('value')))
-
+        return cls(parameter_label=pl, local_name=element.get('local_name'))

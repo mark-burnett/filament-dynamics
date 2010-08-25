@@ -29,6 +29,10 @@
         name='Release Count'
         description='Count of phosphate release events.'/>
 
+    <measurement_label
+        name='In Solution Release Count'
+        description='Count of in solution phosphate release events.'/>
+
 
     <!-- Polymerization/Depolymerization Transition Counts -->
     <measurement_label

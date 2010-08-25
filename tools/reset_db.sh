@@ -31,3 +31,5 @@ python tools/slurp_xml.py --parameter_labels data/xml/parameter_labels.xml
 python tools/slurp_xml.py --hydrolysis_states data/xml/hydrolysis_states.xml
 
 python tools/slurp_xml.py --simulations data/xml/simulations/*.xml
+
+python tools/slurp_xml.py --parameter_set_groups data/xml/parameter_set_groups/*.xml

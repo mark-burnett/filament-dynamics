@@ -123,6 +123,7 @@
 
         <!-- Transitions -->
         <transitions>
+            <!-- Hydrolysis Transitions -->
             <transition
                 name='Cleavage'
                 measurement_label_name='Cleavage Count'>
@@ -170,6 +171,7 @@
                 </binding>
             </transition>
 
+            <!-- Polymerization/Depolymerization Transitions -->
             <transition
                 name='Barbed ATP Polymerization'
                 measurement_label_name='Barbed ATP Polymerization Count'>
@@ -242,6 +244,32 @@
                         <state_mapping
                             state_name='ADP'
                             local_name='state'/>
+                    </state_mappings>
+                </binding>
+            </transition>
+
+            <!-- In Solution Transitions -->
+            <transition
+                name='In Solution Release'
+                measurement_label_name='In Solution Release Count'>
+
+                <binding class_name='ConcentrationChangeWithByproduct'>
+                    <parameter_mappings>
+                        <parameter_mapping
+                            parameter_label_name='Release Rate In Solution'
+                            local_name='rate'/>
+                    </parameter_mappings>
+
+                    <state_mappings>
+                        <state_mapping
+                            state_name='ADP-Pi'
+                            local_name='old_state'/>
+                        <state_mapping
+                            state_name='ADP'
+                            local_name='new_state'/>
+                        <state_mapping
+                            state_name='Pi'
+                            local_name='byproduct'/>
                     </state_mappings>
                 </binding>
             </transition>
