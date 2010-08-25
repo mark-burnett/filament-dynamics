@@ -21,9 +21,22 @@ class HydrolysisState(_elixir.Entity):
     name = _elixir.Field(_elixir.Unicode(50))
     description = _elixir.Field(_elixir.UnicodeText)
 
+    @classmethod
+    def from_xml(cls, element):
+        result = cls.get_by(name=element.get('name'))
+        if not result:
+            result = cls()
+            result.from_dict(element.attrib)
+        return result
+
 class HydrolysisStateMapping(_elixir.Entity):
     _elixir.using_options(tablename='hydrolysis_state_mapping')
 
     binding = _elixir.ManyToOne('Binding')
     local_name = _elixir.Field(_elixir.Unicode(50))
     state = _elixir.ManyToOne('HydrolysisState')
+
+    @classmethod
+    def from_xml(cls, element):
+        hs = HydrolysisState.query.get_by(name=element.get('state_name'))
+        return cls(state=hs, local_name=element.get('local_name'))

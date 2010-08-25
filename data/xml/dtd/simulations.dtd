@@ -24,7 +24,7 @@
 <!ELEMENT concentrations (concentration*)>
     <!ELEMENT concentration (binding)>
         <!ATTLIST concentration state_name CDATA #REQUIRED>
-        <!ATTLIST concentration measurement_label_name CDATA #REQUIRED>
+        <!ATTLIST concentration measurement_label_name CDATA #IMPLIED>
 
 <!ELEMENT end_conditions (end_condition)>
     <!ELEMENT end_condition (binding)>
@@ -36,4 +36,4 @@
 <!ELEMENT transitions (transition*)>
     <!ELEMENT transition (binding)>
         <!ATTLIST transition name CDATA #REQUIRED>
-        <!ATTLIST transition measurement_label_name CDATA #REQUIRED>
+        <!ATTLIST transition measurement_label_name CDATA #IMPLIED>

@@ -15,9 +15,26 @@
 
 import elixir as _elixir
 
+from .parameters import ParameterMapping as _ParameterMapping
+from .hydrolysis_states import HydrolysisStateMapping as _HydrolysisStateMapping 
+
 class Binding(_elixir.Entity):
     _elixir.using_options(tablename='binding')
 
     class_name = _elixir.Field(_elixir.Unicode(50))
     parameter_mappings = _elixir.OneToMany('ParameterMapping')
     state_mappings = _elixir.OneToMany('HydrolysisStateMapping')
+
+    @classmethod
+    def from_xml(cls, element):
+        parameter_mappings = []
+        for pm_xml in element.find('parameter_mappings'):
+            parameter_mappings.append(_ParameterMapping.from_xml(pm_xml))
+
+        state_mappings = []
+        for sm_xml in element.find('state_mappings'):
+            state_mappings.append(_HydrolysisStateMapping.from_xml(sm_xml))
+
+        return cls(class_name=element.get('class_name'),
+                   parameter_mappings=parameter_mappings,
+                   state_mappings=state_mappings)

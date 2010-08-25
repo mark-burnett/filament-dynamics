@@ -21,6 +21,14 @@ class ParameterLabel(_elixir.Entity):
     name = _elixir.Field(_elixir.Unicode(50), unique=True)
     description = _elixir.Field(_elixir.UnicodeText)
 
+    @classmethod
+    def from_xml(cls, element):
+        result = cls.get_by(name=element.get('name'))
+        if not result:
+            result = cls()
+            result.from_dict(element.attrib)
+        return result
+
 class Parameter(_elixir.Entity):
     _elixir.using_options(tablename='parameter')
 
@@ -59,3 +67,8 @@ class ParameterMapping(_elixir.Entity):
     binding = _elixir.ManyToOne('Binding')
     parameter_label = _elixir.ManyToOne('ParameterLabel')
     local_name  = _elixir.Field(_elixir.Unicode(50))
+
+    @classmethod
+    def from_xml(cls, element):
+        pl = ParameterLabel.query.get_by(name=element.get('parameter_label_name'))
+        return cls(parameter_label=pl, local_name=element.get('local_name'))

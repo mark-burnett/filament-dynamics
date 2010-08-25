@@ -24,7 +24,7 @@ class MeasurementLabel(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        result = cls.get_by(name=element.attrib['name'])
+        result = cls.get_by(name=element.get('name'))
         if not result:
             result = cls()
             result.from_dict(element.attrib)

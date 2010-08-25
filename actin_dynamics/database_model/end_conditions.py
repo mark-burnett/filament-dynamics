@@ -15,8 +15,14 @@
 
 import elixir as _elixir
 
+from .bindings import Binding as _Binding
+
 class EndCondition(_elixir.Entity):
     _elixir.using_options(tablename='end_condition')
 
     simulation = _elixir.ManyToOne('Simulation')
     binding = _elixir.ManyToOne('Binding', column_kwargs=dict(unique=True))
+
+    @classmethod
+    def from_xml(cls, element):
+        return cls(binding=_Binding.from_xml(element.find('binding')))

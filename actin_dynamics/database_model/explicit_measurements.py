@@ -19,5 +19,13 @@ class ExplicitMeasurement(_elixir.Entity):
     _elixir.using_options(tablename='explicit_measurement')
 
     simulation = _elixir.ManyToOne('Simulation')
-    measurement_label = _elixir.ManyToOne('MeasurementLabel')
+    # Measurement label is required for an explicit measurement.
+    measurement_label = _elixir.ManyToOne('MeasurementLabel', required=True)
     binding = _elixir.ManyToOne('Binding', column_kwargs=dict(unique=True))
+
+    @classmethod
+    def from_xml(cls, element):
+        ml = _MeasurementLabel.query.get_by(
+                name=element.get('measurement_label_name'))
+        b = _Binding.from_xml(element.find('binding'))
+        return cls(measurement_label=ml, binding=b)

@@ -15,6 +15,10 @@
 
 import elixir as _elixir
 
+from .bindings import Binding as _Binding
+from .hydrolysis_states import HydrolysisState as _HydrolysisState
+from .measurements import MeasurementLabel as _MeasurementLabel
+
 class Concentration(_elixir.Entity):
     _elixir.using_options(tablename='concentration')
 
@@ -22,3 +26,11 @@ class Concentration(_elixir.Entity):
     state = _elixir.ManyToOne('HydrolysisState')
     binding = _elixir.ManyToOne('Binding', column_kwargs=dict(unique=True))
     measurement_label = _elixir.ManyToOne('MeasurementLabel')
+
+    @classmethod
+    def from_xml(cls, element):
+        hs = _HydrolysisState.query.get_by(name=element.get('state_name'))
+        ml = _MeasurementLabel.query.get_by(
+                name=element.get('measurement_label_name'))
+        b = _Binding.from_xml(element.find('binding'))
+        return cls(state=hs, measurement_label=ml, binding=b)

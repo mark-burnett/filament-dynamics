@@ -15,6 +15,9 @@
 
 import elixir as _elixir
 
+from .bindings import Binding as _Binding
+from .measurements import MeasurementLabel as _MeasurementLabel
+
 class Transition(_elixir.Entity):
     _elixir.using_options(tablename='transition')
 
@@ -22,3 +25,10 @@ class Transition(_elixir.Entity):
     measurement_label = _elixir.ManyToOne('MeasurementLabel')
     simulation = _elixir.ManyToOne('Simulation')
     binding = _elixir.ManyToOne('Binding', column_kwargs=dict(unique=True))
+
+    @classmethod
+    def from_xml(cls, element):
+        ml = _MeasurementLabel.query.get_by(
+                name=element.get('measurement_label_name'))
+        b = _Binding.from_xml(element.find('binding'))
+        return cls(name=element.get('name'), measurement_label=ml, binding=b)
