@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE parameter_labels SYSTEM 'parameter_labels.dtd'>
+<!DOCTYPE parameter_labels SYSTEM 'dtd/parameter_labels.dtd'>
 
 <parameter_labels>
     <!-- Concentration Labels -->

@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
+
 import elixir as _elixir
 
 from .concentrations import Concentration as _Concentration
@@ -44,7 +46,8 @@ class Simulation(_elixir.Entity):
         sf = _StrandFactory.from_xml(element.find('strand_factory'))
         result = cls(name=element.get('name'),
                      description=element.get('description'),
-                     strand_factory=sf)
+                     strand_factory=sf,
+                     creation_date=datetime.datetime.today())
 
         concentrations = []
         for c in element.find('concentrations'):
@@ -57,9 +60,9 @@ class Simulation(_elixir.Entity):
                     _EndCondition.from_xml(ec))
 
         explicit_measurements = []
-        for em in element.find('expilcit_measurements'):
+        for em in element.find('explicit_measurements'):
             result.explicit_measurements.append(
-                    _ExplicitMeasurement.from_xml(cm))
+                    _ExplicitMeasurement.from_xml(em))
 
         transitions = []
         for t in element.find('transitions'):

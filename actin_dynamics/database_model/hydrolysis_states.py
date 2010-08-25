@@ -38,5 +38,5 @@ class HydrolysisStateMapping(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        hs = HydrolysisState.query.get_by(name=element.get('state_name'))
+        hs = HydrolysisState.get_by(name=element.get('state_name'))
         return cls(state=hs, local_name=element.get('local_name'))

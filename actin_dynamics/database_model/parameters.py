@@ -70,5 +70,5 @@ class ParameterMapping(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        pl = ParameterLabel.query.get_by(name=element.get('parameter_label_name'))
+        pl = ParameterLabel.get_by(name=element.get('parameter_label_name'))
         return cls(parameter_label=pl, local_name=element.get('local_name'))

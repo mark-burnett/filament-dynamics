@@ -18,9 +18,4 @@ import elixir
 
 from actin_dynamics import database_model as dbm
 
-config_parser = configobj.ConfigObj('config.ini')
-db_co = dbm.ConfigObject.from_configobj(config_parser)
-
-elixir.metadata.bind = db_co.bind
-
-elixir.setup_all()
+dbm.setup_database(configobj.ConfigObj('config.ini'))

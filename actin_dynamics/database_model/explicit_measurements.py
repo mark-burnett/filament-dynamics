@@ -15,6 +15,9 @@
 
 import elixir as _elixir
 
+from .bindings import Binding as _Binding
+from .measurements import MeasurementLabel as _MeasurementLabel
+
 class ExplicitMeasurement(_elixir.Entity):
     _elixir.using_options(tablename='explicit_measurement')
 
@@ -25,7 +28,7 @@ class ExplicitMeasurement(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        ml = _MeasurementLabel.query.get_by(
+        ml = _MeasurementLabel.get_by(
                 name=element.get('measurement_label_name'))
         b = _Binding.from_xml(element.find('binding'))
         return cls(measurement_label=ml, binding=b)

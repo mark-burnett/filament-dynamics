@@ -29,8 +29,8 @@ class Concentration(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        hs = _HydrolysisState.query.get_by(name=element.get('state_name'))
-        ml = _MeasurementLabel.query.get_by(
+        hs = _HydrolysisState.get_by(name=element.get('state_name'))
+        ml = _MeasurementLabel.get_by(
                 name=element.get('measurement_label_name'))
         b = _Binding.from_xml(element.find('binding'))
         return cls(state=hs, measurement_label=ml, binding=b)

@@ -15,6 +15,10 @@
         name='ADP-Pi Actin Concentration'
         description='Concentration of ADP-Pi-actin in solution.'/>
 
+    <measurement_label
+        name='Phosphate Concentration'
+        description='Concentration of inorganic phosphate.'/>
+
 
     <!-- Hydrolysis Transition Counts -->
     <measurement_label

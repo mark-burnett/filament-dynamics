@@ -177,7 +177,7 @@
                 <binding class_name='BarbedPolymerization'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='ATP Polymerization Rate'
+                            parameter_label_name='Barbed ATP Polymerization Rate'
                             local_name='rate'/>
                     </parameter_mappings>
 
@@ -196,7 +196,7 @@
                 <binding class_name='BarbedPolymerization'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='ADP Polymerization Rate'
+                            parameter_label_name='Barbed ADP Polymerization Rate'
                             local_name='rate'/>
                     </parameter_mappings>
 
@@ -215,7 +215,7 @@
                 <binding class_name='BarbedDepolymerization'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='ATP Depolymerization Rate'
+                            parameter_label_name='Barbed ATP Depolymerization Rate'
                             local_name='rate'/>
                     </parameter_mappings>
 
@@ -234,7 +234,7 @@
                 <binding class_name='BarbedDepolymerization'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='ADP Depolymerization Rate'
+                            parameter_label_name='Barbed ADP Depolymerization Rate'
                             local_name='rate'/>
                     </parameter_mappings>
 

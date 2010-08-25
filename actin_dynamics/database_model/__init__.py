@@ -23,8 +23,8 @@ from simulations import *
 from strand_factories import *
 from transitions import *
 
-from config_object import ConfigObject
-del config_object
+from config import setup_database
+del config
 
 # Cleanup the namespace
 del bindings

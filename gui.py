@@ -20,7 +20,7 @@ import configobj
 
 import elixir
 
-from actin_dynamics import database_model
+from actin_dynamics import database_model as dbm
 from actin_dynamics import gui_starter
 
 def parse_command_line():
@@ -29,18 +29,12 @@ def parse_command_line():
                         help='Configuration file name')
     return parser.parse_args()
 
-def load_database_model(bind):
-    elixir.metadata.bind = bind
-    elixir.setup_all()
-
 def gui_main():
     args = parse_command_line()
 
-    config_parser = configobj.ConfigObj(args.config)
-    db_co = database_model.ConfigObject.from_configobj(config_parser)
-
-    load_database_model(db_co.bind)
-    gui_starter.go(config_parser)
+    config_object = configobj.ConfigObj(args.config)
+    dbm.setup_database(config_object)
+    gui_starter.go(config_object)
 
 if '__main__' == __name__:
     gui_main()

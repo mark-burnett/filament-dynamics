@@ -29,11 +29,7 @@ def parse_command_line():
 
 args = parse_command_line()
 
-config_parser = configobj.ConfigObj(args.config)
-db_co = dbm.ConfigObject.from_configobj(config_parser)
-
-elixir.metadata.bind = db_co.bind
-elixir.setup_all()
+dbm.setup_database(configobj.ConfigObj(args.config))
 
 # Create test database
 

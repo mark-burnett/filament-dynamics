@@ -48,6 +48,9 @@ class ParameterSet(object):
         for em in simulation.explicit_measurements:
             result.extend(_get_pars_from_binding(em.binding))
 
+        # Remove duplicates:
+        result = list(set(result))
+
         result.sort(key=operator.itemgetter(1))
         
         return cls(result)

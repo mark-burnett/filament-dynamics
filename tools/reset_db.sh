@@ -22,7 +22,12 @@ echo 'Creating new database.'
 sudo -u postgres createdb -O aduser actin_dynamics
 
 echo 'Creating tables.'
-python adtools/create_tables.py
+python tools/create_tables.py
 
 echo 'Creating test data.'
-python adtools/create_test_data.py
+#python tools/create_test_data.py
+python tools/slurp_xml.py --measurement_labels data/xml/measurement_labels.xml
+python tools/slurp_xml.py --parameter_labels data/xml/parameter_labels.xml
+python tools/slurp_xml.py --hydrolysis_states data/xml/hydrolysis_states.xml
+
+python tools/slurp_xml.py --simulations data/xml/simulations/*.xml

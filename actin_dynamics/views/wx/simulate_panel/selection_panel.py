@@ -102,7 +102,7 @@ class SelectionPanel(wx.Panel):
 class ElementsDialog(wx.Dialog):
     def __init__(self, parent=None, publisher=None, config=None, **kwargs):
         wx.Dialog.__init__(self, title='Simulation Details', parent=parent,
-                           size=(512, 768), **kwargs)
+                           size=(1024, 768), **kwargs)
         sizer = wx.BoxSizer(orient=wx.HORIZONTAL)
         self.SetSizer(sizer, wx.EXPAND)
         sizer.Add(ElementsPanel(publisher=publisher, config=config,

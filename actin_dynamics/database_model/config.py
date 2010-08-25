@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import elixir
+
 class ConfigObject(object):
     def __init__(self, server_type=None, username=None, password=None,
                  host=None, database_name=None):
@@ -38,3 +40,11 @@ class ConfigObject(object):
             raise RuntimeError('Database name not specified.')
         result += '/' + self.database_name
         return result
+
+def setup_database(configobj):
+    '''
+    Takes a 'configobj' object and sets up the elixir database.
+    '''
+    db_co = ConfigObject.from_configobj(configobj)
+    elixir.metadata.bind = db_co.bind
+    elixir.setup_all()
