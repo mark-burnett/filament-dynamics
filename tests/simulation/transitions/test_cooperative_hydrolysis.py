@@ -13,18 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from registry import transition_registry as registry
+import unittest
 
-from concentration_changes import *
-from depolymerization import *
-from polymerization import *
-from random_hydrolysis import *
-from vectorial_hydrolysis import *
+from actin_dynamics.simulation.strands import Strand
 
-del concentration_changes
-del depolymerization
-del polymerization
-del random_hydrolysis
-del vectorial_hydrolysis
 
-del base_classes
+class CooperativeHydrolysisTest(unittest.TestCase):
+    def test_write_me_please(self):
+        self.assertTrue(False)
+
+if '__main__' == __name__:
+    unittest.main()

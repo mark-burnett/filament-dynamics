@@ -16,44 +16,6 @@
 from .base_classes import Transition as _Transition
 from . import mixins as _mixins
 
-class RandomHydrolysis(_Transition):
-    # XXX Are we going to use these descriptions?
-    description = 'Independent state change.'
-    parameters = ['rate']
-    states = ['old_state', 'new_state']
-
-    __slots__ = ['old_state', 'rate', 'new_state']
-    def __init__(self, old_state=None, rate=None, new_state=None):
-        self.old_state = old_state
-        self.rate      = rate
-        self.new_state = new_state
-
-        _Transition.__init__(self)
-
-    def R(self, strand, concentrations):
-        return self.rate * len(strand.state_indices[self.old_state])
-
-    def perform(self, time, strand, concentrations, r):
-        state_index = int(r / self.rate)
-        strand_index = strand.state_indices[self.old_state][state_index]
-        strand.set_state(strand_index, self.new_state)
-
-        _Transition.perform(self, time, strand, concentrations, r)
-
-
-class RandomHydrolysisWithByproduct(RandomHydrolysis, _mixins.Byproduct):
-    parameters = ['rate']
-    states = ['old_state', 'new_state', 'byproduct']
-    def __init__(self, old_state=None, rate=None, new_state=None,
-                 byproduct=None):
-        RandomHydrolysis.__init__(self, old_state=old_state, rate=rate,
-                                  new_state=new_state)
-        _mixins.Byproduct.__init__(self, byproduct=byproduct)
-
-    def perform(self, time, strand, concentrations, r):
-        RandomHydrolysis.perform(self, time, strand, concentrations, r)
-        _mixins.Byproduct.perform( self, time, strand, concentrations, r)
-
 
 class VectorialHydrolysis(_Transition):
     parameters = ['rate']
