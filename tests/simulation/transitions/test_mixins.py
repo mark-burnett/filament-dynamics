@@ -19,13 +19,7 @@ from collections import defaultdict
 from actin_dynamics.simulation.transitions.mixins import *
 from actin_dynamics.simulation.strands import Strand
 
-
-class MockConcentration(object):
-    def __init__(self):
-        self.count = 0
-
-    def add_monomer(self):
-        self.count += 1
+from tests.mocks.concentrations import MockConcentration
 
 
 class ByproductMixinTest(unittest.TestCase):

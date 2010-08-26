@@ -19,58 +19,18 @@ import unittest
 
 from actin_dynamics.simulation.simulations import Simulation, running_total
 
-class MockTransition(object):
-    def __init__(self, add_value, rate, measurement_label=None):
-        self.add_value = add_value
-        self.rate = rate
-        self.measurement_label = measurement_label
-
-    def R(self, strand, concentrations):
-        return self.rate
-
-    def perform(self, time, strand, concentrations, r):
-        strand[0] += self.add_value
-
-class MockEndCondition(object):
-    def __init__(self, max_count):
-        self.max_count = max_count
-
-    def reset(self):
-        self.count = 0
-
-    def __call__(self, time, strand, concentrations):
-        self.count += 1
-        if self.count > self.max_count:
-            return True
-        return False
-
-class MockMeasurement(object):
-    def __init__(self, measurement_label):
-        self.measurement_label = measurement_label
-        self.data = []
-
-    def perform(self, time, state):
-        self.data.append(state[0])
-
-class MockStrandFactory(object):
-    def __init__(self, initial_strand):
-        self.initial_strand = initial_strand
-    def create(self):
-        return self.initial_strand
-
-class MockRNG(object):
-    def __init__(self, fraction):
-        self.fraction = fraction
-
-    def __call__(self, a, b):
-        return (b - a) * self.fraction + a
+from tests.mocks.end_conditions import MockEndCondition
+from tests.mocks.explicit_measurements import MockExplicitMeasurement
+from tests.mocks.random_number_generators import MockRNG
+from tests.mocks.transitions import MockTransition
+from tests.mocks.strand_factories import MockStrandFactory
 
 
 class BasicSimulationTests(unittest.TestCase):
     def test_basic_simulation(self):
         transitions    = [MockTransition(1, 1)]
         concentrations = {}
-        measurements   = [MockMeasurement('mock_measurement')]
+        measurements   = [MockExplicitMeasurement('mock_measurement')]
         ecs            = [MockEndCondition(3)]
         strand_factory = MockStrandFactory([5])
         rng            = MockRNG(0.5)
@@ -86,8 +46,8 @@ class BasicSimulationTests(unittest.TestCase):
     def test_multiple_measurements(self):
         transitions    = [MockTransition(1, 1)]
         concentrations = {}
-        measurements   = [MockMeasurement('measurement_1'),
-                          MockMeasurement('measurement_2')]
+        measurements   = [MockExplicitMeasurement('measurement_1'),
+                          MockExplicitMeasurement('measurement_2')]
         strand_factory = MockStrandFactory([5])
         ecs            = [MockEndCondition(3)]
         rng            = MockRNG(0.5)
