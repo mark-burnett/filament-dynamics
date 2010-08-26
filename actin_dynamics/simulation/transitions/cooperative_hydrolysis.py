@@ -20,7 +20,8 @@ class CooperativeHydrolysis(_Transition):
     parameters = ['rate', 'cooperativity']
     states = ['old_state', 'pointed_neighbor', 'new_state']
 
-    __slots__ = ['old_state', 'rate', 'cooperativity', 'new_state']
+    __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'cooperativity',
+                 'new_state']
     def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
                  cooperativity=None, new_state=None):
         self.old_state        = old_state
@@ -40,7 +41,7 @@ class CooperativeHydrolysis(_Transition):
         return self.rate * self.cooperativity * boundary_count
 
     def _random_rate(self, strand):
-        # XXX Slightly repeatition of code, but convenient.
+        # XXX Slight repeatition of code, but convenient.
         boundary_count = len(strand.boundary_indices
                 [self.old_state][self.pointed_neighbor])
         protomer_count = len(strand.state_indices[self.old_state])
@@ -50,13 +51,14 @@ class CooperativeHydrolysis(_Transition):
 
 
     def perform(self, time, strand, concentrations, r):
-        self.boundary_rate = self._boundary_rate(strand)
+        boundary_rate = self._boundary_rate(strand)
         random_rate = self._random_rate(strand)
 
-        if r < self.boundary_rate:
+        if r < boundary_rate:
             self._perform_boundary(time, strand, concentrations, r, boundary_rate)
         else:
-            self._perform_random(time, strand, concentrations, r, random_rate)
+            self._perform_random(time, strand, concentrations,
+                                 r - boundary_rate, random_rate)
 
         _Transition.perform(self, time, strand, concentrations, r)
 
@@ -75,18 +77,19 @@ class CooperativeHydrolysis(_Transition):
             if working_index not in strand.boundary_indices[self.old_state][self.pointed_neighbor]:
                 current_index += 1
                 if target_index == current_index:
-                    strand.set_state(strand_index, self.new_state)
+                    strand.set_state(working_index, self.new_state)
                     return
-        raise RuntimeError('No working index found.')
+        raise IndexError('No working index found.')
 
 
 class CooperativeHydrolysisWithByproduct(CooperativeHydrolysis, _mixins.Byproduct):
     parameters = ['cooperativity', 'rate']
-    states = ['old_state', 'new_state', 'byproduct']
-    def __init__(self, old_state=None, rate=None, cooperativity=None,
-                 new_state=None, byproduct=None):
-        CooperativeHydrolysis.__init__(self, old_state=old_state, rate=rate,
-                                       cooperativity=cooperativity,
+    states = ['old_state', 'new_state', 'pointed_neighbor', 'byproduct']
+    def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
+                 cooperativity=None, new_state=None, byproduct=None):
+        CooperativeHydrolysis.__init__(self, old_state=old_state,
+                                       pointed_neighbor=pointed_neighbor,
+                                       rate=rate, cooperativity=cooperativity,
                                        new_state=new_state)
         _mixins.Byproduct.__init__(self, byproduct=byproduct)
 
