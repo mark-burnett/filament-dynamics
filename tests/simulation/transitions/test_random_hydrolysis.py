@@ -94,9 +94,5 @@ class RandomHydrolysisWithByproductTest(unittest.TestCase):
         self.assertEqual(self.concentrations[14].count, 0)
 
 
-class CooperativeHydrolysisTest(unittest.TestCase):
-    def test_write_me_please(self):
-        self.assertTrue(False)
-
 if '__main__' == __name__:
     unittest.main()

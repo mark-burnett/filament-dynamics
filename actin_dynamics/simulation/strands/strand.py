@@ -17,6 +17,7 @@ import itertools
 import collections
 
 def _ddict_factory():
+    # XXX Consider making these sets instead of lists for performance reasons.
     return collections.defaultdict(list)
 
 class Strand(object):

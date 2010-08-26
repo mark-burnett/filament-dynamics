@@ -32,8 +32,8 @@ class ConcentrationChange(_Transition):
         return self.rate * concentrations[self.old_state].value
 
     def perform(self, time, strand, concentrations, r):
-        concentrations[self.old_state].add_monomer()
-        concentrations[self.new_state].remove_monomer()
+        concentrations[self.old_state].remove_monomer()
+        concentrations[self.new_state].add_monomer()
 
         _Transition.perform(self, time, strand, concentrations, r)
 

@@ -15,7 +15,7 @@
 
 class MockConcentration(object):
     __slots__ = ['count', 'value_access_count', '_value']
-    def __init__(self, count=0, value=None):
+    def __init__(self, count=0, value=0):
         self.count = count
         self.value_access_count = 0
         self._value = value
