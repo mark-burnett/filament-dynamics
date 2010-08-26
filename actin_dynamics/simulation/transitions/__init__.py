@@ -15,10 +15,12 @@
 
 from registry import transition_registry as registry
 
-from polymerization import *
-from hydrolysis import *
+from concentration_changes import *
 from depolymerization import *
+from hydrolysis import *
+from polymerization import *
 
+del concentration_changes
 del depolymerization
 del hydrolysis
 del polymerization

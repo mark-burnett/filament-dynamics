@@ -14,20 +14,164 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+from collections import defaultdict
 
-import actin_dynamics.simulation.transitions.hydrolysis
+from actin_dynamics.simulation.transitions.hydrolysis import *
+from actin_dynamics.simulation.strands import Strand
+
+class MockConcentration(object):
+    def __init__(self):
+        self.count = 0
+
+    def add_monomer(self):
+        self.count += 1
+
+    def remove_monomer(self):
+        self.count -= 1
+
 
 class RandomHydrolysisTest(unittest.TestCase):
-    def test_write_me_please(self):
-        self.assertTrue(False)
+    def setUp(self):
+        self.strand = Strand([1, 2, 3, 1, 2, 3, 1])
+        self.transition_one = RandomHydrolysis(old_state=1, new_state=2, rate=3)
+        self.transition_two = RandomHydrolysis(old_state=2, new_state=3, rate=2)
+        self.transition_four = RandomHydrolysis(old_state=4, new_state=5, rate=1)
+
+    def test_normal_rates(self):
+        self.assertEqual(self.transition_one.R(self.strand, None), 9)
+        self.assertEqual(self.transition_two.R(self.strand, None), 4)
+
+    def test_missing_rates(self):
+        self.assertEqual(self.transition_four.R(self.strand, None), 0)
+
+    def test_perform_normal(self):
+        self.transition_one.perform(None, self.strand, None, 0)
+        self.assertEqual(self.transition_one.R(self.strand, None), 6)
+        self.assertEqual(self.transition_two.R(self.strand, None), 6)
+
+        self.transition_one.perform(None, self.strand, None, 5.9)
+        self.assertEqual(self.transition_one.R(self.strand, None), 3)
+        self.assertEqual(self.transition_two.R(self.strand, None), 8)
+
+        self.transition_two.perform(None, self.strand, None, 1)
+        self.assertEqual(self.transition_two.R(self.strand, None), 6)
+
+    def test_perform_missing(self):
+        self.assertRaises(IndexError, self.transition_four.perform,
+                          None, self.strand, None, 0)
+
+
+class RandomHydrolysisWithByproductTest(unittest.TestCase):
+    def setUp(self):
+        self.strand = Strand([1, 2, 3, 1, 2, 3, 1])
+        self.concentrations = defaultdict(MockConcentration)
+
+        self.transition_one = RandomHydrolysisWithByproduct(old_state=1,
+                new_state=2, byproduct=11, rate=3)
+        self.transition_two = RandomHydrolysisWithByproduct(old_state=2,
+                new_state=3, byproduct=12, rate=2)
+        self.transition_four = RandomHydrolysisWithByproduct(old_state=4,
+                new_state=5, byproduct=14, rate=1)
+
+    def test_normal_rates(self):
+        self.assertEqual(self.transition_one.R(self.strand, None), 9)
+        self.assertEqual(self.transition_two.R(self.strand, None), 4)
+
+    def test_missing_rates(self):
+        self.assertEqual(self.transition_four.R(self.strand, None), 0)
+
+    def test_perform_normal(self):
+        self.transition_one.perform(None, self.strand, self.concentrations, 0)
+        self.assertEqual(self.transition_one.R(self.strand, None), 6)
+        self.assertEqual(self.transition_two.R(self.strand, None), 6)
+        self.assertEqual(self.concentrations[11].count, 1)
+
+        self.transition_one.perform(None, self.strand, self.concentrations, 5.9)
+        self.assertEqual(self.transition_one.R(self.strand, None), 3)
+        self.assertEqual(self.transition_two.R(self.strand, None), 8)
+        self.assertEqual(self.concentrations[11].count, 2)
+
+        self.transition_two.perform(None, self.strand, self.concentrations, 1)
+        self.assertEqual(self.transition_two.R(self.strand, None), 6)
+        self.assertEqual(self.concentrations[11].count, 2)
+        self.assertEqual(self.concentrations[12].count, 1)
+
+    def test_perform_missing(self):
+        self.assertRaises(IndexError, self.transition_four.perform,
+                          None, self.strand, self.concentrations, 0)
+        self.assertEqual(self.concentrations[14].count, 0)
+
 
 class VectorialHydrolysisTest(unittest.TestCase):
-    def test_write_me_please(self):
-        self.assertTrue(False)
+    def setUp(self):
+        self.strand = Strand([1, 2, 3, 1, 2, 3, 1])
 
-class CooperativeHydrolysisTest(unittest.TestCase):
-    def test_write_me_please(self):
-        self.assertTrue(False)
+        self.normal_one = VectorialHydrolysis(old_state=1, pointed_neighbor=3,
+                                              new_state=2, rate=3)
+        self.normal_two = VectorialHydrolysis(old_state=2, pointed_neighbor=1,
+                                              new_state=3, rate=2)
+        self.missing    = VectorialHydrolysis(old_state=1, pointed_neighbor=2,
+                                              new_state=7, rate=1)
+
+    def test_normal_rates(self):
+        self.assertEqual(self.normal_one.R(self.strand, None), 6)
+        self.assertEqual(self.normal_two.R(self.strand, None), 4)
+
+    def test_missing_rates(self):
+        self.assertEqual(self.missing.R(self.strand, None), 0)
+
+    def test_perform_normal(self):
+        self.normal_one.perform(None, self.strand, None, 4)
+        self.assertEqual(self.normal_one.R(self.strand, None), 3)
+        self.assertEqual(self.normal_two.R(self.strand, None), 4)
+
+        self.normal_two.perform(None, self.strand, None, 1)
+        self.assertEqual(self.normal_one.R(self.strand, None), 3)
+        self.assertEqual(self.normal_two.R(self.strand, None), 2)
+
+    def test_perform_missing(self):
+        self.assertRaises(IndexError, self.missing.perform,
+                          None, self.strand, None, 0)
+
+class VectorialHydrolysisWithByproductTest(unittest.TestCase):
+    def setUp(self):
+        self.strand = Strand([1, 2, 3, 1, 2, 3, 1])
+        self.concentrations = defaultdict(MockConcentration)
+
+        self.normal_one = VectorialHydrolysisWithByproduct(old_state=1,
+                pointed_neighbor=3, new_state=2, byproduct=11, rate=3)
+        self.normal_two = VectorialHydrolysisWithByproduct(old_state=2,
+                pointed_neighbor=1, new_state=3, byproduct=12, rate=2)
+        self.missing    = VectorialHydrolysisWithByproduct(old_state=1,
+                pointed_neighbor=2, new_state=7, byproduct=17, rate=1)
+
+    def test_normal_rates(self):
+        self.assertEqual(self.normal_one.R(self.strand, None), 6)
+        self.assertEqual(self.normal_two.R(self.strand, None), 4)
+
+    def test_missing_rates(self):
+        self.assertEqual(self.missing.R(self.strand, None), 0)
+
+    def test_perform_normal(self):
+        self.normal_one.perform(None, self.strand, self.concentrations, 4)
+        self.assertEqual(self.normal_one.R(self.strand, None), 3)
+        self.assertEqual(self.normal_two.R(self.strand, None), 4)
+        self.assertEqual(self.concentrations[11].count, 1)
+
+        self.normal_two.perform(None, self.strand, self.concentrations, 1)
+        self.assertEqual(self.normal_one.R(self.strand, None), 3)
+        self.assertEqual(self.normal_two.R(self.strand, None), 2)
+        self.assertEqual(self.concentrations[12].count, 1)
+
+    def test_perform_missing(self):
+        self.assertRaises(IndexError, self.missing.perform,
+                          None, self.strand, self.concentrations, 0)
+        self.assertEqual(self.concentrations[17].count, 0)
+
+
+#class CooperativeHydrolysisTest(unittest.TestCase):
+#    def test_write_me_please(self):
+#        self.assertTrue(False)
 
 if '__main__' == __name__:
     unittest.main()

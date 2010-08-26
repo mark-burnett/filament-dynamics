@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 #    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -15,20 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-echo 'Dropping old database.'
-sudo -u postgres dropdb actin_dynamics
+class Byproduct(object):
+    def __init__(self, byproduct):
+        self.byproduct = byproduct
 
-echo 'Creating new database.'
-sudo -u postgres createdb -O aduser actin_dynamics
+    def perform(self, time, strand, concentrations, r):
+        concentrations[self.byproduct].add_monomer()
 
-echo 'Creating tables.'
-python tools/create_tables.py
 
-echo 'Creating test data.'
-python tools/slurp_xml.py --measurement_labels data/xml/measurement_labels.xml
-python tools/slurp_xml.py --parameter_labels data/xml/parameter_labels.xml
-python tools/slurp_xml.py --hydrolysis_states data/xml/hydrolysis_states.xml
-
-python tools/slurp_xml.py --simulations data/xml/simulations/*.xml
-
-python tools/slurp_xml.py --parameter_set_groups data/xml/parameter_set_groups/*.xml
