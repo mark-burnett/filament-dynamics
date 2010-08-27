@@ -20,4 +20,26 @@ class Byproduct(object):
     def perform(self, time, strand, concentrations, r):
         concentrations[self.byproduct].add_monomer()
 
+def add_byproduct(old_class):
+    '''
+    Dynamically create a new transition class that adds byproduct
+    functionality.
+    '''
+    new_class_name = old_class.__name__ + 'WithByproduct'
+    new_class_dict = dict(old_class.__dict__)
+    new_class_dict['states'].append('byproduct')
 
+    new_class = type(new_class_name, (old_class, Byproduct), new_class_dict)
+
+    def init(self, byproduct=None, **kwargs):
+        old_class.__init__(self, **kwargs)
+        Byproduct.__init__(self, byproduct=byproduct)
+
+    def perform(self, time, strand, concentrations, r):
+        old_class.perform(self, time, strand, concentrations, r)
+        Byproduct.perform(self, time, strand, concentrations, r)
+
+    new_class.__init__ = init
+    new_class.perform  = perform
+
+    return new_class

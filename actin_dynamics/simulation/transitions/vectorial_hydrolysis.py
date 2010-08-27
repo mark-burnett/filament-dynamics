@@ -43,17 +43,4 @@ class VectorialHydrolysis(_Transition):
 
         _Transition.perform(self, time, strand, concentrations, r)
 
-
-class VectorialHydrolysisWithByproduct(VectorialHydrolysis, _mixins.Byproduct):
-    parameters = ['rate']
-    states = ['old_state', 'pointed_neighbor', 'new_state', 'byproduct']
-    def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
-                 new_state=None, byproduct=None):
-        VectorialHydrolysis.__init__(self, old_state=old_state,
-                                    pointed_neighbor=pointed_neighbor,
-                                    rate=rate, new_state=new_state)
-        _mixins.Byproduct.__init__(self, byproduct=byproduct)
-
-    def perform(self, time, strand, concentrations, r):
-        VectorialHydrolysis.perform(self, time, strand, concentrations, r)
-        _mixins.Byproduct.perform(self, time, strand, concentrations, r)
+VectorialHydrolysisWithByproduct = _mixins.add_byproduct(VectorialHydrolysis)

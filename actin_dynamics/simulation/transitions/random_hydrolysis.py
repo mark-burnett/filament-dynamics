@@ -42,15 +42,4 @@ class RandomHydrolysis(_Transition):
         _Transition.perform(self, time, strand, concentrations, r)
 
 
-class RandomHydrolysisWithByproduct(RandomHydrolysis, _mixins.Byproduct):
-    parameters = ['rate']
-    states = ['old_state', 'new_state', 'byproduct']
-    def __init__(self, old_state=None, rate=None, new_state=None,
-                 byproduct=None):
-        RandomHydrolysis.__init__(self, old_state=old_state, rate=rate,
-                                  new_state=new_state)
-        _mixins.Byproduct.__init__(self, byproduct=byproduct)
-
-    def perform(self, time, strand, concentrations, r):
-        RandomHydrolysis.perform(self, time, strand, concentrations, r)
-        _mixins.Byproduct.perform( self, time, strand, concentrations, r)
+RandomHydrolysisWithByproduct = _mixins.add_byproduct(RandomHydrolysis)

@@ -82,17 +82,4 @@ class CooperativeHydrolysis(_Transition):
         raise IndexError('No working index found.')
 
 
-class CooperativeHydrolysisWithByproduct(CooperativeHydrolysis, _mixins.Byproduct):
-    parameters = ['cooperativity', 'rate']
-    states = ['old_state', 'new_state', 'pointed_neighbor', 'byproduct']
-    def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
-                 cooperativity=None, new_state=None, byproduct=None):
-        CooperativeHydrolysis.__init__(self, old_state=old_state,
-                                       pointed_neighbor=pointed_neighbor,
-                                       rate=rate, cooperativity=cooperativity,
-                                       new_state=new_state)
-        _mixins.Byproduct.__init__(self, byproduct=byproduct)
-
-    def perform(self, time, strand, concentrations, r):
-        CooperativeHydrolysis.perform(self, time, strand, concentrations, r)
-        _mixins.Byproduct.perform(self, time, strand, concentrations, r)
+CooperativeHydrolysisWithByproduct = _mixins.add_byproduct(CooperativeHydrolysis)
