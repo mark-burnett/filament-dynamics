@@ -13,9 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from base_classes import Transition as _Transition
+from base_classes import Transition as _FilamentTransition
 
-class _FixedRate(_Transition):
+class _FixedRate(_FilamentTransition):
     skip_registration = True
     parameters = ['rate', 'number']
     states = ['state']
@@ -29,18 +29,19 @@ class _FixedRate(_Transition):
         self.state = state
         self.rate  = rate
 
-        _Transition.__init__(self, number)
+        _FilamentTransition.__init__(self, number)
 
     def R(self, strands, concentrations):
         result = []
         for strand in strands:
             if self.state == strand[-1]:
                 result.append(self.rate)
-            result.append(0)
+            else:
+                result.append(0)
         return result
 
     def perform(self, time, strands, concentrations, index, r):
-        _Transition.perform(self, time, strands, concentrations, index, r)
+        _FilamentTransition.perform(self, time, strands, concentrations, index, r)
 
 class BarbedDepolymerization(_FixedRate):
     def perform(self, time, strands, concentrations, index, r):
