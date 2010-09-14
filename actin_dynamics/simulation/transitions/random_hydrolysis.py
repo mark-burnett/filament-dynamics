@@ -13,15 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .base_classes import Transition as _Transition
+from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
 
-class RandomHydrolysis(_Transition):
+class RandomHydrolysis(_FilamentTransition):
     # XXX Are we going to use these descriptions?
     description = 'Independent state change.'
-    parameters = ['rate', 'number']
-    states = ['old_state', 'new_state']
+    parameters  = ['rate', 'number']
+    states      = ['old_state', 'new_state']
 
     __slots__ = ['old_state', 'rate', 'new_state']
     def __init__(self, old_state=None, rate=None, new_state=None, number=None):
@@ -29,7 +29,7 @@ class RandomHydrolysis(_Transition):
         self.rate      = rate
         self.new_state = new_state
 
-        _Transition.__init__(self, number)
+        _FilamentTransition.__init__(self, number=number)
 
     def R(self, strands, concentrations):
         return [self.rate * len(s.state_indices[self.old_state])
@@ -41,7 +41,7 @@ class RandomHydrolysis(_Transition):
         strand_index = current_strand.state_indices[self.old_state][state_index]
         current_strand.set_state(strand_index, self.new_state)
 
-        _Transition.perform(self, time, strands, concentrations, index, r)
+        _FilamentTransition.perform(self, time, strands, concentrations, index, r)
 
 
 RandomHydrolysisWithByproduct = _mixins.add_byproduct(RandomHydrolysis)
