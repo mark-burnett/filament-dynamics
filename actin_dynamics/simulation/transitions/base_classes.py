@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
+
 from ..meta_classes import Registration
 
 from registry import transition_registry
@@ -22,12 +24,24 @@ class Transition(object):
     registry = transition_registry
     skip_registration = True
 
-    __slots__ = ['data', 'count', 'measurement_label']
-    def __init__(self, measurement_label=None):
-        self.measurement_label = measurement_label
-        self.count = 0
-        self.data = [(0, 0)]
+class FilamentTransition(Transition):
+    skip_registration = True
 
-    def perform(self, time, strand, concentrations, r):
-        self.count += 1
-        self.data.append((time, self.count))
+    __slots__ = ['data', 'count', 'measurement_label']
+    def __init__(self, number=None, measurement_label=None):
+        self.measurement_label = measurement_label
+        self.count = list(itertools.repeat(0, number))
+        self.data = list(itertools.repeat((0, 0), number))
+
+    def perform(self, time, strands, concentrations, index, r):
+        self.count[index] += 1
+        self.data[index].append((time, self.count))
+
+class SolutionTransition(Transition):
+    skip_registration = True
+
+    def __init__(self):
+        pass
+
+    def perform(self, time, strands, concentrations, index, r):
+        pass

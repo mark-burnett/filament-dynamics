@@ -17,28 +17,32 @@ from base_classes import Transition as _Transition
 
 class _FixedRate(_Transition):
     skip_registration = True
-    parameters = ['rate']
+    parameters = ['rate', 'number']
     states = ['state']
 
     __slots__ = ['rate', 'state']
-    def __init__(self, state, rate):
+    def __init__(self, state=None, rate=None, number=None):
         """
         'state' that are added to the barbed end of the strand.
         'rate' is the number per second per concentration of
         """
         self.state = state
         self.rate  = rate
-        _Transition.__init__(self)
 
-    def R(self, strand, concentrations):
-        return self.rate * concentrations[self.state].value
+        _Transition.__init__(self, number)
 
-    def perform(self, time, strand, concentrations, r):
-        _Transition.perform(self, time, strand, concentrations, r)
+    def R(self, strands, concentrations):
+        return [self.rate * concentrations[self.state].value
+                for s in strands]
+
+    def perform(self, time, strands, concentrations, index, r):
+        _Transition.perform(self, time, strands, concentrations, index, r)
+
 
 class BarbedPolymerization(_FixedRate):
     description = 'Simple polymerization at the barbed end.'
-    def perform(self, time, strand, concentrations, r):
-        strand.grow_barbed_end(self.state)
+    def perform(self, time, strands, concentrations, index, r):
+        current_strand = strands[index]
+        current_strand.grow_barbed_end(self.state)
         concentrations[self.state].remove_monomer()
-        _FixedRate.perform(self, time, strand, concentrations, r)
+        _FixedRate.perform(self, time, strands, concentrations, index, r)

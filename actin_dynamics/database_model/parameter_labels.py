@@ -28,5 +28,3 @@ class ParameterLabel(_elixir.Entity):
             result = cls()
             result.from_dict(element.attrib)
         return result
-
-

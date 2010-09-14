@@ -23,7 +23,7 @@ from parameter_labels import *
 from parameter_mappings import *
 from parameter_sets import *
 from simulations import *
-from strand_factories import *
+from simulation_results import *
 from transitions import *
 
 from config import setup_database
@@ -41,5 +41,5 @@ del parameter_labels
 del parameter_mappings
 del parameter_sets
 del simulations
-del strand_factories
+del simulation_results
 del transitions

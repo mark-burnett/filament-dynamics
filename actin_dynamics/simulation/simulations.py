@@ -61,17 +61,24 @@ class Simulation(object):
         bbl = bisect.bisect_left
 
         # Initialize.
-        strand = self.strand_factory.create()
+        strands = self.strand_factory.create()
         [e.reset() for e in self.end_conditions]
         time = 0
 
-        while not any(e(time, strand, self.concentrations)
+        while not any(e(time, strands, self.concentrations)
                       for e in self.end_conditions):
             # Calculate partial sums of transition probabilities
-            transition_R = [t.R(strand, self.concentrations)
-                            for t in self.transitions]
-            running_R    = list(running_total(transition_R))
-            total_R      = running_R[-1]
+            # NOTE we are keeping the small_Rs here so they don't need to be
+            #   recalculated to determine which strand undergoes transition.
+            small_Rs = []
+            transition_Rs = []
+            for t in self.transitions:
+                local_Rs = t.Rs(strands, self.concentrations)
+                transition_Rs.append(sum(local_Rs))
+                small_Rs.append(local_Rs)
+
+            running_R = list(running_total(transition_Rs))
+            total_R   = running_R[-1]
 
             # Update simulation time
             time += ml(1/self.rng(0, 1)) / total_R
@@ -80,24 +87,33 @@ class Simulation(object):
             r = self.rng(0, total_R)
             j = bbl(running_R, r)
 
+            # Figure out which strand to perform it on
+            running_strand_R = list(running_total(small_Rs[j]))
+            strand_r = r - running_R[j]
+            s = bbl(running_strand_R, strand_r)
+
             # Perform transition
-            self.transitions[j].perform(time, strand, self.concentrations,
-                                        running_R[j] - r)
+            state_r = strand_r - running_strand_R[s]
+            self.transitions[j].perform(time, strands, self.concentrations, s,
+                                        state_r)
 
             # Perform strand measurements
             for measurement in self.explicit_measurements:
-                measurement.perform(time, strand)
+                measurement.perform(time, strands)
 
         # Compile measurements
-        results = {}
+        simulation_measurements = {}
+        strand_measurements = {}
         for c in self.concentrations.itervalues():
             if c.measurement_label:
-                results[c.measurement_label] = c.data
+                simulation_measurements[c.measurement_label] = c.data
+
         for t in self.transitions:
             if t.measurement_label:
                 results[t.measurement_label] = t.data
+
         for em in self.explicit_measurements:
             if em.measurement_label:
                 results[em.measurement_label] = em.data
 
-        return strand, results
+        return strands, simulation_measurements, strand_measurements

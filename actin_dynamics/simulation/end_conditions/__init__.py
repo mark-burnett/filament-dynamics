@@ -16,9 +16,7 @@
 from registry import end_condition_registry as registry
 
 from duration import *
-from length import *
 
-del length
 del duration
 
 del base_classes

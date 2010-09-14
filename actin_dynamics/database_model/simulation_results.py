@@ -15,15 +15,15 @@
 
 import elixir as _elixir
 
-from .bindings import Binding as _Binding
+class SimulationResult(_elixir.Entity):
+    _elixir.using_options(tablename='simulation_result')
 
-# XXX This table has been reduce to a pass-through to a binding.
-#     Consider deleting it.
-class StrandFactory(_elixir.Entity):
-    _elixir.using_options(tablename='strand_factory')
+    simulation = _elixir.ManyToOne('Simulation')
+    parameter_set = _elixir.ManyToOne('ParameterSet')
 
-    binding = _elixir.ManyToOne('Binding', column_kwargs=dict(unique=True))
-    
-    @classmethod
-    def from_xml(cls, element):
-        return cls(binding=_Binding.from_xml(element.find('binding')))
+    timestamp = _elixir.Field(_elixir.DateTime)
+    revision = _elixir.Field(_elixir.Integer)
+
+    simulation_data = _elixir.OneToMany('SimulationData')
+    strand_data = _elixir.OneToMany('StrandData')
+

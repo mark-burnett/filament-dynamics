@@ -16,7 +16,7 @@
 import concentrations
 import end_conditions
 import explicit_measurements
-import strands
+import strand_factories
 import transitions
 
 del meta_classes

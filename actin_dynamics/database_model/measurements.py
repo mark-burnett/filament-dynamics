@@ -29,18 +29,3 @@ class MeasurementLabel(_elixir.Entity):
             result = cls()
             result.from_dict(element.attrib)
         return result
-
-class MeasurementData(_elixir.Entity):
-    _elixir.using_options(tablename='measurement_data')
-
-    data = _elixir.OneToMany('MeasurementDataEntry')
-
-    simulation_result = _elixir.ManyToOne('SimulationResult', primary_key=True)
-    measurement_label = _elixir.ManyToOne('MeasurementLabel', primary_key=True)
-
-class MeasurementDataEntry(_elixir.Entity):
-    _elixir.using_options(tablename='measurement_data_entry')
-
-    measurement_data = _elixir.ManyToOne('MeasurementData')
-    time = _elixir.Field(_elixir.Float)
-    value = _elixir.Field(_elixir.Float)

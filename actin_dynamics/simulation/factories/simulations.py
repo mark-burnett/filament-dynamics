@@ -35,7 +35,7 @@ def make_simulation(simulation, parameter_set):
 
     # create initial strand
     strand_factory = shortcuts.make_strand_factory(parameter_value_map,
-                                                   simulation.strand_factory)
+            simulation.strand_factory_binding)
 
     # create transitions
     transitions = utils.make_many(shortcuts.make_transition,

@@ -26,7 +26,7 @@ class Duration(_EndCondition):
     parameters = ['duration']
 
     __slots__ = ['duration']
-    def __init__(self, duration):
+    def __init__(self, duration=None):
         if duration <= 0:
             raise ValueError('Illegal duration.')
         self.duration = duration
@@ -34,7 +34,7 @@ class Duration(_EndCondition):
     def reset(self):
         pass
 
-    def __call__(self, time, strand, concentrations):
+    def __call__(self, time, strands, concentrations):
         return time > self.duration
 
 class RandomDuration(Duration):
@@ -42,7 +42,7 @@ class RandomDuration(Duration):
     parameters = ['max_duration']
 
     __slots__ = ['max_duration']
-    def __init__(self, max_duration):
+    def __init__(self, max_duration=None):
         if max_duration <= 0:
             raise ValueError('Illegal max_duration.')
         self.max_duration = max_duration

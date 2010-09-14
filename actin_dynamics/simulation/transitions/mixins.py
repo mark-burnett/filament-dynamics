@@ -14,10 +14,11 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Byproduct(object):
+    __slots__ = ['byproduct']
     def __init__(self, byproduct):
         self.byproduct = byproduct
 
-    def perform(self, time, strand, concentrations, r):
+    def perform(self, time, strands, concentrations, index, r):
         concentrations[self.byproduct].add_monomer()
 
 def add_byproduct(old_class):
@@ -35,9 +36,9 @@ def add_byproduct(old_class):
         old_class.__init__(self, **kwargs)
         Byproduct.__init__(self, byproduct=byproduct)
 
-    def perform(self, time, strand, concentrations, r):
-        old_class.perform(self, time, strand, concentrations, r)
-        Byproduct.perform(self, time, strand, concentrations, r)
+    def perform(self, time, strand, concentrations, index, r):
+        old_class.perform(self, time, strand, concentrations, index, r)
+        Byproduct.perform(self, time, strand, concentrations, index, r)
 
     new_class.__init__ = init
     new_class.perform  = perform

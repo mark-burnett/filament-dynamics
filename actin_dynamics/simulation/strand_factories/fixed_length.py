@@ -17,7 +17,7 @@ import itertools
 
 from base_classes import StrandFactory as _StrandFactory
 
-from strand import Strand
+from .strands.single_strand import Strand
 
 class SingleState(_StrandFactory):
     description = 'Creates strands of a fixed state and length.'

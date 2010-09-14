@@ -17,29 +17,34 @@ from base_classes import Transition as _Transition
 
 class _FixedRate(_Transition):
     skip_registration = True
-    parameters = ['rate']
+    parameters = ['rate', 'number']
     states = ['state']
 
     __slots__ = ['state', 'rate']
-    def __init__(self, state, rate):
+    def __init__(self, state=None, rate=None, number=None):
         """
         state - state to depolymerize
         rate  - depolymerization rate (constant)
         """
         self.state = state
         self.rate  = rate
-        _Transition.__init__(self)
 
-    def R(self, strand, concentrations):
-        if self.state == strand[-1]:
-            return self.rate
-        return 0
+        _Transition.__init__(self, number)
 
-    def perform(self, time, strand, concentrations, r):
-        _Transition.perform(self, time, strand, concentrations, r)
+    def R(self, strands, concentrations):
+        result = []
+        for strand in strands:
+            if self.state == strand[-1]:
+                result.append(self.rate)
+            result.append(0)
+        return result
+
+    def perform(self, time, strands, concentrations, index, r):
+        _Transition.perform(self, time, strands, concentrations, index, r)
 
 class BarbedDepolymerization(_FixedRate):
-    def perform(self, time, strand, concentrations, r):
-        strand.shrink_barbed_end()
+    def perform(self, time, strands, concentrations, index, r):
+        current_strand = strands[index]
+        current_strand.shrink_barbed_end()
         concentrations[self.state].add_monomer()
-        _FixedRate.perform(self, time, strand, concentrations, r)
+        _FixedRate.perform(self, time, strands, concentrations, index, r)

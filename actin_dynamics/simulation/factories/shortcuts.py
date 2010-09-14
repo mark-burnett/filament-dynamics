@@ -17,7 +17,7 @@ from bindings import instantiate_binding
 
 from .. import concentrations
 from .. import end_conditions
-from .. import strands
+from .. import strand_factories
 from .. import transitions
 from .. import explicit_measurements
 
@@ -53,12 +53,12 @@ def make_explicit_measurement(parameter_value_map, explicit_measurement):
         em.measurement_label = explicit_measurement.measurement_label
     return em
 
-def make_strand_factory(parameter_value_map, strand_factory):
+def make_strand_factory(parameter_value_map, strand_factory_binding):
     logger.debug('Making strand factory: parameter_value_map=%s, strand_factory=%s'
                  % (parameter_value_map, strand_factory))
     return instantiate_binding(parameter_value_map,
-                               strand_factory.binding,
-                               strands.registry)
+                               strand_factory_binding,
+                               strand_factories.registry)
 
 def make_transition(parameter_value_map, transition):
     logger.debug('Making transition: parameter_value_map=%s, transition=%s'
