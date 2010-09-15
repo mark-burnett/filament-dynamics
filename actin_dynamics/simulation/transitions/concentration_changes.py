@@ -13,10 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from base_classes import Transition as _Transition
+from base_classes import SolutionTransition as _SolutionTransition
 from . import mixins as _mixins
 
-class ConcentrationChange(_Transition):
+class ConcentrationChange(_SolutionTransition):
     parameters = ['rate']
     states = ['old_state', 'new_state']
 
@@ -26,16 +26,16 @@ class ConcentrationChange(_Transition):
         self.rate      = rate
         self.new_state = new_state
 
-        _Transition.__init__(self)
+        _SolutionTransition.__init__(self)
 
-    def R(self, strand, concentrations):
+    def R(self, strands, concentrations):
         return self.rate * concentrations[self.old_state].value
 
-    def perform(self, time, strand, concentrations, r):
+    def perform(self, time, strands, concentrations, index, r):
         concentrations[self.old_state].remove_monomer()
         concentrations[self.new_state].add_monomer()
 
-        _Transition.perform(self, time, strand, concentrations, r)
+        _SolutionTransition.perform(self, time, strands, concentrations, index, r)
 
 
 ConcentrationChangeWithByproduct = _mixins.add_byproduct(ConcentrationChange)

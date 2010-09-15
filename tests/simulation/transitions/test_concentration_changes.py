@@ -40,21 +40,21 @@ class ConcentrationChangeTest(unittest.TestCase):
         self.assertEqual(self.missing.R(None, self.concentrations), 0)
 
     def test_normal_perform(self):
-        self.normal_one.perform(None, None, self.concentrations, None)
+        self.normal_one.perform(None, None, self.concentrations, None, None)
         self.assertEqual(self.concentrations[1].count, -1)
         self.assertEqual(self.concentrations[2].count,  1)
 
-        self.normal_one.perform(None, None, self.concentrations, None)
+        self.normal_one.perform(None, None, self.concentrations, None, None)
         self.assertEqual(self.concentrations[1].count, -2)
         self.assertEqual(self.concentrations[2].count,  2)
 
-        self.normal_two.perform(None, None, self.concentrations, None)
+        self.normal_two.perform(None, None, self.concentrations, None, None)
         self.assertEqual(self.concentrations[1].count, -2)
         self.assertEqual(self.concentrations[2].count,  1)
         self.assertEqual(self.concentrations[3].count,  1)
 
     def test_missing_perform(self):
-        self.missing.perform(None, None, self.concentrations, None)
+        self.missing.perform(None, None, self.concentrations, None, None)
         self.assertEqual(self.concentrations[3].count, -1)
         self.assertEqual(self.concentrations[4].count,  1)
 
@@ -82,24 +82,24 @@ class ConcentrationChangeWithByproductTest(unittest.TestCase):
         self.assertEqual(self.missing.R(None, self.concentrations), 0)
 
     def test_normal_perform(self):
-        self.normal_one.perform(None, None, self.concentrations, None)
+        self.normal_one.perform(None, None, self.concentrations, None, None)
         self.assertEqual(self.concentrations[1].count, -1)
         self.assertEqual(self.concentrations[2].count,  1)
         self.assertEqual(self.concentrations[11].count, 1)
 
-        self.normal_one.perform(None, None, self.concentrations, None)
+        self.normal_one.perform(None, None, self.concentrations, None, None)
         self.assertEqual(self.concentrations[1].count, -2)
         self.assertEqual(self.concentrations[2].count,  2)
         self.assertEqual(self.concentrations[11].count, 2)
 
-        self.normal_two.perform(None, None, self.concentrations, None)
+        self.normal_two.perform(None, None, self.concentrations, None, None)
         self.assertEqual(self.concentrations[1].count, -2)
         self.assertEqual(self.concentrations[2].count,  1)
         self.assertEqual(self.concentrations[3].count,  1)
         self.assertEqual(self.concentrations[12].count, 1)
 
     def test_missing_perform(self):
-        self.missing.perform(None, None, self.concentrations, None)
+        self.missing.perform(None, None, self.concentrations, None, None)
         self.assertEqual(self.concentrations[3].count, -1)
         self.assertEqual(self.concentrations[4].count,  1)
         self.assertEqual(self.concentrations[13].count, 1)
