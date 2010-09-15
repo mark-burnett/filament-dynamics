@@ -17,75 +17,134 @@ import unittest
 from collections import defaultdict
 
 from actin_dynamics.simulation.transitions.vectorial_hydrolysis import *
-from actin_dynamics.simulation.strands import Strand
+from actin_dynamics.simulation.strand_factories import Strand
 
 from tests.mocks.concentrations import MockConcentration
 
 
-class VectorialHydrolysisTest(unittest.TestCase):
+class VectorialHydrolysisSingleFilamentTest(unittest.TestCase):
     def setUp(self):
         self.strand = Strand([1, 2, 3, 1, 2, 3, 1])
 
         self.normal_one = VectorialHydrolysis(old_state=1, pointed_neighbor=3,
-                                              new_state=2, rate=3)
+                                              new_state=2, rate=3, number=1)
         self.normal_two = VectorialHydrolysis(old_state=2, pointed_neighbor=1,
-                                              new_state=3, rate=2)
+                                              new_state=3, rate=2, number=1)
         self.missing    = VectorialHydrolysis(old_state=1, pointed_neighbor=2,
-                                              new_state=7, rate=1)
+                                              new_state=7, rate=1, number=1)
 
     def test_normal_rates(self):
-        self.assertEqual(self.normal_one.R(self.strand, None), 6)
-        self.assertEqual(self.normal_two.R(self.strand, None), 4)
+        self.assertEqual(self.normal_one.R([self.strand], None), [6])
+        self.assertEqual(self.normal_two.R([self.strand], None), [4])
 
     def test_missing_rates(self):
-        self.assertEqual(self.missing.R(self.strand, None), 0)
+        self.assertEqual(self.missing.R([self.strand], None), [0])
 
     def test_perform_normal(self):
-        self.normal_one.perform(None, self.strand, None, 4)
-        self.assertEqual(self.normal_one.R(self.strand, None), 3)
-        self.assertEqual(self.normal_two.R(self.strand, None), 4)
+        self.normal_one.perform(None, [self.strand], None, 0, 4)
+        self.assertEqual(self.normal_one.R([self.strand], None), [3])
+        self.assertEqual(self.normal_two.R([self.strand], None), [4])
 
-        self.normal_two.perform(None, self.strand, None, 1)
-        self.assertEqual(self.normal_one.R(self.strand, None), 3)
-        self.assertEqual(self.normal_two.R(self.strand, None), 2)
+        self.normal_two.perform(None, [self.strand], None, 0, 1)
+        self.assertEqual(self.normal_one.R([self.strand], None), [3])
+        self.assertEqual(self.normal_two.R([self.strand], None), [2])
 
     def test_perform_missing(self):
         self.assertRaises(IndexError, self.missing.perform,
-                          None, self.strand, None, 0)
+                          None, [self.strand], None, 0, 0)
 
-class VectorialHydrolysisWithByproductTest(unittest.TestCase):
+
+class VectorialHydrolysisMultipleFilamentTest(unittest.TestCase):
+    def setUp(self):
+        self.filaments = [Strand([1, 2, 3, 1, 2, 3, 1]),
+                          Strand([2, 3, 1, 2, 3, 1, 2]),
+                          Strand([3, 2, 1, 3, 2, 1, 3])]
+
+        self.normal_one = VectorialHydrolysis(old_state=1, pointed_neighbor=3,
+                                              new_state=2, rate=3,
+                                              number=len(self.filaments))
+        self.normal_two = VectorialHydrolysis(old_state=2, pointed_neighbor=1,
+                                              new_state=3, rate=2,
+                                              number=len(self.filaments))
+        self.missing    = VectorialHydrolysis(old_state=1, pointed_neighbor=2,
+                                              new_state=7, rate=1,
+                                              number=len(self.filaments))
+
+    def test_normal_rates(self):
+        self.assertEqual(self.normal_one.R(self.filaments, None), [6, 6, 0])
+        self.assertEqual(self.normal_two.R(self.filaments, None), [4, 4, 0])
+
+    def test_missing_rates(self):
+        self.assertEqual(self.missing.R(self.filaments, None), [0, 0, 2])
+
+    def test_perform_normal(self):
+        self.normal_one.perform(None, self.filaments, None, 0, 4)
+        self.assertEqual(self.normal_one.R(self.filaments, None), [3, 6, 0])
+        self.assertEqual(self.normal_two.R(self.filaments, None), [4, 4, 0])
+
+        self.normal_two.perform(None, self.filaments, None, 0, 1)
+        self.assertEqual(self.normal_one.R(self.filaments, None), [3, 6, 0])
+        self.assertEqual(self.normal_two.R(self.filaments, None), [2, 4, 0])
+
+        self.normal_one.perform(None, self.filaments, None, 1, 0)
+        self.assertEqual(self.normal_one.R(self.filaments, None), [3, 3, 0])
+        self.assertEqual(self.normal_two.R(self.filaments, None), [2, 2, 0])
+
+        self.missing.perform(None, self.filaments, None, 2, 0)
+        self.assertEqual(self.normal_one.R(self.filaments, None), [3, 3, 0])
+        self.assertEqual(self.normal_two.R(self.filaments, None), [2, 2, 0])
+        self.assertEqual(self.missing.R(self.filaments, None),    [0, 0, 1])
+
+    def test_perform_missing(self):
+        self.assertRaises(IndexError, self.missing.perform,
+                          None, self.filaments, None, 0, 0)
+
+        self.assertRaises(IndexError, self.missing.perform,
+                          None, self.filaments, None, 1, 0)
+
+
+class VectorialHydrolysisWithByproductSingleFilamentTest(unittest.TestCase):
     def setUp(self):
         self.strand = Strand([1, 2, 3, 1, 2, 3, 1])
         self.concentrations = defaultdict(MockConcentration)
 
         self.normal_one = VectorialHydrolysisWithByproduct(old_state=1,
-                pointed_neighbor=3, new_state=2, byproduct=11, rate=3)
+                                                           pointed_neighbor=3,
+                                                           new_state=2, rate=3,
+                                                           byproduct=11,
+                                                           number=1)
         self.normal_two = VectorialHydrolysisWithByproduct(old_state=2,
-                pointed_neighbor=1, new_state=3, byproduct=12, rate=2)
+                                                           pointed_neighbor=1,
+                                                           new_state=3, rate=2,
+                                                           byproduct=12,
+                                                           number=1)
         self.missing    = VectorialHydrolysisWithByproduct(old_state=1,
-                pointed_neighbor=2, new_state=7, byproduct=17, rate=1)
+                                                           pointed_neighbor=2,
+                                                           new_state=7, rate=1,
+                                                           byproduct=17,
+                                                           number=1)
 
     def test_normal_rates(self):
-        self.assertEqual(self.normal_one.R(self.strand, None), 6)
-        self.assertEqual(self.normal_two.R(self.strand, None), 4)
+        self.assertEqual(self.normal_one.R([self.strand], None), [6])
+        self.assertEqual(self.normal_two.R([self.strand], None), [4])
 
     def test_missing_rates(self):
-        self.assertEqual(self.missing.R(self.strand, None), 0)
+        self.assertEqual(self.missing.R([self.strand], None), [0])
 
     def test_perform_normal(self):
-        self.normal_one.perform(None, self.strand, self.concentrations, 4)
-        self.assertEqual(self.normal_one.R(self.strand, None), 3)
-        self.assertEqual(self.normal_two.R(self.strand, None), 4)
+        self.normal_one.perform(None, [self.strand], self.concentrations, 0, 4)
+        self.assertEqual(self.normal_one.R([self.strand], None), [3])
+        self.assertEqual(self.normal_two.R([self.strand], None), [4])
         self.assertEqual(self.concentrations[11].count, 1)
 
-        self.normal_two.perform(None, self.strand, self.concentrations, 1)
-        self.assertEqual(self.normal_one.R(self.strand, None), 3)
-        self.assertEqual(self.normal_two.R(self.strand, None), 2)
+        self.normal_two.perform(None, [self.strand], self.concentrations, 0, 1)
+        self.assertEqual(self.normal_one.R([self.strand], None), [3])
+        self.assertEqual(self.normal_two.R([self.strand], None), [2])
         self.assertEqual(self.concentrations[12].count, 1)
 
     def test_perform_missing(self):
         self.assertRaises(IndexError, self.missing.perform,
-                          None, self.strand, self.concentrations, 0)
+                          None, [self.strand], None, 0, 0)
         self.assertEqual(self.concentrations[17].count, 0)
 
 

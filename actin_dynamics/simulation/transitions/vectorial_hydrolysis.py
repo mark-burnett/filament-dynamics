@@ -13,34 +13,36 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .base_classes import Transition as _Transition
+from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
 
-class VectorialHydrolysis(_Transition):
+class VectorialHydrolysis(_FilamentTransition):
     parameters = ['rate']
     states = ['old_state', 'pointed_neighbor', 'new_state']
 
     __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'new_state']
     def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
-                 new_state=None):
+                 new_state=None, number=None):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
         self.rate             = rate
         self.new_state        = new_state
 
-        _Transition.__init__(self)
+        _FilamentTransition.__init__(self, number=number)
 
-    def R(self, strand, concentrations):
-        return self.rate * len(
-                strand.boundary_indices[self.old_state][self.pointed_neighbor])
+    def R(self, strands, concentrations):
+        return [self.rate * len(
+                    s.boundary_indices[self.old_state][self.pointed_neighbor])
+                for s in strands]
 
-    def perform(self, time, strand, concentrations, r):
+    def perform(self, time, strands, concentrations, index, r):
+        current_strand = strands[index]
         boundary_index = int(r / self.rate)
-        strand_index = (strand.boundary_indices
+        strand_index = (current_strand.boundary_indices
                 [self.old_state][self.pointed_neighbor][boundary_index])
-        strand.set_state(strand_index, self.new_state)
+        current_strand.set_state(strand_index, self.new_state)
 
-        _Transition.perform(self, time, strand, concentrations, r)
+        _FilamentTransition.perform(self, time, strands, concentrations, index, r)
 
 VectorialHydrolysisWithByproduct = _mixins.add_byproduct(VectorialHydrolysis)

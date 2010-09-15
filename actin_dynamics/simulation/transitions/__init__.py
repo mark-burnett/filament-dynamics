@@ -20,13 +20,13 @@ from registry import transition_registry as registry
 from depolymerization import *
 from polymerization import *
 from random_hydrolysis import *
-#from vectorial_hydrolysis import *
+from vectorial_hydrolysis import *
 
 #del concentration_changes
 #del cooperative_hydrolysis
 del depolymerization
 del polymerization
 del random_hydrolysis
-#del vectorial_hydrolysis
+del vectorial_hydrolysis
 
 del base_classes
