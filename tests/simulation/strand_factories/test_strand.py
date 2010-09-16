@@ -1,7 +1,7 @@
 import unittest
 import collections
 
-from actin_dynamics.simulation.strands import strand
+from actin_dynamics.simulation.strand_factories import strands
 from actin_dynamics.simulation import concentrations
 
 # This would be a decent test to adapt and add for good measure.
@@ -13,7 +13,7 @@ from actin_dynamics.simulation import concentrations
 
 class StrandTest(unittest.TestCase):
     def setUp(self):
-        self.strand = strand.Strand(['d', 'd', 'p', 't', 'p', 't', 't'])
+        self.strand = strands.single_strand.Strand(['d', 'd', 'p', 't', 'p', 't', 't'])
 
     def tearDown(self):
         del self.strand

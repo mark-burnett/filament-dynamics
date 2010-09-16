@@ -15,15 +15,13 @@
 
 import unittest
 
-import actin_dynamics.simulation.strands.fixed_length
+from actin_dynamics.simulation.strand_factories.base_classes import StrandFactory
 
-class SingleStateFixedLength(unittest.TestCase):
-    def test_write_me_please(self):
-        self.assertTrue(False)
-
-class SingleStateFromConcentrations(unittest.TestCase):
-    def test_write_me_please(self):
-        self.assertTrue(False)
+class StrandFactoryBase(unittest.TestCase):
+    def test_exists(self):
+        # There is no functionality to tests, but we need to be able to
+        #  successfully import StrandFactory.
+        pass
 
 if '__main__' == __name__:
     unittest.main()

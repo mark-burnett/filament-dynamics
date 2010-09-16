@@ -13,24 +13,24 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .base_classes import Transition as _Transition
+from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
-class CooperativeHydrolysis(_Transition):
+class CooperativeHydrolysis(_FilamentTransition):
     parameters = ['rate', 'cooperativity']
     states = ['old_state', 'pointed_neighbor', 'new_state']
 
     __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'cooperativity',
                  'new_state']
     def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
-                 cooperativity=None, new_state=None):
+                 cooperativity=None, new_state=None, number=None):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
         self.rate             = rate
         self.cooperativity    = cooperativity
         self.new_state        = new_state
 
-        _Transition.__init__(self)
+        _FilamentTransition.__init__(self, number=number)
 
     def R(self, strand, concentrations):
         return self._boundary_rate(strand) + self._random_rate(strand)
@@ -50,17 +50,18 @@ class CooperativeHydrolysis(_Transition):
         return self.rate * random_count
 
 
-    def perform(self, time, strand, concentrations, r):
+    def perform(self, time, strands, concentrations, index, r):
         boundary_rate = self._boundary_rate(strand)
         random_rate = self._random_rate(strand)
 
+        current_strand = strands[index]
         if r < boundary_rate:
-            self._perform_boundary(time, strand, concentrations, r, boundary_rate)
+            self._perform_boundary(time, current_strand, concentrations, r, boundary_rate)
         else:
-            self._perform_random(time, strand, concentrations,
+            self._perform_random(time, current_strand, concentrations,
                                  r - boundary_rate, random_rate)
 
-        _Transition.perform(self, time, strand, concentrations, r)
+        _FilamentTransition.perform(self, time, strands, concentrations, index, r)
 
     def _perform_boundary(self, time, strand, concentrations, r, boundary_rate):
         boundary_index = int(r / boundary_rate)

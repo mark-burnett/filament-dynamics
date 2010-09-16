@@ -17,26 +17,26 @@ import unittest
 from collections import defaultdict
 
 from actin_dynamics.simulation.transitions.mixins import *
-from actin_dynamics.simulation.strands import Strand
+from actin_dynamics.simulation.strand_factories import strands
 
 from tests.mocks.concentrations import MockConcentration
 
 
 class ByproductMixinTest(unittest.TestCase):
     def setUp(self):
-        self.strand = Strand([1, 2, 3, 1, 2, 3, 1])
+        self.strand = strands.single_strand.Strand([1, 2, 3, 1, 2, 3, 1])
         self.concentrations = defaultdict(MockConcentration)
 
-        self.mixin = Byproduct(byproduct=11)
+        self.mixin = WithByproduct(byproduct=11)
 
     def test_normal_perform(self):
-        self.mixin.perform(None, self.strand, self.concentrations, None)
+        self.mixin.perform(None, self.strand, self.concentrations, None, None)
         self.assertEqual(self.concentrations[11].count, 1)
 
-        self.mixin.perform(None, self.strand, self.concentrations, None)
+        self.mixin.perform(None, self.strand, self.concentrations, None, None)
         self.assertEqual(self.concentrations[11].count, 2)
 
-        self.mixin.perform(None, self.strand, self.concentrations, None)
+        self.mixin.perform(None, self.strand, self.concentrations, None, None)
         self.assertEqual(self.concentrations[11].count, 3)
 
 

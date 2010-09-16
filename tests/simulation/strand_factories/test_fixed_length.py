@@ -15,23 +15,15 @@
 
 import unittest
 
-from actin_dynamics.simulation import end_conditions
+import actin_dynamics.simulation.strand_factories.fixed_length
 
-class StateLengthBelowTest(unittest.TestCase):
-    def test_vary_state(self):
-        lengths     = [0, 5, 6, 7, 12]
-        expectation = [True, True, False, False, False]
-        ec = end_conditions.StateLengthBelow(6)
-        for l, e in zip(lengths, expectation):
-            self.assertEqual(e, ec(None, range(l)))
+class SingleStateFixedLength(unittest.TestCase):
+    def test_write_me_please(self):
+        self.assertTrue(False)
 
-    def test_vary_condition(self):
-        lengths     = [0, 5, 6, 7, 12]
-        expectation = [False, False, False, True, True]
-        state = range(6)
-        for l, e in zip(lengths, expectation):
-            ec = end_conditions.StateLengthBelow(l)
-            self.assertEqual(e, ec(None, state))
+class SingleStateFromConcentrations(unittest.TestCase):
+    def test_write_me_please(self):
+        self.assertTrue(False)
 
 if '__main__' == __name__:
     unittest.main()

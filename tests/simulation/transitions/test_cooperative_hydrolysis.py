@@ -18,7 +18,7 @@ from collections import defaultdict
 
 from actin_dynamics.simulation.transitions.cooperative_hydrolysis import *
 
-from actin_dynamics.simulation.strands import Strand
+from actin_dynamics.simulation.strand_factories.strands.single_strand import Strand
 
 from tests.mocks.concentrations import MockConcentration
 
