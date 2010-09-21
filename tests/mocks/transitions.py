@@ -13,14 +13,16 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
+
 class MockTransition(object):
     def __init__(self, add_value, rate, measurement_label=None):
         self.add_value = add_value
         self.rate = rate
         self.measurement_label = measurement_label
 
-    def R(self, strand, concentrations):
-        return self.rate
+    def Rs(self, strands, concentrations):
+        return list(itertools.repeat(self.rate, len(strands)))
 
-    def perform(self, time, strand, concentrations, r):
-        strand[0] += self.add_value
+    def perform(self, time, strands, concentrations, index, r):
+        strands[index][0] += self.add_value

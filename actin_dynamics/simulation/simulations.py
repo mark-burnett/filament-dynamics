@@ -110,10 +110,10 @@ class Simulation(object):
 
         for t in self.transitions:
             if t.measurement_label:
-                results[t.measurement_label] = t.data
+                strand_measurements[t.measurement_label] = t.data
 
         for em in self.explicit_measurements:
             if em.measurement_label:
-                results[em.measurement_label] = em.data
+                strand_measurements[em.measurement_label] = em.data
 
         return strands, simulation_measurements, strand_measurements

@@ -14,8 +14,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class MockStrandFactory(object):
-    def __init__(self, initial_strand):
+    def __init__(self, initial_strand, number):
         self.initial_strand = initial_strand
+        self.number = number
 
     def create(self):
-        return self.initial_strand
+        return [self.initial_strand for i in xrange(self.number)]

@@ -32,8 +32,9 @@ class CooperativeHydrolysis(_FilamentTransition):
 
         _FilamentTransition.__init__(self, number=number)
 
-    def R(self, strand, concentrations):
-        return self._boundary_rate(strand) + self._random_rate(strand)
+    def R(self, strands, concentrations):
+        return [self._boundary_rate(strand) + self._random_rate(strand)
+                for strand in strands]
 
     def _boundary_rate(self, strand):
         boundary_count = len(strand.boundary_indices
@@ -51,10 +52,11 @@ class CooperativeHydrolysis(_FilamentTransition):
 
 
     def perform(self, time, strands, concentrations, index, r):
-        boundary_rate = self._boundary_rate(strand)
-        random_rate = self._random_rate(strand)
-
         current_strand = strands[index]
+
+        boundary_rate = self._boundary_rate(current_strand)
+        random_rate = self._random_rate(current_strand)
+
         if r < boundary_rate:
             self._perform_boundary(time, current_strand, concentrations, r, boundary_rate)
         else:

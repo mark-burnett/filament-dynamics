@@ -16,8 +16,8 @@
 from base_classes import Measurement as _Measurement
 
 class StrandLength(_Measurement):
-    def __init__(self):
-        _Measurement.__init__(self)
+    def __init__(self, number=None):
+        _Measurement.__init__(self, number=number)
 
-    def perform(self, time, strand):
-        self.store(time, len(strand))
+    def perform(self, time, strands):
+        self.store(time, map(len, strands))

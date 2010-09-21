@@ -38,7 +38,7 @@ class FilamentTransition(Transition):
     __slots__ = ['data', 'count']
     def __init__(self, number=None, measurement_label=None):
         self.count = list(itertools.repeat(0, number))
-        self.data  = list(itertools.repeat([(0, 0)], number))
+        self.data  = [[(0, 0)] for i in xrange(number)]
         Transition.__init__(self, measurement_label=measurement_label)
 
     def perform(self, time, strands, concentrations, index, r):

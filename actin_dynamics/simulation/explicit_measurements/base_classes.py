@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
+
 from ..meta_classes import Registration
 
 from registry import measurement_registry
@@ -24,12 +26,13 @@ class Measurement(object):
     parameters = []
     states = []
 
-    __slots__ = ['data', 'last_value']
-    def __init__(self):
-        self.data = []
-        self.last_value = None
+    __slots__ = ['data', 'last_values']
+    def __init__(self, number=None):
+        self.data = [[] for i in xrange(number)]
+        self.last_values = list(itertools.repeat(None, number))
 
-    def store(self, time, value):
-        if value != self.last_value:
-            self.last_value = value
-            self.data.append((time, value))
+    def store(self, time, values):
+        for i, value in enumerate(values):
+            if value != self.last_values[i]:
+                self.last_values[i] = value
+                self.data[i].append((time, value))

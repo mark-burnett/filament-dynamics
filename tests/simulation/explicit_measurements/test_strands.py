@@ -17,27 +17,23 @@ import unittest
 
 from actin_dynamics.simulation import explicit_measurements
 
-class MockConcentration(object):
-    def remove_monomer(self):
-        pass
-
-    def add_monomer(self):
-        pass
-
 class LengthTest(unittest.TestCase):
-    def test_normal_use(self):
+    def test_single_filament(self):
         times  = [1, 2, 3, 4]
         lengths = [3, 7, 8, 1]
 
-        m = explicit_measurements.StrandLength()
+        m = explicit_measurements.StrandLength(number=1)
 
         for t, l in zip(times, lengths):
-            m.perform(t, range(l))
+            m.perform(t, [range(l)])
 
-        self.assertEqual(len(times), len(m.data))
+        self.assertEqual(len(times), len(m.data[0]))
         
-        for t, l, d in zip(times, lengths, m.data):
+        for t, l, d in zip(times, lengths, m.data[0]):
             self.assertEqual((t, l), d)
+
+    def test_multiple_filaments(self):
+        self.assertTrue(False)
 
 if '__main__' == __name__:
     unittest.main()

@@ -15,12 +15,13 @@
 
 class MockExplicitMeasurement(object):
     __slots__ = ['data', 'index', 'measurement_label']
-    def __init__(self, measurement_label=None, index=0):
+    def __init__(self, measurement_label=None, index=0, number=None):
         self.index = index
         self.measurement_label = measurement_label
 
-        self.data = []
+        self.data = [[] for i in xrange(number)]
 
-    def perform(self, time, state):
-        self.data.append(state[self.index])
+    def perform(self, time, values):
+        for i, value in enumerate(values):
+            self.data[i].append(value[self.index])
 
