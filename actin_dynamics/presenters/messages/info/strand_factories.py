@@ -20,8 +20,8 @@ class StrandFactoryList(object):
 
     @classmethod
     def from_simulation(cls, simulation):
-        sf = simulation.strand_factory
-        result = [(sf.id, sf.binding.class_name)]
+        sf = simulation.strand_factory_binding
+        result = [(sf.id, sf.class_name)]
 
         return cls(result)
 
@@ -46,13 +46,13 @@ class StrandFactoryInfo(object):
     @classmethod
     def from_strand_factory(cls, sf):
         pm = []
-        for p in sf.binding.parameter_mappings:
+        for p in sf.parameter_mappings:
             pm.append((p.id, p.parameter_label.name, p.local_name))
 
         sm = []
-        for s in sf.binding.state_mappings:
+        for s in sf.state_mappings:
             sm.append((s.id, s.state.name, s.local_name))
 
-        return cls(class_name=sf.binding.class_name,
+        return cls(class_name=sf.class_name,
                    parameter_mappings=pm,
                    state_mappings=sm)

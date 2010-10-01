@@ -44,10 +44,10 @@ class Simulation(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        sf = _Binding.from_xml(element.find('strand_factory'))
+        sfb = _Binding.from_xml(element.find('strand_factory'))
         result = cls(name=unicode(element.get('name')),
                      description=unicode(element.get('description')),
-                     strand_factory=sf,
+                     strand_factory_binding=sfb,
                      creation_date=datetime.datetime.today())
 
         for c in element.find('concentrations'):

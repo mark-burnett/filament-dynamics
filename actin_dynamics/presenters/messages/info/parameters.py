@@ -34,7 +34,7 @@ class ParameterSet(object):
     def from_simulation(cls, simulation):
         result = []
 
-        result.extend(_get_pars_from_binding(simulation.strand_factory.binding))
+        result.extend(_get_pars_from_binding(simulation.strand_factory_binding))
 
         for t in simulation.transitions:
             result.extend(_get_pars_from_binding(t.binding))
