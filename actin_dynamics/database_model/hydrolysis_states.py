@@ -23,10 +23,11 @@ class HydrolysisState(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        result = cls.get_by(name=element.get('name'))
+        result = cls.get_by(name=unicode(element.get('name')))
         if not result:
             result = cls()
-            result.from_dict(element.attrib)
+            result.name = unicode(element.get('name', None))
+            result.description = unicode(element.get('description', None))
         return result
 
 class HydrolysisStateMapping(_elixir.Entity):
@@ -38,5 +39,5 @@ class HydrolysisStateMapping(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        hs = HydrolysisState.get_by(name=element.get('state_name'))
-        return cls(state=hs, local_name=element.get('local_name'))
+        hs = HydrolysisState.get_by(name=unicode(element.get('state_name')))
+        return cls(state=hs, local_name=unicode(element.get('local_name')))

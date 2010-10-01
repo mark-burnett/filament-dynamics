@@ -26,4 +26,3 @@ class SimulationResult(_elixir.Entity):
 
     simulation_data = _elixir.OneToMany('SimulationData')
     strand_data = _elixir.OneToMany('StrandData')
-

@@ -14,6 +14,7 @@
 
 from bindings import *
 from concentrations import *
+from data import *
 from end_conditions import *
 from explicit_measurements import *
 from hydrolysis_states import *
@@ -32,6 +33,7 @@ del config
 # Cleanup the namespace
 del bindings
 del concentrations
+del data
 del end_conditions
 del explicit_measurements
 del hydrolysis_states

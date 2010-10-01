@@ -29,12 +29,12 @@ class ParameterSetGroup(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        sim = _Simulation.get_by(name=element.get('simulation_name'))
+        sim = _Simulation.get_by(name=unicode(element.get('simulation_name')))
 
-        result = cls.get_by(name=element.get('name'), simulation=sim)
+        result = cls.get_by(name=unicode(element.get('name')), simulation=sim)
         if not result:
-            result = cls(name=element.get('name'),
-                         description=element.get('name'),
+            result = cls(name=unicode(element.get('name')),
+                         description=unicode(element.get('description')),
                          simulation=sim)
 
         for ps_xml in element:
@@ -56,7 +56,8 @@ class ParameterSet(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        result = cls(name=element.get('name'))
+        result = cls(name=unicode(element.get('name')),
+                     description=unicode(element.get('description', None)))
         for p_xml in element:
             result.parameters.append(_Parameter.from_xml(p_xml))
 

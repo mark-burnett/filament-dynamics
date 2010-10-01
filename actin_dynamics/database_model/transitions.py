@@ -29,6 +29,7 @@ class Transition(_elixir.Entity):
     @classmethod
     def from_xml(cls, element):
         ml = _MeasurementLabel.get_by(
-                name=element.get('measurement_label_name'))
+                name=unicode(element.get('measurement_label_name')))
         b = _Binding.from_xml(element.find('binding'))
-        return cls(name=element.get('name'), measurement_label=ml, binding=b)
+        return cls(name=unicode(element.get('name')), measurement_label=ml,
+                   binding=b)

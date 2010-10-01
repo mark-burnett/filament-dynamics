@@ -37,17 +37,17 @@ class StrandData(_elixir.Entity):
     simulation_result = _elixir.ManyToOne('SimulationResult')
     measurement_label = _elixir.ManyToOne('MeasurementLabel')
 
-    strands = _elixir.OneToMany('StrandIdentifier')
+    strands = _elixir.ManyToOne('StrandIdentifier')
 
 class StrandIdentifier(_elixir.Entity):
     _elixir.using_options(tablename='strand_identifier')
 
-    data = _elixir.OneToMany('StrandDataEntry')
+    data = _elixir.ManyToOne('StrandDataEntry')
 
 class StrandDataEntry(_elixir.Entity):
     _elixir.using_options(tablename='strand_data_entry')
 
-    strand_identifier = _elixir.ManyToOne('StrandIdentifier')
+    strand_identifier = _elixir.OneToMany('StrandIdentifier')
 
     time = _elixir.Field(_elixir.Float)
     value = _elixir.Field(_elixir.Float)

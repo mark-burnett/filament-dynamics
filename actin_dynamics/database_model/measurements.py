@@ -20,12 +20,13 @@ class MeasurementLabel(_elixir.Entity):
 
     name = _elixir.Field(_elixir.Unicode(50), unique=True)
     description = _elixir.Field(_elixir.UnicodeText)
-    measurement_data = _elixir.OneToMany('MeasurementData')
+#    measurement_data = _elixir.OneToMany('MeasurementData')
 
     @classmethod
     def from_xml(cls, element):
-        result = cls.get_by(name=element.get('name'))
+        result = cls.get_by(name=unicode(element.get('name')))
         if not result:
             result = cls()
-            result.from_dict(element.attrib)
+            result.name = unicode(element.get('name', None))
+            result.description = unicode(element.get('description', None))
         return result

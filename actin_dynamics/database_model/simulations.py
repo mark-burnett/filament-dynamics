@@ -17,6 +17,7 @@ import datetime
 
 import elixir as _elixir
 
+from .bindings import Binding as _Binding
 from .concentrations import Concentration as _Concentration
 from .end_conditions import EndCondition as _EndCondition
 from .explicit_measurements import ExplicitMeasurement as _ExplicitMeasurement
@@ -43,9 +44,9 @@ class Simulation(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        sf = _StrandFactory.from_xml(element.find('strand_factory'))
-        result = cls(name=element.get('name'),
-                     description=element.get('description'),
+        sf = _Binding.from_xml(element.find('strand_factory'))
+        result = cls(name=unicode(element.get('name')),
+                     description=unicode(element.get('description')),
                      strand_factory=sf,
                      creation_date=datetime.datetime.today())
 

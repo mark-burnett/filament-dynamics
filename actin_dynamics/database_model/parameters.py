@@ -31,6 +31,6 @@ class Parameter(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        pl = _ParameterLabel.get_by(name=element.get('parameter_label_name'))
+        pl = _ParameterLabel.get_by(name=unicode(element.get('parameter_label_name')))
         return cls(label=pl, value=float(element.get('value')))
 

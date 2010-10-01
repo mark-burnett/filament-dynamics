@@ -23,8 +23,9 @@ class ParameterLabel(_elixir.Entity):
 
     @classmethod
     def from_xml(cls, element):
-        result = cls.get_by(name=element.get('name'))
+        result = cls.get_by(name=unicode(element.get('name')))
         if not result:
             result = cls()
-            result.from_dict(element.attrib)
+            result.name = unicode(element.get('name', None))
+            result.description = unicode(element.get('description', None))
         return result
