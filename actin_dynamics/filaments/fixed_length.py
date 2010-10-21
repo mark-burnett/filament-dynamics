@@ -36,3 +36,14 @@ class SingleStateFromConcentrations(SingleState):
     def __init__(self, state, concentration, filament_tip_concentration):
         length = int(seed_concentration / filament_tip_concentration)
         SingleState.__init__(self, state, length)
+
+class NormalDistribution(_StrandFactory):
+    def __init__(self, mean=None, standard_deviation=None,
+                 initial_state=None, number=None):
+        self.mean = mean
+        self.standard_deviation = standard_deviation
+        self.initial_state = initial_state
+        self.number = number
+
+    def create(self):
+        return []

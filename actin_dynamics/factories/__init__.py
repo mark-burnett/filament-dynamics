@@ -15,9 +15,3 @@
 
 from parameters import *
 from simulations import *
-#import simulations
-#from shortcuts import *
-#from simulations import *
-#
-#del shortcuts
-#del simulations

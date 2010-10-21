@@ -13,59 +13,37 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import collections
+
 from bindings import instantiate_binding
 
 from .. import concentrations
 from .. import end_conditions
-from .. import strand_factories
+from .. import filaments
 from .. import transitions
-from .. import explicit_measurements
+#from .. import explicit_measurements
 
-#from actin_dynamics.common import logutils
-#logger = logutils.getLogger(__file__)
-#
-#__all__ = ['make_concentration', 'make_end_condition', 'make_explicit_measurement',
-#           'make_strand_factory', 'make_transition']
+def make_filaments(filaments_dict, parameters):
+    factory = instantiate_binding(filaments_dict, parameters, filaments.registry)
+    return factory.create()
 
-def make_concentration(parameter_value_map, concentration):
-#    logger.debug('Making concentration: parameter_value_map=%s, concentration=%s'
-#                 % (parameter_value_map, concentration))
-    c = instantiate_binding(parameter_value_map,
-                            concentration.binding,
-                            concentrations.registry)
-    if concentration.measurement_label:
-        c.measurement_label = concentration.measurement_label
-    return c
+def make_transitions(transitions_dict, parameters):
+    return make_from_list(transitions_dict, parameters,
+                          transitions.registry)
 
-def make_end_condition(parameter_value_map, end_condition):
-#    logger.debug('Making end condition: parameter_value_map=%s, end_condition=%s'
-#                 % (parameter_value_map, end_condition))
-    return instantiate_binding(parameter_value_map,
-                               end_condition.binding,
-                               end_conditions.registry)
+def make_end_conditions(end_conditions_dict, parameters):
+    return make_from_list(end_conditions_dict, parameters,
+                          end_conditions.registry)
 
-def make_explicit_measurement(parameter_value_map, explicit_measurement):
-#    logger.debug('Making explicit measurement: parameter_value_map=%s, explicit_measurement=%s'
-#                 % (parameter_value_map, explicit_measurement))
-    em = instantiate_binding(parameter_value_map, explicit_measurement.binding,
-                             explicit_measurements.registry)
-    if explicit_measurement.measurement_label:
-        em.measurement_label = explicit_measurement.measurement_label
-    return em
+def make_from_list(object_dicts, parameters, registry):
+    results = []
+    for od in object_dicts:
+        results.append(instantiate_binding(od, parameters, registry))
+    return results
 
-def make_strand_factory(parameter_value_map, strand_factory_binding):
-#    logger.debug('Making strand factory: parameter_value_map=%s, strand_factory=%s'
-#                 % (parameter_value_map, strand_factory))
-    return instantiate_binding(parameter_value_map,
-                               strand_factory_binding,
-                               strand_factories.registry)
-
-def make_transition(parameter_value_map, transition):
-#    logger.debug('Making transition: parameter_value_map=%s, transition=%s'
-#                 % (parameter_value_map, transition))
-    t = instantiate_binding(parameter_value_map,
-                            transition.binding,
-                            transitions.registry)
-    if transition.measurement_label:
-        t.measurement_label = transition.measurement_label
-    return t
+def make_concentrations(concentrations_dict, parameters):
+    result = collections.defaultdict(concentrations.ZeroConcentration)
+    for conc_dict in concentrations_dict:
+        result[conc_dict['state']] = instantiate_binding(
+                conc_dict, parameters, concentrations.registry)
+    return result

@@ -15,5 +15,5 @@
 
 import yaml
 
-def parse_object_graph_file(par_file):
-    return {}
+def parse_object_graph_file(obj_file):
+    return yaml.load(obj_file)

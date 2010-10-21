@@ -26,13 +26,11 @@ pointed_adp_depolymerization_rate: [0.25, 0.25, 1, linear]
 
 
 # Hydrolysis parameters
-cleavage_rate: [0.001, 10, 1000, log]
+cleavage_rate: [0.03, 3, 100, linear]
+cleavage_cooperativity: [0.0001, 10000000, 1000, log]
 
-cleavage_cooperativity: [0.000001, 10000000, 1000, log]
-
-release_rate: [0.00001, 0.1, 1000, log]
-
-release_cooperativity: [0.000001, 10000000, 1000, log]
+release_rate: [0.0003, 0.03, 100, linear]
+release_cooperativity: [0.00001, 10000000, 1000, log]
 
 
 # Initial Strand

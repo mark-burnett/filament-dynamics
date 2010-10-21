@@ -1,10 +1,11 @@
-filament_factory:
-    class_name: normal_distribution
+filaments:
+    class_name: NormalDistribution
     parameters:
         mean: average_initial_filament_length
         standard_deviation: initial_filament_length_deviation
-        initial_state: ADP
         number: number_of_filaments
+    fixed_parameters:
+        initial_state: ADP
 
 concentrations:
     - class_name: FixedReagent
@@ -39,46 +40,54 @@ end_conditions:
 transitions:
     # Polymerization
     - class_name: BarbedPolymerization
-      parameters:
+      fixed_parameters:
           state: ATP
+      parameters:
           rate: barbed_atp_polymerization_rate
     - class_name: BarbedPolymerization
-      parameters:
+      fixed_parameters:
           state: ADPPi
+      parameters:
           rate: barbed_adppi_polymerization_rate
     - class_name: BarbedPolymerization
-      parameters:
+      fixed_parameters:
           state: ADP
+      parameters:
           rate: barbed_adp_polymerization_rate
 
     # Depolymerization
     - class_name: BarbedDepolymerization
-      parameters:
+      fixed_parameters:
           state: ATP
+      parameters:
           rate: barbed_atp_depolymerization_rate
     - class_name: BarbedDepolymerization
-      parameters:
+      fixed_parameters:
           state: ADPPi
+      parameters:
           rate: barbed_adppi_depolymerization_rate
     - class_name: BarbedDepolymerization
-      parameters:
+      fixed_parameters:
           state: ADP
+      parameters:
           rate: barbed_adp_depolymerization_rate
 
     # Hydrolysis
-    - class_name: Cooperative
+    - class_name: CooperativeHydrolysis
       label: cleavage
-      parameters:
+      fixed_parameters:
           old_state: ATP
           new_state: ADPPi
+      parameters:
           rate: cleavage_rate
           cooperativity: cleavage_cooperativity
 
-    - class_name: CooperativeWithByproduct
+    - class_name: CooperativeHydrolysisWithByproduct
       label: release
-      parameters:
+      fixed_parameters:
           old_state: ADPPi
           new_state: ADP
           byproduct: Pi
+      parameters:
           rate: release_rate
           cooperativity: release_cooperativity

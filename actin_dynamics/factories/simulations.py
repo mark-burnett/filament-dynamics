@@ -13,39 +13,29 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import utils
+import random
 
 from . import shortcuts
-from .concentrations import make_concentrations
 
 from ..simulations import Simulation
 
 def make_simulation(object_graph, parameters):
-    # create parameter map (dict)
-    parameter_value_map = utils.make_parameter_value_map(parameter_set)
+    filaments = shortcuts.make_filaments(object_graph['filaments'],
+                                         parameters)
+    print 'num fil', len(filaments)
 
-    # create initial strand
-    strand_factory = shortcuts.make_strand_factory(parameter_value_map,
-            simulation.strand_factory_binding)
+    transitions = shortcuts.make_transitions(object_graph['transitions'],
+                                             parameters)
+    print transitions
 
-    # create transitions
-    transitions = utils.make_many(shortcuts.make_transition,
-                                  parameter_value_map,
-                                  simulation.transitions)
+    # XXX create explicit measurements?
 
-    # create explicit measurements
-    explicit_measurements = utils.make_many(shortcuts.make_explicit_measurement,
-                                            parameter_value_map,
-                                            simulation.explicit_measurements)
+    end_conditions = shortcuts.make_end_conditions(
+            object_graph['end_conditions'], parameters)
+    print end_conditions
 
-    # create end conditions
-    end_conditions = utils.make_many(shortcuts.make_end_condition,
-                                     parameter_value_map,
-                                     simulation.end_conditions)
-
-    # create concentrations
-    concentrations =  make_concentrations(parameter_value_map,
-                                          simulation.concentrations)
+    concentrations = shortcuts.make_concentrations(
+        object_graph['concentrations'], parameters)
 
     # assemble simulation
     return Simulation(transitions, concentrations, explicit_measurements,
