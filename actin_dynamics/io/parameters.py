@@ -13,7 +13,36 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
+
 import yaml
+import numpy
+
+from ..factories import ParameterMeshIterator
+
+
+def _make_mesh(min_value, max_value, mesh_size, mesh_type):
+    if 'linear' == mesh_type.lower():
+        return numpy.linspace(min_value, max_value, mesh_size)
+    elif 'log' == mesh_type.lower():
+        umin_value = numpy.log(min_value)
+        umax_value = numpy.log(max_value)
+        transformed_range = numpy.linspace(umin_value, umax_value, mesh_size)
+        return numpy.exp(transformed_range)
+    else:
+        raise RuntimeError('Unsupported mesh type specified for make_mesh.')
+
+def _make_parameter_mesh_iterator(parameter_ranges):
+    names = []
+    meshes = []
+    for name, range_info in parameter_ranges.iteritems():
+        names.append(name)
+        meshes.append(_make_mesh(*range_info))
+
+    parameter_sets = itertools.product(*meshes)
+    
+    return ParameterMeshIterator(names, parameter_sets)
 
 def parse_parameters_file(par_file):
-    return {}
+    parameter_ranges = yaml.load(par_file)
+    return _make_parameter_mesh_iterator(parameter_ranges)

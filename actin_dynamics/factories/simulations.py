@@ -13,8 +13,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import random
-
 from . import utils
 
 from . import shortcuts
@@ -22,14 +20,7 @@ from .concentrations import make_concentrations
 
 from ..simulations import Simulation
 
-from actin_dynamics.common import logutils
-logger = logutils.getLogger(__file__)
-
-__all__ = ['make_simulation']
-
-def make_simulation(simulation, parameter_set):
-    logger.debug('Instantiating Simulation: simulation=%s, parameter_set=%s.'
-                 % (simulation, parameter_set))
+def make_simulation(object_graph, parameters):
     # create parameter map (dict)
     parameter_value_map = utils.make_parameter_value_map(parameter_set)
 
@@ -61,12 +52,12 @@ def make_simulation(simulation, parameter_set):
                       end_conditions, strand_factory, random.uniform)
 
 class SimulationFactory(object):
-    def __init__(self, object_graph, parameter_iterator):
+    def __init__(self, object_graph, parameters):
         self.object_graph = object_graph
-        self.parameter_iterator = parameter_iterator
+        self.parameters = parameters
 
     def __iter__(self):
         return self
 
     def next(self):
-        return make_something_happen(self.object_graph, next(self.parameters))
+        return make_simulation(self.object_graph, next(self.parameters))

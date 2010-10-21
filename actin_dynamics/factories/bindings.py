@@ -13,8 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from actin_dynamics.common import logutils
-logger = logutils.getLogger(__file__)
+#from actin_dynamics.common import logutils
+#logger = logutils.getLogger(__file__)
 
 def instantiate_binding(parameter_value_map, binding, registry):
     cls = registry[binding.class_name]
@@ -25,7 +25,7 @@ def instantiate_binding(parameter_value_map, binding, registry):
     kwargs = state_map
     kwargs.update(_make_parameter_kwargs(parameter_value_map, parameter_name_map,
                                          cls.parameters))
-    logger.debug('Instantiating binding: %s' % binding)
+#    logger.debug('Instantiating binding: %s' % binding)
     return cls(**_kwargs_to_ascii(kwargs))
 
 def _make_parameter_kwargs(parameter_value_map, parameter_name_map, parameters):

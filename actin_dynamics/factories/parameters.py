@@ -16,20 +16,14 @@
 import itertools
 
 class ParameterMeshIterator(object):
-    def __init__(self, names, values):
+    def __init__(self, names, parameter_sets):
         self.names = names
-        self.values = values
+        self.parameter_sets = parameter_sets
     
     def __iter__(self):
         return self
 
     def next(self):
-        next_values = next(self.values)
-        return dict((n, v) for n, v in itertools.izip(self.names, next_values))
-
-def make_parameter_mesh_iterator(parameter_ranges):
-    names = []
-    values = []
-    for name, range_info in parameter_ranges.iteritems():
-        pass
-    return ParameterMeshIterator(names, values)
+        next_parameter_sets = next(self.parameter_sets)
+        return dict((n, v) for n, v in itertools.izip(self.names,
+                                                      next_parameter_sets))

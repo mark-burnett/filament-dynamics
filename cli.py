@@ -32,8 +32,7 @@ def parse_command_line():
 def cli_main():
     args = parse_command_line()
 
-    parameter_ranges = io.parse_parameters_file(open(args.parameters))
-    parameters = factories.make_parameter_mesh_iterator(parameter_ranges)
+    parameters = io.parse_parameters_file(open(args.parameters))
 
     object_graph = io.parse_object_graph_file(open(args.object_graph))
     simulation_factory = factories.SimulationFactory(object_graph, parameters)
