@@ -11,7 +11,7 @@
             <binding class_name='SingleState'>
                 <parameter_mappings>
                     <parameter_mapping
-                        parameter_label_name='Initial Strand Length'
+                        parameter_name='Initial Strand Length'
                         local_name='length'/>
                 </parameter_mappings>
 
@@ -28,15 +28,15 @@
         <concentrations>
             <concentration
                 state_name='ATP'
-                measurement_label_name='ATP Actin Concentration'>
+                measurement_name='ATP Actin Concentration'>
 
                 <binding class_name='FixedReagent'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='Initial ATP Concentration'
+                            parameter_name='Initial ATP Concentration'
                             local_name='initial_concentration'/>
                         <parameter_mapping
-                            parameter_label_name='Filament Tip Concentration'
+                            parameter_name='Filament Tip Concentration'
                             local_name='filament_tip_concentration'/>
                     </parameter_mappings>
 
@@ -47,15 +47,15 @@
 
             <concentration
                 state_name='ADP'
-                measurement_label_name='ADP Actin Concentration'>
+                measurement_name='ADP Actin Concentration'>
 
                 <binding class_name='FixedReagent'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='Initial ADP Concentration'
+                            parameter_name='Initial ADP Concentration'
                             local_name='initial_concentration'/>
                         <parameter_mapping
-                            parameter_label_name='Filament Tip Concentration'
+                            parameter_name='Filament Tip Concentration'
                             local_name='filament_tip_concentration'/>
                     </parameter_mappings>
 
@@ -66,15 +66,15 @@
 
             <concentration
                 state_name='Pi'
-                measurement_label_name='Phosphate Concentration'>
+                measurement_name='Phosphate Concentration'>
 
                 <binding class_name='FixedReagent'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='Initial Pi Concentration'
+                            parameter_name='Initial Pi Concentration'
                             local_name='initial_concentration'/>
                         <parameter_mapping
-                            parameter_label_name='Filament Tip Concentration'
+                            parameter_name='Filament Tip Concentration'
                             local_name='filament_tip_concentration'/>
                     </parameter_mappings>
 
@@ -92,7 +92,7 @@
                 <binding class_name='Duration'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='Simulation Duration'
+                            parameter_name='Simulation Duration'
                             local_name='duration'/>
                     </parameter_mappings>
 
@@ -107,7 +107,7 @@
         <!-- Explicit Measurements -->
         <explicit_measurements>
             <explicit_measurement
-                measurement_label_name='Strand Length'>
+                measurement_name='Strand Length'>
 
                 <binding class_name='StrandLength'>
                     <parameter_mappings>
@@ -126,12 +126,12 @@
             <!-- Hydrolysis Transitions -->
             <transition
                 name='Cleavage'
-                measurement_label_name='Cleavage Count'>
+                measurement_name='Cleavage Count'>
 
                 <binding class_name='RandomHydrolysis'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='Cleavage Rate'
+                            parameter_name='Cleavage Rate'
                             local_name='rate'/>
                     </parameter_mappings>
 
@@ -148,12 +148,12 @@
 
             <transition
                 name='Release'
-                measurement_label_name='Release Count'>
+                measurement_name='Release Count'>
 
                 <binding class_name='RandomHydrolysisWithByproduct'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='Release Rate'
+                            parameter_name='Release Rate'
                             local_name='rate'/>
                     </parameter_mappings>
 
@@ -174,12 +174,12 @@
             <!-- Polymerization/Depolymerization Transitions -->
             <transition
                 name='Barbed ATP Polymerization'
-                measurement_label_name='Barbed ATP Polymerization Count'>
+                measurement_name='Barbed ATP Polymerization Count'>
 
                 <binding class_name='BarbedPolymerization'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='Barbed ATP Polymerization Rate'
+                            parameter_name='Barbed ATP Polymerization Rate'
                             local_name='rate'/>
                     </parameter_mappings>
 
@@ -193,12 +193,12 @@
 
             <transition
                 name='Barbed ADP Polymerization'
-                measurement_label_name='Barbed ADP Polymerization Count'>
+                measurement_name='Barbed ADP Polymerization Count'>
 
                 <binding class_name='BarbedPolymerization'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='Barbed ADP Polymerization Rate'
+                            parameter_name='Barbed ADP Polymerization Rate'
                             local_name='rate'/>
                     </parameter_mappings>
 
@@ -212,12 +212,12 @@
 
             <transition
                 name='Barbed ATP Depolymerization'
-                measurement_label_name='Barbed ATP Depolymerization Count'>
+                measurement_name='Barbed ATP Depolymerization Count'>
 
                 <binding class_name='BarbedDepolymerization'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='Barbed ATP Depolymerization Rate'
+                            parameter_name='Barbed ATP Depolymerization Rate'
                             local_name='rate'/>
                     </parameter_mappings>
 
@@ -231,12 +231,12 @@
 
             <transition
                 name='Barbed ADP Depolymerization'
-                measurement_label_name='Barbed ADP Depolymerization Count'>
+                measurement_name='Barbed ADP Depolymerization Count'>
 
                 <binding class_name='BarbedDepolymerization'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='Barbed ADP Depolymerization Rate'
+                            parameter_name='Barbed ADP Depolymerization Rate'
                             local_name='rate'/>
                     </parameter_mappings>
 
@@ -251,12 +251,12 @@
             <!-- In Solution Transitions -->
             <transition
                 name='In Solution Release'
-                measurement_label_name='In Solution Release Count'>
+                measurement_name='In Solution Release Count'>
 
                 <binding class_name='ConcentrationChangeWithByproduct'>
                     <parameter_mappings>
                         <parameter_mapping
-                            parameter_label_name='Release Rate In Solution'
+                            parameter_name='Release Rate In Solution'
                             local_name='rate'/>
                     </parameter_mappings>
 
