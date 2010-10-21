@@ -13,10 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import concentrations
-import end_conditions
-import explicit_measurements
-import strand_factories
-import transitions
-
-del meta_classes
+from parameters import *
+from simulations import *
+#import simulations
+#from shortcuts import *
+#from simulations import *
+#
+#del shortcuts
+#del simulations

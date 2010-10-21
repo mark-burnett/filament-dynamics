@@ -59,3 +59,14 @@ def make_simulation(simulation, parameter_set):
     # assemble simulation
     return Simulation(transitions, concentrations, explicit_measurements,
                       end_conditions, strand_factory, random.uniform)
+
+class SimulationFactory(object):
+    def __init__(self, object_graph, parameter_iterator):
+        self.object_graph = object_graph
+        self.parameter_iterator = parameter_iterator
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return make_something_happen(self.object_graph, next(self.parameters))

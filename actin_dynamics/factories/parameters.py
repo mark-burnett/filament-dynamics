@@ -13,10 +13,23 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import concentrations
-import end_conditions
-import explicit_measurements
-import strand_factories
-import transitions
+import itertools
 
-del meta_classes
+class ParameterMeshIterator(object):
+    def __init__(self, names, values):
+        self.names = names
+        self.values = values
+    
+    def __iter__(self):
+        return self
+
+    def next(self):
+        next_values = next(self.values)
+        return dict((n, v) for n, v in itertools.izip(self.names, next_values))
+
+def make_parameter_mesh_iterator(parameter_ranges):
+    names = []
+    values = []
+    for name, range_info in parameter_ranges.iteritems():
+        pass
+    return ParameterMeshIterator(names, values)

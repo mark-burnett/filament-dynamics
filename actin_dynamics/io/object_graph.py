@@ -13,9 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import simulations
-#from shortcuts import *
-#from simulations import *
-#
-#del shortcuts
-#del simulations
+import yaml
+
+def parse_object_graph_file(par_file):
+    return {}

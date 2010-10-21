@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -14,26 +15,28 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+import cPickle
 
+from actin_dynamics import io, factories
 
 def parse_command_line():
     parser = argparse.ArgumentParser()
-    parser.add_argument('object_graph', default='object_graph.yaml',
+    parser.add_argument('--object_graph', default='object_graph.yaml',
                         help='Object graph definition file.')
-    parser.add_argument('parameters', default='parameters.yaml',
+    parser.add_argument('--parameters', default='parameters.yaml',
                         help='Parameters file.')
-    parser.add_argument('output_file', default='output.pickle',
+    parser.add_argument('--output_file', default='output.pickle',
                         help='Output pickle file name.')
     return parser.parse_args()
 
 def cli_main():
     args = parse_command_line()
 
-    parameter_ranges = parse_parameters_file(open(args.parameters))
-    parameter_iterator = make_parameter_mesh_iterator(parameter_ranges)
+    parameter_ranges = io.parse_parameters_file(open(args.parameters))
+    parameters = factories.make_parameter_mesh_iterator(parameter_ranges)
 
-    object_graph = parse_object_graph_file(open(args.object_graph))
-    simulation_factory = SimulationFactory(object_graph, parameter_iterator)
+    object_graph = io.parse_object_graph_file(open(args.object_graph))
+    simulation_factory = factories.SimulationFactory(object_graph, parameters)
 
     results = [s.run() for s in simulation_factory]
 
