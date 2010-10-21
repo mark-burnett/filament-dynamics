@@ -1,4 +1,0 @@
-<!ELEMENT measurement_labels (measurement_label*)>
-<!ELEMENT measurement_label EMPTY>
-    <!ATTLIST measurement_label name CDATA #REQUIRED>
-    <!ATTLIST measurement_label description CDATA #IMPLIED>

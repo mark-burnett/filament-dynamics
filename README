@@ -14,16 +14,7 @@ Python version 2.6 or 2.7 (Not 3.x ready yet.)
 
 Python Packages:
 argparse (if using python 2.6)
-configobj
-elixir
-lxml
-psycopg2 (to use postgresql)
-sqlalchemy
-twisted
-wxpython
-
-External Requirements:
-postgresql
+discover
 
 ------------------------------------------------------------------------
 - Setup                                                                -
