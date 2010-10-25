@@ -51,3 +51,8 @@ initial_pi_concentration: [0, 0, 1, linear]
 
 # End Conditions
 simulation_duration: [40, 40, 1, linear]
+
+# Measurements
+atp_flourescence:   [1, 1, 1, linear]
+adppi_flourescence: [1, 1, 1, linear]
+adp_flourescence:   [1, 1, 1, linear]

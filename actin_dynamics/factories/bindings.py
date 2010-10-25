@@ -18,7 +18,11 @@ def instantiate_binding(object_dict, parameters, registry):
     par_map = object_dict['parameters']
     kwargs = dict((local_name, parameters[global_name])
                   for local_name, global_name in par_map.iteritems())
-    fixed_pars = object_dict['fixed_parameters']
-    kwargs.update(fixed_pars)
+    # NOTE getattr doesn't appear to work on yaml 'dicts' for some reason.
+    try:
+        fixed_pars = object_dict['fixed_parameters']
+        kwargs.update(fixed_pars)
+    except:
+        pass
 
     return cls(**kwargs)

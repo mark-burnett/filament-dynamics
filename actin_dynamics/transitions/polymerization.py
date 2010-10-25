@@ -29,8 +29,8 @@ class _FixedRate(_FilamentTransition):
         _FilamentTransition.__init__(self)
 
     def R(self, filaments, concentrations):
-        return [self.rate * concentrations[self.state].value
-                for s in filaments]
+        value = self.rate * concentrations[self.state].value
+        return [value for s in filaments]
 
     def perform(self, time, filaments, concentrations, index, r):
         _FilamentTransition.perform(self, time, filaments, concentrations, index, r)

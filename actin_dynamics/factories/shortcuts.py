@@ -19,9 +19,9 @@ from bindings import instantiate_binding
 
 from .. import concentrations
 from .. import end_conditions
+from .. import explicit_measurements
 from .. import filaments
 from .. import transitions
-#from .. import explicit_measurements
 
 def make_filaments(filaments_dict, parameters):
     factory = instantiate_binding(filaments_dict, parameters, filaments.registry)
@@ -34,6 +34,10 @@ def make_transitions(transitions_dict, parameters):
 def make_end_conditions(end_conditions_dict, parameters):
     return make_from_list(end_conditions_dict, parameters,
                           end_conditions.registry)
+
+def make_explicit_measurements(explicit_measurements_dict, parameters):
+    return make_from_list(explicit_measurements_dict, parameters,
+                          explicit_measurements.registry)
 
 def make_from_list(object_dicts, parameters, registry):
     results = []

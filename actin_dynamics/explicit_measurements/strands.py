@@ -21,3 +21,7 @@ class StrandLength(_Measurement):
 
     def perform(self, time, strands):
         self.store(time, map(len, strands))
+
+class Flourescence(_Measurement):
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs

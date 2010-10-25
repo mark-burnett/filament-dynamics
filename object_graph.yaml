@@ -37,6 +37,13 @@ end_conditions:
       parameters:
           duration: simulation_duration
 
+explicit_measurements:
+    - class_name: Flourescence
+      parameters:
+          ATP: atp_flourescence
+          ADPPi: adppi_flourescence
+          ADP: adp_flourescence
+
 transitions:
     # Polymerization
     - class_name: BarbedPolymerization

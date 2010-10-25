@@ -22,12 +22,11 @@ from base_classes import EndCondition as _EndCondition
 import random
 
 class Duration(_EndCondition):
-    description = 'End simulation after duration seconds.'
-    parameters = ['duration']
+    'End simulation after duration seconds.'
 
     __slots__ = ['duration']
     def __init__(self, duration=None):
-        if duration <= 0:
+        if duration is None or duration <= 0:
             raise ValueError('Illegal duration.')
         self.duration = duration
 
@@ -38,12 +37,11 @@ class Duration(_EndCondition):
         return time > self.duration
 
 class RandomDuration(Duration):
-    description = 'End simulation after 0 to max_duration seconds.'
-    parameters = ['max_duration']
+    'End simulation after 0 to max_duration seconds.'
 
     __slots__ = ['max_duration']
     def __init__(self, max_duration=None):
-        if max_duration <= 0:
+        if max_duration is None or max_duration <= 0:
             raise ValueError('Illegal max_duration.')
         self.max_duration = max_duration
 

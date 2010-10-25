@@ -22,24 +22,26 @@ from ..simulations import Simulation
 def make_simulation(object_graph, parameters):
     filaments = shortcuts.make_filaments(object_graph['filaments'],
                                          parameters)
-    print 'num fil', len(filaments)
-
     transitions = shortcuts.make_transitions(object_graph['transitions'],
                                              parameters)
-    print transitions
+    print 'tr', transitions
 
-    # XXX create explicit measurements?
+    explicit_measurements = shortcuts.make_explicit_measurements(
+            object_graph['explicit_measurements'], parameters)
+    print 'em', explicit_measurements
 
     end_conditions = shortcuts.make_end_conditions(
             object_graph['end_conditions'], parameters)
-    print end_conditions
+    print 'ecs', end_conditions
 
     concentrations = shortcuts.make_concentrations(
         object_graph['concentrations'], parameters)
+    print 'conc', concentrations
+
 
     # assemble simulation
     return Simulation(transitions, concentrations, explicit_measurements,
-                      end_conditions, strand_factory, random.uniform)
+                      end_conditions, filaments, random.uniform)
 
 class SimulationFactory(object):
     def __init__(self, object_graph, parameters):
