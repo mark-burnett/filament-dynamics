@@ -28,7 +28,7 @@ class Transition(object):
     def __init__(self, measurement_label=None):
         self.measurement_label = measurement_label
 
-    def perform(self, time, strands, concentrations, index, r):
+    def perform(self, time, filaments, concentrations, index, r):
         pass
 
 
@@ -36,15 +36,15 @@ class FilamentTransition(Transition):
     skip_registration = True
 
     __slots__ = ['data', 'count']
-    def __init__(self, number=None, measurement_label=None):
-        self.count = list(itertools.repeat(0, number))
-        self.data  = [[(0, 0)] for i in xrange(number)]
+    def __init__(self, measurement_label=None):
         Transition.__init__(self, measurement_label=measurement_label)
 
-    def perform(self, time, strands, concentrations, index, r):
-        self.count[index] += 1
-        self.data[index].append((time, self.count[index]))
-        Transition.perform(self, time, strands, concentrations, index, r)
+    def perform(self, time, filaments, concentrations, index, r):
+        # Store data with each filament
+        if self.measurement_label:
+            filament = filaments[index]
+            filament.measurements[self.measurement_label] += 1
+        Transition.perform(self, time, filaments, concentrations, index, r)
 
 class SolutionTransition(Transition):
     skip_registration = True
@@ -55,7 +55,7 @@ class SolutionTransition(Transition):
         self.data  = [(0, 0)]
         Transition.__init__(self, measurement_label=measurement_label)
 
-    def perform(self, time, strands, concentrations, index, r):
+    def perform(self, time, filaments, concentrations, index, r):
         self.count += 1
         self.data.append((time, self.count))
-        Transition.perform(self, time, strands, concentrations, index, r)
+        Transition.perform(self, time, filaments, concentrations, index, r)

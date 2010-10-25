@@ -17,11 +17,8 @@ from base_classes import Transition as _FilamentTransition
 
 class _FixedRate(_FilamentTransition):
     skip_registration = True
-    parameters = ['rate', 'number']
-    states = ['state']
-
     __slots__ = ['state', 'rate']
-    def __init__(self, state=None, rate=None, number=None):
+    def __init__(self, state=None, rate=None):
         """
         state - state to depolymerize
         rate  - depolymerization rate (constant)
@@ -29,23 +26,23 @@ class _FixedRate(_FilamentTransition):
         self.state = state
         self.rate  = rate
 
-        _FilamentTransition.__init__(self, number)
+        _FilamentTransition.__init__(self)
 
-    def R(self, strands, concentrations):
+    def R(self, filaments, concentrations):
         result = []
-        for strand in strands:
+        for strand in filaments:
             if self.state == strand[-1]:
                 result.append(self.rate)
             else:
                 result.append(0)
         return result
 
-    def perform(self, time, strands, concentrations, index, r):
-        _FilamentTransition.perform(self, time, strands, concentrations, index, r)
+    def perform(self, time, filaments, concentrations, index, r):
+        _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
 
 class BarbedDepolymerization(_FixedRate):
-    def perform(self, time, strands, concentrations, index, r):
-        current_strand = strands[index]
+    def perform(self, time, filaments, concentrations, index, r):
+        current_strand = filaments[index]
         current_strand.shrink_barbed_end()
         concentrations[self.state].add_monomer()
-        _FixedRate.perform(self, time, strands, concentrations, index, r)
+        _FixedRate.perform(self, time, filaments, concentrations, index, r)

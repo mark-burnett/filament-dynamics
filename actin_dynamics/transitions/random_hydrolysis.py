@@ -18,30 +18,25 @@ from . import mixins as _mixins
 
 
 class RandomHydrolysis(_FilamentTransition):
-    # XXX Are we going to use these descriptions?
-    description = 'Independent state change.'
-    parameters  = ['rate', 'number']
-    states      = ['old_state', 'new_state']
-
     __slots__ = ['old_state', 'rate', 'new_state']
-    def __init__(self, old_state=None, rate=None, new_state=None, number=None):
+    def __init__(self, old_state=None, rate=None, new_state=None):
         self.old_state = old_state
         self.rate      = rate
         self.new_state = new_state
 
-        _FilamentTransition.__init__(self, number=number)
+        _FilamentTransition.__init__(self)
 
-    def R(self, strands, concentrations):
+    def R(self, filaments, concentrations):
         return [self.rate * len(s.state_indices[self.old_state])
-                for s in strands]
+                for s in filaments]
 
-    def perform(self, time, strands, concentrations, index, r):
+    def perform(self, time, filaments, concentrations, index, r):
         state_index = int(r / self.rate)
-        current_strand = strands[index]
+        current_strand = filaments[index]
         strand_index = current_strand.state_indices[self.old_state][state_index]
         current_strand.set_state(strand_index, self.new_state)
 
-        _FilamentTransition.perform(self, time, strands, concentrations, index, r)
+        _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
 
 
 RandomHydrolysisWithByproduct = _mixins.add_byproduct(RandomHydrolysis)

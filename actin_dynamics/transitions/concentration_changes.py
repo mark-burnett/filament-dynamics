@@ -17,9 +17,6 @@ from base_classes import SolutionTransition as _SolutionTransition
 from . import mixins as _mixins
 
 class ConcentrationChange(_SolutionTransition):
-    parameters = ['rate']
-    states = ['old_state', 'new_state']
-
     __slots__ = ['old_state', 'rate', 'new_state']
     def __init__(self, old_state=None, rate=None, new_state=None):
         self.old_state = old_state
@@ -28,14 +25,14 @@ class ConcentrationChange(_SolutionTransition):
 
         _SolutionTransition.__init__(self)
 
-    def R(self, strands, concentrations):
+    def R(self, filaments, concentrations):
         return self.rate * concentrations[self.old_state].value
 
-    def perform(self, time, strands, concentrations, index, r):
+    def perform(self, time, filaments, concentrations, index, r):
         concentrations[self.old_state].remove_monomer()
         concentrations[self.new_state].add_monomer()
 
-        _SolutionTransition.perform(self, time, strands, concentrations, index, r)
+        _SolutionTransition.perform(self, time, filaments, concentrations, index, r)
 
 
 ConcentrationChangeWithByproduct = _mixins.add_byproduct(ConcentrationChange)

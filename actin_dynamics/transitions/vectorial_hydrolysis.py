@@ -18,31 +18,28 @@ from . import mixins as _mixins
 
 
 class VectorialHydrolysis(_FilamentTransition):
-    parameters = ['rate']
-    states = ['old_state', 'pointed_neighbor', 'new_state']
-
     __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'new_state']
     def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
-                 new_state=None, number=None):
+                 new_state=None):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
         self.rate             = rate
         self.new_state        = new_state
 
-        _FilamentTransition.__init__(self, number=number)
+        _FilamentTransition.__init__(self)
 
-    def R(self, strands, concentrations):
+    def R(self, filaments, concentrations):
         return [self.rate * len(
                     s.boundary_indices[self.old_state][self.pointed_neighbor])
-                for s in strands]
+                for s in filaments]
 
-    def perform(self, time, strands, concentrations, index, r):
-        current_strand = strands[index]
+    def perform(self, time, filaments, concentrations, index, r):
+        current_strand = filaments[index]
         boundary_index = int(r / self.rate)
         strand_index = (current_strand.boundary_indices
                 [self.old_state][self.pointed_neighbor][boundary_index])
         current_strand.set_state(strand_index, self.new_state)
 
-        _FilamentTransition.perform(self, time, strands, concentrations, index, r)
+        _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
 
 VectorialHydrolysisWithByproduct = _mixins.add_byproduct(VectorialHydrolysis)
