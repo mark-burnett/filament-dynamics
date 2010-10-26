@@ -20,8 +20,8 @@ def _ddict_factory():
     # XXX Consider making these sets instead of lists for performance reasons.
     return collections.defaultdict(list)
 
-class Strand(object):
-    __slots__ = ['states', 'state_indices', 'boundary_indices']
+class Filament(object):
+    __slots__ = ['states', 'state_indices', 'boundary_indices', 'measurements']
     def __init__(self, iterable):
         self.states = list(iterable)
 
@@ -40,6 +40,7 @@ class Strand(object):
                     if barbed_state != pointed_state:
                         self.boundary_indices[barbed_state][pointed_state].append(i)
 
+
     def grow_barbed_end(self, state):
         self.states.append(state)
         self._update_statistics(len(self.states) - 1, None, state)
@@ -47,6 +48,13 @@ class Strand(object):
     def shrink_barbed_end(self):
         old_state = self.states.pop()
         self._update_statistics(len(self.states), old_state, None)
+
+
+    def grow_pointed_end(self, state):
+        raise NotImplementedError()
+
+    def shrink_pointed_end(self):
+        raise NotImplementedError()
 
 
     def set_state(self, index, state):

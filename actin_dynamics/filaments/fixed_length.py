@@ -15,11 +15,11 @@
 
 import itertools
 
-from base_classes import StrandFactory as _StrandFactory
+from base_classes import FilamentFactory as _FilamentFactory
 
-from .strands.single_strand import Strand
+from .single_strand import Filament
 
-class SingleState(_StrandFactory):
+class SingleState(_FilamentFactory):
     description = 'Creates strands of a fixed state and length.'
     states = ['state']
     parameters = ['length']
@@ -29,7 +29,7 @@ class SingleState(_StrandFactory):
         self.length = int(length)
 
     def create(self):
-        return Strand(itertools.repeat(self.state, self.length))
+        return Filament(itertools.repeat(self.state, self.length))
 
 class SingleStateFromConcentrations(SingleState):
     parameters = ['concentration', 'filament_tip_concentration']
@@ -37,7 +37,7 @@ class SingleStateFromConcentrations(SingleState):
         length = int(seed_concentration / filament_tip_concentration)
         SingleState.__init__(self, state, length)
 
-class NormalDistribution(_StrandFactory):
+class NormalDistribution(_FilamentFactory):
     def __init__(self, mean=None, standard_deviation=None,
                  initial_state=None, number=None):
         self.mean = mean
@@ -46,4 +46,5 @@ class NormalDistribution(_StrandFactory):
         self.number = number
 
     def create(self):
+        # XXX Write this.
         return []

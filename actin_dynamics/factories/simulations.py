@@ -26,9 +26,9 @@ def make_simulation(object_graph, parameters):
                                              parameters)
     print 'tr', transitions
 
-    explicit_measurements = shortcuts.make_explicit_measurements(
-            object_graph['explicit_measurements'], parameters)
-    print 'em', explicit_measurements
+    measurements = shortcuts.make_measurements(
+            object_graph['measurements'], parameters)
+    print 'em', measurements
 
     end_conditions = shortcuts.make_end_conditions(
             object_graph['end_conditions'], parameters)
@@ -40,7 +40,7 @@ def make_simulation(object_graph, parameters):
 
 
     # assemble simulation
-    return Simulation(transitions, concentrations, explicit_measurements,
+    return Simulation(transitions, concentrations, measurements,
                       end_conditions, filaments, random.uniform)
 
 class SimulationFactory(object):

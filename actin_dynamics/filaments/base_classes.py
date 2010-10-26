@@ -15,9 +15,9 @@
 
 from ..meta_classes import Registration
 
-from registry import strand_factory_registry
+from registry import filament_factory_registry
 
-class StrandFactory(object):
+class FilamentFactory(object):
     __metaclass__ = Registration
-    registry = strand_factory_registry
+    registry = filament_factory_registry
     skip_registration = True

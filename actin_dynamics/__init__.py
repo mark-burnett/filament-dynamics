@@ -15,7 +15,7 @@
 
 import concentrations
 import end_conditions
-import explicit_measurements
+import measurements
 import filaments
 import transitions
 
