@@ -16,12 +16,23 @@
 from base_classes import Measurement as _Measurement
 
 class StrandLength(_Measurement):
-    def __init__(self, number=None):
-        _Measurement.__init__(self, number=number)
+    def __init__(self, label=None):
+        _Measurement.__init__(self, label=label)
 
-    def perform(self, time, strands):
-        self.store(time, map(len, strands))
+    def perform(self, time, filaments):
+        for filament in filaments:
+            self.store(time, len(filament), filament)
 
 class Flourescence(_Measurement):
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
+    def __init__(self, label=None, **kwargs):
+        self.state_strengths = kwargs
+        _Measurement.__init__(self, label=label)
+
+    def perform(self, time, filaments):
+        for filament in filaments:
+            value = self._get_flourescence(filament)
+            self.store(time, value, filament)
+
+    def _get_flourescence(self, filament):
+        return sum(self.state_strengths[state] * filament.state_indices[state]
+                   for state in filament.states.keys())

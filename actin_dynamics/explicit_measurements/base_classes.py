@@ -23,16 +23,14 @@ class Measurement(object):
     __metaclass__ = Registration
     registry = measurement_registry
     skip_registration = True
-    parameters = []
-    states = []
 
-    __slots__ = ['data', 'last_values']
-    def __init__(self, number=None):
-        self.data = [[] for i in xrange(number)]
-        self.last_values = list(itertools.repeat(None, number))
+    __slots__ = ['label']
+    def __init__(self, label=None):
+        self.label = label
 
-    def store(self, time, values):
-        for i, value in enumerate(values):
-            if value != self.last_values[i]:
-                self.last_values[i] = value
-                self.data[i].append((time, value))
+    def store(self, time, value, filament):
+        measurements = filament.measurements[self.label]
+        if measurements:
+            previous_time, previous_value = measurements[-1]
+            if value != previous_value:
+                measurements.append((time, value))

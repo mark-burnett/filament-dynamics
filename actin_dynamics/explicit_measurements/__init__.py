@@ -15,7 +15,7 @@
 
 from registry import measurement_registry as registry
 
-from strands import *
+from filaments import *
 
-del strands
+del filaments
 del base_classes
