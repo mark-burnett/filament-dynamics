@@ -13,15 +13,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class MockExplicitMeasurement(object):
-    __slots__ = ['data', 'index', 'measurement_label']
-    def __init__(self, measurement_label=None, index=0, number=None):
-        self.index = index
-        self.measurement_label = measurement_label
+import unittest
 
-        self.data = [[] for i in xrange(number)]
+import actin_dynamics.filaments.fixed_length
 
-    def perform(self, time, values):
-        for i, value in enumerate(values):
-            self.data[i].append(value[self.index])
+class SingleStateFixedLength(unittest.TestCase):
+    def test_write_me_please(self):
+        self.assertTrue(False)
 
+class SingleStateFromConcentrations(unittest.TestCase):
+    def test_write_me_please(self):
+        self.assertTrue(False)
+
+if '__main__' == __name__:
+    unittest.main()

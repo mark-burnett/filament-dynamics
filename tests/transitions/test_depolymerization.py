@@ -17,17 +17,17 @@ import unittest
 from collections import defaultdict
 
 from tests.mocks.concentrations import MockConcentration
-from actin_dynamics.simulation.strand_factories import Strand
+from actin_dynamics.filaments.single_strand_filaments import Filament
 
-from actin_dynamics.simulation.transitions import BarbedDepolymerization
+from actin_dynamics.transitions import BarbedDepolymerization
 
 class BarbedDepolymerizationSingleFilament(unittest.TestCase):
     def setUp(self):
-        self.filament = Strand([None, 1, 2, 1])
+        self.filament = Filament([None, 1, 2, 1])
         self.concentrations = defaultdict(MockConcentration)
 
-        self.depoly_one = BarbedDepolymerization(state=1, rate=1, number=1)
-        self.depoly_two = BarbedDepolymerization(state=2, rate=2, number=1)
+        self.depoly_one = BarbedDepolymerization(state=1, rate=1)
+        self.depoly_two = BarbedDepolymerization(state=2, rate=2)
 
     def test_rates(self):
         self.assertEqual(self.depoly_one.R([self.filament], None), [1])
@@ -35,17 +35,17 @@ class BarbedDepolymerizationSingleFilament(unittest.TestCase):
 
     def test_normal_perform(self):
         self.depoly_one.perform(None, [self.filament], self.concentrations, 0, None)
-        self.assertEqual(self.filament.states, [None, 1, 2])
+        self.assertEqual(list(self.filament.states), [None, 1, 2])
         self.assertEqual(self.depoly_one.R([self.filament], None), [0])
         self.assertEqual(self.depoly_two.R([self.filament], None), [2])
 
         self.depoly_two.perform(None, [self.filament], self.concentrations, 0, None)
-        self.assertEqual(self.filament.states, [None, 1])
+        self.assertEqual(list(self.filament.states), [None, 1])
         self.assertEqual(self.depoly_one.R([self.filament], None), [1])
         self.assertEqual(self.depoly_two.R([self.filament], None), [0])
 
         self.depoly_one.perform(None, [self.filament], self.concentrations, 0, None)
-        self.assertEqual(self.filament.states, [None])
+        self.assertEqual(list(self.filament.states), [None])
         self.assertEqual(self.depoly_one.R([self.filament], None), [0])
         self.assertEqual(self.depoly_two.R([self.filament], None), [0])
 

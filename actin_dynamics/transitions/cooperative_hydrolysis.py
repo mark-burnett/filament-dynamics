@@ -39,7 +39,7 @@ class CooperativeHydrolysis(_FilamentTransition):
 
     def _random_rate(self, filament):
         return (self.rate *
-                filament.non_boundary_state_index(self.old_state,
+                filament.non_boundary_state_count(self.old_state,
                                                   self.pointed_neighbor))
 
     def perform(self, time, filaments, concentrations, index, r):
@@ -64,8 +64,10 @@ class CooperativeHydrolysis(_FilamentTransition):
         filament[state_index] = self.new_state
 
     def _perform_random(self, time, filament, r, random_rate):
-        target_index = int(r / self.rate)
-        state_index = filament.non_boundary_state_index(self.old_state, self.pointed_neighbor,
+#        target_index = int(r / self.rate)
+        target_index = int(random_rate / r)
+        state_index = filament.non_boundary_state_index(self.old_state,
+                                                        self.pointed_neighbor,
                                                         target_index)
         filament[state_index] = self.new_state
 

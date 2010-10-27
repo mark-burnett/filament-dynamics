@@ -15,7 +15,7 @@
 
 from registry import filament_factory_registry as registry
 
-from fixed_length import *
+from single_state import *
 
-del fixed_length
+del single_state
 del base_classes

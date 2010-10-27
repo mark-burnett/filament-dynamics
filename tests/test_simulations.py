@@ -17,10 +17,11 @@ import random
 
 import unittest
 
-from actin_dynamics.simulation.simulations import Simulation, running_total
+from actin_dynamics.simulations import Simulation, running_total
+from actin_dynamics.filaments.single_strand_filaments import Filament
 
 from tests.mocks.end_conditions import MockEndCondition
-from tests.mocks.explicit_measurements import MockExplicitMeasurement
+from tests.mocks.measurements import MockMeasurement
 from tests.mocks.random_number_generators import MockRNG
 from tests.mocks.transitions import MockTransition
 from tests.mocks.strand_factories import MockStrandFactory
@@ -30,25 +31,27 @@ class BasicSimulationTests(unittest.TestCase):
     def test_basic_simulation(self):
         transitions    = [MockTransition(1, 1)]
         concentrations = {}
-        measurements   = [MockExplicitMeasurement('mock_measurement', number=1)]
+        measurements   = [MockMeasurement('mock_measurement')]
         ecs            = [MockEndCondition(3)]
-        strand_factory = MockStrandFactory([5], number=1)
+        filaments      = [Filament([5])]
         rng            = MockRNG(0.5)
 
         sim = Simulation(transitions, concentrations, measurements, ecs,
-                         strand_factory, rng)
+                         filaments, rng)
 
-        final_state, sim_data, strand_data = sim.run()
-        self.assertEqual([8], final_state[0])
+        final_state, sim_data, filament_data = sim.run()
+        self.assertEqual([8], list(final_state[0]))
         self.assertEqual(0, len(sim_data))
-        self.assertEqual(1, len(strand_data))
-        self.assertEqual(strand_data['mock_measurement'][0], [6, 7, 8])
+        self.assertEqual(1, len(filament_data))
+        values = [l for t, l in filament_data['mock_measurement'][0]]
+        self.assertEqual(values, [6, 7, 8])
 
 #    def test_multiple_measurements(self):
 #        transitions    = [MockTransition(1, 1)]
 #        concentrations = {}
 #        measurements   = [MockExplicitMeasurement('measurement_1'),
 #                          MockExplicitMeasurement('measurement_2')]
+#        filaments      = MockFilaments()
 #        strand_factory = MockStrandFactory([5])
 #        ecs            = [MockEndCondition(3)]
 #        rng            = MockRNG(0.5)
@@ -60,7 +63,7 @@ class BasicSimulationTests(unittest.TestCase):
 #        self.assertEqual(2, len(data))
 #        self.assertEqual(data['measurement_1'], data['measurement_2'])
 #        self.assertEqual(data['measurement_1'], [6, 7, 8])
-#
+
 #class DetailedSimulationTests(unittest.TestCase):
 #    def test_detailed_logging_tests(self):
 #        '''
@@ -133,16 +136,16 @@ class BasicSimulationTests(unittest.TestCase):
 #        self.assertTrue(final_state[0] > 936)
 #
 #
-#class RunningTotalTest(unittest.TestCase):
-#    def test_running_total(self):
-#        test_data = [[0, 1, 2, 3, 4, 5],
-#                     [7, 1, 2, 8],
-#                     [-5, 0, -2, 3]]
-#        answers   = [[0, 1, 3, 6, 10, 15],
-#                     [7, 8, 10, 18],
-#                     [-5, -5, -7, -4]]
-#        for a, d in zip(answers, test_data):
-#            self.assertEqual(a, list(running_total(d)))
+class RunningTotalTest(unittest.TestCase):
+    def test_running_total(self):
+        test_data = [[0, 1, 2, 3, 4, 5],
+                     [7, 1, 2, 8],
+                     [-5, 0, -2, 3]]
+        answers   = [[0, 1, 3, 6, 10, 15],
+                     [7, 8, 10, 18],
+                     [-5, -5, -7, -4]]
+        for a, d in zip(answers, test_data):
+            self.assertEqual(a, list(running_total(d)))
 
 if '__main__' == __name__:
     unittest.main()

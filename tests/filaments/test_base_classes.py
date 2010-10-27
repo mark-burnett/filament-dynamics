@@ -15,12 +15,12 @@
 
 import unittest
 
-from actin_dynamics.simulation.strand_factories.base_classes import StrandFactory
+from actin_dynamics.filaments.base_classes import FilamentFactory
 
-class StrandFactoryBase(unittest.TestCase):
+class FilamentFactoryBase(unittest.TestCase):
     def test_exists(self):
-        # There is no functionality to tests, but we need to be able to
-        #  successfully import StrandFactory.
+        # There is no functionality to test, but we need to be able to
+        #  successfully import FilamentFactory.
         pass
 
 if '__main__' == __name__:

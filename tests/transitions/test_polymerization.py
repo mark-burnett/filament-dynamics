@@ -17,15 +17,15 @@ import unittest
 
 from collections import defaultdict
 
-from actin_dynamics.simulation.transitions import BarbedPolymerization
+from actin_dynamics.transitions import BarbedPolymerization
 
-from actin_dynamics.simulation.strand_factories import Strand
+from actin_dynamics.filaments.single_strand_filaments import Filament
 
 from tests.mocks.concentrations import MockConcentration
 
 class BarbedPolymerizationSingleFilament(unittest.TestCase):
     def setUp(self):
-        self.filament = Strand([None, None, None])
+        self.filament = Filament([None, None, None])
 
         self.concentrations = defaultdict(MockConcentration)
         self.concentrations[1] = MockConcentration(value=3)
@@ -40,13 +40,13 @@ class BarbedPolymerizationSingleFilament(unittest.TestCase):
 
     def test_normal_perform(self):
         self.poly_one.perform(None, [self.filament], self.concentrations, 0, None)
-        self.assertEqual(self.filament.states, [None, None, None, 1])
+        self.assertEqual(list(self.filament.states), [None, None, None, 1])
 
         self.poly_two.perform(None, [self.filament], self.concentrations, 0, None)
-        self.assertEqual(self.filament.states, [None, None, None, 1, 2])
+        self.assertEqual(list(self.filament.states), [None, None, None, 1, 2])
 
         self.poly_one.perform(None, [self.filament], self.concentrations, 0, None)
-        self.assertEqual(self.filament.states, [None, None, None, 1, 2, 1])
+        self.assertEqual(list(self.filament.states), [None, None, None, 1, 2, 1])
 
         # Validate rates after some transitions.
         self.test_rates()

@@ -14,37 +14,43 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import itertools
+import random
 
 from base_classes import FilamentFactory as _FilamentFactory
 
-from .single_strand import Filament
+from .single_strand_filaments import Filament
 
-class SingleState(_FilamentFactory):
+class SingleStateFixedLength(_FilamentFactory):
     description = 'Creates strands of a fixed state and length.'
     states = ['state']
     parameters = ['length']
 
-    def __init__(self, state, length):
+    def __init__(self, state=None, length=None, number=None):
         self.state = state
         self.length = int(length)
-
-    def create(self):
-        return Filament(itertools.repeat(self.state, self.length))
-
-class SingleStateFromConcentrations(SingleState):
-    parameters = ['concentration', 'filament_tip_concentration']
-    def __init__(self, state, concentration, filament_tip_concentration):
-        length = int(seed_concentration / filament_tip_concentration)
-        SingleState.__init__(self, state, length)
-
-class NormalDistribution(_FilamentFactory):
-    def __init__(self, mean=None, standard_deviation=None,
-                 initial_state=None, number=None):
-        self.mean = mean
-        self.standard_deviation = standard_deviation
-        self.initial_state = initial_state
         self.number = number
 
     def create(self):
-        # XXX Write this.
-        return []
+        return [Filament(itertools.repeat(self.state, self.length))
+                for i in xrange(number)]
+
+class SingleStateFixedLengthFromConcentrations(SingleStateFixedLength):
+    parameters = ['concentration', 'filament_tip_concentration']
+    def __init__(self, state=None, concentration=None,
+                 filament_tip_concentration=None, number=None):
+        length = int(seed_concentration / filament_tip_concentration)
+        SingleState.__init__(self, state=state, length=length, number=number)
+
+
+class NormalDistribution(_FilamentFactory):
+    def __init__(self, mean=None, standard_deviation=None,
+                 state=None, number=None):
+        self.mean = mean
+        self.standard_deviation = standard_deviation
+        self.state = state
+        self.number = number
+
+    def create(self):
+        return [Filament(itertools.repeat(self.state,
+                    int(random.uniform(self.mean, self.standard_deviation))))
+                for i in xrange(self.number)]

@@ -16,7 +16,7 @@
 import unittest
 from collections import defaultdict
 
-from actin_dynamics.simulation.transitions.concentration_changes import *
+from actin_dynamics.transitions.concentration_changes import *
 
 from tests.mocks.concentrations import MockConcentration
 

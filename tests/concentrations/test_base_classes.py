@@ -15,7 +15,7 @@
 
 import unittest
 
-import actin_dynamics.simulation.concentrations.base_classes
+import actin_dynamics.concentrations.base_classes
 
 class ConcentrationMeasurement(unittest.TestCase):
     def test_write_me_please(self):

@@ -13,17 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
+class MockMeasurement(object):
+    def __init__(self, label=None, index=0):
+        self.index = index
+        self.label = label
 
-import actin_dynamics.simulation.strand_factories.fixed_length
-
-class SingleStateFixedLength(unittest.TestCase):
-    def test_write_me_please(self):
-        self.assertTrue(False)
-
-class SingleStateFromConcentrations(unittest.TestCase):
-    def test_write_me_please(self):
-        self.assertTrue(False)
-
-if '__main__' == __name__:
-    unittest.main()
+    def perform(self, time, filaments):
+        for i, filament in enumerate(filaments):
+            filament.measurements[self.label].append((time, filament[-1]))

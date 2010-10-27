@@ -15,7 +15,7 @@
 
 import unittest
 
-import actin_dynamics.simulation.explicit_measurements.base_classes
+import actin_dynamics.measurements.base_classes
 
 class ExplicitMeasurementBase(unittest.TestCase):
     def test_write_me_please(self):

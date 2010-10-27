@@ -14,15 +14,16 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import itertools
+import collections
 
 class MockTransition(object):
-    def __init__(self, add_value, rate, measurement_label=None):
+    def __init__(self, add_value, rate):
         self.add_value = add_value
         self.rate = rate
-        self.measurement_label = measurement_label
+        self.measurements = collections.defaultdict(list)
 
-    def Rs(self, strands, concentrations):
-        return list(itertools.repeat(self.rate, len(strands)))
+    def Rs(self, filaments, concentrations):
+        return list(itertools.repeat(self.rate, len(filaments)))
 
-    def perform(self, time, strands, concentrations, index, r):
-        strands[index][0] += self.add_value
+    def perform(self, time, filaments, concentrations, index, r):
+        filaments[index][0] += self.add_value

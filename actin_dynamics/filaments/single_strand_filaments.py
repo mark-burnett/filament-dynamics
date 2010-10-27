@@ -25,6 +25,7 @@ class Filament(object):
                  'relative_shift', 'relative_boundary_indices']
     def __init__(self, iterable):
         self.states = collections.deque(iterable)
+        self.measurements = collections.defaultdict(list)
 
         # this is added to indexes stored in indices to get absolute index.
         self.relative_shift = 0
@@ -98,6 +99,8 @@ class Filament(object):
         relative_indices = [i for i in self.relative_state_indices[barbed_state]
                             if i not in (self.relative_boundary_indices
                                          [barbed_state][pointed_state])]
+        if target_index >= len(relative_indices):
+            print target_index, len(relative_indices), barbed_state, pointed_state
         relative_index = relative_indices[target_index]
         return relative_index + self.relative_shift
 

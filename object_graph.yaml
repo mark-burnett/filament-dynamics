@@ -5,7 +5,7 @@ filaments:
         standard_deviation: initial_filament_length_deviation
         number: number_of_filaments
     fixed_parameters:
-        initial_state: ADP
+        state: ADP
 
 concentrations:
     - class_name: FixedReagent
@@ -80,6 +80,7 @@ transitions:
       label: cleavage
       fixed_parameters:
           old_state: ATP
+          pointed_neighbor: ADPPi
           new_state: ADPPi
       parameters:
           rate: cleavage_rate
@@ -89,6 +90,7 @@ transitions:
       label: release
       fixed_parameters:
           old_state: ADPPi
+          pointed_neighbor: ADP
           new_state: ADP
           byproduct: Pi
       parameters:

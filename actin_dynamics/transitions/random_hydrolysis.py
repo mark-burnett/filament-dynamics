@@ -36,7 +36,8 @@ class RandomHydrolysis(_FilamentTransition):
         state_index = current_filament.state_index(self.old_state, target_index)
         current_filament[state_index] = self.new_state
 
-        _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
+        _FilamentTransition.perform(self, time, filaments, concentrations,
+                                    filament_index, r)
 
 
 RandomHydrolysisWithByproduct = _mixins.add_byproduct(RandomHydrolysis)

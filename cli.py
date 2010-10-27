@@ -36,11 +36,11 @@ def cli_main():
     object_graph = io.parse_object_graph_file(open(args.object_graph))
 
     simulation_factory = factories.SimulationFactory(object_graph, parameters)
-    s = next(simulation_factory)
+#    s = next(simulation_factory)
 
-#    results = [s.run() for s in simulation_factory]
-#
-#    cPickle.dump(results, open(args.output, 'wb'), -1)
+    results = [s.run() for s in simulation_factory]
+
+    cPickle.dump(results, open(args.output, 'wb'), -1)
 
 if '__main__' == __name__:
     cli_main()

@@ -15,7 +15,7 @@
 
 import unittest
 
-from actin_dynamics.simulation import concentrations
+from actin_dynamics import concentrations
 
 class FixedConcentrationTest(unittest.TestCase):
     def test_typical_FixedConcentration(self):

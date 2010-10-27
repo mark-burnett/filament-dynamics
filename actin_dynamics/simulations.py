@@ -19,6 +19,7 @@
 
 import copy
 import bisect
+import collections
 
 import math
 
@@ -35,21 +36,21 @@ class Simulation(object):
     """
     Kinetic Monte Carlo simulation object.
     """
-    __slots__ = ['transitions', 'concentrations', 'explicit_measurements',
-                 'end_conditions', 'strand_factory', 'rng']
-    def __init__(self, transitions, concentrations, explicit_measurements,
-                 end_conditions, strand_factory, rng):
+    __slots__ = ['transitions', 'concentrations', 'measurements',
+                 'end_conditions', 'filaments', 'rng']
+    def __init__(self, transitions=None, concentrations=None, measurements=None,
+                 end_conditions=None, filaments=None, rng=None):
         """
         'transitions' list of transition objects.  Each object represents
             a set of possible state changes.
         'end_conditions' is either a single end condition or an iterable of end
             conditions (see 'end_conditions' module).
         """
-        self.transitions = transitions
+        self.transitions    = transitions
         self.concentrations = concentrations
-        self.explicit_measurements = explicit_measurements
+        self.measurements   = measurements
         self.end_conditions = end_conditions
-        self.strand_factory = strand_factory
+        self.filaments      = filaments
         self.rng = rng
 
     def run(self):
@@ -61,59 +62,59 @@ class Simulation(object):
         bbl = bisect.bisect_left
 
         # Initialize.
-        strands = self.strand_factory.create()
+#        filaments = self.filament_factory.create()
         [e.reset() for e in self.end_conditions]
         time = 0
 
-        while not any(e(time, strands, self.concentrations)
+        while not any(e(time, self.filaments, self.concentrations)
                       for e in self.end_conditions):
             # Calculate partial sums of transition probabilities
             # NOTE we are keeping the small_Rs here so they don't need to be
-            #   recalculated to determine which strand undergoes transition.
+            #   recalculated to determine which filament undergoes transition.
             small_Rs = []
             transition_Rs = []
             for t in self.transitions:
-                local_Rs = t.Rs(strands, self.concentrations)
+                local_Rs = t.R(self.filaments, self.concentrations)
                 transition_Rs.append(sum(local_Rs))
                 small_Rs.append(local_Rs)
 
-            running_R = list(running_total(transition_Rs))
-            total_R   = running_R[-1]
+            running_transition_R = list(running_total(transition_Rs))
+            total_R   = running_transition_R[-1]
 
             # Update simulation time
+            if total_R <= 0:
+                print 'ENDING SIMULATION:  no possible events.'
+                break;
             time += ml(1/self.rng(0, 1)) / total_R
 
             # Figure out which transition to perform
-            r = self.rng(0, total_R)
-            j = bbl(running_R, r)
+            transition_r = self.rng(0, total_R)
+            transition_index = bbl(running_transition_R, transition_r)
 
-            # Figure out which strand to perform it on
-            running_strand_R = list(running_total(small_Rs[j]))
-            strand_r = r - running_R[j]
-            s = bbl(running_strand_R, strand_r)
+            # Figure out which filament to perform it on
+            filament_r = running_transition_R[transition_index] - transition_r
+            running_filament_R = list(running_total(small_Rs[transition_index]))
+            filament_index = bbl(running_filament_R, filament_r)
 
             # Perform transition
-            state_r = strand_r - running_strand_R[s]
-            self.transitions[j].perform(time, strands, self.concentrations, s,
-                                        state_r)
+            state_r = filament_r - small_Rs[transition_index][filament_index]
+            self.transitions[transition_index].perform(time, self.filaments,
+                                        self.concentrations, filament_index, state_r)
 
-            # Perform strand measurements
-            for measurement in self.explicit_measurements:
-                measurement.perform(time, strands)
+            # Perform filament measurements
+            for measurement in self.measurements:
+                measurement.perform(time, self.filaments)
 
         # Compile measurements
-        simulation_measurements = {}
-        strand_measurements = {}
+        simulation_measurements = collections.defaultdict(list)
+        filament_measurements   = collections.defaultdict(list)
         for c in self.concentrations.itervalues():
-            if c.measurement_label:
-                simulation_measurements[c.measurement_label] = c.data
+            if c.label:
+                simulation_measurements[c.label] = c.data
 
-        for t in self.transitions:
-            if t.measurement_label:
-                strand_measurements[t.measurement_label] = t.data
+        for f in self.filaments:
+            for label, data in f.measurements.iteritems():
+                filament_measurements[label].append(data)
 
-        for em in self.explicit_measurements:
-            if em.measurement_label:
-                strand_measurements[em.measurement_label] = em.data
-
-        return strands, simulation_measurements, strand_measurements
+        states = [f.states for f in self.filaments]
+        return states, simulation_measurements, filament_measurements

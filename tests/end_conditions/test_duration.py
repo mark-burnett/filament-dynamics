@@ -15,7 +15,7 @@
 
 import unittest
 
-from actin_dynamics.simulation import end_conditions
+from actin_dynamics import end_conditions
 
 class DurationTest(unittest.TestCase):
     def test_normal_duration(self):

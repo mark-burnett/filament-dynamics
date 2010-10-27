@@ -16,15 +16,15 @@
 import unittest
 from collections import defaultdict
 
-from actin_dynamics.simulation.transitions.mixins import *
-from actin_dynamics.simulation.strand_factories import strands
+from actin_dynamics.transitions.mixins import *
+from actin_dynamics.filaments.single_strand_filaments import Filament
 
 from tests.mocks.concentrations import MockConcentration
 
 
 class ByproductMixinTest(unittest.TestCase):
     def setUp(self):
-        self.strand = strands.single_strand.Strand([1, 2, 3, 1, 2, 3, 1])
+        self.strand = Filament([1, 2, 3, 1, 2, 3, 1])
         self.concentrations = defaultdict(MockConcentration)
 
         self.mixin = WithByproduct(byproduct=11)
