@@ -27,14 +27,14 @@ class RandomHydrolysis(_FilamentTransition):
         _FilamentTransition.__init__(self)
 
     def R(self, filaments, concentrations):
-        return [self.rate * len(s.state_indices[self.old_state])
-                for s in filaments]
+        return [self.rate * filament.state_count(self.old_state)
+                for filament in filaments]
 
-    def perform(self, time, filaments, concentrations, index, r):
-        state_index = int(r / self.rate)
-        current_strand = filaments[index]
-        strand_index = current_strand.state_indices[self.old_state][state_index]
-        current_strand.set_state(strand_index, self.new_state)
+    def perform(self, time, filaments, concentrations, filament_index, r):
+        target_index = int(r / self.rate)
+        current_filament = filaments[filament_index]
+        state_index = current_filament.state_index(self.old_state, target_index)
+        current_filament[state_index] = self.new_state
 
         _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
 

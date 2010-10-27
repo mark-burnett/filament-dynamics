@@ -33,7 +33,7 @@ class Duration(_EndCondition):
     def reset(self):
         pass
 
-    def __call__(self, time, strands, concentrations):
+    def __call__(self, time, filaments, concentrations):
         return time > self.duration
 
 class RandomDuration(Duration):

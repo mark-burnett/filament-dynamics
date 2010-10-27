@@ -30,8 +30,8 @@ class _FixedRate(_FilamentTransition):
 
     def R(self, filaments, concentrations):
         result = []
-        for strand in filaments:
-            if self.state == strand[-1]:
+        for filament in filaments:
+            if self.state == filament[-1]:
                 result.append(self.rate)
             else:
                 result.append(0)
@@ -42,7 +42,14 @@ class _FixedRate(_FilamentTransition):
 
 class BarbedDepolymerization(_FixedRate):
     def perform(self, time, filaments, concentrations, index, r):
-        current_strand = filaments[index]
-        current_strand.shrink_barbed_end()
+        current_filament = filaments[index]
+        current_filament.shrink_barbed_end()
+        concentrations[self.state].add_monomer()
+        _FixedRate.perform(self, time, filaments, concentrations, index, r)
+
+class PointedDepolymerization(_FixedRate):
+    def perform(self, time, filaments, concentrations, index, r):
+        current_filament = filaments[index]
+        current_filament.shrink_pointed_end()
         concentrations[self.state].add_monomer()
         _FixedRate.perform(self, time, filaments, concentrations, index, r)

@@ -22,24 +22,19 @@ from ..simulations import Simulation
 def make_simulation(object_graph, parameters):
     filaments = shortcuts.make_filaments(object_graph['filaments'],
                                          parameters)
+
     transitions = shortcuts.make_transitions(object_graph['transitions'],
                                              parameters)
-    print 'tr', transitions
 
     measurements = shortcuts.make_measurements(
             object_graph['measurements'], parameters)
-    print 'em', measurements
 
     end_conditions = shortcuts.make_end_conditions(
             object_graph['end_conditions'], parameters)
-    print 'ecs', end_conditions
 
     concentrations = shortcuts.make_concentrations(
         object_graph['concentrations'], parameters)
-    print 'conc', concentrations
 
-
-    # assemble simulation
     return Simulation(transitions, concentrations, measurements,
                       end_conditions, filaments, random.uniform)
 

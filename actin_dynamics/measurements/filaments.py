@@ -16,12 +16,12 @@
 from base_classes import Measurement as _Measurement
 
 class StateCounts(_Measurement):
-    __slots__ = ['state_strengths']
     def __init__(self, label=None):
         _Measurement.__init__(self, label=label)
 
     def perform(self, time, filaments):
         for filament in filaments:
-            state_counts = dict((state, len(positions))
-                    for state, positions in filament.state_indices.iteritems())
+            states = filament.containted_states()
+            state_counts = dict((state, filament.state_count(state))
+                                for state in states)
             self.store(time, state_counts, filament)

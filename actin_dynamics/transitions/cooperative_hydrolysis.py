@@ -34,19 +34,13 @@ class CooperativeHydrolysis(_FilamentTransition):
                 for filament in filaments]
 
     def _boundary_rate(self, filament):
-        boundary_count = len(filament.boundary_indices
-                [self.old_state][self.pointed_neighbor])
-        return self.rate * self.cooperativity * boundary_count
+        return (self.rate * self.cooperativity *
+                filament.boundary_count(self.old_state, self.pointed_neighbor))
 
     def _random_rate(self, filament):
-        # XXX Slight repeatition of code, but convenient.
-        boundary_count = len(filament.boundary_indices
-                [self.old_state][self.pointed_neighbor])
-        protomer_count = len(filament.state_indices[self.old_state])
-        random_count = protomer_count - boundary_count
-
-        return self.rate * random_count
-
+        return (self.rate *
+                filament.non_boundary_state_index(self.old_state,
+                                                  self.pointed_neighbor))
 
     def perform(self, time, filaments, concentrations, index, r):
         current_filament = filaments[index]
@@ -55,33 +49,25 @@ class CooperativeHydrolysis(_FilamentTransition):
         random_rate = self._random_rate(current_filament)
 
         if r < boundary_rate:
-            self._perform_boundary(time, current_filament, concentrations, r,
-                                   boundary_rate)
+            self._perform_boundary(time, current_filament, r, boundary_rate)
         else:
-            self._perform_random(time, current_filament, concentrations,
-                                 r - boundary_rate, random_rate)
+            self._perform_random(time, current_filament, r - boundary_rate,
+                                 random_rate)
 
         _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
 
-    def _perform_boundary(self, time, filament, concentrations, r, boundary_rate):
-        boundary_index = int(r / boundary_rate)
-        filament_index = (filament.boundary_indices
-                [self.old_state][self.pointed_neighbor][boundary_index])
-        filament.set_state(filament_index, self.new_state)
+    def _perform_boundary(self, time, filament, r, boundary_rate):
+        target_index = int(r / boundary_rate)
+        state_index = filament.boundary_index(self.old_state,
+                                              self.pointed_neighbor,
+                                              target_index)
+        filament[state_index] = self.new_state
 
-    def _perform_random(self, time, filament, concentrations, r, random_rate):
+    def _perform_random(self, time, filament, r, random_rate):
         target_index = int(r / self.rate)
-        current_index = -1
-
-        for working_index in filament.state_indices[self.old_state]:
-            # XXX Performance warning:  boundary_indices should probably contain sets
-            if working_index not in (filament.boundary_indices[self.old_state]
-                                     [self.pointed_neighbor]):
-                current_index += 1
-                if target_index == current_index:
-                    filament.set_state(working_index, self.new_state)
-                    return
-        raise IndexError('No working index found.')
+        state_index = filament.non_boundary_state_index(self.old_state, self.pointed_neighbor,
+                                                        target_index)
+        filament[state_index] = self.new_state
 
 
 CooperativeHydrolysisWithByproduct = _mixins.add_byproduct(CooperativeHydrolysis)

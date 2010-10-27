@@ -17,28 +17,33 @@ import itertools
 import collections
 
 def _ddict_factory():
-    # XXX Consider making these sets instead of lists for performance reasons.
+    # XXX Consider making these (ordered) sets instead of lists (performance).
     return collections.defaultdict(list)
 
 class Filament(object):
-    __slots__ = ['states', 'state_indices', 'boundary_indices', 'measurements']
+    __slots__ = ['states', 'relative_state_indices', 'measurements',
+                 'relative_shift', 'relative_boundary_indices']
     def __init__(self, iterable):
-        self.states = list(iterable)
+        self.states = collections.deque(iterable)
+
+        # this is added to indexes stored in indices to get absolute index.
+        self.relative_shift = 0
 
         # generate statistics/strand boundary info
-        self.state_indices = collections.defaultdict(list)
-        self.boundary_indices = collections.defaultdict(
+        # XXX Consider making these (ordered) sets instead of lists (performance).
+        self.relative_state_indices = collections.defaultdict(list)
+        self.relative_boundary_indices = collections.defaultdict(
                 _ddict_factory)
 
         for i, state in enumerate(self.states):
-            self.state_indices[state].append(i)
+            self.relative_state_indices[state].append(i)
 
-        for barbed_state, indices in self.state_indices.iteritems():
+        for barbed_state, indices in self.relative_state_indices.iteritems():
             for i in indices:
                 if i > 0:
                     pointed_state = self.states[i - 1]
                     if barbed_state != pointed_state:
-                        self.boundary_indices[barbed_state][pointed_state].append(i)
+                        self.relative_boundary_indices[barbed_state][pointed_state].append(i)
 
 
     def grow_barbed_end(self, state):
@@ -51,55 +56,96 @@ class Filament(object):
 
 
     def grow_pointed_end(self, state):
-        raise NotImplementedError()
+        self.states.appendleft(state)
+        self._update_statistics(0, None, state)
+        self.relative_shift += 1
 
     def shrink_pointed_end(self):
-        raise NotImplementedError()
+        old_state = self.states.popleft()
+        self._update_statistics(-1, old_state, None)
+        self.relative_shift -= 1
 
 
-    def set_state(self, index, state):
-        old_state = self.states[index]
-        self.states[index] = state
+    def containted_states(self):
+        return self.relative_state_indices.keys()
+
+
+    def state_count(self, state):
+        return len(self.relative_state_indices[state])
+
+    def boundary_count(self, barbed_state, pointed_state):
+        return len(self.relative_boundary_indices[barbed_state][pointed_state])
+
+    def non_boundary_state_count(self, barbed_state, pointed_state):
+        relative_indices = [i for i in self.relative_state_indices[barbed_state]
+                            if i not in (self.relative_boundary_indices
+                                         [barbed_state][pointed_state])]
+        return len(relative_indices)
+
+
+    def state_index(self, state, target_index):
+        relative_index = self.relative_state_indices[state][target_index]
+        return relative_index + self.relative_shift
+
+    def boundary_index(self, barbed_state, pointed_state, target_index):
+        relative_index = (self.relative_boundary_indices[barbed_state]
+                                                        [pointed_state]
+                                                        [target_index])
+        return relative_index + self.relative_shift
+
+    def non_boundary_state_index(self, barbed_state, pointed_state,
+                                 target_index):
+        relative_indices = [i for i in self.relative_state_indices[barbed_state]
+                            if i not in (self.relative_boundary_indices
+                                         [barbed_state][pointed_state])]
+        relative_index = relative_indices[target_index]
+        return relative_index + self.relative_shift
+
+
+    def __setitem__(self, absolute_index, item):
         # Adjust for negative indices
-        if index < 0:
-            index = index + len(self)
-        self._update_statistics(index, old_state, state)
+        if absolute_index < 0:
+            absolute_index = absolute_index + len(self)
 
-    def get_state(self, index):
-        return self.states[index]
+        old_state = self.states[absolute_index]
+        self.states[absolute_index] = state
+        self._update_statistics(absolute_index, old_state, state)
 
-
-    def __setitem__(self, index, item):
-        self.set_state(index, item)
-
-    def __getitem__(self, index):
-        return self.get_state(index)
+    def __getitem__(self, absolute_index):
+        return self.states[absolute_index]
 
     def __len__(self):
         return len(self.states)
 
+    def __contains__(self, state):
+        return state in self.containted_states()
 
-    def _update_statistics(self, index, old_state, new_state):
-        self._update_state_indices(   index, old_state, new_state)
-        self._update_boundary_indices(index, old_state, new_state)
 
-    def _update_state_indices(self, index, old_state, new_state):
+    def _update_statistics(self, absolute_index, old_state, new_state):
+        self._update_relative_state_indices(absolute_index, old_state, new_state)
+        self._update_relative_boundary_indices(absolute_index, old_state, new_state)
+
+    def _update_relative_state_indices(self, absolute_index, old_state, new_state):
+        relative_index = absolute_index - self.relative_index
+
         if old_state is not None:
-            self.state_indices[old_state].remove(index)
+            self.relative_state_indices[old_state].remove(relative_index)
         if new_state is not None:
-            self.state_indices[new_state].append(index)
+            self.relative_state_indices[new_state].append(relative_index)
 
-    def _update_boundary_indices(self, index, old_state, new_state):
-        if index > 0:
-            pointed_neighbor = self[index - 1]
+    def _update_relative_boundary_indices(self, absolute_index, old_state, new_state):
+        relative_index = absolute_index - self.relative_index
+
+        if absolute_index > 0:
+            pointed_neighbor = self[absolute_index - 1]
             if old_state is not None and old_state != pointed_neighbor:
-                self.boundary_indices[old_state][pointed_neighbor].remove(index)
+                self.relative_boundary_indices[old_state][pointed_neighbor].remove(relative_index)
             if new_state is not None and new_state != pointed_neighbor:
-                self.boundary_indices[new_state][pointed_neighbor].append(index)
+                self.relative_boundary_indices[new_state][pointed_neighbor].append(relative_index)
 
-        if index < len(self) - 1:
-            barbed_neighbor  = self[index + 1]
+        if absolute_index < len(self) - 1:
+            barbed_neighbor  = self[absolute_index + 1]
             if old_state is not None and old_state != barbed_neighbor:
-               self.boundary_indices[barbed_neighbor][old_state].remove(index+1)
+               self.relative_boundary_indices[barbed_neighbor][old_state].remove(relative_index + 1)
             if new_state is not None and new_state != barbed_neighbor:
-               self.boundary_indices[barbed_neighbor][new_state].append(index+1)
+               self.relative_boundary_indices[barbed_neighbor][new_state].append(relative_index + 1)

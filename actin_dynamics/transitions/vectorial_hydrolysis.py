@@ -29,16 +29,18 @@ class VectorialHydrolysis(_FilamentTransition):
         _FilamentTransition.__init__(self)
 
     def R(self, filaments, concentrations):
-        return [self.rate * len(
-                    s.boundary_indices[self.old_state][self.pointed_neighbor])
-                for s in filaments]
+        return [self.rate * filament.boundary_count(self.old_state,
+                                                    self.pointed_neighbor)
+                for filament in filaments]
 
     def perform(self, time, filaments, concentrations, index, r):
-        current_strand = filaments[index]
-        boundary_index = int(r / self.rate)
-        strand_index = (current_strand.boundary_indices
-                [self.old_state][self.pointed_neighbor][boundary_index])
-        current_strand.set_state(strand_index, self.new_state)
+        current_filament = filaments[index]
+
+        target_index = int(r / self.rate)
+        state_index = current_filament.boundary_index(self.old_state,
+                                                      self.pointed_neighbor,
+                                                      target_index)
+        current_filament[state_index] = self.new_state
 
         _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
 

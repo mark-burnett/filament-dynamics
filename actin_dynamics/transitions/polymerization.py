@@ -20,7 +20,7 @@ class _FixedRate(_FilamentTransition):
     __slots__ = ['rate', 'state']
     def __init__(self, state=None, rate=None):
         """
-        'state' that are added to the barbed end of the strand.
+        'state' that are added to the barbed end of the filament.
         'rate' is the number per second per concentration of
         """
         self.state = state
@@ -39,7 +39,15 @@ class _FixedRate(_FilamentTransition):
 class BarbedPolymerization(_FixedRate):
     'Simple polymerization at the barbed end.'
     def perform(self, time, filaments, concentrations, index, r):
-        current_strand = filaments[index]
-        current_strand.grow_barbed_end(self.state)
+        current_filament = filaments[index]
+        current_filament.grow_barbed_end(self.state)
+        concentrations[self.state].remove_monomer()
+        _FixedRate.perform(self, time, filaments, concentrations, index, r)
+
+class PointedPolymerization(_FixedRate):
+    'Simple polymerization at the barbed end.'
+    def perform(self, time, filaments, concentrations, index, r):
+        current_filament = filaments[index]
+        current_filament.grow_pointed_end(self.state)
         concentrations[self.state].remove_monomer()
         _FixedRate.perform(self, time, filaments, concentrations, index, r)
