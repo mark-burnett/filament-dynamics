@@ -29,7 +29,7 @@ class Filament(object):
         # this is added to indexes stored in indices to get absolute index.
         self.relative_shift = 0
 
-        # generate statistics/strand boundary info
+        # generate relative indices
         # XXX Consider making these (ordered) sets instead of lists (performance).
         self.relative_state_indices = collections.defaultdict(list)
         self.relative_boundary_indices = collections.defaultdict(
@@ -48,21 +48,21 @@ class Filament(object):
 
     def grow_barbed_end(self, state):
         self.states.append(state)
-        self._update_statistics(len(self.states) - 1, None, state)
+        self._update_relative_indices(len(self.states) - 1, None, state)
 
     def shrink_barbed_end(self):
         old_state = self.states.pop()
-        self._update_statistics(len(self.states), old_state, None)
+        self._update_relative_indices(len(self.states), old_state, None)
 
 
     def grow_pointed_end(self, state):
         self.states.appendleft(state)
-        self._update_statistics(0, None, state)
+        self._update_relative_indices(0, None, state)
         self.relative_shift += 1
 
     def shrink_pointed_end(self):
         old_state = self.states.popleft()
-        self._update_statistics(-1, old_state, None)
+        self._update_relative_indices(-1, old_state, None)
         self.relative_shift -= 1
 
 
@@ -102,14 +102,14 @@ class Filament(object):
         return relative_index + self.relative_shift
 
 
-    def __setitem__(self, absolute_index, item):
+    def __setitem__(self, absolute_index, new_state):
         # Adjust for negative indices
         if absolute_index < 0:
             absolute_index = absolute_index + len(self)
 
         old_state = self.states[absolute_index]
-        self.states[absolute_index] = state
-        self._update_statistics(absolute_index, old_state, state)
+        self.states[absolute_index] = new_state
+        self._update_relative_indices(absolute_index, old_state, new_state)
 
     def __getitem__(self, absolute_index):
         return self.states[absolute_index]
@@ -121,12 +121,12 @@ class Filament(object):
         return state in self.containted_states()
 
 
-    def _update_statistics(self, absolute_index, old_state, new_state):
+    def _update_relative_indices(self, absolute_index, old_state, new_state):
         self._update_relative_state_indices(absolute_index, old_state, new_state)
         self._update_relative_boundary_indices(absolute_index, old_state, new_state)
 
     def _update_relative_state_indices(self, absolute_index, old_state, new_state):
-        relative_index = absolute_index - self.relative_index
+        relative_index = absolute_index - self.relative_shift
 
         if old_state is not None:
             self.relative_state_indices[old_state].remove(relative_index)
@@ -134,7 +134,7 @@ class Filament(object):
             self.relative_state_indices[new_state].append(relative_index)
 
     def _update_relative_boundary_indices(self, absolute_index, old_state, new_state):
-        relative_index = absolute_index - self.relative_index
+        relative_index = absolute_index - self.relative_shift
 
         if absolute_index > 0:
             pointed_neighbor = self[absolute_index - 1]
