@@ -18,7 +18,7 @@ from base_classes import Transition as _FilamentTransition
 class _FixedRate(_FilamentTransition):
     skip_registration = True
     __slots__ = ['state', 'rate']
-    def __init__(self, state=None, rate=None):
+    def __init__(self, state=None, rate=None, label=None):
         """
         state - state to depolymerize
         rate  - depolymerization rate (constant)
@@ -26,7 +26,7 @@ class _FixedRate(_FilamentTransition):
         self.state = state
         self.rate  = rate
 
-        _FilamentTransition.__init__(self)
+        _FilamentTransition.__init__(self, label=None)
 
     def R(self, filaments, concentrations):
         result = []

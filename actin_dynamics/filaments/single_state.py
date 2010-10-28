@@ -53,4 +53,4 @@ class NormalDistribution(_FilamentFactory):
     def create(self):
         return [Filament(itertools.repeat(self.state,
                     int(random.uniform(self.mean, self.standard_deviation))))
-                for i in xrange(self.number)]
+                for i in xrange(int(self.number))]

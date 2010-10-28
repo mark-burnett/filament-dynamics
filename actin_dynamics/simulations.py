@@ -97,7 +97,7 @@ class Simulation(object):
             filament_index = bbl(running_filament_R, filament_r)
 
             # Perform transition
-            state_r = filament_r - small_Rs[transition_index][filament_index]
+            state_r = running_filament_R[filament_index] - filament_r
             self.transitions[transition_index].perform(time, self.filaments,
                                         self.concentrations, filament_index, state_r)
 
@@ -114,7 +114,8 @@ class Simulation(object):
 
         for f in self.filaments:
             for label, data in f.measurements.iteritems():
-                filament_measurements[label].append(data)
+                if label is not None:
+                    filament_measurements[label].append(data)
 
         states = [f.states for f in self.filaments]
         return states, simulation_measurements, filament_measurements

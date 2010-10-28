@@ -22,9 +22,9 @@ class Concentration(object):
     registry = concentration_registry
     skip_registration = True
 
-    __slots__ = ['measurement_label']
-    def __init__(self, measurement_label):
-        self.measurement_label = measurement_label
+    __slots__ = ['label']
+    def __init__(self, label):
+        self.label = label
 
     def add_monomer(self):
         pass

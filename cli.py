@@ -40,7 +40,7 @@ def cli_main():
 
     results = [s.run() for s in simulation_factory]
 
-    cPickle.dump(results, open(args.output, 'wb'), -1)
+    cPickle.dump(results, open(args.output_file, 'wb'), -1)
 
 if '__main__' == __name__:
     cli_main()

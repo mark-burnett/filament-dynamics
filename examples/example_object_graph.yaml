@@ -39,8 +39,6 @@ end_conditions:
 
 measurements:
     - class_name: StateCounts
-      fixed_parameters:
-          label: state_counts
 
 transitions:
     # Polymerization
@@ -79,8 +77,8 @@ transitions:
 
     # Hydrolysis
     - class_name: CooperativeHydrolysis
+      label: cleavage
       fixed_parameters:
-          label: cleavage
           old_state: ATP
           pointed_neighbor: ADPPi
           new_state: ADPPi
@@ -89,8 +87,8 @@ transitions:
           cooperativity: cleavage_cooperativity
 
     - class_name: CooperativeHydrolysisWithByproduct
+      label: release
       fixed_parameters:
-          label: release
           old_state: ADPPi
           pointed_neighbor: ADP
           new_state: ADP

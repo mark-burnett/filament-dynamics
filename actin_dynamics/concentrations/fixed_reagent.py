@@ -23,7 +23,7 @@ class FixedReagent(_Concentration):
     __slots__ = ['monomer_concentration', 'filament_tip_concentration']
     def __init__(self, initial_concentration=-1,
                  filament_tip_concentration=-1,
-                 measurement_label=None):
+                 label=None):
         if initial_concentration < 0:
             raise ValueError('Negative concentrations not allowed.')
         if filament_tip_concentration < 0:
@@ -31,7 +31,7 @@ class FixedReagent(_Concentration):
 
         self.monomer_concentration = initial_concentration
         self.filament_tip_concentration = filament_tip_concentration
-        _Concentration.__init__(self, measurement_label)
+        _Concentration.__init__(self, label)
 
     @property
     def value(self):

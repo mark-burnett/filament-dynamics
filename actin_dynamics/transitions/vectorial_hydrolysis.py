@@ -20,13 +20,13 @@ from . import mixins as _mixins
 class VectorialHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'new_state']
     def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
-                 new_state=None):
+                 new_state=None, label=None):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
         self.rate             = rate
         self.new_state        = new_state
 
-        _FilamentTransition.__init__(self)
+        _FilamentTransition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
         return [self.rate * filament.boundary_count(self.old_state,

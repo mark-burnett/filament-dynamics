@@ -30,7 +30,8 @@ class Measurement(object):
 
     def store(self, time, value, filament):
         measurements = filament.measurements[self.label]
+        previous_value = None
         if measurements:
             previous_time, previous_value = measurements[-1]
-            if value != previous_value:
-                measurements.append((time, value))
+        if value != previous_value:
+            measurements.append((time, value))

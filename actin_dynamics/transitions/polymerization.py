@@ -18,7 +18,7 @@ from base_classes import Transition as _FilamentTransition
 class _FixedRate(_FilamentTransition):
     skip_registration = True
     __slots__ = ['rate', 'state']
-    def __init__(self, state=None, rate=None):
+    def __init__(self, state=None, rate=None, label=None):
         """
         'state' that are added to the barbed end of the filament.
         'rate' is the number per second per concentration of
@@ -26,7 +26,7 @@ class _FixedRate(_FilamentTransition):
         self.state = state
         self.rate  = rate
 
-        _FilamentTransition.__init__(self)
+        _FilamentTransition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
         value = self.rate * concentrations[self.state].value

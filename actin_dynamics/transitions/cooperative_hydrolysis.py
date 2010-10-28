@@ -20,14 +20,14 @@ class CooperativeHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'cooperativity',
                  'new_state']
     def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
-            cooperativity=None, new_state=None):
+            cooperativity=None, new_state=None, label=None):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
         self.rate             = rate
         self.cooperativity    = cooperativity
         self.new_state        = new_state
 
-        _FilamentTransition.__init__(self)
+        _FilamentTransition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
         return [self._boundary_rate(filament) + self._random_rate(filament)
@@ -65,7 +65,8 @@ class CooperativeHydrolysis(_FilamentTransition):
 
     def _perform_random(self, time, filament, r, random_rate):
 #        target_index = int(r / self.rate)
-        target_index = int(random_rate / r)
+#        target_index = int(random_rate / r)
+        target_index = int(r /random_rate)
         state_index = filament.non_boundary_state_index(self.old_state,
                                                         self.pointed_neighbor,
                                                         target_index)
