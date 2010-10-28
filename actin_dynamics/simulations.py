@@ -21,6 +21,8 @@ import copy
 import bisect
 import collections
 
+import random
+
 import math
 
 def running_total(values):
@@ -37,9 +39,9 @@ class Simulation(object):
     Kinetic Monte Carlo simulation object.
     """
     __slots__ = ['transitions', 'concentrations', 'measurements',
-                 'end_conditions', 'filaments', 'rng']
+                 'end_conditions', 'filaments', 'rng', 'parameters']
     def __init__(self, transitions=None, concentrations=None, measurements=None,
-                 end_conditions=None, filaments=None, rng=None):
+                 end_conditions=None, filaments=None, parameters=None, rng=None):
         """
         'transitions' list of transition objects.  Each object represents
             a set of possible state changes.
@@ -51,71 +53,75 @@ class Simulation(object):
         self.measurements   = measurements
         self.end_conditions = end_conditions
         self.filaments      = filaments
+        self.parameters     = parameters
         self.rng = rng
 
-    def run(self):
-        """
-        Perform the actual simulation, starting with initial_state.
-        """
-        # XXX Aliases for a small speedup.
-        ml  = math.log
-        bbl = bisect.bisect_left
+def run_simulation(sim):
+    """
+    Perform the actual simulation, starting with initial_state.
+    """
+    # XXX Aliases for a small speedup.
+    ml  = math.log
+    bbl = bisect.bisect_left
+    if sim.rng is not None:
+        rng = sim.rng
+    else:
+        rng = random.uniform
 
-        # Initialize.
-#        filaments = self.filament_factory.create()
-        [e.reset() for e in self.end_conditions]
-        time = 0
+    # Initialize.
+    [e.reset() for e in sim.end_conditions]
+    time = 0
 
-        while not any(e(time, self.filaments, self.concentrations)
-                      for e in self.end_conditions):
-            # Calculate partial sums of transition probabilities
-            # NOTE we are keeping the small_Rs here so they don't need to be
-            #   recalculated to determine which filament undergoes transition.
-            small_Rs = []
-            transition_Rs = []
-            for t in self.transitions:
-                local_Rs = t.R(self.filaments, self.concentrations)
-                transition_Rs.append(sum(local_Rs))
-                small_Rs.append(local_Rs)
+    while not any(e(time, sim.filaments, sim.concentrations)
+                  for e in sim.end_conditions):
+        # Calculate partial sums of transition probabilities
+        # NOTE we are keeping the small_Rs here so they don't need to be
+        #   recalculated to determine which filament undergoes transition.
+        small_Rs = []
+        transition_Rs = []
+        for t in sim.transitions:
+            local_Rs = t.R(sim.filaments, sim.concentrations)
+            transition_Rs.append(sum(local_Rs))
+            small_Rs.append(local_Rs)
 
-            running_transition_R = list(running_total(transition_Rs))
-            total_R   = running_transition_R[-1]
+        running_transition_R = list(running_total(transition_Rs))
+        total_R   = running_transition_R[-1]
 
-            # Update simulation time
-            if total_R <= 0:
-                print 'ENDING SIMULATION:  no possible events.'
-                break;
-            time += ml(1/self.rng(0, 1)) / total_R
+        # Update simulation time
+        if total_R <= 0:
+            print 'ENDING SIMULATION:  no possible events.'
+            break;
+        time += ml(1/rng(0, 1)) / total_R
 
-            # Figure out which transition to perform
-            transition_r = self.rng(0, total_R)
-            transition_index = bbl(running_transition_R, transition_r)
+        # Figure out which transition to perform
+        transition_r = rng(0, total_R)
+        transition_index = bbl(running_transition_R, transition_r)
 
-            # Figure out which filament to perform it on
-            filament_r = running_transition_R[transition_index] - transition_r
-            running_filament_R = list(running_total(small_Rs[transition_index]))
-            filament_index = bbl(running_filament_R, filament_r)
+        # Figure out which filament to perform it on
+        filament_r = running_transition_R[transition_index] - transition_r
+        running_filament_R = list(running_total(small_Rs[transition_index]))
+        filament_index = bbl(running_filament_R, filament_r)
 
-            # Perform transition
-            state_r = running_filament_R[filament_index] - filament_r
-            self.transitions[transition_index].perform(time, self.filaments,
-                                        self.concentrations, filament_index, state_r)
+        # Perform transition
+        state_r = running_filament_R[filament_index] - filament_r
+        sim.transitions[transition_index].perform(time, sim.filaments,
+                                    sim.concentrations, filament_index, state_r)
 
-            # Perform filament measurements
-            for measurement in self.measurements:
-                measurement.perform(time, self.filaments)
+        # Perform filament measurements
+        for measurement in sim.measurements:
+            measurement.perform(time, sim.filaments)
 
-        # Compile measurements
-        simulation_measurements = collections.defaultdict(list)
-        filament_measurements   = collections.defaultdict(list)
-        for c in self.concentrations.itervalues():
-            if c.label:
-                simulation_measurements[c.label] = c.data
+    # Compile measurements
+    simulation_measurements = collections.defaultdict(list)
+    filament_measurements   = collections.defaultdict(list)
+    for c in sim.concentrations.itervalues():
+        if c.label:
+            simulation_measurements[c.label] = c.data
 
-        for f in self.filaments:
-            for label, data in f.measurements.iteritems():
-                if label is not None:
-                    filament_measurements[label].append(data)
+    for f in sim.filaments:
+        for label, data in f.measurements.iteritems():
+            if label is not None:
+                filament_measurements[label].append(data)
 
-        states = [f.states for f in self.filaments]
-        return states, simulation_measurements, filament_measurements
+    states = [f.states for f in sim.filaments]
+    return states, simulation_measurements, filament_measurements

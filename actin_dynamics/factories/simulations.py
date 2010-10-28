@@ -13,8 +13,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import random
-
 from . import shortcuts
 
 from ..simulations import Simulation
@@ -35,8 +33,9 @@ def make_simulation(object_graph, parameters):
     concentrations = shortcuts.make_concentrations(
         object_graph['concentrations'], parameters)
 
-    return Simulation(transitions, concentrations, measurements,
-                      end_conditions, filaments, random.uniform)
+    return Simulation(transitions=transitions, concentrations=concentrations,
+                      measurements=measurements, end_conditions=end_conditions,
+                      filaments=filaments, parameters=parameters)
 
 class SimulationFactory(object):
     def __init__(self, object_graph, parameters):
