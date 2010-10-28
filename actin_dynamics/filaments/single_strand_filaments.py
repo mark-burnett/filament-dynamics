@@ -78,6 +78,7 @@ class Filament(object):
         return len(self.relative_boundary_indices[barbed_state][pointed_state])
 
     def non_boundary_state_count(self, barbed_state, pointed_state):
+        # XXX Speed limiting.
         relative_indices = [i for i in self.relative_state_indices[barbed_state]
                             if i not in (self.relative_boundary_indices
                                          [barbed_state][pointed_state])]

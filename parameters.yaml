@@ -30,7 +30,7 @@ cleavage_rate: [0.03, 3, 5, linear]
 cleavage_cooperativity: [0.0001, 10000000, 5, log]
 
 release_rate: [0.3, 0.3, 1, linear]
-release_cooperativity: [1, 1, 1, log]
+release_cooperativity: [0, 0, 1, log]
 
 
 # Initial Strand
