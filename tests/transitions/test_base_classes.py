@@ -20,8 +20,8 @@ from actin_dynamics.transitions.base_classes import SolutionTransition
 class SolutionTransitionCountTest(unittest.TestCase):
     def test_initialization(self):
         test_label = 'test label text'
-        t = SolutionTransition(measurement_label=test_label)
-        self.assertEqual(test_label, t.measurement_label)
+        t = SolutionTransition(label=test_label)
+        self.assertEqual(test_label, t.label)
         self.assertEqual([(0, 0)], t.data)
 
     def test_perform(self):

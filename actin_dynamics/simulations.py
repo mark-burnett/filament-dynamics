@@ -124,4 +124,4 @@ def run_simulation(sim):
                 filament_measurements[label].append(data)
 
     states = [f.states for f in sim.filaments]
-    return states, simulation_measurements, filament_measurements
+    return sim.parameters, simulation_measurements, states, filament_measurements

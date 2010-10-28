@@ -35,9 +35,9 @@ from actin_dynamics import measurements
 #    def test_multiple_filaments(self):
 #        self.assertTrue(False)
 
-class FlourescenceTest(unittest.TestCase):
-    def test_write_me_please(self):
-        self.assertTrue(False)
+#class FlourescenceTest(unittest.TestCase):
+#    def test_write_me_please(self):
+#        self.assertTrue(False)
 
 if '__main__' == __name__:
     unittest.main()
