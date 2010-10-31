@@ -13,17 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
+import tables
 
-class ParameterMeshIterator(object):
-    def __init__(self, names, parameter_sets):
-        self.names = names
-        self.parameter_sets = parameter_sets
-    
-    def __iter__(self):
-        return self
+class Measurement(tables.IsDescription):
+    time  = tables.FloatCol()
+    value = tables.FloatCol()
 
-    def next(self):
-        next_parameter_sets = next(self.parameter_sets)
-        return dict((n, v) for n, v in itertools.izip(self.names,
-                                                      next_parameter_sets))
+class State(tables.IsDescription):
+    state = tables.StringCol(6)
+
+class Parameter(tables.IsDescription):
+    name  = tables.StringCol(64)
+    value = tables.FloatCol()

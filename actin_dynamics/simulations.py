@@ -54,7 +54,7 @@ class Simulation(object):
         self.end_conditions = end_conditions
         self.filaments      = filaments
         self.parameters     = parameters
-        self.rng = rng
+        self.rng            = rng
 
 def run_simulation(sim):
     """
@@ -112,16 +112,12 @@ def run_simulation(sim):
             measurement.perform(time, sim.filaments)
 
     # Compile measurements
-    simulation_measurements = collections.defaultdict(list)
-    filament_measurements   = collections.defaultdict(list)
-    for c in sim.concentrations.itervalues():
-        if c.label:
-            simulation_measurements[c.label] = c.data
+    concentration_measurements = {}
+    for state, c in sim.concentrations.iteritems():
+        concentration_measurements[state] = c.data
 
-    for f in sim.filaments:
-        for label, data in f.measurements.iteritems():
-            if label is not None:
-                filament_measurements[label].append(data)
+    raw_filaments = [f.states for f in sim.filaments]
+    filament_measurements = [f.measurements for f in sim.filaments]
 
-    states = [f.states for f in sim.filaments]
-    return sim.parameters, simulation_measurements, states, filament_measurements
+    return (sim.parameters, concentration_measurements,
+            raw_filaments, filament_measurements)

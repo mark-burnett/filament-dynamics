@@ -13,26 +13,24 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..meta_classes import Registration
+import multiprocessing
 
-from registry import concentration_registry
+from .io import hdf
+from .simulations import run_simulation
 
-class Concentration(object):
-    __metaclass__ = Registration
-    registry = concentration_registry
-    skip_registration = True
+def run_simulations(simulation_factory, output_file_name):
 
-    __slots__ = ['label', 'data']
-    def __init__(self, label=None):
-        self.label = label
-        self.data  = [(0, self.value)]
+    hdf_writer = hdf.Writer(output_file_name)
+    pool = multiprocessing.Pool()
 
-    def add_monomer(self, time):
-        self.update_measurement(time)
+    try:
+        for sim in simulation_factory:
+            pool.apply_async(run_simulation, (sim,),
+                             callback=hdf_writer.write_result)
 
-    def remove_monomer(self, time):
-        self.update_measurement(time)
-
-    def update_measurement(self, time):
-        if self.value != self.data[-1][1]:
-            self.data.append((time, self.value))
+        pool.close()
+        pool.join()
+    except KeyboardInterrupt:
+        # Handle CTRL-C
+        pool.terminate()
+        raise

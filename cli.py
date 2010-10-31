@@ -15,14 +15,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-import copy
-import cPickle
-import itertools
-
-import multiprocessing
 
 from actin_dynamics import io, factories
-from actin_dynamics.simulations import run_simulation
+from actin_dynamics import mp_support
 
 def parse_command_line():
     parser = argparse.ArgumentParser()
@@ -30,7 +25,7 @@ def parse_command_line():
                         help='Object graph definition file.')
     parser.add_argument('--parameters', default='parameters.yaml',
                         help='Parameters file.')
-    parser.add_argument('--output_file', default='output.pickle',
+    parser.add_argument('--output_file', default='output.h5',
                         help='Output pickle file name.')
     return parser.parse_args()
 
@@ -42,25 +37,7 @@ def cli_main():
 
     simulation_factory = factories.SimulationFactory(object_graph, parameters)
 
-    pool = multiprocessing.Pool()
-
-    try:
-        async_results = []
-        for s in simulation_factory:
-            async_results.append(pool.apply_async(run_simulation, (s,)))
-
-        # Add a crazy long timeout (ms) to work around a python bug.
-        # This lets us use CTRL-C to stop the program.
-        results = [r.get(999999999999) for r in async_results]
-
-        pool.close()
-        pool.join()
-    except KeyboardInterrupt:
-        # Handle CTRL-C
-        pool.terminate()
-        raise
-
-    cPickle.dump(results, open(args.output_file, 'wb'), -1)
+    mp_support.run_simulations(simulation_factory, args.output_file)
 
 if '__main__' == __name__:
     cli_main()

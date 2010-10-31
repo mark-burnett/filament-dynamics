@@ -41,7 +41,7 @@ class BarbedPolymerization(_FixedRate):
     def perform(self, time, filaments, concentrations, index, r):
         current_filament = filaments[index]
         current_filament.grow_barbed_end(self.state)
-        concentrations[self.state].remove_monomer()
+        concentrations[self.state].remove_monomer(time)
         _FixedRate.perform(self, time, filaments, concentrations, index, r)
 
 class PointedPolymerization(_FixedRate):
@@ -49,5 +49,5 @@ class PointedPolymerization(_FixedRate):
     def perform(self, time, filaments, concentrations, index, r):
         current_filament = filaments[index]
         current_filament.grow_pointed_end(self.state)
-        concentrations[self.state].remove_monomer()
+        concentrations[self.state].remove_monomer(time)
         _FixedRate.perform(self, time, filaments, concentrations, index, r)

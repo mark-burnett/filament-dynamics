@@ -29,8 +29,8 @@ class ConcentrationChange(_SolutionTransition):
         return self.rate * concentrations[self.old_state].value
 
     def perform(self, time, filaments, concentrations, index, r):
-        concentrations[self.old_state].remove_monomer()
-        concentrations[self.new_state].add_monomer()
+        concentrations[self.old_state].remove_monomer(time)
+        concentrations[self.new_state].add_monomer(time)
 
         _SolutionTransition.perform(self, time, filaments, concentrations, index, r)
 

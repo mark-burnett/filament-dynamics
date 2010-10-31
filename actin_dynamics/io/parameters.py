@@ -18,7 +18,18 @@ import itertools
 import yaml
 import numpy
 
-from ..factories import ParameterMeshIterator
+class ParameterMeshIterator(object):
+    def __init__(self, names, parameter_sets):
+        self.names = names
+        self.parameter_sets = parameter_sets
+    
+    def __iter__(self):
+        return self
+
+    def next(self):
+        next_parameter_sets = next(self.parameter_sets)
+        return dict((n, v) for n, v in itertools.izip(self.names,
+                                                      next_parameter_sets))
 
 
 def _make_mesh(min_value, max_value, mesh_size, mesh_type):

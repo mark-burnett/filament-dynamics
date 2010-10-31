@@ -18,7 +18,7 @@ class WithByproduct(object):
         self.byproduct = byproduct
 
     def perform(self, time, filaments, concentrations, index, r):
-        concentrations[self.byproduct].add_monomer()
+        concentrations[self.byproduct].add_monomer(time)
 
 def add_byproduct(old_class):
     '''

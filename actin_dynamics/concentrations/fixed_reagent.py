@@ -40,12 +40,15 @@ class FixedReagent(_Concentration):
             return 0
         return self.monomer_concentration
 
-    def add_monomer(self):
+    def add_monomer(self, time):
         self.monomer_concentration += self.filament_tip_concentration
+        _Concentration.add_monomer(self, time)
 
-    def remove_monomer(self):
+
+    def remove_monomer(self, time):
         if  self.monomer_concentration >= self.filament_tip_concentration:
             self.monomer_concentration -= self.filament_tip_concentration
+            _Concentration.remove_monomer(self, time)
         else:
             raise RuntimeError(
             'Could not polymerize without going to negative concentration.')

@@ -44,12 +44,12 @@ class BarbedDepolymerization(_FixedRate):
     def perform(self, time, filaments, concentrations, index, r):
         current_filament = filaments[index]
         current_filament.shrink_barbed_end()
-        concentrations[self.state].add_monomer()
+        concentrations[self.state].add_monomer(time)
         _FixedRate.perform(self, time, filaments, concentrations, index, r)
 
 class PointedDepolymerization(_FixedRate):
     def perform(self, time, filaments, concentrations, index, r):
         current_filament = filaments[index]
         current_filament.shrink_pointed_end()
-        concentrations[self.state].add_monomer()
+        concentrations[self.state].add_monomer(time)
         _FixedRate.perform(self, time, filaments, concentrations, index, r)

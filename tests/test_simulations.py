@@ -44,7 +44,7 @@ class BasicSimulationTests(unittest.TestCase):
         self.assertEqual([8], list(final_state[0]))
         self.assertEqual(0, len(sim_data))
         self.assertEqual(1, len(filament_data))
-        values = [l for t, l in filament_data['mock_measurement'][0]]
+        values = [l for t, l in filament_data[0]['mock_measurement']]
         self.assertEqual(values, [6, 7, 8])
 
     def test_multiple_measurements(self):
@@ -62,10 +62,10 @@ class BasicSimulationTests(unittest.TestCase):
 
         pars, sim_data, final_state, filament_data = run_simulation(sim)
 
-        self.assertEqual(2, len(filament_data))
-        self.assertEqual(filament_data['measurement_1'], filament_data['measurement_2'])
+        self.assertEqual(2, len(filament_data[0]))
+        self.assertEqual(filament_data[0]['measurement_1'], filament_data[0]['measurement_2'])
 
-        values = [l for t, l in filament_data['measurement_1'][0]]
+        values = [l for t, l in filament_data[0]['measurement_1']]
         self.assertEqual(values, [6, 7, 8])
 
 #class DetailedSimulationTests(unittest.TestCase):

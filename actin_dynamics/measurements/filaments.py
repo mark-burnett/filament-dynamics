@@ -15,13 +15,12 @@
 
 from base_classes import Measurement as _Measurement
 
-class StateCounts(_Measurement):
-    def __init__(self, label=None):
+class StateCount(_Measurement):
+    def __init__(self, state=None, label=None):
+        self.state = state
         _Measurement.__init__(self, label=label)
 
     def perform(self, time, filaments):
-        for filament in filaments:
-            states = filament.containted_states()
-            state_counts = dict((state, filament.state_count(state))
-                                for state in states)
-            self.store(time, state_counts, filament)
+        for i, filament in enumerate(filaments):
+            state_count = filament.state_count(self.state)
+            self.store(time, state_count, filament)
