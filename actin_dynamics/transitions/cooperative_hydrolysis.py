@@ -18,7 +18,7 @@ from . import mixins as _mixins
 
 class CooperativeHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'cooperativity',
-                 'new_state']
+                 'new_state', 'boundary_rate']
     def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
             cooperativity=None, new_state=None, label=None):
         self.old_state        = old_state
@@ -27,6 +27,8 @@ class CooperativeHydrolysis(_FilamentTransition):
         self.cooperativity    = cooperativity
         self.new_state        = new_state
 
+        self.boundary_rate = self.rate * self.cooperativity
+
         _FilamentTransition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
@@ -34,7 +36,7 @@ class CooperativeHydrolysis(_FilamentTransition):
                 for filament in filaments]
 
     def _boundary_rate(self, filament):
-        return (self.rate * self.cooperativity *
+        return (self.boundary_rate *
                 filament.boundary_count(self.old_state, self.pointed_neighbor))
 
     def _random_rate(self, filament):

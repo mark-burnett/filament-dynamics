@@ -22,7 +22,8 @@ def _ddict_factory():
 
 class Filament(object):
     __slots__ = ['states', 'relative_state_indices', 'measurements',
-                 'relative_shift', 'relative_boundary_indices']
+                 'relative_shift', 'relative_boundary_indices',
+                 'relative_non_boundary_indices']
     def __init__(self, iterable):
         self.states = collections.deque(iterable)
         self.measurements = collections.defaultdict(list)
@@ -35,6 +36,8 @@ class Filament(object):
         self.relative_state_indices = collections.defaultdict(list)
         self.relative_boundary_indices = collections.defaultdict(
                 _ddict_factory)
+#        self.relative_non_boundary_indices = collections.defaultdict(
+#                _ddict_factory)
 
         for i, state in enumerate(self.states):
             self.relative_state_indices[state].append(i)
