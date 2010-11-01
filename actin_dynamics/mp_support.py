@@ -34,3 +34,9 @@ def run_simulations(simulation_factory, output_file_name):
         # Handle CTRL-C
         pool.terminate()
         raise
+
+def sp_run_simulations(simulation_factory, output_file_name):
+    hdf_writer = hdf.Writer(output_file_name)
+
+    for sim in simulation_factory:
+        hdf_writer.write_result(run_simulation(sim))

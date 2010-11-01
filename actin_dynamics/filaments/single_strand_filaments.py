@@ -22,8 +22,7 @@ def _ddict_factory():
 
 class Filament(object):
     __slots__ = ['states', 'relative_state_indices', 'measurements',
-                 'relative_shift', 'relative_boundary_indices',
-                 'relative_non_boundary_indices']
+                 'relative_shift', 'relative_boundary_indices']
     def __init__(self, iterable):
         self.states = collections.deque(iterable)
         self.measurements = collections.defaultdict(list)
@@ -36,8 +35,6 @@ class Filament(object):
         self.relative_state_indices = collections.defaultdict(list)
         self.relative_boundary_indices = collections.defaultdict(
                 _ddict_factory)
-#        self.relative_non_boundary_indices = collections.defaultdict(
-#                _ddict_factory)
 
         for i, state in enumerate(self.states):
             self.relative_state_indices[state].append(i)
@@ -81,11 +78,8 @@ class Filament(object):
         return len(self.relative_boundary_indices[barbed_state][pointed_state])
 
     def non_boundary_state_count(self, barbed_state, pointed_state):
-        # XXX Speed limiting.
-        relative_indices = [i for i in self.relative_state_indices[barbed_state]
-                            if i not in (self.relative_boundary_indices
-                                         [barbed_state][pointed_state])]
-        return len(relative_indices)
+        return (len(self.relative_state_indices[barbed_state]) - 
+                len(self.relative_boundary_indices[barbed_state][pointed_state]))
 
 
     def state_index(self, state, target_index):
@@ -100,13 +94,19 @@ class Filament(object):
 
     def non_boundary_state_index(self, barbed_state, pointed_state,
                                  target_index):
-        relative_indices = [i for i in self.relative_state_indices[barbed_state]
-                            if i not in (self.relative_boundary_indices
-                                         [barbed_state][pointed_state])]
+        relative_indices = self._non_boundary_relative_indices(barbed_state,
+                                                               pointed_state)
         if target_index >= len(relative_indices):
             print target_index, len(relative_indices), barbed_state, pointed_state
         relative_index = relative_indices[target_index]
         return relative_index + self.relative_shift
+
+    def _non_boundary_relative_indices(self, barbed_state, pointed_state):
+        # XXX Speed limiting.
+        return [i for i in self.relative_state_indices[barbed_state]
+                if i not in (self.relative_boundary_indices
+                             [barbed_state][pointed_state])]
+
 
 
     def __setitem__(self, absolute_index, new_state):
