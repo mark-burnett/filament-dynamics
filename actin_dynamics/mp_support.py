@@ -40,3 +40,5 @@ def sp_run_simulations(simulation_factory, output_file_name):
 
     for sim in simulation_factory:
         hdf_writer.write_result(run_simulation(sim))
+
+    hdf_writer.close()

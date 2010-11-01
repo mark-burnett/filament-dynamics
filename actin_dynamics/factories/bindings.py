@@ -15,14 +15,24 @@
 
 def instantiate_binding(object_dict, parameters, registry):
     cls = registry[object_dict['class_name']]
-    # NOTE getattr doesn't appear to work on yaml 'dicts' for some reason.
-    try:
-        par_map = object_dict['parameters']
+
+    par_map = {}
+    dict_map = {}
+    try: # NOTE getattr doesn't appear to work on yaml 'dicts' for some reason.
+        for local_name, value in object_dict['parameters'].iteritems():
+            try:
+                temp_map = {}
+                for internal_key, internal_value in value.iteritems():
+                    temp_map[internal_key] = parameters[internal_value]
+                dict_map[local_name] = temp_map
+            except:
+                par_map[local_name] = value
     except:
-        par_map = {}
+        pass
 
     kwargs = dict((local_name, parameters[global_name])
                   for local_name, global_name in par_map.iteritems())
+    kwargs.update(dict_map)
 
     try:
         fixed_pars = object_dict['fixed_parameters']

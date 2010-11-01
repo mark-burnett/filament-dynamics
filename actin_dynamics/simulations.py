@@ -25,14 +25,7 @@ import random
 
 import math
 
-def running_total(values):
-    """
-    Generator that calculates a running total of a sequence.
-    """
-    total = 0
-    for v in values:
-        total += v
-        yield total
+from . import utils
 
 class Simulation(object):
     """
@@ -84,7 +77,7 @@ def run_simulation(sim):
             transition_Rs.append(sum(local_Rs))
             small_Rs.append(local_Rs)
 
-        running_transition_R = list(running_total(transition_Rs))
+        running_transition_R = list(utils.running_total(transition_Rs))
         total_R   = running_transition_R[-1]
 
         # Update simulation time
@@ -99,7 +92,7 @@ def run_simulation(sim):
 
         # Figure out which filament to perform it on
         filament_r = running_transition_R[transition_index] - transition_r
-        running_filament_R = list(running_total(small_Rs[transition_index]))
+        running_filament_R = list(utils.running_total(small_Rs[transition_index]))
         filament_index = bbl(running_filament_R, filament_r)
 
         # Perform transition

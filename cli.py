@@ -38,8 +38,8 @@ def cli_main():
     simulation_factory = factories.SimulationFactory(object_graph, parameters)
 
     mp_support.run_simulations(simulation_factory, args.output_file)
-    # used for profiling
-    # mp_support.sp_run_simulations(simulation_factory, args.output_file)
+    # NOTE used for profiling
+#    mp_support.sp_run_simulations(simulation_factory, args.output_file)
 
 if '__main__' == __name__:
     cli_main()
