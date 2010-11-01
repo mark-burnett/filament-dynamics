@@ -94,19 +94,13 @@ class Filament(object):
 
     def non_boundary_state_index(self, barbed_state, pointed_state,
                                  target_index):
-        relative_indices = self._non_boundary_relative_indices(barbed_state,
-                                                               pointed_state)
+        relative_indices = [i for i in self.relative_state_indices[barbed_state]
+                            if i not in (self.relative_boundary_indices
+                                         [barbed_state][pointed_state])]
         if target_index >= len(relative_indices):
             print target_index, len(relative_indices), barbed_state, pointed_state
         relative_index = relative_indices[target_index]
         return relative_index + self.relative_shift
-
-    def _non_boundary_relative_indices(self, barbed_state, pointed_state):
-        # XXX Speed limiting.
-        return [i for i in self.relative_state_indices[barbed_state]
-                if i not in (self.relative_boundary_indices
-                             [barbed_state][pointed_state])]
-
 
 
     def __setitem__(self, absolute_index, new_state):
