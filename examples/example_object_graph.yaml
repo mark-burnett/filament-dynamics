@@ -38,7 +38,21 @@ end_conditions:
           duration: simulation_duration
 
 measurements:
-    - class_name: StateCounts
+    - class_name: StateCount
+      fixed_parameters:
+          label: atp_count
+          state: ATP
+
+    - class_name: StateCount
+      fixed_parameters:
+          label: adppi_count
+          state: ADPPi
+
+    - class_name: StateCount
+      fixed_parameters:
+          label: adp_count
+          state: ADP
+
 
 transitions:
     # Polymerization
@@ -80,19 +94,20 @@ transitions:
       label: cleavage
       fixed_parameters:
           old_state: ATP
-          pointed_neighbor: ADPPi
           new_state: ADPPi
       parameters:
           rate: cleavage_rate
-          cooperativity: cleavage_cooperativity
+          cooperativities:
+              ADPPi: cleavage_cooperativity
+              ADP: cleavage_cooperativity
 
     - class_name: CooperativeHydrolysisWithByproduct
       label: release
       fixed_parameters:
           old_state: ADPPi
-          pointed_neighbor: ADP
           new_state: ADP
           byproduct: Pi
       parameters:
           rate: release_rate
-          cooperativity: release_cooperativity
+          cooperativities:
+              ADP: cleavage_cooperativity
