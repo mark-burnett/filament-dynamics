@@ -64,13 +64,10 @@ class Writer(object):
 
     def _save_measurement_collection(self, collection=None, group=None, **kwargs):
         for name, measurements in collection.iteritems():
-            sub_group = self.hdf_file.createGroup(group, name)
-            self._save_measurements(measurements=measurements, group=sub_group,
-                                    **kwargs)
+            table = self.hdf_file.createTable(group, name, hdf_format.Measurement)
+            self._save_measurements(measurements=measurements, table=table)
 
-    def _save_measurements(self, measurements=None, group=None, table_name='data'):
-        table = self.hdf_file.createTable(group, table_name, hdf_format.Measurement)
-
+    def _save_measurements(self, measurements=None, table=None):
         row = table.row
         for time, value in measurements:
             row['time']  = time

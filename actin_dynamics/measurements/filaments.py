@@ -15,6 +15,15 @@
 
 from base_classes import Measurement as _Measurement
 
+class Length(_Measurement):
+    def __init__(self, label=None):
+        _Measurement.__init__(self, label=label)
+
+    def perform(self, time, filaments):
+        for filament in filaments:
+            length = len(filament)
+            self.store(time, length, filament)
+
 class StateCount(_Measurement):
     __slots__ = ['state']
     def __init__(self, state=None, label=None):

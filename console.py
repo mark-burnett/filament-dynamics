@@ -33,9 +33,9 @@ def _analyze_main():
     hdf_file = _tables.openFile(filename=_args.simulation_file, mode='a')
     simulations = hdf_file.getNode('/Simulations')
     try:
-        analyses = hdf_file.getNode('/Analyses')
+        analysis = hdf_file.getNode('/Analysis')
     except _tables.NoSuchNodeError:
-        analyses = hdf_file.createGroup('/', 'Analyses', 'Analysis Results')
+        analysis = hdf_file.createGroup('/', 'Analysis', 'Analysis Results')
 
     # Drop into shell
     _shell = _IPShellEmbed()
