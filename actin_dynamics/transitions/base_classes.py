@@ -48,6 +48,7 @@ class FilamentTransition(Transition):
                 previous_time, previous_value = measurements[-1]
             else:
                 previous_value = 0
+                measurements.append((0, 0))
             measurements.append((time, previous_value + 1))
         Transition.perform(self, time, filaments, concentrations, index, r)
 
