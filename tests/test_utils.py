@@ -13,6 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import unittest
+
+from actin_dynamics.utils import running_total
+
 class RunningTotalTest(unittest.TestCase):
     def test_running_total(self):
         test_data = [[0, 1, 2, 3, 4, 5],

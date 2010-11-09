@@ -25,8 +25,8 @@ class MockConcentration(object):
         self.value_access_count += 1
         return self._value
 
-    def add_monomer(self):
+    def add_monomer(self, time):
         self.count += 1
 
-    def remove_monomer(self):
+    def remove_monomer(self, time):
         self.count -= 1

@@ -23,21 +23,21 @@ class FixedReagentTest(unittest.TestCase):
 
         self.assertEqual(3.0, fr.value)
         
-        fr.add_monomer()
+        fr.add_monomer(None)
         self.assertEqual(3.1, fr.value)
 
-        fr.remove_monomer()
-        fr.remove_monomer()
-        fr.remove_monomer()
-        fr.remove_monomer()
-        fr.remove_monomer()
-        fr.remove_monomer()
+        fr.remove_monomer(None)
+        fr.remove_monomer(None)
+        fr.remove_monomer(None)
+        fr.remove_monomer(None)
+        fr.remove_monomer(None)
+        fr.remove_monomer(None)
         # Messy looking, but avoids rounding errors.
         self.assertEqual(3.0 - 0.1 - 0.1 - 0.1 - 0.1 - 0.1, fr.value)
 
-        fr.add_monomer()
-        fr.add_monomer()
-        fr.add_monomer()
+        fr.add_monomer(None)
+        fr.add_monomer(None)
+        fr.add_monomer(None)
         # Messy looking, but avoids rounding errors.
         self.assertEqual(3.0 - 0.1 - 0.1, fr.value)
 

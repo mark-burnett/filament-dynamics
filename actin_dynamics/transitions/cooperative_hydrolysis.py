@@ -41,6 +41,7 @@ class CooperativeHydrolysis(_FilamentTransition):
 
     def _boundary_rates(self, filament):
         return [filament.boundary_count(self.old_state, pn)
+                * self.boundary_rates[pn]
                 for pn in self.pointed_neighbors]
 
     def _random_rate(self, filament):
