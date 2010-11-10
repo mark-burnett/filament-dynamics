@@ -38,6 +38,10 @@ end_conditions:
           duration: simulation_duration
 
 measurements:
+    - class_name: Length
+      fixed_parameters:
+          label: length
+
     - class_name: StateCount
       fixed_parameters:
           label: atp_count
@@ -53,22 +57,24 @@ measurements:
           label: adp_count
           state: ADP
 
-
 transitions:
     # Polymerization
     - class_name: BarbedPolymerization
       fixed_parameters:
           state: ATP
+          label: barbed_atp_polymerization
       parameters:
           rate: barbed_atp_polymerization_rate
     - class_name: BarbedPolymerization
       fixed_parameters:
           state: ADPPi
+          label: barbed_adppi_polymerization
       parameters:
           rate: barbed_adppi_polymerization_rate
     - class_name: BarbedPolymerization
       fixed_parameters:
           state: ADP
+          label: barbed_adp_polymerization
       parameters:
           rate: barbed_adp_polymerization_rate
 
@@ -76,23 +82,26 @@ transitions:
     - class_name: BarbedDepolymerization
       fixed_parameters:
           state: ATP
+          label: barbed_atp_depolymerization
       parameters:
           rate: barbed_atp_depolymerization_rate
     - class_name: BarbedDepolymerization
       fixed_parameters:
           state: ADPPi
+          label: barbed_adppi_depolymerization
       parameters:
           rate: barbed_adppi_depolymerization_rate
     - class_name: BarbedDepolymerization
       fixed_parameters:
           state: ADP
+          label: barbed_adp_depolymerization
       parameters:
           rate: barbed_adp_depolymerization_rate
 
     # Hydrolysis
     - class_name: CooperativeHydrolysis
-      label: cleavage
       fixed_parameters:
+          label: cleavage
           old_state: ATP
           new_state: ADPPi
       parameters:
@@ -101,13 +110,11 @@ transitions:
               ADPPi: cleavage_cooperativity
               ADP: cleavage_cooperativity
 
-    - class_name: CooperativeHydrolysisWithByproduct
-      label: release
+    - class_name: RandomHydrolysisWithByproduct
       fixed_parameters:
+          label: release
           old_state: ADPPi
           new_state: ADP
           byproduct: Pi
       parameters:
           rate: release_rate
-          cooperativities:
-              ADP: cleavage_cooperativity
