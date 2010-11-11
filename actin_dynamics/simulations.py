@@ -66,7 +66,6 @@ def run_simulation(sim):
     # Initialize.
     [e.reset() for e in sim.end_conditions]
     time = 0
-    last_print_time = -1000
 
     # Perform initial filament measurements
     for measurement in sim.measurements:
@@ -74,11 +73,6 @@ def run_simulation(sim):
     try:
         while not any(e(time, sim.filaments, sim.concentrations)
                       for e in sim.end_conditions):
-            if time > last_print_time + 10:
-                print 'sim time', time
-                print 'lengths', [len(f) for f in sim.filaments]
-                print 'atp actin concentration', sim.concentrations['ATP'].value
-                last_print_time = time
             # Calculate partial sums of transition probabilities
             # NOTE we are keeping the small_Rs here so they don't need to be
             #   recalculated to determine which filament undergoes transition.

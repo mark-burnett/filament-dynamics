@@ -38,7 +38,8 @@ class Writer(object):
 
 
         par_table = _wrappers.Parameters.in_group(hdf_file=self.hdf_file,
-                                                  parent_group=result_group)
+                                                  parent_group=result_group,
+                                                  name='parameters')
         par_table.write(parameters)
 
         sm_group = _wrappers.MeasurementCollection.in_group(
@@ -54,7 +55,7 @@ class Writer(object):
             fg = self.hdf_file.createGroup(filament_group,
                                            name=('filament_%s' % i))
             fil_col = _wrappers.MeasurementCollection.in_group(
-                    hdf_file=self.hdf_file, parent_group=filaments,
+                    hdf_file=self.hdf_file, parent_group=fg,
                     name='measurements')
             fil_col.write(fm)
 

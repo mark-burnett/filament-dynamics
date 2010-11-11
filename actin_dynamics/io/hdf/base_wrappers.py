@@ -13,13 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
+
 class TableWrapper(object):
     def __init__(self, table=None):
         self.table = table
 
     @classmethod
     def in_group(cls, hdf_file=None, parent_group=None, name=None):
-        table = hdf_file.createTable(parent_group, name, self.description)
+        table = hdf_file.createTable(parent_group, name, cls.description)
         return cls(table)
 
     def read(self):
@@ -27,9 +29,8 @@ class TableWrapper(object):
 
     def write(self, data):
         row = self.table.row
-        column_names = data.colnams
         for d in data:
-            for name, value in itertools.izip(column_names, d):
+            for name, value in itertools.izip(self.table.colnames, d):
                 row[name] = value
             row.append()
 
