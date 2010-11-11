@@ -16,39 +16,34 @@
 from base_classes import Concentration as _Concentration
 
 class FixedReagent(_Concentration):
-    description = 'Maintains a fixed amount of the species.'
-    parameters = ['initial_concentration', 'filament_tip_concentration']
-    states = None
-
-    __slots__ = ['monomer_concentration', 'filament_tip_concentration']
+    __slots__ = ['value', 'monomer_count', 'concentration_per_monomer']
     def __init__(self, initial_concentration=-1,
                  filament_tip_concentration=-1,
-                 label=None):
+                 number=None, label=None):
         if initial_concentration < 0:
             raise ValueError('Negative concentrations not allowed.')
         if filament_tip_concentration < 0:
             raise ValueError('Negative concentrations not allowed.')
 
-        self.monomer_concentration = initial_concentration
-        self.filament_tip_concentration = filament_tip_concentration
+
+        self.monomer_count = (number * initial_concentration
+                              / filament_tip_concentration)
+        self.concentration_per_monomer = (initial_concentration
+                                          / self.monomer_count)
+        self.monomer_count = int(self.monomer_count)
+
+        self.value = self.concentration_per_monomer * self.monomer_count
+
         _Concentration.__init__(self, label)
 
-    @property
-    def value(self):
-        # We must ensure we never go to negative concentration.
-        if self.monomer_concentration < self.filament_tip_concentration:
-            return 0
-        return self.monomer_concentration
-
     def add_monomer(self, time):
-        self.monomer_concentration += self.filament_tip_concentration
+        self.monomer_count += 1
+        self.value = self.concentration_per_monomer * self.monomer_count
         _Concentration.add_monomer(self, time)
 
 
     def remove_monomer(self, time):
-        if  self.monomer_concentration >= self.filament_tip_concentration:
-            self.monomer_concentration -= self.filament_tip_concentration
-            _Concentration.remove_monomer(self, time)
-        else:
-            raise RuntimeError(
-            'Could not polymerize without going to negative concentration.')
+        if self.monomer_count > 0:
+            self.monomer_count -= 1
+            self.value = self.concentration_per_monomer * self.monomer_count
+        _Concentration.remove_monomer(self, time)

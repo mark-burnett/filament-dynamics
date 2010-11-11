@@ -46,9 +46,11 @@ class Writer(object):
         self._save_measurement_collection(collection=simulation_measurements,
                                           group=sim_measurement_group)
 
+        filament_group = self.hdf_file.createGroup(result_group,
+                'filaments')
         self._save_filament_data(states=raw_filaments,
                                  measurement_collections=filament_measurements,
-                                 group=result_group)
+                                 group=filament_group)
 
 
     def _save_parameters(self, parameters, result_group):

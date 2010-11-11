@@ -21,18 +21,14 @@ from base_classes import FilamentFactory as _FilamentFactory
 from .single_strand_filaments import Filament
 
 class SingleStateFixedLength(_FilamentFactory):
-    description = 'Creates strands of a fixed state and length.'
-    states = ['state']
-    parameters = ['length']
-
     def __init__(self, state=None, length=None, number=None):
         self.state = state
         self.length = int(length)
-        self.number = number
+        self.number = int(number)
 
     def create(self):
         return [Filament(itertools.repeat(self.state, self.length))
-                for i in xrange(number)]
+                for i in xrange(self.number)]
 
 class SingleStateFixedLengthFromConcentrations(SingleStateFixedLength):
     parameters = ['concentration', 'filament_tip_concentration']

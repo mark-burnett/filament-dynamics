@@ -50,13 +50,15 @@ def downsample(hdf_file, sample_period, duration_name='simulation_duration'):
         _downsample_group(simulation.simulation_measurements, hdf_file,
                           sm_group, sample_times)
 
+        try:
+            filaments_out_group = hdf_file.createGroup(output_group, 'filaments')
+        except tables.NodeError:
+            filaments_out_group = output_group.filaments
+
         # Filament measurements - don't duplicate e.g. final state.
-        for f in simulation:
-            # Skip non filaments
-            if 'filament_' != f._v_name[:9]:
-                continue
+        for f in simulation.filaments:
             try:
-                filament_group = hdf_file.createGroup(output_group, f._v_name)
+                filament_group = hdf_file.createGroup(filaments_out_group, f._v_name)
             except tables.NodeError:
                 filament_group = output_group._f_getChild(f._v_name)
             _downsample_group(f, hdf_file, filament_group, sample_times)

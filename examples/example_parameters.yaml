@@ -22,19 +22,20 @@ pointed_adp_depolymerization_rate:   [0.25, 0.25, 1, linear]
 cleavage_rate: [0.3, 0.3, 1, linear]
 cleavage_cooperativity: [1, 1, 1, linear]
 
-release_rate: [0.3, 0.3, 1, linear]
+release_rate: [0.003, 0.003, 1, linear]
 
 
 # Initial Strand
-average_initial_filament_length: [535, 535, 1, linear]
-initial_filament_length_deviation: [100, 100, 1, linear]
-number_of_filaments: [21, 21, 1, linear]
+#average_initial_filament_length: [535, 535, 1, linear]
+#initial_filament_length_deviation: [50, 50, 1, linear]
+initial_filament_length: [535, 535, 1, linear]
+number_of_filaments: [1, 1, 1, linear]
 
 
 # Concentrations
-filament_tip_concentration: [0.01, 0.01, 1, linear]
+filament_tip_concentration: [0.0112, 0.0112, 1, linear]
 
-initial_atp_concentration: [4, 4, 1, linear]
+initial_atp_concentration: [6, 6, 1, linear]
 initial_adp_concentration: [0, 0, 1, linear]
 
 initial_adppi_concentration: [0, 0, 1, linear]

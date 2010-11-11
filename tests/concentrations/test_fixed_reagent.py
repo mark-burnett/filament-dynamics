@@ -19,12 +19,18 @@ from actin_dynamics import concentrations
 
 class FixedReagentTest(unittest.TestCase):
     def test_typical_FixedReagent(self):
-        fr = concentrations.FixedReagent(3.0, 0.1)
+        initial_concentration = 3.0
+        concentration_per_monomer = 0.1
+        fr = concentrations.FixedReagent(initial_concentration,
+                                         concentration_per_monomer, number=1)
+        original_monomer_count = int(initial_concentration
+                                     / concentration_per_monomer)
 
-        self.assertEqual(3.0, fr.value)
+        self.assertEqual(initial_concentration, fr.value)
         
         fr.add_monomer(None)
-        self.assertEqual(3.1, fr.value)
+        self.assertEqual((original_monomer_count+1) * concentration_per_monomer,
+                         fr.value)
 
         fr.remove_monomer(None)
         fr.remove_monomer(None)
@@ -33,13 +39,15 @@ class FixedReagentTest(unittest.TestCase):
         fr.remove_monomer(None)
         fr.remove_monomer(None)
         # Messy looking, but avoids rounding errors.
-        self.assertEqual(3.0 - 0.1 - 0.1 - 0.1 - 0.1 - 0.1, fr.value)
+        self.assertEqual((original_monomer_count-5) * concentration_per_monomer,
+                          fr.value)
 
         fr.add_monomer(None)
         fr.add_monomer(None)
         fr.add_monomer(None)
         # Messy looking, but avoids rounding errors.
-        self.assertEqual(3.0 - 0.1 - 0.1, fr.value)
+        self.assertEqual((original_monomer_count-2) * concentration_per_monomer,
+                          fr.value)
 
 if '__main__' == __name__:
     unittest.main()
