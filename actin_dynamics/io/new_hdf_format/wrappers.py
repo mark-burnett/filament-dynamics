@@ -13,15 +13,27 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import tables
+from . import base_wrappers as _base_wrappers
+from . import table_formats as _table_formats
 
-class Measurement(tables.IsDescription):
-    time  = tables.FloatCol()
-    value = tables.FloatCol()
 
-class State(tables.IsDescription):
-    state = tables.StringCol(6)
+class Measurement(_base_wrappers.TableWrapper):
+    description = _table_formats.Measurement
 
-class Parameter(tables.IsDescription):
-    name  = tables.StringCol(64)
-    value = tables.FloatCol()
+class MeasurementCollection(_base_wrappers.Collection):
+    child_wrapper = Measurement
+
+
+class Parameters(_base_wrappers.DictionaryTable):
+    description = _table_formats.Parameter
+    key   = 'name'
+    value = 'value'
+
+
+class Value(_base_wrappers.SingleValueTable):
+    column_name = 'value'
+    description = _table_formats.SingleValue
+
+class State(_base_wrappers.SingleValueTable):
+    column_name = 'state'
+    description = _table_formats.State

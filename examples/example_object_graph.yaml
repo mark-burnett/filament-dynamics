@@ -1,4 +1,5 @@
 filaments:
+    class_name: NormalDistribution
     parameters:
         mean: average_initial_filament_length
         standard_deviation: initial_filament_length_deviation
@@ -120,24 +121,24 @@ transitions:
       parameters:
           rate: barbed_adp_depolymerization_rate
 
-    - class_name: PointedDepolymerization
-      fixed_parameters:
-          state: ATP
-          label: pointed_atp_depolymerization
-      parameters:
-          rate: pointed_atp_depolymerization_rate
-    - class_name: PointedDepolymerization
-      fixed_parameters:
-          state: ADPPi
-          label: pointed_adppi_depolymerization
-      parameters:
-          rate: pointed_adppi_depolymerization_rate
-    - class_name: PointedDepolymerization
-      fixed_parameters:
-          state: ADP
-          label: pointed_adp_depolymerization
-      parameters:
-          rate: pointed_adp_depolymerization_rate
+#    - class_name: PointedDepolymerization
+#      fixed_parameters:
+#          state: ATP
+#          label: pointed_atp_depolymerization
+#      parameters:
+#          rate: pointed_atp_depolymerization_rate
+#    - class_name: PointedDepolymerization
+#      fixed_parameters:
+#          state: ADPPi
+#          label: pointed_adppi_depolymerization
+#      parameters:
+#          rate: pointed_adppi_depolymerization_rate
+#    - class_name: PointedDepolymerization
+#      fixed_parameters:
+#          state: ADP
+#          label: pointed_adp_depolymerization
+#      parameters:
+#          rate: pointed_adp_depolymerization_rate
 
     # Hydrolysis
     - class_name: CooperativeHydrolysis

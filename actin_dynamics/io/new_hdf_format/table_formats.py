@@ -13,9 +13,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# XXX This function is a hack because pytables sucks.
-def table_as_list(table):
-    result = []
-    for row in table:
-        result.append(row)
-    return result
+import tables
+
+class Measurement(tables.IsDescription):
+    time  = tables.FloatCol()
+    value = tables.FloatCol()
+
+class State(tables.IsDescription):
+    state = tables.StringCol(6)
+
+class Parameter(tables.IsDescription):
+    name  = tables.StringCol(64)
+    value = tables.FloatCol()
+
+class SingleValue(tables.IsDescription):
+    value = tables.FloatCol()
