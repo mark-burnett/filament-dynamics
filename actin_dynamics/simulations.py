@@ -17,6 +17,8 @@
     This module contains a general Kinetic Monte Carlo simulation.
 """
 
+import traceback
+
 import copy
 import bisect
 import collections
@@ -64,45 +66,58 @@ def run_simulation(sim):
     # Initialize.
     [e.reset() for e in sim.end_conditions]
     time = 0
+    last_print_time = -1000
 
-    while not any(e(time, sim.filaments, sim.concentrations)
-                  for e in sim.end_conditions):
-        # Calculate partial sums of transition probabilities
-        # NOTE we are keeping the small_Rs here so they don't need to be
-        #   recalculated to determine which filament undergoes transition.
-        small_Rs = []
-        transition_Rs = []
-        for t in sim.transitions:
-            local_Rs = t.R(sim.filaments, sim.concentrations)
-            transition_Rs.append(sum(local_Rs))
-            small_Rs.append(local_Rs)
+    # Perform initial filament measurements
+    for measurement in sim.measurements:
+        measurement.perform(time, sim.filaments)
+    try:
+        while not any(e(time, sim.filaments, sim.concentrations)
+                      for e in sim.end_conditions):
+            if time > last_print_time + 10:
+                print 'sim time', time
+                print 'lengths', [len(f) for f in sim.filaments]
+                print 'atp actin concentration', sim.concentrations['ATP'].value
+                last_print_time = time
+            # Calculate partial sums of transition probabilities
+            # NOTE we are keeping the small_Rs here so they don't need to be
+            #   recalculated to determine which filament undergoes transition.
+            small_Rs = []
+            transition_Rs = []
+            for t in sim.transitions:
+                local_Rs = t.R(sim.filaments, sim.concentrations)
+                transition_Rs.append(sum(local_Rs))
+                small_Rs.append(local_Rs)
 
-        running_transition_R = list(utils.running_total(transition_Rs))
-        total_R   = running_transition_R[-1]
+            running_transition_R = list(utils.running_total(transition_Rs))
+            total_R   = running_transition_R[-1]
 
-        # Update simulation time
-        if total_R <= 0:
-            print 'ENDING SIMULATION:  no possible events.'
-            break;
-        time += ml(1/rng(0, 1)) / total_R
+            # Update simulation time
+            if total_R <= 0:
+                print 'ENDING SIMULATION:  no possible events.'
+                break;
+            time += ml(1/rng(0, 1)) / total_R
 
-        # Figure out which transition to perform
-        transition_r = rng(0, total_R)
-        transition_index = bbl(running_transition_R, transition_r)
+            # Figure out which transition to perform
+            transition_r = rng(0, total_R)
+            transition_index = bbl(running_transition_R, transition_r)
 
-        # Figure out which filament to perform it on
-        filament_r = running_transition_R[transition_index] - transition_r
-        running_filament_R = list(utils.running_total(small_Rs[transition_index]))
-        filament_index = bbl(running_filament_R, filament_r)
+            # Figure out which filament to perform it on
+            filament_r = running_transition_R[transition_index] - transition_r
+            running_filament_R = list(utils.running_total(small_Rs[transition_index]))
+            filament_index = bbl(running_filament_R, filament_r)
 
-        # Perform transition
-        state_r = running_filament_R[filament_index] - filament_r
-        sim.transitions[transition_index].perform(time, sim.filaments,
-                                    sim.concentrations, filament_index, state_r)
+            # Perform transition
+            state_r = running_filament_R[filament_index] - filament_r
+            sim.transitions[transition_index].perform(time, sim.filaments,
+                                        sim.concentrations, filament_index, state_r)
 
-        # Perform filament measurements
-        for measurement in sim.measurements:
-            measurement.perform(time, sim.filaments)
+            # Perform filament measurements
+            for measurement in sim.measurements:
+                measurement.perform(time, sim.filaments)
+    except Exception as e:
+        traceback.print_exc()
+        raise
 
     # Compile measurements
     concentration_measurements = {}

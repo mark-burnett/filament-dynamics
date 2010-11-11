@@ -26,11 +26,9 @@ class FixedReagent(_Concentration):
             raise ValueError('Negative concentrations not allowed.')
 
 
-        self.monomer_count = (number * initial_concentration
+        self.monomer_count = int(number * initial_concentration
                               / filament_tip_concentration)
-        self.concentration_per_monomer = (initial_concentration
-                                          / self.monomer_count)
-        self.monomer_count = int(self.monomer_count)
+        self.concentration_per_monomer = (filament_tip_concentration / number)
 
         self.value = self.concentration_per_monomer * self.monomer_count
 

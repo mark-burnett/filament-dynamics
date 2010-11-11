@@ -100,9 +100,10 @@ def _table_to_dict(table):
     return dd
 
 def _downsample(times, measurements, new_times):
+    if len(measurements) < 2:
+        return [measurements[0] for t in times]
     interp = scipy.interpolate.interp1d(times,
                                         measurements,
-                                        copy=False,
-                                        bounds_error=False,
+                                        copy=False, bounds_error=False,
                                         fill_value=measurements[-1])
     return interp(new_times)

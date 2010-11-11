@@ -56,6 +56,7 @@ class Filament(object):
         self._update_relative_indices(len(self.states), old_state, None)
 
 
+    # XXX these may not be right
     def grow_pointed_end(self, state):
         self.states.appendleft(state)
         self._update_relative_indices(0, None, state)
@@ -63,7 +64,7 @@ class Filament(object):
 
     def shrink_pointed_end(self):
         old_state = self.states.popleft()
-        self._update_relative_indices(-1, old_state, None)
+        self._update_relative_indices(0, old_state, None)
         self.relative_shift -= 1
 
 

@@ -34,6 +34,7 @@ class Duration(_EndCondition):
         pass
 
     def __call__(self, time, filaments, concentrations):
+        result = time > self.duration
         return time > self.duration
 
 class RandomDuration(Duration):
