@@ -98,13 +98,14 @@ def run_simulation(sim):
 
             # Figure out which filament to perform it on
             filament_r = running_transition_R[transition_index] - transition_r
-            running_filament_R = list(utils.running_total(small_Rs[transition_index]))
+            running_filament_R = list(utils.running_total(
+                small_Rs[transition_index]))
             filament_index = bbl(running_filament_R, filament_r)
 
             # Perform transition
             state_r = running_filament_R[filament_index] - filament_r
             sim.transitions[transition_index].perform(time, sim.filaments,
-                                        sim.concentrations, filament_index, state_r)
+                    sim.concentrations, filament_index, state_r)
 
             # Perform filament measurements
             for measurement in sim.measurements:

@@ -1,0 +1,54 @@
+/Simulations/
+    parameter_set_n/
+        parameters
+        simulations/
+            simulation_n/
+                measurements/
+                    atp_concentration
+                    ...
+                filaments/
+                    filament_n/
+                        final_state
+                        measurements/
+                            length
+                            ...
+
+/Analysis/
+    downsampled/
+        parameter_set_n/
+            simulations/
+                simulation_n/
+                    measurements/
+                        atp_concentration
+                        ...
+                    filaments/
+                        filament_n/
+                            measurements/
+                                length
+                                ...
+
+    basic_statistics/
+        parameter_set_n/
+            summary/
+                average_filament_measurements/
+                    length
+                    ...
+                std_filament_measurements/
+                    length
+                    ...
+
+            average_simulation_measurements/
+                atp_concentration
+                ...
+            std_simulation_measurements/
+                atp_concentration
+                ...
+
+            simulations/
+                simulation_n/
+                    average_filament_measurements/
+                        length
+                        ...
+                    std_filament_measurements/
+                        length
+                        ...

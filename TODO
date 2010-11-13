@@ -1,0 +1,3 @@
+Possible Bugs:
+    Pointed end (de)polymerization probably fails.
+    Is fixed reagent starting with correct number of monomers?

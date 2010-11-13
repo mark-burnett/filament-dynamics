@@ -17,7 +17,8 @@ from . import shortcuts
 
 from ..simulations import Simulation
 
-def make_simulation(object_graph, parameters):
+def make_simulation(object_graph, raw_parameters):
+    par_set_num, parameters = raw_parameters
     filaments = shortcuts.make_filaments(object_graph['filaments'],
                                          parameters)
 
@@ -35,12 +36,12 @@ def make_simulation(object_graph, parameters):
 
     return Simulation(transitions=transitions, concentrations=concentrations,
                       measurements=measurements, end_conditions=end_conditions,
-                      filaments=filaments, parameters=parameters)
+                      filaments=filaments, parameters=raw_parameters)
 
 class SimulationFactory(object):
     def __init__(self, object_graph, parameters):
         self.object_graph = object_graph
-        self.parameters = parameters
+        self.parameters = enumerate(parameters)
 
     def __iter__(self):
         return self

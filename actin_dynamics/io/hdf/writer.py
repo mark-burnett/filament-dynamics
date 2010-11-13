@@ -1,6 +1,7 @@
 #    Copyright (C) 2010 Mark Burnett
 #
-#    This program is free software: you can redistribute it and/or modify #    it under the terms of the GNU General Public License as published by
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
@@ -18,29 +19,30 @@ import tables
 
 from . import wrappers as _wrappers
 
-class Writer(object):
-    def __init__(self, file_name):
-        self.hdf_file    = tables.openFile(file_name, mode='w')
+# XXX Consider making this writer a context?
+class SimulationWriter(object):
+    def __init__(self, hdf_file=None):
+        self.hdf_file = hdf_file
         self.simulations = self.hdf_file.createGroup('/', 'Simulations',
                                                      'Raw Simulation Data')
 
-    def __del__(self):
-        self.hdf_file.close()
-
     def write_result(self, result):
-        (parameters, simulation_measurements,
+        (raw_parameters, simulation_measurements,
             raw_filaments, filament_measurements) = result
 
-        num_written_simulations = len(self.simulations._v_children)
-        result_group = self.hdf_file.createGroup(self.simulations,
+        # Get or create parameter set group
+        par_set_number, parameters = raw_parameters
+        par_set_group = _create_parameter_set_group(self.hdf_file,
+                self.simulations, par_set_number)
+
+        # Write parameters if needed.
+        _write_parameters(self.hdf_file, par_set_group, parameters)
+
+        # Time to start writing results.
+        num_written_simulations = par_set_group.simulations._v_nchildren
+        result_group = self.hdf_file.createGroup(par_set_group.simulations,
                                                  ('simulation_%s' %
                                                   num_written_simulations))
-
-
-        par_table = _wrappers.Parameters.in_group(hdf_file=self.hdf_file,
-                                                  parent_group=result_group,
-                                                  name='parameters')
-        par_table.write(parameters)
 
         sm_group = _wrappers.MeasurementCollection.in_group(
                 hdf_file=self.hdf_file, parent_group=result_group,
@@ -62,3 +64,24 @@ class Writer(object):
             state = _wrappers.State.in_group(hdf_file=self.hdf_file,
                     parent_group=fg, name='final_state')
             state.write(states)
+
+def _create_parameter_set_group(hdf_file, parent_group, par_set_number):
+    psg = getattr(parent_group, ('parameter_set_%s' % par_set_number), None)
+    if psg is None:
+        psg = hdf_file.createGroup(parent_group,
+                                   'parameter_set_%s' % par_set_number)
+        hdf_file.createGroup(psg, 'simulations')
+    return psg
+
+def _write_parameters(hdf_file, par_set_group, parameters):
+    # XXX check for existing table first
+    if getattr(par_set_group, 'parameters', None) is None:
+        par_table = _wrappers.Parameters.in_group(hdf_file=hdf_file,
+                                                  parent_group=par_set_group,
+                                                  name='parameters')
+        par_table.write(parameters)
+
+class AnalysisWriter(object):
+    def __init__(self, hdf_file=None, parent_group=None):
+        self.hdf_file = hdf_file
+        self.parent_group = parent_group

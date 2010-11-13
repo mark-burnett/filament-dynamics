@@ -26,6 +26,7 @@ class DownsampledMeasurement(tables.IsDescription):
 def downsample(hdf_file, sample_period, duration_name='simulation_duration'):
     simulations = hdf_file.getNode('/Simulations')
     analysis_group = hdf_file.getNode('/Analysis')
+
     try:
         output_group = hdf_file.createGroup(analysis_group, 'sampled_data',
                                             'Downsampled data.')

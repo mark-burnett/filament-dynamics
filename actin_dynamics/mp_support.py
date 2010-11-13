@@ -15,30 +15,31 @@
 
 import multiprocessing
 
+import tables
+
 from .io import hdf
 from .simulations import run_simulation
 
 def run_simulations(simulation_factory, output_file_name):
+    with tables.openFile(output_file_name, mode='w') as output_file:
+        hdf_writer = hdf.SimulationWriter(output_file)
+        pool = multiprocessing.Pool()
 
-    hdf_writer = hdf.Writer(output_file_name)
-    pool = multiprocessing.Pool()
+        try:
+            for sim in simulation_factory:
+                pool.apply_async(run_simulation, (sim,),
+                                 callback=hdf_writer.write_result)
 
-    try:
-        for sim in simulation_factory:
-            pool.apply_async(run_simulation, (sim,),
-                             callback=hdf_writer.write_result)
-
-        pool.close()
-        pool.join()
-    except KeyboardInterrupt:
-        # Handle CTRL-C
-        pool.terminate()
-        raise
+            pool.close()
+            pool.join()
+        except KeyboardInterrupt:
+            # Handle CTRL-C
+            pool.terminate()
+            raise
 
 def sp_run_simulations(simulation_factory, output_file_name):
-    hdf_writer = hdf.Writer(output_file_name)
+    with tables.openFile(output_file_name) as output_file:
+        hdf_writer = hdf.Writer(output_file)
 
-    for sim in simulation_factory:
-        hdf_writer.write_result(run_simulation(sim))
-
-    hdf_writer.close()
+        for sim in simulation_factory:
+            hdf_writer.write_result(run_simulation(sim))
