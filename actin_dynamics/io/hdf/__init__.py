@@ -14,5 +14,10 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from writer import SimulationWriter
-from . import utils
-from . import wrappers
+#from . import utils
+from .table_wrappers import *
+from .group_wrappers import *
+
+del writer
+del table_wrappers
+del group_wrappers

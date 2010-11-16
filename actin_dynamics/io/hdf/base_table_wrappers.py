@@ -19,8 +19,20 @@ class TableWrapper(object):
     def __init__(self, table=None):
         self.table = table
 
+    def __str__(self):
+        return str(self.table)
+
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, repr(self.table))
+
     @classmethod
     def in_group(cls, hdf_file=None, parent_group=None, name=None):
+        table = hdf_file.createTable(parent_group, name, cls.description)
+        return cls(table)
+
+    @classmethod
+    def create(cls, parent_group=None, name=None):
+        hdf_file = parent_group._v_file
         table = hdf_file.createTable(parent_group, name, cls.description)
         return cls(table)
 
@@ -29,8 +41,8 @@ class TableWrapper(object):
 
     def write(self, data):
         row = self.table.row
-        for d in data:
-            for name, value in itertools.izip(self.table.colnames, d):
+        for datum in data:
+            for name, value in itertools.izip(self.table.colnames, datum):
                 row[name] = value
             row.append()
 
@@ -70,46 +82,3 @@ class SingleValueTable(TableWrapper):
             row.append()
 
         self.table.flush()
-
-class Collection(object):
-    def __init__(self, hdf_file=None, group=None):
-        self.hdf_file = hdf_file
-        self.group    = group
-
-    def __iter__(self):
-        return _WrappedIterator(self.group, self.child_wrapper)
-
-    @classmethod
-    def in_group(cls, hdf_file=None, parent_group=None, name=None):
-        group = hdf_file.createGroup(parent_group, name)
-        return cls(hdf_file=hdf_file, group=group)
-
-    def read(self):
-        result = {}
-        for child in self.group:
-            m = self.description(child)
-            result[child._v_name] = m.read()
-        return result
-
-    def create_child(self, name):
-        return self.child_wrapper.in_group(parent_group=self.group,
-                                           hdf_file=self.hdf_file, name=name)
-
-    def write(self, children):
-        for name, data in children.iteritems():
-            c = self.child_wrapper.in_group(hdf_file=self.hdf_file,
-                                            parent_group=self.group,
-                                            name=name)
-            c.write(data)
-
-
-class _WrappedIterator(object):
-    def __init__(self, target, wrapper):
-        self.target = iter(target)
-        self.wrapper = wrapper
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        return self.wrapper(next(self.target))

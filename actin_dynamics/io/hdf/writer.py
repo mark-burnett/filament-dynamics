@@ -17,7 +17,8 @@ import itertools
 
 import tables
 
-from . import wrappers as _wrappers
+from . import table_wrappers as _table_wrappers
+from . import group_wrappers as _group_wrappers
 
 # XXX Consider making this writer a context?
 class SimulationWriter(object):
@@ -44,7 +45,7 @@ class SimulationWriter(object):
                                                  ('simulation_%s' %
                                                   num_written_simulations))
 
-        sm_group = _wrappers.MeasurementCollection.in_group(
+        sm_group = _group_wrappers.MeasurementCollection.in_group(
                 hdf_file=self.hdf_file, parent_group=result_group,
                 name='simulation_measurements')
         sm_group.write(simulation_measurements)
@@ -56,12 +57,12 @@ class SimulationWriter(object):
                                                         raw_filaments)):
             fg = self.hdf_file.createGroup(filament_group,
                                            name=('filament_%s' % i))
-            fil_col = _wrappers.MeasurementCollection.in_group(
+            fil_col = _group_wrappers.MeasurementCollection.in_group(
                     hdf_file=self.hdf_file, parent_group=fg,
                     name='measurements')
             fil_col.write(fm)
 
-            state = _wrappers.State.in_group(hdf_file=self.hdf_file,
+            state = _table_wrappers.State.in_group(hdf_file=self.hdf_file,
                     parent_group=fg, name='final_state')
             state.write(states)
 
@@ -76,7 +77,7 @@ def _create_parameter_set_group(hdf_file, parent_group, par_set_number):
 def _write_parameters(hdf_file, par_set_group, parameters):
     # XXX check for existing table first
     if getattr(par_set_group, 'parameters', None) is None:
-        par_table = _wrappers.Parameters.in_group(hdf_file=hdf_file,
+        par_table = _table_wrappers.Parameters.in_group(hdf_file=hdf_file,
                                                   parent_group=par_set_group,
                                                   name='parameters')
         par_table.write(parameters)

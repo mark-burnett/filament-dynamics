@@ -13,8 +13,24 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def get_or_create_group(hdf_file, group_name, description=None):
-    try:
-        return hdf_file.getNode('/' + group_name)
-    except:
-        return hdf_file.createGroup('/', group_name, description)
+from . import base_table_wrappers as _base_table_wrappers
+from . import table_formats as _table_formats
+
+class Measurement(_base_table_wrappers.TableWrapper):
+    description = _table_formats.Measurement
+
+
+class Parameters(_base_table_wrappers.DictionaryTable):
+    description = _table_formats.Parameter
+    key   = 'name'
+    value = 'value'
+
+
+# XXX Value may not be used.
+class Value(_base_table_wrappers.SingleValueTable):
+    column_name = 'value'
+    description = _table_formats.SingleValue
+
+class State(_base_table_wrappers.SingleValueTable):
+    column_name = 'state'
+    description = _table_formats.State
