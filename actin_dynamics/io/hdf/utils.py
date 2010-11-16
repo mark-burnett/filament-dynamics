@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from writer import SimulationWriter
-from . import utils
-from . import wrappers
+def get_or_create_node(hdf_file, node_name, description=None):
+    try:
+        return hdf_file.getNode('/' + node_name)
+    except:
+        return hdf_file.createGroup('/', node_name, description)

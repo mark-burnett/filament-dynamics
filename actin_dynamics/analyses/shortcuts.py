@@ -13,5 +13,23 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def downsample_all(hdf_file=None, sample_period=1):
-    pass
+from . import downsample as _downsample
+
+from actin_dynamics.io import hdf as _hdf
+
+def perform_all(hdf_file=None):
+    simulations_group = hdf_file.getNode('/Simulations')
+    analysis_group = _hdf.utils.get_or_create_node(hdf_file, 'Analysis',
+            description='Analysis of simulation results.')
+
+#    parameter_sets_wrapper = _hdf.wrappers.MultipleParameterSetWrapper.from_group(
+#            hdf_file=hdf_file, parent_group=simulations_group)
+    parameter_sets_wrapper = _hdf.wrappers.MultipleParameterSetWrapper(hdf_file,
+            simulations_group)
+
+    analyses_wrapper = _hdf.wrappers.MultipleAnalysisWrapper(
+            hdf_file, analysis_group)
+
+    downsample_analysis_wrapper = analyses_wrapper.create_child('downsample')
+    _downsample.all_measurements(parameter_sets_wrapper,
+                                 downsample_analysis_wrapper)

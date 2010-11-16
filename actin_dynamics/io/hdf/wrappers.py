@@ -17,6 +17,7 @@ from . import base_wrappers as _base_wrappers
 from . import table_formats as _table_formats
 
 
+# Table Wrappers
 class Measurement(_base_wrappers.TableWrapper):
     description = _table_formats.Measurement
 
@@ -37,3 +38,38 @@ class Value(_base_wrappers.SingleValueTable):
 class State(_base_wrappers.SingleValueTable):
     column_name = 'state'
     description = _table_formats.State
+
+# Group Wrappers
+class FilamentWrapper(object):
+    def __init__(self, group=None):
+        self.group = group
+
+class SimulationWrapper(object):
+    def __init__(self, group=None):
+        self.group = group
+
+    def __iter__(self):
+        return _base_wrappers._WrappedIterator(self.group.filaments,
+                                               FilamentWrapper)
+
+    def __getitem__(self, simulation_measurement_name):
+        return Measurement(getattr(self.group.simulation_measurements,
+                                   simulation_measurement_name))
+
+class ParameterSetWrapper(object):
+    def __init__(self, group=None):
+        self.group = group
+        self.parameters = Parameters(self.group.parameters)
+
+    def __iter__(self):
+        return _base_wrappers._WrappedIterator(self.group.simulations,
+                                               SimulationWrapper)
+
+    def __getitem__(self, key):
+        return self.parameters[key]
+
+class MultipleParameterSetWrapper(_base_wrappers.Collection):
+    child_wrapper = ParameterSetWrapper
+
+class MultipleAnalysisWrapper(_base_wrappers.Collection):
+    child_wrapper = MultipleParameterSetWrapper

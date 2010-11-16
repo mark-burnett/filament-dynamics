@@ -36,9 +36,15 @@ class TableWrapper(object):
 
         self.table.flush()
 
+# XXX Needs to really use the getitem/setitem interface.
 class DictionaryTable(TableWrapper):
+    def __init__(self, table=None):
+        TableWrapper.__init__(self, table)
+        self.read()
+
     def read(self):
-        return dict(self.table.read())
+        self._dict = dict(self.table.read())
+        return self._dict
 
     def write(self, data):
         row = self.table.row
@@ -48,6 +54,10 @@ class DictionaryTable(TableWrapper):
             row.append()
 
         self.table.flush()
+        self.read() # update _dict
+
+    def __getitem__(self, key):
+        return self._dict[key]
 
 class SingleValueTable(TableWrapper):
     def read(self):
@@ -66,6 +76,9 @@ class Collection(object):
         self.hdf_file = hdf_file
         self.group    = group
 
+    def __iter__(self):
+        return _WrappedIterator(self.group, self.child_wrapper)
+
     @classmethod
     def in_group(cls, hdf_file=None, parent_group=None, name=None):
         group = hdf_file.createGroup(parent_group, name)
@@ -78,9 +91,25 @@ class Collection(object):
             result[child._v_name] = m.read()
         return result
 
+    def create_child(self, name):
+        return self.child_wrapper.in_group(parent_group=self.group,
+                                           hdf_file=self.hdf_file, name=name)
+
     def write(self, children):
         for name, data in children.iteritems():
             c = self.child_wrapper.in_group(hdf_file=self.hdf_file,
                                             parent_group=self.group,
                                             name=name)
             c.write(data)
+
+
+class _WrappedIterator(object):
+    def __init__(self, target, wrapper):
+        self.target = iter(target)
+        self.wrapper = wrapper
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return self.wrapper(next(self.target))

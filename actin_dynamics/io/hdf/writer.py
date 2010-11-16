@@ -85,3 +85,12 @@ class AnalysisWriter(object):
     def __init__(self, hdf_file=None, parent_group=None):
         self.hdf_file = hdf_file
         self.parent_group = parent_group
+
+    def write_simulation_analysis(self, analysis_name=None, data=None):
+        pass
+
+    def write_filament_analysis(self, analysis_name=None, data=None):
+        pass
+
+    def write_summary_analysis(self, analysis_name=None, data=None):
+        pass
