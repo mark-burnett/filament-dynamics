@@ -24,8 +24,10 @@ from . import group_wrappers as _group_wrappers
 class SimulationWriter(object):
     def __init__(self, hdf_file=None):
         self.hdf_file = hdf_file
-        self.simulations = self.hdf_file.createGroup('/', 'Simulations',
+        simulations = self.hdf_file.createGroup('/', 'Simulations',
                                                      'Raw Simulation Data')
+        self.parameter_sets = _group_wrappers.MultipleParameterSetWrapper(
+                simulations)
 
     def write_result(self, result):
         (raw_parameters, simulation_measurements,
@@ -33,50 +35,25 @@ class SimulationWriter(object):
 
         # Get or create parameter set group
         par_set_number, parameters = raw_parameters
-        par_set_group = _create_parameter_set_group(self.hdf_file,
-                self.simulations, par_set_number)
+
+        par_set_group = self.parameter_sets.select_child_number(
+                par_set_number)
+
 
         # Write parameters if needed.
-        _write_parameters(self.hdf_file, par_set_group, parameters)
+        if not len(par_set_group.parameters):
+            par_set_group.parameters.write(parameters)
 
         # Time to start writing results.
         num_written_simulations = par_set_group.simulations._v_nchildren
-        result_group = self.hdf_file.createGroup(par_set_group.simulations,
-                                                 ('simulation_%s' %
-                                                  num_written_simulations))
+        num_written_simulations = len(par_set_group.simulations)
+        sim_group = par_set_group.sim_group.create_child_from_number(
+                num_written_simulations)
 
-        sm_group = _group_wrappers.MeasurementCollection.create(
-                parent_group=result_group,
-                name='simulation_measurements')
-        sm_group.write(simulation_measurements)
-
-        filament_group = self.hdf_file.createGroup(result_group,
-                'filaments')
+        sim_group.measurements.write(simulation_measurements)
 
         for i, (fm, states) in enumerate(itertools.izip(filament_measurements,
                                                         raw_filaments)):
-            fg = self.hdf_file.createGroup(filament_group,
-                                           name=('filament_%s' % i))
-            fil_col = _group_wrappers.MeasurementCollection.create(
-                    parent_group=fg, name='measurements')
-            fil_col.write(fm)
-
-            state = _table_wrappers.State.create(parent_group=fg,
-                                                 name='final_state')
-            state.write(states)
-
-def _create_parameter_set_group(hdf_file, parent_group, par_set_number):
-    psg = getattr(parent_group, ('parameter_set_%s' % par_set_number), None)
-    if psg is None:
-        psg = hdf_file.createGroup(parent_group,
-                                   'parameter_set_%s' % par_set_number)
-        hdf_file.createGroup(psg, 'simulations')
-    return psg
-
-def _write_parameters(hdf_file, par_set_group, parameters):
-    # XXX check for existing table first
-    if getattr(par_set_group, 'parameters', None) is None:
-        par_table = _table_wrappers.Parameters.in_group(hdf_file=hdf_file,
-                                                  parent_group=par_set_group,
-                                                  name='parameters')
-        par_table.write(parameters)
+            fg = sim_group.filaments.create_child_from_number(i)
+            fg.measurements.write(fm)
+            fg.final_state.write(states)

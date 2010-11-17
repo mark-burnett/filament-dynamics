@@ -45,6 +45,9 @@ class TableWrapper(_base_wrappers.Wrapper):
 
         self._pytables_object.flush()
 
+    def __len__(self):
+        return self._pytables_object.nrows
+
 # XXX Needs to really use the getitem/setitem interface.
 class DictionaryTable(TableWrapper):
     def __init__(self, table=None):

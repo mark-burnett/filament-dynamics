@@ -53,12 +53,20 @@ class Collection(GroupWrapper):
     def create_child(self, name=None):
         return self.child_wrapper.create(parent_group=self._pytables_object,
                                          name=name)
+    def create_or_select_child(self, name=None):
+        try:
+            return self.create_child(name=name)
+        except:
+            return self.child_wrapper(getattr(self._pytables_object, name))
 
     def write(self, children):
         for name, data in children.iteritems():
             c = self.child_wrapper.create(parent_group=self._pytables_object,
                                           name=name)
             c.write(data)
+
+    def __len__(self):
+        return self._pytables_object._v_nchildren
 
 
 class _WrappedIterator(object):

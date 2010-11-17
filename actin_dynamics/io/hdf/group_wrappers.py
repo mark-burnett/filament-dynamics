@@ -22,14 +22,6 @@ class SimulationWrapper(_base_group_wrappers.GroupWrapper):
     def __init__(self, group=None):
         _base_group_wrappers.GroupWrapper.__init__(self, group=group)
         MeasurementCollection.create_or_select(group, 'simulation_measurements')
-    def __iter__(self):
-        return _base_group_wrappers._WrappedIterator(
-                self._pytables_object.filaments, FilamentWrapper)
-
-    def __getitem__(self, simulation_measurement_name):
-        return _table_wrappers.Measurement(
-                getattr(self._pytables_object.simulation_measurements,
-                        simulation_measurement_name))
 
     def create_filament(self, name):
         return self.create_subgroup(name=name, wrapper=FilamentWrapper)
@@ -41,51 +33,57 @@ class SimulationWrapper(_base_group_wrappers.GroupWrapper):
                 'simulation_measurements')
 
     def write_measurements(self, results_dict):
-        m = MeasurementCollection.create_or_select(
-                self._pytables_object,
-                'simulation_measurements')
-        m.write(results_dict)
+        self.measurements.write(results_dict)
 
     @property
     def filaments(self):
         return FilamentCollection.create_or_select(
                 self._pytables_object, 'filaments')
 
+class SimulationCollection(_base_group_wrappers.Collection):
+    child_wrapper = SimulationWrapper
+
+    def create_child_from_number(self, number):
+        return self.create_child(name='simulation_%s' % number)
+
 
 class ParameterSetWrapper(_base_group_wrappers.GroupWrapper):
-    def __init__(self, group=None):
-        self.parameters = _table_wrappers.Parameters.create_or_select(
-                parent_group=group)
-        _base_group_wrappers.GroupWrapper.__init__(self, group)
+    @property
+    def simulations(self):
+        return SimulationCollection.create_or_select(
+                parent_group=self._pytables_object, name='simulations')
 
-    def __iter__(self):
-        return _base_group_wrappers._WrappedIterator(
-                self._pytables_object.simulations, SimulationWrapper)
+    @property
+    def parameters(self):
+        return _table_wrappers.Parameters.create_or_select(
+                parent_group=self._pytables_object)
 
-    def __getitem__(self, key):
-        return self.parameters[key]
+class MultipleParameterSetWrapper(_base_group_wrappers.Collection):
+    child_wrapper = ParameterSetWrapper
+
+    def select_child_number(self, number):
+        self.create_or_select_child('parameter_set_%s' % number)
+
+class MultipleAnalysisWrapper(_base_group_wrappers.Collection):
+    child_wrapper = MultipleParameterSetWrapper
 
 
 class FilamentWrapper(_base_group_wrappers.GroupWrapper):
+    @property
+    def final_state(self):
+        return _table_wrappers.State.create(parent_group=self._pytables_object,
+                                            name='final_state')
     @property
     def measurements(self):
         return MeasurementCollection.create_or_select(
                 parent_group=self._pytables_object, name='measurements')
 
-#    def __iter__(self):
-#        return _base_group_wrappers._WrappedIterator(
-#                self._pytables_object.measurements,
-#                _table_wrappers.Measurement)
-
 class FilamentCollection(_base_group_wrappers.Collection):
     child_wrapper = FilamentWrapper
+
+    def create_child_from_number(self, number):
+        return self.create_child(name='filament_%s' % number)
 
 
 class MeasurementCollection(_base_group_wrappers.Collection):
     child_wrapper = _table_wrappers.Measurement
-
-class MultipleParameterSetWrapper(_base_group_wrappers.Collection):
-    child_wrapper = ParameterSetWrapper
-
-class MultipleAnalysisWrapper(_base_group_wrappers.Collection):
-    child_wrapper = MultipleParameterSetWrapper

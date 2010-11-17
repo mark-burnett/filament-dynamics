@@ -21,23 +21,21 @@ from actin_dynamics.io import hdf as _hdf
 def all_measurements(parameter_sets_wrapper, analysis_wrapper,
                      sample_period=1):
     for parameter_set in parameter_sets_wrapper:
-        sample_times = numpy.arange(0, parameter_set['simulation_duration'],
-                                    sample_period)
+        sample_times = numpy.arange(0,
+                parameter_set.parameters['simulation_duration'], sample_period)
+
         analysis_ps = analysis_wrapper.create_child(parameter_set.name)
 
-        for simulation in parameter_set:
-            print 'begin', simulation.name
+        for simulation in parameter_set.simulations:
             # calculate simulation measurements
             sm_results = collection_measurements(simulation, sample_times)
 
-            simulation_analysis_wrapper = analysis_ps.create_subgroup(
-                    name=simulation.name,
-                    wrapper=_hdf.SimulationWrapper)
+            sa_wrapper = analysis_ps.simulations.create_child(simulation.name)
 
             # write simulation measurements
-            simulation_analysis_wrapper.write_measurements(sm_results)
+            sa_wrapper.write_measurements(sm_results)
 
-            sa_filaments = simulation_analysis_wrapper.filaments
+            sa_filaments = sa_wrapper.filaments
             for filament in simulation.filaments:
                 # calculate filament measurements
                 fm_results = collection_measurements(filament, sample_times)
@@ -48,8 +46,6 @@ def all_measurements(parameter_sets_wrapper, analysis_wrapper,
 
                 # write filament measurements
                 filament_analysis_wrapper.measurements.write(fm_results)
-
-            print 'end', simulation.name
 
 
 def collection_measurements(simulation, sample_times):
