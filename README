@@ -24,6 +24,29 @@ yaml
 ------------------------------------------------------------------------
 - Running                                                              -
 ------------------------------------------------------------------------
+    To perform a simulation, create a new directory (probably in the
+data directory) and place parameters and object graph configuration
+files in that directory:
+
+mkdir data/new_simulation
+cp examples/parameters.yaml examples/object_graph.yaml data/new_simulation
+
+    Goto that directory and run cli.py:
+
+cd data/new_simulation
+../../cli.py
+
+    To analyze the data, stay in the same directory and use console.py:
+
+../../console.py
+
+    Once in the console, you can browse the HDF5 data file created by
+the simulation, and use a wide variety of available tools.  Check the
+actin_dynamics/analysis module for more info.
+
+    To run a standard suite of measurements, just type:
+
+analysis.perform_all(hdf_file)
 
 ------------------------------------------------------------------------
 - Adding Simulations                                                   -

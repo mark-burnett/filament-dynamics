@@ -57,7 +57,8 @@ def get_length(hdf_file=None, parameter_set_number=None,
     ftc = parameter_set.parameters['filament_tip_concentration']
 
     # multiply by filament tip concentration
-    normalized_values = [(v - average_initial_filament_length) * ftc for v in values]
+    normalized_values = [(v - average_initial_filament_length) * ftc
+                         for v in values]
 
     if standard_deviation:
         std_analysis = analysis.standard_deviation
