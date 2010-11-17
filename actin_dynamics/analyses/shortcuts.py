@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import downsample as _downsample
+from . import stats as _stats
 
 from actin_dynamics.io import hdf as _hdf
 
@@ -29,3 +30,9 @@ def perform_all(hdf_file=None):
     downsample_analysis_wrapper = analyses_wrapper.create_child('downsample')
     _downsample.all_measurements(parameter_sets_wrapper,
                                  downsample_analysis_wrapper)
+
+    average_analaysis_wrapper = analyses_wrapper.create_child('average')
+    _stats.average_all(downsample_analysis_wrapper, average_analaysis_wrapper)
+
+    std_analaysis_wrapper = analyses_wrapper.create_child('standard_deviation')
+    _stats.std_all(downsample_analysis_wrapper, std_analaysis_wrapper)

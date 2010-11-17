@@ -34,6 +34,9 @@ class TableWrapper(_base_wrappers.Wrapper):
 
     def read(self):
         return self._pytables_object.read()
+    
+    def __iter__(self):
+        return iter(self.read())
 
     def write(self, data):
         row = self._pytables_object.row

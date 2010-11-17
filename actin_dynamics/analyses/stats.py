@@ -15,6 +15,43 @@
 
 import numpy
 
+def average_all(input_parameter_sets, output_parameter_sets):
+    return lol_refactor(input_parameter_sets, output_parameter_sets,
+                        function=numpy.average)
+
+def std_all(input_parameter_sets, output_parameter_sets):
+    return lol_refactor(input_parameter_sets, output_parameter_sets,
+                        function=numpy.std)
+
+
+def lol_refactor(input_parameter_sets, output_parameter_sets, function=None):
+    for input_ps in input_parameter_sets:
+        output_ps = output_parameter_sets.create_child(input_ps.name)
+        for simulation in input_ps.simulations:
+            output_sim = output_ps.simulations.create_child(simulation.name)
+            for measurement_name in simulation.filament_measurement_names:
+                m_stat_results = get_statistics(simulation, measurement_name,
+                                                function=function)
+                output_measurement = output_sim.measurements.create_child(
+                        measurement_name)
+                output_measurement.write(m_stat_results)
+
+
+def get_statistics(simulation_wrapper=None, measurement_name=None,
+                   function=None):
+    all_filaments = []
+    for filament in simulation_wrapper.filaments:
+        times, values = zip(*getattr(filament.measurements, measurement_name))
+        all_filaments.append(values)
+
+    results = []
+    for t, vals in zip(times, numpy.array(all_filaments).transpose()):
+        results.append((t, function(vals)))
+    return results
+
+
+
+
 def get_lengths(filaments_group):
     results = []
     for filament in filaments_group:

@@ -40,6 +40,11 @@ class SimulationWrapper(_base_group_wrappers.GroupWrapper):
         return FilamentCollection.create_or_select(
                 self._pytables_object, 'filaments')
 
+    @property
+    def filament_measurement_names(self):
+        first_filament = next(iter(self.filaments))
+        return [m.name for m in first_filament.measurements]
+
 class SimulationCollection(_base_group_wrappers.Collection):
     child_wrapper = SimulationWrapper
 
@@ -87,3 +92,6 @@ class FilamentCollection(_base_group_wrappers.Collection):
 
 class MeasurementCollection(_base_group_wrappers.Collection):
     child_wrapper = _table_wrappers.Measurement
+
+    def __getattr__(self, key):
+        return _table_wrappers.Measurement(getattr(self._pytables_object, key))

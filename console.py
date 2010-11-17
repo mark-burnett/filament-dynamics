@@ -20,6 +20,8 @@ import tables as _tables
 
 from IPython.Shell import IPShellEmbed as _IPShellEmbed
 
+from actin_dynamics.io import hdf as _hdf
+
 def _parse_command_line():
     parser = _argparse.ArgumentParser()
     parser.add_argument('--simulation_file', default='output.h5',
@@ -32,10 +34,10 @@ def _analyze_main():
     # Read in hdf file
     hdf_file = _tables.openFile(filename=_args.simulation_file, mode='a')
     simulations = hdf_file.getNode('/Simulations')
-    try:
-        analysis = hdf_file.getNode('/Analysis')
-    except _tables.NoSuchNodeError:
-        analysis = hdf_file.createGroup('/', 'Analysis', 'Analysis Results')
+
+    analysis =  _hdf.utils.get_or_create_group(hdf_file, 'Analysis')
+
+    from actin_dynamics import analyses
 
     # Drop into shell
     _shell = _IPShellEmbed()
