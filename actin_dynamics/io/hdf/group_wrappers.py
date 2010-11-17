@@ -51,6 +51,9 @@ class SimulationCollection(_base_group_wrappers.Collection):
     def create_child_from_number(self, number):
         return self.create_child(name='simulation_%s' % number)
 
+    def select_child_number(self, number):
+        return self.create_or_select_child('simulation_%s' % number)
+
 
 class ParameterSetWrapper(_base_group_wrappers.GroupWrapper):
     @property
@@ -63,11 +66,16 @@ class ParameterSetWrapper(_base_group_wrappers.GroupWrapper):
         return _table_wrappers.Parameters.create_or_select(
                 parent_group=self._pytables_object)
 
+    @property
+    def measurement_summary(self):
+        return MeasurementCollection.create_or_select(
+                parent_group=self._pytables_object, name='measurement_summary')
+
 class MultipleParameterSetWrapper(_base_group_wrappers.Collection):
     child_wrapper = ParameterSetWrapper
 
     def select_child_number(self, number):
-        self.create_or_select_child('parameter_set_%s' % number)
+        return self.create_or_select_child('parameter_set_%s' % number)
 
 class MultipleAnalysisWrapper(_base_group_wrappers.Collection):
     child_wrapper = MultipleParameterSetWrapper

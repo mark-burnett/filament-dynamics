@@ -21,6 +21,7 @@ import tables as _tables
 from IPython.Shell import IPShellEmbed as _IPShellEmbed
 
 from actin_dynamics.io import hdf as _hdf
+from actin_dynamics.visualization import measurements
 
 def _parse_command_line():
     parser = _argparse.ArgumentParser()
@@ -33,9 +34,7 @@ def _analyze_main():
 
     # Read in hdf file
     hdf_file = _tables.openFile(filename=_args.simulation_file, mode='a')
-    simulations = hdf_file.getNode('/Simulations')
-
-    analysis =  _hdf.utils.get_or_create_group(hdf_file, 'Analysis')
+    simulations, analysis = _hdf.utils.get_ps_ana(hdf_file)
 
     from actin_dynamics import analyses
 

@@ -16,15 +16,15 @@
 import numpy
 
 def average_all(input_parameter_sets, output_parameter_sets):
-    return lol_refactor(input_parameter_sets, output_parameter_sets,
+    return statistics_loop(input_parameter_sets, output_parameter_sets,
                         function=numpy.average)
 
 def std_all(input_parameter_sets, output_parameter_sets):
-    return lol_refactor(input_parameter_sets, output_parameter_sets,
+    return statistics_loop(input_parameter_sets, output_parameter_sets,
                         function=numpy.std)
 
 
-def lol_refactor(input_parameter_sets, output_parameter_sets, function=None):
+def statistics_loop(input_parameter_sets, output_parameter_sets, function=None):
     for input_ps in input_parameter_sets:
         output_ps = output_parameter_sets.create_child(input_ps.name)
         for simulation in input_ps.simulations:
