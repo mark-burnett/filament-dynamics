@@ -45,8 +45,8 @@ class SimulationWriter(object):
                                                  ('simulation_%s' %
                                                   num_written_simulations))
 
-        sm_group = _group_wrappers.MeasurementCollection.in_group(
-                hdf_file=self.hdf_file, parent_group=result_group,
+        sm_group = _group_wrappers.MeasurementCollection.create(
+                parent_group=result_group,
                 name='simulation_measurements')
         sm_group.write(simulation_measurements)
 
@@ -57,13 +57,12 @@ class SimulationWriter(object):
                                                         raw_filaments)):
             fg = self.hdf_file.createGroup(filament_group,
                                            name=('filament_%s' % i))
-            fil_col = _group_wrappers.MeasurementCollection.in_group(
-                    hdf_file=self.hdf_file, parent_group=fg,
-                    name='measurements')
+            fil_col = _group_wrappers.MeasurementCollection.create(
+                    parent_group=fg, name='measurements')
             fil_col.write(fm)
 
-            state = _table_wrappers.State.in_group(hdf_file=self.hdf_file,
-                    parent_group=fg, name='final_state')
+            state = _table_wrappers.State.create(parent_group=fg,
+                                                 name='final_state')
             state.write(states)
 
 def _create_parameter_set_group(hdf_file, parent_group, par_set_number):
@@ -81,17 +80,3 @@ def _write_parameters(hdf_file, par_set_group, parameters):
                                                   parent_group=par_set_group,
                                                   name='parameters')
         par_table.write(parameters)
-
-class AnalysisWriter(object):
-    def __init__(self, hdf_file=None, parent_group=None):
-        self.hdf_file = hdf_file
-        self.parent_group = parent_group
-
-    def write_simulation_analysis(self, analysis_name=None, data=None):
-        pass
-
-    def write_filament_analysis(self, analysis_name=None, data=None):
-        pass
-
-    def write_summary_analysis(self, analysis_name=None, data=None):
-        pass

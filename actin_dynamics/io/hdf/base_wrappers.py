@@ -13,11 +13,23 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from writer import SimulationWriter
-from . import utils
-from .table_wrappers import *
-from .group_wrappers import *
+class Wrapper(object):
+    def __init__(self, pytables_object=None):
+        self._pytables_object = pytables_object
 
-del writer
-del table_wrappers
-del group_wrappers
+    def __str__(self):
+        return str(self._pytables_object)
+
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, repr(self._pytables_object))
+
+    @property
+    def name(self):
+        return self._pytables_object._v_name
+
+#    def __getattr__(self, name):
+#        result = getattr(self._pytables_object, '_v_%s' % name, None)
+#        if result is not None:
+#            return result
+#        raise AttributeError('%s not found in %s.'
+#                             % (name, self.__class__.__name__))

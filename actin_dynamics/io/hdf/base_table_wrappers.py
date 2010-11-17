@@ -15,15 +15,11 @@
 
 import itertools
 
-class TableWrapper(object):
+from . import base_wrappers as _base_wrappers 
+
+class TableWrapper(_base_wrappers.Wrapper):
     def __init__(self, table=None):
-        self.table = table
-
-    def __str__(self):
-        return str(self.table)
-
-    def __repr__(self):
-        return '%s(%s)' % (self.__class__.__name__, repr(self.table))
+        _base_wrappers.Wrapper.__init__(self, table)
 
     @classmethod
     def in_group(cls, hdf_file=None, parent_group=None, name=None):
@@ -37,16 +33,17 @@ class TableWrapper(object):
         return cls(table)
 
     def read(self):
-        return self.table.read()
+        return self._pytables_object.read()
 
     def write(self, data):
-        row = self.table.row
+        row = self._pytables_object.row
         for datum in data:
-            for name, value in itertools.izip(self.table.colnames, datum):
+            for name, value in itertools.izip(self._pytables_object.colnames,
+                                              datum):
                 row[name] = value
             row.append()
 
-        self.table.flush()
+        self._pytables_object.flush()
 
 # XXX Needs to really use the getitem/setitem interface.
 class DictionaryTable(TableWrapper):
@@ -55,17 +52,17 @@ class DictionaryTable(TableWrapper):
         self.read()
 
     def read(self):
-        self._dict = dict(self.table.read())
+        self._dict = dict(self._pytables_object.read())
         return self._dict
 
     def write(self, data):
-        row = self.table.row
+        row = self._pytables_object.row
         for k, v in data.iteritems():
             row[self.key]  = k
             row[self.value] = v
             row.append()
 
-        self.table.flush()
+        self._pytables_object.flush()
         self.read() # update _dict
 
     def __getitem__(self, key):
@@ -73,12 +70,12 @@ class DictionaryTable(TableWrapper):
 
 class SingleValueTable(TableWrapper):
     def read(self):
-        return [row[0] for row in self.table.read()]
+        return [row[0] for row in self._pytables_object.read()]
 
     def write(self, data):
-        row = self.table.row
+        row = self._pytables_object.row
         for v in data:
             row[self.column_name] = v
             row.append()
 
-        self.table.flush()
+        self._pytables_object.flush()

@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# XXX this needs to become real...
 def get_or_create_group(hdf_file, group_name, description=None):
     try:
         return hdf_file.getNode('/' + group_name)

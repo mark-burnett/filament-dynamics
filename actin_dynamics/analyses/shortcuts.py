@@ -19,16 +19,12 @@ from actin_dynamics.io import hdf as _hdf
 
 def perform_all(hdf_file=None):
     simulations_group = hdf_file.getNode('/Simulations')
-    analysis_group = _hdf.utils.get_or_create_node(hdf_file, 'Analysis',
+    analysis_group = _hdf.utils.get_or_create_group(hdf_file, 'Analysis',
             description='Analysis of simulation results.')
 
-#    parameter_sets_wrapper = _hdf.wrappers.MultipleParameterSetWrapper.from_group(
-#            hdf_file=hdf_file, parent_group=simulations_group)
-    parameter_sets_wrapper = _hdf.wrappers.MultipleParameterSetWrapper(hdf_file,
-            simulations_group)
+    parameter_sets_wrapper = _hdf.MultipleParameterSetWrapper(simulations_group)
 
-    analyses_wrapper = _hdf.wrappers.MultipleAnalysisWrapper(
-            hdf_file, analysis_group)
+    analyses_wrapper = _hdf.MultipleAnalysisWrapper(analysis_group)
 
     downsample_analysis_wrapper = analyses_wrapper.create_child('downsample')
     _downsample.all_measurements(parameter_sets_wrapper,

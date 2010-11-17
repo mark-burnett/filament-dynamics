@@ -14,37 +14,64 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy
+import scipy.interpolate
+
+from actin_dynamics.io import hdf as _hdf
 
 def all_measurements(parameter_sets_wrapper, analysis_wrapper,
                      sample_period=1):
     for parameter_set in parameter_sets_wrapper:
-        sample_times = numpy.arange(0, parameter_set['simulation_duration'], sample_period)
+        sample_times = numpy.arange(0, parameter_set['simulation_duration'],
+                                    sample_period)
+        analysis_ps = analysis_wrapper.create_child(parameter_set.name)
 
         for simulation in parameter_set:
+            print 'begin', simulation.name
             # calculate simulation measurements
-            sm_results = simulation_measurements(simulation, sample_times)
+            sm_results = collection_measurements(simulation, sample_times)
 
-            simulation_analysis_wrapper = SimulationAnalysisWrapper.for_analysis(analysis_wrapper)
+            simulation_analysis_wrapper = analysis_ps.create_subgroup(
+                    name=simulation.name,
+                    wrapper=_hdf.SimulationWrapper)
 
             # write simulation measurements
-            simulation_analysis_wrapper.write_analyses(sm_results)
+            simulation_analysis_wrapper.write_measurements(sm_results)
 
-            for filament in simulation:
+            sa_filaments = simulation_analysis_wrapper.filaments
+            for filament in simulation.filaments:
                 # calculate filament measurements
-                fm_results = filament_measurements(filament, sample_times)
+                fm_results = collection_measurements(filament, sample_times)
 
                 # simulation result wrapper
-                filament_analysis_wrapper = FilamentAnalysisWrapper.for_analysis(
-                        simulation_analysis_wrapper)
+                filament_analysis_wrapper = sa_filaments.create_child(
+                        filament.name)
+
                 # write filament measurements
-                filament_analysis_wrapper.write_analyses(fm_results)
+                filament_analysis_wrapper.measurements.write(fm_results)
+
+            print 'end', simulation.name
 
 
+def collection_measurements(simulation, sample_times):
+    results = {}
+    # XXX make simulation.measurements.iteritems()
+    for m in simulation.measurements:
+        results[m.name] = resample(m.read(), sample_times)
+    return results
+
+
+# This is the only function in this file that does actual work.
 def resample(data, sample_times):
-    times, values = zip(data)
+    '''
+    Downsample data to sample_times.
+
+    For now this is linear interpolation, but later it might need to become
+    a previous-value interpolation.
+    '''
+    times, values = zip(*data)
     if len(values) < 2:
-        return [values[0] for t in sample_times]
+        return [(t, values[0]) for t in sample_times]
     interp = scipy.interpolate.interp1d(times, values,
                                         copy=False, bounds_error=False,
-                                        fill_value=data[-1])
-    return interp(sample_times)
+                                        fill_value=values[-1])
+    return zip(sample_times, interp(sample_times))

@@ -13,15 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class GroupWrapper(object):
+from . import base_wrappers as _base_wrappers
+
+class GroupWrapper(_base_wrappers.Wrapper):
     def __init__(self, group=None):
-        self.group = group
-
-    def __str__(self):
-        return str(self.group)
-
-    def __repr__(self):
-        return '%s(%s)' % (self.__class__.__name__, repr(self.group))
+        _base_wrappers.Wrapper.__init__(self, group)
 
     @classmethod
     def create(cls, parent_group=None, name=None):
@@ -29,28 +25,39 @@ class GroupWrapper(object):
         group = hdf_file.createGroup(parent_group, name)
         return cls(group)
 
+    @classmethod
+    def create_or_select(cls, parent_group=None, name=None):
+        try:
+            return cls.create(parent_group=parent_group, name=name)
+        except:
+            return cls(getattr(parent_group, name))
+
+
     def create_subgroup(self, name=None, description=None,
                         wrapper=None):
         if wrapper is None:
             wrapper = self.__class__
-        hdf_file = self.group._v_file
-        subgroup = hdf_file.create_subgroup(self.group, name, description)
+        hdf_file = self._pytables_object._v_file
+        subgroup = hdf_file.createGroup(self._pytables_object, name,
+                                        description)
         return wrapper(subgroup)
 
     def create_table(self, name=None, wrapper=None):
-        return wrapper.create(parent_group=self.group, name=name)
+        return wrapper.create(parent_group=self._pytables_object, name=name)
 
 
 class Collection(GroupWrapper):
     def __iter__(self):
-        return _WrappedIterator(self.group, self.child_wrapper)
+        return _WrappedIterator(self._pytables_object, self.child_wrapper)
 
     def create_child(self, name=None):
-        return self.child_wrapper.create(parent_group=self.group, name=name)
+        return self.child_wrapper.create(parent_group=self._pytables_object,
+                                         name=name)
 
     def write(self, children):
         for name, data in children.iteritems():
-            c = self.child_wrapper.create(parent_group=self.group, name=name)
+            c = self.child_wrapper.create(parent_group=self._pytables_object,
+                                          name=name)
             c.write(data)
 
 
