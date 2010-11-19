@@ -1,7 +1,7 @@
 import unittest
 import collections
 
-from actin_dynamics.filaments.single_strand import Filament
+from actin_dynamics.filaments.single_strand_filaments import Filament
 from actin_dynamics import concentrations
 
 # This would be a decent test to adapt and add for good measure.
@@ -74,7 +74,7 @@ class FilamentTest(unittest.TestCase):
         self.assertEqual(1, self.filament.boundary_count('p', 't'))
 
 
-    def test_grow_pointed_end(self):
+    def test_grow_pointed_end_getitem(self):
         self.filament.grow_pointed_end('p')
 
         # Verify sequence.
@@ -96,6 +96,9 @@ class FilamentTest(unittest.TestCase):
         self.assertEqual(1, self.filament.boundary_count('p', 'd'))
         self.assertEqual(1, self.filament.boundary_count('p', 't'))
 
+    def test_grow_pointed_end_setitem(self):
+        self.filament.grow_pointed_end('p')
+
         # Test setitem
         final_sequence = ['p', 'd', 'd', 'd', 't', 'p', 't', 't']
         self.filament[3] = 'd'
@@ -113,8 +116,113 @@ class FilamentTest(unittest.TestCase):
         self.assertEqual(1, self.filament.boundary_count('p', 't'))
 
 
-    def test_shrink_pointed_end(self):
-        pass
+    def test_shrink_pointed_end_getitem(self):
+        self.filament.shrink_pointed_end()
+
+        # Verify sequence.
+        new_sequence = ['d', 'p', 't', 'p', 't', 't']
+        self.assertEqual(new_sequence, list(self.filament.states))
+
+        # Test getitem
+        for i, s in enumerate(new_sequence):
+            self.assertEqual(s, self.filament[i])
+
+        # Verify state indices.
+        self.assertEqual(3, self.filament.state_count('t'))
+        self.assertEqual(2, self.filament.state_count('p'))
+        self.assertEqual(1, self.filament.state_count('d'))
+
+        # Verify boundary indices.
+        self.assertEqual(2, self.filament.boundary_count('t', 'p'))
+        self.assertEqual(0, self.filament.boundary_count('t', 'd'))
+        self.assertEqual(1, self.filament.boundary_count('p', 'd'))
+        self.assertEqual(1, self.filament.boundary_count('p', 't'))
+
+        # Second step
+        self.filament.shrink_pointed_end()
+
+        # Verify sequence.
+        new_sequence = ['p', 't', 'p', 't', 't']
+        self.assertEqual(new_sequence, list(self.filament.states))
+
+        # Test getitem
+        for i, s in enumerate(new_sequence):
+            self.assertEqual(s, self.filament[i])
+
+        # Verify state indices.
+        self.assertEqual(3, self.filament.state_count('t'))
+        self.assertEqual(2, self.filament.state_count('p'))
+        self.assertEqual(0, self.filament.state_count('d'))
+
+        # Verify boundary indices.
+        self.assertEqual(2, self.filament.boundary_count('t', 'p'))
+        self.assertEqual(0, self.filament.boundary_count('t', 'd'))
+        self.assertEqual(0, self.filament.boundary_count('p', 'd'))
+        self.assertEqual(1, self.filament.boundary_count('p', 't'))
+
+        # Barbed check
+        self.filament.shrink_barbed_end()
+
+        # Verify sequence.
+        new_sequence = ['p', 't', 'p', 't']
+        self.assertEqual(new_sequence, list(self.filament.states))
+
+        # Verify state indices.
+        self.assertEqual(2, self.filament.state_count('t'))
+        self.assertEqual(2, self.filament.state_count('p'))
+        self.assertEqual(0, self.filament.state_count('d'))
+
+        # Verify boundary indices.
+        self.assertEqual(2, self.filament.boundary_count('t', 'p'))
+        self.assertEqual(0, self.filament.boundary_count('t', 'd'))
+        self.assertEqual(0, self.filament.boundary_count('p', 'd'))
+        self.assertEqual(1, self.filament.boundary_count('p', 't'))
+
+
+    def test_shrink_pointed_end_setitem(self):
+        self.filament.shrink_pointed_end()
+
+        # Setitem
+        self.filament[2] = 'd'
+        final_sequence = ['d', 'p', 'd', 'p', 't', 't']
+
+        # Verify state indices.
+        self.assertEqual(2, self.filament.state_count('t'))
+        self.assertEqual(2, self.filament.state_count('p'))
+        self.assertEqual(2, self.filament.state_count('d'))
+
+        # Verify boundary indices.
+        self.assertEqual(1, self.filament.boundary_count('t', 'p'))
+        self.assertEqual(0, self.filament.boundary_count('t', 'd'))
+        self.assertEqual(2, self.filament.boundary_count('p', 'd'))
+        self.assertEqual(1, self.filament.boundary_count('d', 'p'))
+        self.assertEqual(0, self.filament.boundary_count('p', 't'))
+
+        # Second step
+        self.filament.shrink_pointed_end()
+
+        # Setitem
+        final_sequence = ['p', 'd', 'p', 't', 't']
+
+        # Verify state indices.
+        self.assertEqual(2, self.filament.state_count('t'))
+        self.assertEqual(2, self.filament.state_count('p'))
+        self.assertEqual(1, self.filament.state_count('d'))
+
+        # Verify boundary indices.
+        self.assertEqual(1, self.filament.boundary_count('t', 'p'))
+        self.assertEqual(0, self.filament.boundary_count('t', 'd'))
+        self.assertEqual(1, self.filament.boundary_count('p', 'd'))
+        self.assertEqual(1, self.filament.boundary_count('d', 'p'))
+        self.assertEqual(0, self.filament.boundary_count('p', 't'))
+
+
+    def test_grow_then_shrink_pointed_end(self):
+        self.filament.grow_pointed_end('p')
+        self.filament.shrink_pointed_end()
+
+        new_states = ['d', 'd', 'p', 't', 'p', 't', 't']
+        self.assertEqual(new_states, list(self.filament.states))
 
 
     def test_state_count(self):

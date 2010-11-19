@@ -56,16 +56,16 @@ class Filament(object):
         self._update_relative_indices(len(self.states), old_state, None)
 
 
-    # XXX these may not be right
     def grow_pointed_end(self, state):
         self.states.appendleft(state)
-        self._update_relative_indices(0, None, state)
         self.relative_shift += 1
+        self._update_relative_indices(0, None, state)
 
     def shrink_pointed_end(self):
-        old_state = self.states.popleft()
-        self._update_relative_indices(0, old_state, None)
+        old_state = self.states[0]
+        self[0] = None
         self.relative_shift -= 1
+        self.states.popleft()
 
 
     def containted_states(self):
@@ -89,8 +89,8 @@ class Filament(object):
                                                         [target_index])
         return relative_index + self.relative_shift
 
-    def non_boundary_state_index(self, barbed_state, pointed_states,
-                                 target_index):
+
+    def _non_boundary_relative_indices(self, barbed_state, pointed_states):
         relative_indices = []
         fail = False
         for bi in self.relative_state_indices[barbed_state]:
@@ -101,9 +101,19 @@ class Filament(object):
             if not fail:
                 relative_indices.append(bi)
             fail = False
+        return relative_indices
+
+
+    def non_boundary_state_count(self, barbed_state, pointed_states):
+        return len(self._non_boundary_relative_indices(barbed_state,
+                                                       pointed_states))
+
+    def non_boundary_state_index(self, barbed_state, pointed_states,
+                                 target_index):
+        relative_indices = self._non_boundary_relative_indices(barbed_state,
+                                                               pointed_states)
 
         assert (target_index < len(relative_indices))
-
         relative_index = relative_indices[target_index]
 
         return relative_index + self.relative_shift

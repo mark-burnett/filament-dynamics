@@ -45,9 +45,8 @@ class SimulationWriter(object):
             par_set_group.parameters.write(parameters)
 
         # Time to start writing results.
-        num_written_simulations = par_set_group.simulations._v_nchildren
         num_written_simulations = len(par_set_group.simulations)
-        sim_group = par_set_group.sim_group.create_child_from_number(
+        sim_group = par_set_group.simulations.create_child_from_number(
                 num_written_simulations)
 
         sim_group.measurements.write(simulation_measurements)
