@@ -19,10 +19,11 @@ import scipy.interpolate
 from actin_dynamics.io import hdf as _hdf
 
 def all_measurements(parameter_sets_wrapper, analysis_wrapper,
-                     sample_period=1):
+                     sample_period=1, epsilon=1e-10):
     for parameter_set in parameter_sets_wrapper:
         sample_times = numpy.arange(0,
-                parameter_set.parameters['simulation_duration'], sample_period)
+                parameter_set.parameters['simulation_duration'] + epsilon,
+                sample_period)
 
         analysis_ps = analysis_wrapper.create_child(parameter_set.name)
 

@@ -17,10 +17,10 @@ import numpy
 
 
 def _avg_summary_function(values):
-    return [sum(row) / len(values) for row in values]
+    return [numpy.average(row) for row in values]
 
 def _std_summary_function(values):
-    return numpy.sqrt([sum(numpy.power(row, 2)) / len(values)
+    return numpy.sqrt([sum(numpy.power(row, 2)) / len(row)
                        for row in values])
 
 def average_all(input_parameter_sets, output_parameter_sets):
