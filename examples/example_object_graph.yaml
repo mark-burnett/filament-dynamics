@@ -1,8 +1,9 @@
 filaments:
     class_name: SingleStateFixedLengthFromConcentrations
     parameters:
-        length: average_initial_filament_length
         number: number_of_filaments
+        concentration: seed_concentration
+        filament_tip_concentration: filament_tip_concentration
     fixed_parameters:
         state: ADP
 

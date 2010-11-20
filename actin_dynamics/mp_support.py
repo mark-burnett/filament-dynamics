@@ -38,8 +38,8 @@ def run_simulations(simulation_factory, output_file_name):
             raise
 
 def sp_run_simulations(simulation_factory, output_file_name):
-    with tables.openFile(output_file_name) as output_file:
-        hdf_writer = hdf.Writer(output_file)
+    with tables.openFile(output_file_name, mode='w') as output_file:
+        hdf_writer = hdf.SimulationWriter(output_file)
 
         for sim in simulation_factory:
             hdf_writer.write_result(run_simulation(sim))

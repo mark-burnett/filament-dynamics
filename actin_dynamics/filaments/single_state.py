@@ -33,8 +33,9 @@ class SingleStateFixedLength(_FilamentFactory):
 class SingleStateFixedLengthFromConcentrations(SingleStateFixedLength):
     def __init__(self, state=None, concentration=None,
                  filament_tip_concentration=None, number=None):
-        length = int(seed_concentration / filament_tip_concentration)
-        SingleState.__init__(self, state=state, length=length, number=number)
+        length = int(concentration / filament_tip_concentration)
+        SingleStateFixedLength.__init__(self, state=state, length=length,
+                                        number=number)
 
 
 class NormalDistribution(_FilamentFactory):
