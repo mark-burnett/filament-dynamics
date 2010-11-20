@@ -13,20 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pylab as _pylab
-
 from actin_dynamics.io import hdf as _hdf
 
-def plot_length(hdf_file=None, parameter_set_number=None,
-                simulation_number=None, standard_deviation=True):
-    _pylab.figure()
-    results = get_length(hdf_file, parameter_set_number, simulation_number,
-                         standard_deviation)
-    for r in results:
-        print r
+from actin_dynamics.io.hdf.utils import unpack_measurement as _unpack
 
-    _pylab.plot(*results)
-    _pylab.show()
 
 # XXX This function should be refactored into a function that grabs data
 # from hdf, and one that actually does the reshaping.
@@ -37,50 +27,46 @@ def get_length(hdf_file=None, parameter_set_number=None,
     average_analysis = analysis.average
     average_par_set = average_analysis.select_child_number(parameter_set_number)
 
+    # get relavent simulation parameters
+    # XXX These should probably be passed in as parameters.
+    parameter_set = parameter_sets.select_child_number(parameter_set_number)
+    average_initial_filament_length = parameter_set.parameters[
+            'average_initial_filament_length']
+    filament_tip_concentration = parameter_set.parameters[
+            'filament_tip_concentration']
+
     if simulation_number is None:
         # use parameter_set summary data
-        length_measurement = average_par_set.measurement_summary.length.read()
+        times, values = _unpack(average_par_set.measurement_summary.length,
+                                shift=-average_initial_filament_length,
+                                scaling=filament_tip_concentration)
     else:
         # get simulation's numbers
         simulation = average_par_set.simulations.select_child_number(
                 simulation_number)
-        length_measurement = simulation.measurements.length.read()
-
-    # subtract initial filament value
-    times, values = zip(*length_measurement)
-
-    # get relavent simulation parameters
-    # XXX These should be passed in as parameters.
-    parameter_set = parameter_sets.select_child_number(parameter_set_number)
-    average_initial_filament_length = parameter_set.parameters[
-            'average_initial_filament_length']
-    ftc = parameter_set.parameters['filament_tip_concentration']
-
-    # multiply by filament tip concentration
-    normalized_values = [(v - average_initial_filament_length) * ftc
-                         for v in values]
+        times, values = _unpack(simulation.measurements.length,
+                                shift=-average_initial_filament_length,
+                                scaling=filament_tip_concentration)
 
     if standard_deviation:
         std_analysis = analysis.standard_deviation
         std_par_set = std_analysis.select_child_number(parameter_set_number)
 
         if simulation_number is None:
-            std_measurement = std_par_set.measurement_summary.length.read()
-
+            stimes, stds = _unpack(std_par_set.measurement_summary.length,
+                                   scaling=filament_tip_concentration)
         else:
             std_simulation = std_par_set.simulations.select_child_number(
                     simulation_number)
-            std_measurement = std_simulation.measurements.length.read()
-
-        std_times, std_values = zip(*std_measurement)
-        normalized_std_values = [s * ftc for s in std_values]
+            stimes, stds = _unpack(std_simulation.measurements.length,
+                                   scaling=filament_tip_concentration)
 
         upper_bound = []
         lower_bound = []
-        for nv, ns in zip(normalized_values, normalized_std_values):
+        for nv, ns in zip(values, stds):
             upper_bound.append(nv + ns)
             lower_bound.append(nv - ns)
 
-        return times, normalized_values, times, upper_bound, times, lower_bound
+        return times, normalized_values, lower_bound, upper_bound
     else:
         return times, normalized_values

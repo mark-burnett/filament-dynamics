@@ -1,1 +1,21 @@
 Possible Bugs:
+    
+Things to Automate:
+    plotting:
+        length + fluorescence + data for a given parameter set
+        pi concentration
+        chi^2 vs single arbitrary parameter
+        chi^2 surface plot vs 2 parameters
+
+Simulations to Run:
+    pollard:
+        fluorescence/length for range of polymerization rates
+            * need sensitivity eventually
+        fluorescence/length for range of filament tip concentrations
+
+        length, pi for various cooperativities and cleavage rates
+            need chi^2 plots for this
+
+Other things to worry about:
+    use a nonfluorescent seed state
+    error estimates

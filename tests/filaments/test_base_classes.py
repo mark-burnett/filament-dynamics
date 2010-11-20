@@ -17,11 +17,11 @@ import unittest
 
 from actin_dynamics.filaments.base_classes import FilamentFactory
 
-#class FilamentFactoryBase(unittest.TestCase):
-#    def test_exists(self):
-#        # There is no functionality to test, but we need to be able to
-#        #  successfully import FilamentFactory.
-#        pass
+class FilamentFactoryBase(unittest.TestCase):
+    def test_exists(self):
+        # There is no functionality to test, but we need to be able to
+        #  successfully import FilamentFactory.
+        pass
 
 if '__main__' == __name__:
     unittest.main()

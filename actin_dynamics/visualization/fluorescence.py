@@ -15,40 +15,61 @@
 
 from actin_dynamics.io import hdf as _hdf
 
+def all_parameter_sets(hdf_file=None, coefficients=None, normalization=1):
+    parameter_sets, all_analyses = _hdf.utils.get_ps_ana(hdf_file)
+
+    fl_analysis = all_analyses.create_or_select_child(name='fluorescence')
+
+    for ps in parameter_sets:
+        ps_results = fl_analysis.create_or_select_child(name=ps.name)
+        single_parameter_set(ps, ps_results, coefficients=coefficients,
+                             normalization=normalization)
+
+def single_parameter_set(parameter_set, analysis_set):
+    pass
+
+
 def get_flourescence(hdf_file=None, parameter_set_number=None,
                      simulation_number=None, coefficients=None,
-                     normalization=1, standard_deviation=True):
+                     normalization=1):
     parameter_sets, analysis = _hdf.utils.get_ps_ana(hdf_file)
+
+    if coefficients is None:
+        # XXX These may not match literature values, I can't check now.
+        coefficients = {'ATP': 0.35,
+                        'ADPPi': 0.56,
+                        'ADP': 0.75}
 
     average_analysis = analysis.average
     average_par_set = average_analysis.select_child_number(parameter_set_number)
 
+    # Parameters
+    parameter_set = parameter_sets.select_child_number(parameter_set_number)
+    filament_tip_concentration = parameter_set.parameters[
+            'filament_tip_concentration']
+
+    scaling = filament_tip_concentration / normalization
+
     if simulation_number is None:
         # use parameter_set summary data
-        atp_count   = average_par_set.measurement_summary.atp_count.read()
-        adppi_count = average_par_set.measurement_summary.adppi_count.read()
-        adp_count   = average_par_set.measurement_summary.adp_count.read()
+        times, atp_count = _unpack(average_par_set.measurement_summary.atp_count,
+                                   scaling=scaling)
+        jtimes, adppi_count = _unpack(
+                average_par_set.measurement_summary.adppi_count,
+                scaling=scaling)
+        jtimes, adp_count = _unpack(
+                average_par_set.measurement_summary.adp_count,
+                scaling=scaling)
     else:
         # get simulation's numbers
         simulation = average_par_set.simulations.select_child_number(
                 simulation_number)
-        raw_atp_count   = simulation.measurements.atp_count.read()
-        raw_adppi_count = simulation.measurements.adppi_count.read()
-        raw_adp_count   = simulation.measurements.adp_count.read()
-
-    times, atp_count   = zip(*raw_atp_count)
-    times, adppi_count = zip(*raw_adppi_count)
-    times, adp_count   = zip(*raw_adp_count)
-
-    parameter_set = parameter_sets.select_child_number(parameter_set_number)
-    ftc = parameter_set.parameters['filament_tip_concentration']
-
-    normalized_atp   = [(v - atp_count[0]) * ftc / normalization
-                        for v in atp_count]
-    normalized_adppi = [(v - adppi_count[0]) * ftc / normalization
-                        for v in adppi_count]
-    normalized_adp   = [(v - adp_count[0]) * ftc / normalization
-                        for v in adp_count]
+        times, atp_count = _unpack(simulation.measurements.atp_count,
+                                   scaling=scaling)
+        jtimes, adppi_count = _unpack(simulation.measurements.adppi_count,
+                                      scaling=scaling)
+        jtimes, adp_count = _unpack(simulation.measurements.adp_count,
+                                    scaling=scaling)
 
     fluorescence = [t * coefficients['ATP']
                         + p * coefficients['ADPPi']

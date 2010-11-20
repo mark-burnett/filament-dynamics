@@ -15,13 +15,24 @@
 
 import numpy
 
+
+def _avg_summary_function(values):
+    return [sum(row) / len(values) for row in values]
+
+def _std_summary_function(values):
+    return numpy.sqrt([sum(numpy.power(row, 2)) / len(values)
+                       for row in values])
+
 def average_all(input_parameter_sets, output_parameter_sets):
-    return statistics_loop(input_parameter_sets, output_parameter_sets,
-                        function=numpy.average)
+    output_ps = statistics_loop(input_parameter_sets, output_parameter_sets,
+                                function=numpy.average)
+    summarize_values(output_ps, function=_avg_summary_function)
+
 
 def std_all(input_parameter_sets, output_parameter_sets):
-    return statistics_loop(input_parameter_sets, output_parameter_sets,
-                        function=numpy.std)
+    output_ps = statistics_loop(input_parameter_sets, output_parameter_sets,
+                                function=numpy.std)
+    summarize_values(output_ps, function=_std_summary_function)
 
 
 def statistics_loop(input_parameter_sets, output_parameter_sets, function=None):
@@ -35,6 +46,25 @@ def statistics_loop(input_parameter_sets, output_parameter_sets, function=None):
                 output_measurement = output_sim.measurements.create_child(
                         measurement_name)
                 output_measurement.write(m_stat_results)
+    return output_parameter_sets
+
+def summarize_values(parameter_sets, function=None):
+    for parameter_set in parameter_sets:
+        measurement_names = get_parameter_set_measurement_names(parameter_set)
+        for measurement_name in measurement_names:
+            all_values = []
+            for simulation in parameter_set.simulations:
+                measurement = getattr(simulation.measurements, measurement_name)
+                times, values = zip(*measurement.read())
+                all_values.append(values)
+            all_values = numpy.array(all_values).transpose()
+
+            summarized_values = function(all_values)
+
+            output_measurement = (
+                    parameter_set.measurement_summary.create_or_select_child(
+                        measurement_name))
+            output_measurement.write(zip(times, summarized_values))
 
 
 def get_statistics(simulation_wrapper=None, measurement_name=None,
@@ -49,12 +79,6 @@ def get_statistics(simulation_wrapper=None, measurement_name=None,
         results.append((t, function(vals)))
     return results
 
-
-
-
-def get_lengths(filaments_group):
-    results = []
-    for filament in filaments_group:
-        filament_lengths = filament.length.read()
-        results.append([fl[0] for fl in filament_lengths])
-    return results
+def get_parameter_set_measurement_names(parameter_set):
+    first_simulation = next(iter(parameter_set.simulations))
+    return [m.name for m in first_simulation.measurements]

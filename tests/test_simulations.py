@@ -63,10 +63,12 @@ class BasicSimulationTests(unittest.TestCase):
         pars, sim_data, final_state, filament_data = run_simulation(sim)
 
         self.assertEqual(2, len(filament_data[0]))
-        self.assertEqual(filament_data[0]['measurement_1'], filament_data[0]['measurement_2'])
+        self.assertEqual(filament_data[0]['measurement_1'],
+                         filament_data[0]['measurement_2'])
 
         values = [l for t, l in filament_data[0]['measurement_1']]
         self.assertEqual(values, [5, 6, 7, 8])
+
 
 #class DetailedSimulationTests(unittest.TestCase):
 #    def test_detailed_logging_tests(self):
@@ -75,69 +77,6 @@ class BasicSimulationTests(unittest.TestCase):
 #        measurements get.  Preferably each in their own test.
 #        '''
 #        self.assertTrue(False)
-#
-#
-#class StochasticSimulationTests(unittest.TestCase):
-#    def test_double_transition_stochastic(self):
-#        """
-#        NOTE: This test is probabilistic.
-#        """
-#        transitions    = [MockTransition( 1, 1),
-#                          MockTransition(-1, 1)]
-#        concentrations = {}
-#        measurements   = []
-#        strand_factory = MockStrandFactory([1000])
-#        ecs            = [MockEndCondition(1000)]
-#        rng            = random.uniform
-#
-#        sim = Simulation(transitions, concentrations, measurements, ecs,
-#                         strand_factory, rng)
-#
-#        final_state, data = sim.run()
-#
-#        self.assertTrue(final_state[0] < 1064)
-#        self.assertTrue(final_state[0] > 936)
-#
-#    def test_unbalanced_transition_stochastic(self):
-#        """
-#        NOTE: This test is probabilistic.
-#        """
-#        transitions    = [MockTransition( 1, 1),
-#                          MockTransition(-1, 0.5)]
-#        concentrations = {}
-#        measurements   = []
-#        strand_factory = MockStrandFactory([1000])
-#        ecs            = [MockEndCondition(1000)]
-#        rng            = random.uniform
-#
-#        sim = Simulation(transitions, concentrations, measurements, ecs,
-#                         strand_factory, rng)
-#
-#        final_state, data = sim.run()
-#
-#        self.assertTrue(final_state[0] < 1397)
-#        self.assertTrue(final_state[0] > 1270)
-#
-#    def test_triple_transition_stochastic(self):
-#        """
-#        NOTE: This test is probabilistic.
-#        """
-#        transitions    = [MockTransition( 1, 1),
-#                          MockTransition(-1, 0.5),
-#                          MockTransition(-1, 0.5)]
-#        concentrations = {}
-#        measurements   = []
-#        strand_factory = MockStrandFactory([1000])
-#        ecs            = [MockEndCondition(1000)]
-#        rng            = random.uniform
-#
-#        sim = Simulation(transitions, concentrations, measurements, ecs,
-#                         strand_factory, rng)
-#
-#        final_state, data = sim.run()
-#
-#        self.assertTrue(final_state[0] < 1064)
-#        self.assertTrue(final_state[0] > 936)
 
 
 if '__main__' == __name__:

@@ -27,8 +27,7 @@ release_rate: [0.003, 0.003, 1, linear]
 
 # Initial Strand
 average_initial_filament_length: [535, 535, 1, linear]
-initial_filament_length_deviation: [50, 50, 1, linear]
-number_of_filaments: [10, 10, 1, linear]
+number_of_filaments: [30, 30, 1, linear]
 
 
 # Concentrations

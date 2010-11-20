@@ -31,7 +31,6 @@ class SingleStateFixedLength(_FilamentFactory):
                 for i in xrange(self.number)]
 
 class SingleStateFixedLengthFromConcentrations(SingleStateFixedLength):
-    parameters = ['concentration', 'filament_tip_concentration']
     def __init__(self, state=None, concentration=None,
                  filament_tip_concentration=None, number=None):
         length = int(seed_concentration / filament_tip_concentration)

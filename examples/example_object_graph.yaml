@@ -1,8 +1,7 @@
 filaments:
-    class_name: NormalDistribution
+    class_name: SingleStateFixedLengthFromConcentrations
     parameters:
-        mean: average_initial_filament_length
-        standard_deviation: initial_filament_length_deviation
+        length: average_initial_filament_length
         number: number_of_filaments
     fixed_parameters:
         state: ADP
@@ -82,24 +81,24 @@ transitions:
       parameters:
           rate: barbed_adp_polymerization_rate
 
-#    - class_name: PointedPolymerization
-#      fixed_parameters:
-#          state: ATP
-#          label: pointed_atp_polymerization
-#      parameters:
-#          rate: pointed_atp_polymerization_rate
-#    - class_name: PointedPolymerization
-#      fixed_parameters:
-#          state: ADPPi
-#          label: pointed_adppi_polymerization
-#      parameters:
-#          rate: pointed_adppi_polymerization_rate
-#    - class_name: PointedPolymerization
-#      fixed_parameters:
-#          state: ADP
-#          label: pointed_adp_polymerization
-#      parameters:
-#          rate: pointed_adp_polymerization_rate
+    - class_name: PointedPolymerization
+      fixed_parameters:
+          state: ATP
+          label: pointed_atp_polymerization
+      parameters:
+          rate: pointed_atp_polymerization_rate
+    - class_name: PointedPolymerization
+      fixed_parameters:
+          state: ADPPi
+          label: pointed_adppi_polymerization
+      parameters:
+          rate: pointed_adppi_polymerization_rate
+    - class_name: PointedPolymerization
+      fixed_parameters:
+          state: ADP
+          label: pointed_adp_polymerization
+      parameters:
+          rate: pointed_adp_polymerization_rate
 
     # Depolymerization
     - class_name: BarbedDepolymerization
@@ -121,24 +120,24 @@ transitions:
       parameters:
           rate: barbed_adp_depolymerization_rate
 
-#    - class_name: PointedDepolymerization
-#      fixed_parameters:
-#          state: ATP
-#          label: pointed_atp_depolymerization
-#      parameters:
-#          rate: pointed_atp_depolymerization_rate
-#    - class_name: PointedDepolymerization
-#      fixed_parameters:
-#          state: ADPPi
-#          label: pointed_adppi_depolymerization
-#      parameters:
-#          rate: pointed_adppi_depolymerization_rate
-#    - class_name: PointedDepolymerization
-#      fixed_parameters:
-#          state: ADP
-#          label: pointed_adp_depolymerization
-#      parameters:
-#          rate: pointed_adp_depolymerization_rate
+    - class_name: PointedDepolymerization
+      fixed_parameters:
+          state: ATP
+          label: pointed_atp_depolymerization
+      parameters:
+          rate: pointed_atp_depolymerization_rate
+    - class_name: PointedDepolymerization
+      fixed_parameters:
+          state: ADPPi
+          label: pointed_adppi_depolymerization
+      parameters:
+          rate: pointed_adppi_depolymerization_rate
+    - class_name: PointedDepolymerization
+      fixed_parameters:
+          state: ADP
+          label: pointed_adp_depolymerization
+      parameters:
+          rate: pointed_adp_depolymerization_rate
 
     # Hydrolysis
     - class_name: CooperativeHydrolysis
