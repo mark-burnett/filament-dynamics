@@ -22,11 +22,8 @@ def perform_all(hdf_file=None):
     simulations_group = hdf_file.getNode('/Simulations')
     analysis_group = _hdf.utils.get_or_create_group(hdf_file, 'Analysis',
             description='Analysis of simulation results.')
-
-    # Remove old analysis.
-    analysis_group._f_remove(recursive=True)
-    analysis_group = _hdf.utils.get_or_create_group(hdf_file, 'Analysis',
-            description='Analysis of simulation results.')
+    # Clean up old stuff.
+    analysis_group.delete_children()
 
     parameter_sets_wrapper = _hdf.MultipleParameterSetWrapper(simulations_group)
 

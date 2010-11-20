@@ -26,10 +26,3 @@ class Wrapper(object):
     @property
     def name(self):
         return self._pytables_object._v_name
-
-#    def __getattr__(self, name):
-#        result = getattr(self._pytables_object, '_v_%s' % name, None)
-#        if result is not None:
-#            return result
-#        raise AttributeError('%s not found in %s.'
-#                             % (name, self.__class__.__name__))

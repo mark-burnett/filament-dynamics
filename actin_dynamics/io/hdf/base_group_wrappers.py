@@ -45,6 +45,10 @@ class GroupWrapper(_base_wrappers.Wrapper):
     def create_table(self, name=None, wrapper=None):
         return wrapper.create(parent_group=self._pytables_object, name=name)
 
+    def delete_children(self):
+        for child in self._pytables_object._v_children.values():
+            child._f_remove(recursive=True)
+
 
 class Collection(GroupWrapper):
     def __iter__(self):
