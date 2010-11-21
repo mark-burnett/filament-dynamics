@@ -38,13 +38,10 @@ def make_simulation(object_graph, raw_parameters):
                       measurements=measurements, end_conditions=end_conditions,
                       filaments=filaments, parameters=raw_parameters)
 
-class SimulationFactory(object):
-    def __init__(self, object_graph, parameters):
-        self.object_graph = object_graph
-        self.parameters = enumerate(parameters)
 
-    def __iter__(self):
-        return self
-
-    def next(self):
-        return make_simulation(self.object_graph, next(self.parameters))
+def simulation_generator(object_graph, parameters, number_simulations):
+    for current_pars in enumerate(parameters):
+        current_sim = 0
+        while current_sim < number_simulations:
+            yield make_simulation(object_graph, current_pars)
+            current_sim += 1
