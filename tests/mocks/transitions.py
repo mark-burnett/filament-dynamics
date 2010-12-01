@@ -27,3 +27,6 @@ class MockTransition(object):
 
     def perform(self, time, filaments, concentrations, index, r):
         filaments[index][0] += self.add_value
+
+    def initialize_measurement(self, filaments):
+        pass
