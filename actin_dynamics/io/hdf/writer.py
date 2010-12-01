@@ -49,7 +49,7 @@ class SimulationWriter(object):
         sim_group = par_set_group.simulations.create_child_from_number(
                 num_written_simulations)
 
-        sim_group.measurements.write(simulation_measurements)
+        sim_group.simulation_measurements.write(simulation_measurements)
 
         for i, (fm, states) in enumerate(itertools.izip(filament_measurements,
                                                         raw_filaments)):

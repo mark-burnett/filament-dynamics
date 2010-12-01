@@ -27,13 +27,19 @@ class SimulationWrapper(_base_group_wrappers.GroupWrapper):
         return self.create_subgroup(name=name, wrapper=FilamentWrapper)
 
     @property
-    def measurements(self):
+    def simulation_measurements(self):
         return MeasurementCollection.create_or_select(
                 self._pytables_object,
                 'simulation_measurements')
 
+    @property
+    def filament_measurements(self):
+        return MeasurementCollection.create_or_select(
+                self._pytables_object,
+                'filament_measurements')
+
     def write_measurements(self, results_dict):
-        self.measurements.write(results_dict)
+        self.simulation_measurements.write(results_dict)
 
     @property
     def filaments(self):

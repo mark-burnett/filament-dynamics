@@ -22,12 +22,12 @@ def perform_all(hdf_file=None):
     simulations_group = hdf_file.getNode('/Simulations')
     analysis_group = _hdf.utils.get_or_create_group(hdf_file, 'Analysis',
             description='Analysis of simulation results.')
+    analyses_wrapper = _hdf.MultipleAnalysisWrapper(analysis_group)
+
     # Clean up old stuff.
-    analysis_group.delete_children()
+    analyses_wrapper.delete_children()
 
     parameter_sets_wrapper = _hdf.MultipleParameterSetWrapper(simulations_group)
-
-    analyses_wrapper = _hdf.MultipleAnalysisWrapper(analysis_group)
 
     downsample_analysis_wrapper = analyses_wrapper.create_child('downsample')
     _downsample.all_measurements(parameter_sets_wrapper,

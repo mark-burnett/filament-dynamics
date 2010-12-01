@@ -63,13 +63,18 @@ def run_simulation(sim):
     else:
         rng = random.uniform
 
-    # Initialize.
+    # Initialize end conditions.
     [e.reset() for e in sim.end_conditions]
     time = 0
+
+    # Initialize transition measurements.
+    for t in sim.transitions:
+        t.initialize_measurement(sim.filaments)
 
     # Perform initial filament measurements
     for measurement in sim.measurements:
         measurement.perform(time, sim.filaments)
+
     try:
         while not any(e(time, sim.filaments, sim.concentrations)
                       for e in sim.end_conditions):

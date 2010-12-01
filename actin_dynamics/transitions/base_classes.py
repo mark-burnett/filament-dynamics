@@ -31,6 +31,9 @@ class Transition(object):
     def perform(self, time, filaments, concentrations, index, r):
         pass
 
+    def initialize_measurement(self, filaments):
+        pass
+
 
 class FilamentTransition(Transition):
     skip_registration = True
@@ -44,13 +47,15 @@ class FilamentTransition(Transition):
         if self.label:
             filament = filaments[index]
             measurements = filament.measurements[self.label]
-            if measurements:
-                previous_time, previous_value = measurements[-1]
-            else:
-                previous_value = 0
-                measurements.append((0, 0))
+            previous_time, previous_value = measurements[-1]
             measurements.append((time, previous_value + 1))
         Transition.perform(self, time, filaments, concentrations, index, r)
+
+    def initialize_measurement(self, filaments):
+        if self.label:
+            for filament in filaments:
+                filament.measurements[self.label].append((0, 0))
+        Transition.initialize_measurement(self, filaments)
 
 class SolutionTransition(Transition):
     skip_registration = True

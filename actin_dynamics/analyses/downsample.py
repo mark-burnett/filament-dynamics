@@ -29,7 +29,8 @@ def all_measurements(parameter_sets_wrapper, analysis_wrapper,
 
         for simulation in parameter_set.simulations:
             # calculate simulation measurements
-            sm_results = collection_measurements(simulation, sample_times)
+            sm_results = collection_measurements(
+                    simulation.simulation_measurements, sample_times)
 
             sa_wrapper = analysis_ps.simulations.create_child(simulation.name)
 
@@ -39,7 +40,8 @@ def all_measurements(parameter_sets_wrapper, analysis_wrapper,
             sa_filaments = sa_wrapper.filaments
             for filament in simulation.filaments:
                 # calculate filament measurements
-                fm_results = collection_measurements(filament, sample_times)
+                fm_results = collection_measurements(filament.measurements,
+                                                     sample_times)
 
                 # simulation result wrapper
                 filament_analysis_wrapper = sa_filaments.create_child(
@@ -49,10 +51,10 @@ def all_measurements(parameter_sets_wrapper, analysis_wrapper,
                 filament_analysis_wrapper.measurements.write(fm_results)
 
 
-def collection_measurements(simulation, sample_times):
+def collection_measurements(measurements, sample_times):
     results = {}
     # XXX make simulation.measurements.iteritems()
-    for m in simulation.measurements:
+    for m in measurements:
         results[m.name] = resample(m.read(), sample_times)
     return results
 
