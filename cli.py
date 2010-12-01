@@ -27,7 +27,7 @@ def parse_command_line():
                         help='Parameters file.')
     parser.add_argument('--output_file', default='output.h5',
                         help='Output pickle file name.')
-    parser.add_argument('--num_sims', default=1,
+    parser.add_argument('--num_sims', type=int, default=1,
                         help='Number of simulations per parameter set.')
     return parser.parse_args()
 
@@ -37,7 +37,6 @@ def cli_main():
     parameters = io.parse_parameters_file(open(args.parameters))
     object_graph = io.parse_object_graph_file(open(args.object_graph))
 
-#    simulation_factory = factories.SimulationFactory(object_graph, parameters)
     simulation_factory = factories.simulation_generator(object_graph,
                                                         parameters,
                                                         args.num_sims)
