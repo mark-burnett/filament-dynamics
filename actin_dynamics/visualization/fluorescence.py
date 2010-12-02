@@ -13,26 +13,26 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import numpy
+
 from actin_dynamics.io import hdf as _hdf
 
-def all_parameter_sets(hdf_file=None, coefficients=None, normalization=1):
-    parameter_sets, all_analyses = _hdf.utils.get_ps_ana(hdf_file)
+from . import utils as _utils
 
-    fl_analysis = all_analyses.create_or_select_child(name='fluorescence')
+def get_fluorescence(analysis=None, parameter_set_number=None,
+                     coefficients=None, normalization=1):
+    # Grab the data
+    times, atp_values, atp_lower_bounds, atp_upper_bounds = (
+            _utils.get_measurement_summary(analysis, parameter_set_number,
+                                           'pyrene_atp_count'))
 
-    for ps in parameter_sets:
-        ps_results = fl_analysis.create_or_select_child(name=ps.name)
-        single_parameter_set(ps, ps_results, coefficients=coefficients,
-                             normalization=normalization)
+    ptimes, adppi_values, adppi_lower_bounds, adppi_upper_bounds = (
+            _utils.get_measurement_summary(analysis, parameter_set_number,
+                                           'pyrene_adppi_count'))
 
-def single_parameter_set(parameter_set, analysis_set):
-    pass
-
-
-def get_flourescence(hdf_file=None, parameter_set_number=None,
-                     simulation_number=None, coefficients=None,
-                     normalization=1):
-    parameter_sets, analysis = _hdf.utils.get_ps_ana(hdf_file)
+    dtimes, adp_values, adp_lower_bounds, adp_upper_bounds = (
+            _utils.get_measurement_summary(analysis, parameter_set_number,
+                                           'pyrene_adp_count'))
 
     if coefficients is None:
         # XXX These may not match literature values, I can't check now.
@@ -40,40 +40,40 @@ def get_flourescence(hdf_file=None, parameter_set_number=None,
                         'ADPPi': 0.56,
                         'ADP': 0.75}
 
-    average_analysis = analysis.average
-    average_par_set = average_analysis.select_child_number(parameter_set_number)
+    # Scale everything
+    average_fluorescence = _linear_combination(
+            [atp_values, adppi_values, adp_values],
+            [coefficients['ATP'], coefficients['ADPPi'], coefficients['ADP']],
+            normalization=normalization)
 
-    # Parameters
-    parameter_set = parameter_sets.select_child_number(parameter_set_number)
-    filament_tip_concentration = parameter_set.parameters[
-            'filament_tip_concentration']
+    lower_fluorescence = _linear_combination(
+            [atp_lower_bounds, adppi_lower_bounds, adp_lower_bounds],
+            [coefficients['ATP'], coefficients['ADPPi'], coefficients['ADP']],
+            normalization=normalization)
 
-    scaling = filament_tip_concentration / normalization
+    upper_fluorescence = _linear_combination(
+            [atp_upper_bounds, adppi_upper_bounds, adp_upper_bounds],
+            [coefficients['ATP'], coefficients['ADPPi'], coefficients['ADP']],
+            normalization=normalization)
 
-    if simulation_number is None:
-        # use parameter_set summary data
-        times, atp_count = _unpack(average_par_set.measurement_summary.atp_count,
-                                   scaling=scaling)
-        jtimes, adppi_count = _unpack(
-                average_par_set.measurement_summary.adppi_count,
-                scaling=scaling)
-        jtimes, adp_count = _unpack(
-                average_par_set.measurement_summary.adp_count,
-                scaling=scaling)
-    else:
-        # get simulation's numbers
-        simulation = average_par_set.simulations.select_child_number(
-                simulation_number)
-        times, atp_count = _unpack(simulation.measurements.atp_count,
-                                   scaling=scaling)
-        jtimes, adppi_count = _unpack(simulation.measurements.adppi_count,
-                                      scaling=scaling)
-        jtimes, adp_count = _unpack(simulation.measurements.adp_count,
-                                    scaling=scaling)
+    return times, average_fluorescence, lower_fluorescence, upper_fluorescence
 
-    fluorescence = [t * coefficients['ATP']
-                        + p * coefficients['ADPPi']
-                        + d * coefficients['ADP']
-                    for t, p, d in zip(normalized_atp, normalized_adppi,
-                                       normalized_adp)]
-    return times, fluorescence
+def _linear_combination(values=None, coefficients=None, normalization=1):
+    values = numpy.array(values).transpose()
+    coefficients = numpy.array(coefficients)
+    results = []
+    for v in values:
+        results.append(numpy.dot(v, coefficients) / normalization)
+    return results
+
+def normalize_fluorescence(length_measurement, fluorescence_measurement):
+    tl, al, ll, ul = length_measurement
+    tf, af, lf, uf = fluorescence_measurement
+
+    scale_factor = al[-1] / af[-1]
+
+    new_average     = [f * scale_factor for f in af]
+    new_lower_bound = [f * scale_factor for f in lf]
+    new_upper_bound = [f * scale_factor for f in uf]
+
+    return tf, new_average, new_lower_bound, new_upper_bound

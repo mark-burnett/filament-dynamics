@@ -18,7 +18,7 @@ from . import stats as _stats
 
 from actin_dynamics.io import hdf as _hdf
 
-def perform_all(hdf_file=None):
+def perform_analysis(hdf_file=None):
     simulations_group = hdf_file.getNode('/Simulations')
     analysis_group = _hdf.utils.get_or_create_group(hdf_file, 'Analysis',
             description='Analysis of simulation results.')

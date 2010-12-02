@@ -13,9 +13,25 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import io
-from . import shortcuts
-from . import utils
+import csv
 
-from fluorescence import get_fluorescence, normalize_fluorescence
-from length import get_length
+# XXX inherit directly from csv.Dialect and set all attributes
+class GnuplotDialect(csv.excel):
+    delimeter = ' '
+
+def write_measurements(file_object, measurements):
+    writer = csv.writer(file_object, dialect=GnuplotDialect)
+    rows = _combine_measurements(measurements)
+    writer.writerows(rows)
+
+def _combine_measurements(measurements):
+    times = measurements[0][0]
+
+    results = []
+    for i, t in enumerate(times):
+        row = [t]
+        for mt, ma, ml, mu in measurements:
+            row.extend([ma[i], ml[i], mu[i]])
+        results.append(row)
+
+    return results

@@ -36,7 +36,7 @@ def _analyze_main():
     hdf_file = _tables.openFile(filename=_args.simulation_file, mode='a')
     simulations, analysis = _hdf.utils.get_ps_ana(hdf_file)
 
-    from actin_dynamics.analyses import perform_all
+    from actin_dynamics.analyses import perform_analysis
     from actin_dynamics import visualization
 
     # Drop into shell

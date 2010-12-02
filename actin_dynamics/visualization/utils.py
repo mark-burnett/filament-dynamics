@@ -43,3 +43,12 @@ def _unpack_measurement(parameter_set=None, measurement_name=None):
         times.append(t)
         values.append(v)
     return times, values
+
+def scale_measurement(measurement, factor):
+    time, average, lower, upper = measurement
+
+    new_average = [a * factor for a in average]
+    new_lower   = [l * factor for l in lower]
+    new_upper   = [g * factor for g in upper]
+
+    return time, new_average, new_lower, new_upper
