@@ -13,9 +13,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
+
 import numpy
 
 from actin_dynamics.io import hdf as _hdf
+
+from actin_dynamics.analyses import downsample as _downsample
 
 from . import utils as _utils
 
@@ -57,6 +61,22 @@ def get_fluorescence(analysis=None, parameter_set_number=None,
             normalization=normalization)
 
     return times, average_fluorescence, lower_fluorescence, upper_fluorescence
+
+def fit_fluorescence(simulation_fluorescence, data_fluorescence):
+    sim_times, sim_avg, sim_lower, sim_upper = simulation_fluorescence
+    data_times, data_avg = data_fluorescence
+
+    sim_std = [(u - l)/2 for l, u in itertools.izip(sim_lower, sim_upper)]
+    junk_times, sampled_avg = zip(*_downsample.resample(zip(sim_times, sim_avg), data_times))
+    junk_times, sampled_std = zip(*_downsample.resample(zip(sim_times, sim_std), data_times))
+
+    return _chi_squared(data_avg, sampled_avg, sampled_std) / len(data_avg)
+
+
+def _chi_squared(data, sim_avg, sim_std):
+    return sum(((d - a) / s)**2
+               for d, a, s in itertools.izip(data, sim_avg, sim_std))
+
 
 def _linear_combination(values=None, coefficients=None, normalization=1):
     values = numpy.array(values).transpose()

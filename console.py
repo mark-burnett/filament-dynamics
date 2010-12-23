@@ -40,7 +40,7 @@ def _analyze_main():
     from actin_dynamics import visualization
 
     # Drop into shell
-    _shell = _IPShellEmbed()
+    _shell = _IPShellEmbed(argv=[])
     _shell()
     hdf_file.close()
 

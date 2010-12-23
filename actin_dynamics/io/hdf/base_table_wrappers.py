@@ -23,13 +23,17 @@ class TableWrapper(_base_wrappers.Wrapper):
 
     @classmethod
     def in_group(cls, hdf_file=None, parent_group=None, name=None):
-        table = hdf_file.createTable(parent_group, name, cls.description)
+        table = hdf_file.createTable(parent_group, name,
+                                     description=cls.description,
+                                     expectedrows=100)
         return cls(table)
 
     @classmethod
     def create(cls, parent_group=None, name=None):
         hdf_file = parent_group._v_file
-        table = hdf_file.createTable(parent_group, name, cls.description)
+        table = hdf_file.createTable(parent_group, name,
+                                     description=cls.description,
+                                     expectedrows=100)
         return cls(table)
 
     def read(self):

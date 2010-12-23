@@ -20,8 +20,11 @@ import tables
 from .io import hdf
 from .simulations import run_simulation
 
+_compession_filter = tables.Filters(complevel=9)
+
 def run_simulations(simulation_factory, output_file_name):
-    with tables.openFile(output_file_name, mode='w') as output_file:
+    with tables.openFile(output_file_name, mode='w',
+                         filters=_compession_filter) as output_file:
         hdf_writer = hdf.SimulationWriter(output_file)
         pool = multiprocessing.Pool()
 
@@ -38,7 +41,8 @@ def run_simulations(simulation_factory, output_file_name):
             raise
 
 def sp_run_simulations(simulation_factory, output_file_name):
-    with tables.openFile(output_file_name, mode='w') as output_file:
+    with tables.openFile(output_file_name, mode='w',
+                         filters=_compession_filter) as output_file:
         hdf_writer = hdf.SimulationWriter(output_file)
 
         for sim in simulation_factory:
