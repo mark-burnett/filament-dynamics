@@ -22,3 +22,12 @@ class DatDialect(csv.Dialect):
     skipinitialspace = True
     lineterminator = '\r\n'
     quoting = csv.QUOTE_NONNUMERIC
+
+def load_data(filename):
+    results = []
+    with open(filename) as f:
+        reader = csv.reader(f, dialect=DatDialect)
+        for row in reader:
+            new_row = map(float, row)
+            results.append(new_row)
+    return zip(*results)

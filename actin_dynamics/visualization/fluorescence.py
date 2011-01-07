@@ -17,11 +17,38 @@ import itertools
 
 import numpy
 
+from scipy import optimize as _optimize
+
 from actin_dynamics.io import hdf as _hdf
 
 from actin_dynamics.analyses import downsample as _downsample
 
 from . import utils as _utils
+
+def fit_fluorescence_normalization(fluorescence_sim=None,
+                                   fluorescence_data=None):
+    # Resample the fluorescences to the data times
+    times, data = fluorescence_data
+
+    sim_times, avg, lower, upper = fluorescence_sim
+    fluorescence_averages     = zip(sim_times, avg)
+    fluorescence_lower_bounds = zip(sim_times, lower)
+    fluorescence_upper_bounds = zip(sim_times, upper)
+
+    fluorescences = zip(*_downsample.resample(fluorescence_averages,     times))[1]
+    lower_bounds  = zip(*_downsample.resample(fluorescence_lower_bounds, times))[1]
+    upper_bounds  = zip(*_downsample.resample(fluorescence_upper_bounds, times))[1]
+
+    errors = numpy.array(upper_bounds) - numpy.array(lower_bounds)
+
+    # Create residual function
+    def model_function(normalization):
+        return _chi_squared(data, fluorescences * normalization, errors)
+
+    # Use scipy to generate the results.
+    fit_results = _optimize.fmin(model_function, 1)
+
+    return fit_results[0]
 
 def get_fluorescence(analysis=None, parameter_set_number=None,
                      coefficients=None, normalization=1):
