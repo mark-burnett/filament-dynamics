@@ -18,19 +18,21 @@ from . import utils as _utils
 
 from .length import get_length as _get_length
 from .fluorescence import get_fluorescence as _get_fluorescence
-from .fluorescence import normalize_fluorescence as _normalize_fluorescence
+from .fluorescence import fit_fluorescence_normalization as _fit_fluorescence_normalization
 
 def write_length_vs_fluorescence(analysis=None, parameter_set_number=None,
-                                 filename=None, filament_tip_concentration=None):
+                                 filename=None, filament_tip_concentration=None,
+                                 data=None):
     length_measurement = _get_length(analysis, parameter_set_number)
     fluorescence_measurement = _get_fluorescence(analysis, parameter_set_number)
 
-    normalized_fluorescence = _normalize_fluorescence(length_measurement,
-                                                      fluorescence_measurement)
+    normalization = _fit_fluorescence_normalization(fluorescence_measurement,
+                                                    data)
 
     scaled_length = _utils.scale_measurement(length_measurement,
                                              filament_tip_concentration)
-    scaled_fluorescence = _utils.scale_measurement(normalized_fluorescence,
-                                                   filament_tip_concentration)
+    scaled_fluorescence = _utils.scale_measurement(fluorescence_measurement,
+                                                   normalization)
+
     with open(filename, 'w') as f:
         _io.write_measurements(f, [scaled_length, scaled_fluorescence])

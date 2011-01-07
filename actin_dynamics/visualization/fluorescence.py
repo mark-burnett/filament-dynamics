@@ -89,16 +89,6 @@ def get_fluorescence(analysis=None, parameter_set_number=None,
 
     return times, average_fluorescence, lower_fluorescence, upper_fluorescence
 
-def fit_fluorescence(simulation_fluorescence, data_fluorescence):
-    sim_times, sim_avg, sim_lower, sim_upper = simulation_fluorescence
-    data_times, data_avg = data_fluorescence
-
-    sim_std = [(u - l)/2 for l, u in itertools.izip(sim_lower, sim_upper)]
-    junk_times, sampled_avg = zip(*_downsample.resample(zip(sim_times, sim_avg), data_times))
-    junk_times, sampled_std = zip(*_downsample.resample(zip(sim_times, sim_std), data_times))
-
-    return _chi_squared(data_avg, sampled_avg, sampled_std) / len(data_avg)
-
 
 def _chi_squared(data, sim_avg, sim_std):
     return sum(((d - a) / s)**2
@@ -112,15 +102,3 @@ def _linear_combination(values=None, coefficients=None, normalization=1):
     for v in values:
         results.append(numpy.dot(v, coefficients) / normalization)
     return results
-
-def normalize_fluorescence(length_measurement, fluorescence_measurement):
-    tl, al, ll, ul = length_measurement
-    tf, af, lf, uf = fluorescence_measurement
-
-    scale_factor = al[-1] / af[-1]
-
-    new_average     = [f * scale_factor for f in af]
-    new_lower_bound = [f * scale_factor for f in lf]
-    new_upper_bound = [f * scale_factor for f in uf]
-
-    return tf, new_average, new_lower_bound, new_upper_bound
