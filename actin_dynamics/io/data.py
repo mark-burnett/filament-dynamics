@@ -15,7 +15,7 @@
 
 import csv
 
-class DatDialect(csv.Dialect):
+class DataThiefDialect(csv.Dialect):
     delimiter = ' '
     quotechar = '"'
     doublequote = True
@@ -26,8 +26,9 @@ class DatDialect(csv.Dialect):
 def load_data(filename):
     results = []
     with open(filename) as f:
-        reader = csv.reader(f, dialect=DatDialect)
+        reader = csv.reader(f, dialect=DataThiefDialect)
         for row in reader:
-            new_row = map(float, row)
-            results.append(new_row)
+            if 0 != len(row) and '#' != row[0]:
+                new_row = map(float, row)
+                results.append(new_row)
     return zip(*results)

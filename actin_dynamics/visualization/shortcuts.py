@@ -14,11 +14,11 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import io as _io
-from . import utils as _utils
+#from . import utils as _utils
 
 from .length import get_length as _get_length
-from .fluorescence import get_fluorescence as _get_fluorescence
-from .fluorescence import fit_fluorescence_normalization as _fit_fluorescence_normalization
+#from .fluorescence import get_fluorescence as _get_fluorescence
+#from .fluorescence import fit_fluorescence_normalization as _fit_fluorescence_normalization
 
 def write_length_vs_fluorescence(analysis=None, parameter_set_number=None,
                                  filename=None, filament_tip_concentration=None,

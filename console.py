@@ -21,7 +21,7 @@ import tables as _tables
 from IPython.Shell import IPShellEmbed as _IPShellEmbed
 
 from actin_dynamics.io import hdf as _hdf
-from actin_dynamics.visualization import length, fluorescence
+#from actin_dynamics.visualization import length, fluorescence
 
 def _parse_command_line():
     parser = _argparse.ArgumentParser()
@@ -36,8 +36,8 @@ def _analyze_main():
     hdf_file = _tables.openFile(filename=_args.simulation_file, mode='a')
     simulations, analysis = _hdf.utils.get_ps_ana(hdf_file)
 
-    from actin_dynamics.analyses import perform_analysis
-    from actin_dynamics import visualization
+    from actin_dynamics import analyses
+#    from actin_dynamics import visualization
 
     # Drop into shell
     _shell = _IPShellEmbed(argv=[])

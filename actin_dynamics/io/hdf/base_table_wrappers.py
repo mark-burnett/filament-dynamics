@@ -68,7 +68,7 @@ class DictionaryTable(TableWrapper):
     def write(self, data):
         row = self._pytables_object.row
         for k, v in data.iteritems():
-            row[self.key]  = k
+            row[self.key]   = k
             row[self.value] = v
             row.append()
 
@@ -77,6 +77,15 @@ class DictionaryTable(TableWrapper):
 
     def __getitem__(self, key):
         return self._dict[key]
+
+    def __setitem__(self, key, value):
+        self._dict[key] = value
+        row = self._pytables_object.row
+        row[self.key]   = key
+        row[self.value] = value
+        row.append()
+        self._pytables_object.flush()
+
 
 class SingleValueTable(TableWrapper):
     def read(self):

@@ -1,3 +1,9 @@
+Automate fluorescence chi squared.
+Make some visualization aids.
+Add start message to console.py
+Automate f-adp-pi concentration chi squared.
+
+
 Things to Automate:
     fitting:
         fit fluorescence normalization

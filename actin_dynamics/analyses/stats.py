@@ -53,14 +53,19 @@ def filament_statistics(input_parameter_sets, output_parameter_sets,
     '''
     for input_ps in input_parameter_sets:
         output_ps = output_parameter_sets.create_child(input_ps.name)
+        num_filaments = 0
         for simulation in input_ps.simulations:
             output_sim = output_ps.simulations.create_child(simulation.name)
+            num_filaments += len(simulation.filaments)
             for measurement_name in simulation.filament_measurement_names:
                 m_stat_results = get_statistics(simulation, measurement_name,
                                                 function=function)
                 output_measurement = output_sim.filament_measurements.create_child(
                         measurement_name)
                 output_measurement.write(m_stat_results)
+
+        output_ps.values['num_filaments']   = num_filaments
+        output_ps.values['num_simulations'] = len(input_ps.simulations)
 
 
 def summarize_filament_measurements(parameter_sets, function=None):

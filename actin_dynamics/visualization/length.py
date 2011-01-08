@@ -15,7 +15,7 @@
 
 from actin_dynamics.io import hdf as _hdf
 
-from . import utils as _utils
+#from . import utils as _utils
 
 def get_length(analysis=None, parameter_set_number=None, zero_initial=True):
     times, average_length, lower_bound, upper_bound = (

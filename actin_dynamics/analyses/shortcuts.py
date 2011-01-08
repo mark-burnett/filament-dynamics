@@ -13,12 +13,16 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import numpy as _numpy
+
 from . import downsample as _downsample
+from . import fluorescence as _fluorescence
 from . import stats as _stats
 
 from actin_dynamics.io import hdf as _hdf
+from actin_dynamics.io import data as _dataio
 
-def perform_analysis(hdf_file=None):
+def perform_common(hdf_file=None):
     simulations_group = hdf_file.getNode('/Simulations')
     analysis_group = _hdf.utils.get_or_create_group(hdf_file, 'Analysis',
             description='Analysis of simulation results.')
@@ -38,3 +42,19 @@ def perform_analysis(hdf_file=None):
 
     std_analaysis_wrapper = analyses_wrapper.create_child('standard_deviation')
     _stats.std_all(downsample_analysis_wrapper, std_analaysis_wrapper)
+
+def perform_pollard(hdf_file=None, fluorescence_filename='pollard_length.dat'):
+    # Load (and resample) the data.
+    raw_fluorescence_data = _dataio.load_data(fluorescence_filename)
+
+    sample_times = range(41)
+    fluorescence_data = _downsample.resample(raw_fluorescence_data,
+                                             sample_times)
+
+    # Do the work.
+    simulations, analysis = _hdf.utils.get_ps_ana(hdf_file)
+
+    # Pyrene fluorescence
+    fluorescence_sets = analysis.create_child('fluorescence')
+    _fluorescence.all_measurements(analysis.average, fluorescence_sets,
+                                   fluorescence_data)
