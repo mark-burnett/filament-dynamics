@@ -13,8 +13,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
-
 import numpy
 from scipy import optimize as _optimize
 
@@ -87,8 +85,8 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
 
     # Create residual function
     def model_function(normalization):
-        cs = _chi_squared(data, sim_avg * normalization[0],
-                            sim_error * normalization[0])
+        cs = _utils.chi_squared(data, sim_avg * normalization[0],
+                                sim_error * normalization[0])
         return cs
 
     # Use scipy to generate the results.
@@ -96,9 +94,3 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
                                  full_output=True)
 
     return fit_results[0][0], fit_results[1]
-
-
-def _chi_squared(data, sim_avg, sim_std):
-    return (sum(((d - a) / s)**2
-                for d, a, s in itertools.izip(data, sim_avg, sim_std))
-            / len(data))

@@ -38,5 +38,8 @@ def value_vs_parameter(hdf_file=None,
         value_ps = value_parameter_sets.select_child_number(ps_index)
         values.append(value_ps.values[value_name])
 
+    pylab.xlabel(parameter_name)
+    pylab.ylabel(value_name)
+
     pylab.plot(parameters, values)
     pylab.show()

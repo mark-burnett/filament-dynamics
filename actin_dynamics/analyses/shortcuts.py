@@ -13,11 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as _numpy
-
-from scipy import interpolate as _interpolate
-
+from . import concentrations as _concentrations
 from . import downsample as _downsample
+from . import interpolation as _interpolation
 from . import fluorescence as _fluorescence
 from . import stats as _stats
 
@@ -45,20 +43,28 @@ def perform_common(hdf_file=None):
     std_analaysis_wrapper = analyses_wrapper.create_child('standard_deviation')
     _stats.std_all(downsample_analysis_wrapper, std_analaysis_wrapper)
 
-def perform_pollard(hdf_file=None, fluorescence_filename='pollard_length.dat'):
-    # Load (and resample) the data.
-    raw_times, raw_data = _dataio.load_data(fluorescence_filename)
+def perform_pollard(hdf_file=None,
+                    fluorescence_filename='pollard_length.dat',
+                    adppi_filename='pollard_cleavage.dat'):
+    # Load the data.
+    fluor_measurement = _dataio.load_data(fluorescence_filename)
+    adppi_data = _dataio.load_data(adppi_filename)
 
+    # Resample the fluorescence data.
     sample_times = range(41)
-    interp = _interpolate.InterpolatedUnivariateSpline(
-            raw_times, raw_data, bbox=[0, 40])
-    fluorescence_values = interp(sample_times)
-    fluorescence_data = sample_times, fluorescence_values
+    fluorescence_data = _interpolation.resample(fluor_measurement, sample_times)
 
     # Do the work.
     simulations, analysis = _hdf.utils.get_ps_ana(hdf_file)
 
     # Pyrene fluorescence
-    fluorescence_sets = analysis.create_or_select_child('fluorescence')
-    _fluorescence.all_measurements(analysis.average, fluorescence_sets,
+    pollard_results = analysis.create_or_select_child('pollard')
+    pollard_results.delete_children()
+    _fluorescence.all_measurements(analysis.average, pollard_results,
                                    fluorescence_data)
+
+    # ADPPi concentration
+    _concentrations.adppi_fit(simulations=simulations,
+                              input_parameter_sets=analysis.average,
+                              output_parameter_sets=pollard_results, 
+                              data=adppi_data)
