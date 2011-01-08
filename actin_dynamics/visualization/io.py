@@ -15,9 +15,13 @@
 
 import csv
 
-# XXX inherit directly from csv.Dialect and set all attributes
-class GnuplotDialect(csv.excel):
-    delimeter = ' '
+class GnuplotDialect(csv.Dialect):
+    delimiter = ' '
+    quotechar = '"'
+    doublequote = True
+    skipinitialspace = True
+    lineterminator = '\n'
+    quoting = csv.QUOTE_NONNUMERIC
 
 def write_measurements(file_object, measurements):
     writer = csv.writer(file_object, dialect=GnuplotDialect)
