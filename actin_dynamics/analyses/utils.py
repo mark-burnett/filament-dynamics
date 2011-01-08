@@ -18,40 +18,6 @@ import math
 
 import numpy
 
-from actin_dynamics.io import hdf as _hdf
-
-# XXX Delete this
-def get_measurement_summary(analyses=None, parameter_set_number=None,
-                            measurement_name=None):
-    average_parameter_set = analyses.average.select_child_number(
-            parameter_set_number)
-    std_parameter_set = analyses.standard_deviation.select_child_number(
-            parameter_set_number)
-
-    times, averages = _unpack_measurement(average_parameter_set,
-                                          measurement_name)
-    stimes, stds = _unpack_measurement(std_parameter_set, measurement_name)
-
-    upper_bound = []
-    lower_bound = []
-    for t, ts, a, s in zip(times, stimes, averages, stds):
-        assert(t == ts)
-        upper_bound.append(a + s)
-        lower_bound.append(a - s)
-
-    return times, averages, lower_bound, upper_bound
-
-# XXX Delete this
-def _unpack_measurement(parameter_set=None, measurement_name=None):
-    measurement = getattr(parameter_set.measurement_summary, measurement_name)
-    times  = []
-    values = []
-    for t, v in measurement.read():
-        times.append(t)
-        values.append(v)
-    return times, values
-
-
 def get_measurement(parameter_set, measurement_name, error_type='filament'):
     '''
     Gets a measurement calculates its standard error.

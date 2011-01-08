@@ -37,7 +37,7 @@ def _analyze_main():
     simulations, analysis = _hdf.utils.get_ps_ana(hdf_file)
 
     from actin_dynamics import analyses
-#    from actin_dynamics import visualization
+    from actin_dynamics import visualization
 
     # Drop into shell
     _shell = _IPShellEmbed(argv=[])

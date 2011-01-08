@@ -27,9 +27,3 @@ def get_ps_ana(hdf_file):
     ana = get_or_create_group(hdf_file, 'Analysis')
     return (_group_wrappers.MultipleParameterSetWrapper(ps),
             _group_wrappers.MultipleAnalysisWrapper(ana))
-
-# XXX This doesn't seem like it belongs.
-def unpack_measurement(measurement, shift=0, scaling=1):
-    times, unscaled_values = zip(*measurement.read())
-    scaled_values = [(v + shift) * scaling for v in unscaled_values]
-    return times, scaled_values
