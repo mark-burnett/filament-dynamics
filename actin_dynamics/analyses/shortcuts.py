@@ -15,6 +15,8 @@
 
 import numpy as _numpy
 
+from scipy import interpolate as _interpolate
+
 from . import downsample as _downsample
 from . import fluorescence as _fluorescence
 from . import stats as _stats
@@ -45,16 +47,18 @@ def perform_common(hdf_file=None):
 
 def perform_pollard(hdf_file=None, fluorescence_filename='pollard_length.dat'):
     # Load (and resample) the data.
-    raw_fluorescence_data = _dataio.load_data(fluorescence_filename)
+    raw_times, raw_data = _dataio.load_data(fluorescence_filename)
 
     sample_times = range(41)
-    fluorescence_data = _downsample.resample(raw_fluorescence_data,
-                                             sample_times)
+    interp = _interpolate.InterpolatedUnivariateSpline(
+            raw_times, raw_data, bbox=[0, 40])
+    fluorescence_values = interp(sample_times)
+    fluorescence_data = sample_times, fluorescence_values
 
     # Do the work.
     simulations, analysis = _hdf.utils.get_ps_ana(hdf_file)
 
     # Pyrene fluorescence
-    fluorescence_sets = analysis.create_child('fluorescence')
+    fluorescence_sets = analysis.create_or_select_child('fluorescence')
     _fluorescence.all_measurements(analysis.average, fluorescence_sets,
                                    fluorescence_data)

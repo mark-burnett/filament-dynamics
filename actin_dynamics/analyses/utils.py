@@ -65,7 +65,7 @@ def get_measurement(parameter_set, measurement_name, error_type='filament'):
         N = parameter_set.values['num_simulations']
 
     scale = 1.0 / math.sqrt(float(N))
-    errors = [v * denom for v in values]
+    errors = [v * scale for v in values]
 
     return times, values, errors
 
@@ -77,18 +77,18 @@ def scale_measurement(measurement, factor):
     for component in rest:
         scaled_rest.append([c * factor for c in component])
 
-    return time + scaled_rest
+    return list([time]) + scaled_rest
 
-def add_measurements(*measurements, errors=True):
+def add_measurements(errors=True, *measurements):
     if errors:
         times, values, errors = copy.copy(measurements[0])
 
         values = numpy.array(values)
-        errors = numpy.pow(errors, 2)
+        errors = numpy.power(errors, 2)
 
         for mtimes, mvalues, merrors in measurements[1:]:
             mvalues = numpy.array(mvalues)
-            merrors = numpy.pow(merrors, 2)
+            merrors = numpy.power(merrors, 2)
 
             values += mvalues
             errors += merrors

@@ -32,6 +32,18 @@ class Parameters(_base_table_wrappers.DictionaryTable):
         except:
             return cls(parent_group.parameters)
 
+class Values(_base_table_wrappers.DictionaryTable):
+    description = _table_formats.Parameter
+    key   = 'name'
+    value = 'value'
+
+    @classmethod
+    def create_or_select(cls, parent_group=None):
+        try:
+            return cls.create(parent_group=parent_group, name='values')
+        except:
+            return cls(parent_group.values)
+
 
 # XXX Value may not be used.
 class Value(_base_table_wrappers.SingleValueTable):

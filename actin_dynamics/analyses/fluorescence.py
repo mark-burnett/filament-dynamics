@@ -30,10 +30,14 @@ def all_measurements(input_parameter_sets, output_parameter_sets, data,
         norm_simulation = _utils.scale_measurement(simulation, normalization)
 
         # Write fluorescence
-        output_ps = output_parameter_sets.create_child(input_ps.name)
-        output_measurement = output_ps.measurement_summary.create_child(
+        output_ps = output_parameter_sets.create_or_select_child(input_ps.name)
+        output_measurement = output_ps.measurement_summary.create_or_select_child(
                 'pyrene_fluorescence')
-        output_measurement.write(norm_simulation)
+        output_measurement.write(zip(*norm_simulation[:2]))
+        error_measurement = output_ps.measurement_summary.create_or_select_child(
+                'pyrene_fluorescence_error')
+        error = zip(norm_simulation[0], norm_simulation[2])
+        error_measurement.write(error)
 
         # Write fluorescence_chi_squared.
         output_ps.values['fluorescence_chi_squared'] = chi_squared
@@ -74,19 +78,27 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
     # Resample the fluorescences to the data times
     times, data = fluorescence_data
     stimes, sim_avg, sim_error = fluorescence_sim
-    sim_avg = _numpy.array(sim_avg)
+
+    sim_avg = numpy.array(sim_avg)
+    sim_error = numpy.array(sim_error)
+
+    # XXX "Fix" for error at time 0.
+    sim_error[0] += 0.05
 
     # Create residual function
     def model_function(normalization):
-        return _chi_squared(data, sim_avg * normalization, sim_error)
+        cs = _chi_squared(data, sim_avg * normalization[0],
+                            sim_error * normalization[0])
+        return cs
 
     # Use scipy to generate the results.
     fit_results = _optimize.fmin(model_function, 1, disp=False,
                                  full_output=True)
 
-    return fit_results[0], fit_results[1]
+    return fit_results[0][0], fit_results[1]
 
 
 def _chi_squared(data, sim_avg, sim_std):
-    return sum(((d - a) / s)**2
-               for d, a, s in itertools.izip(data, sim_avg, sim_std))
+    return (sum(((d - a) / s)**2
+                for d, a, s in itertools.izip(data, sim_avg, sim_std))
+            / len(data))

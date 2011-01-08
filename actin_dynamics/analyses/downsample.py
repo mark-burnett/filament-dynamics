@@ -70,7 +70,13 @@ def resample(data, sample_times):
     times, values = zip(*data)
     if len(values) < 2:
         return [(t, values[0]) for t in sample_times]
-    interp = scipy.interpolate.interp1d(times, values,
-                                        copy=False, bounds_error=False,
-                                        fill_value=values[-1])
-    return zip(sample_times, interp(sample_times))
+    elif len(values) < 4:
+        interp = scipy.interpolate.interp1d(times, values, bounds_error=False,
+                                            fill_value=values[-1])
+        return zip(sample_times, interp(sample_times))
+    else:
+        bbox = [min(sample_times[0], times[0]),
+                max(sample_times[-1], times[-1])]
+        interp = scipy.interpolate.InterpolatedUnivariateSpline(
+                times, values, bbox=bbox)
+        return zip(sample_times, interp(sample_times))

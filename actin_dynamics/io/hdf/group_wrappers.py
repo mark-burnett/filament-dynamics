@@ -73,6 +73,11 @@ class ParameterSetWrapper(_base_group_wrappers.GroupWrapper):
                 parent_group=self._pytables_object)
 
     @property
+    def values(self):
+        return _table_wrappers.Values.create_or_select(
+                parent_group=self._pytables_object)
+
+    @property
     def measurement_summary(self):
         return MeasurementCollection.create_or_select(
                 parent_group=self._pytables_object, name='measurement_summary')
