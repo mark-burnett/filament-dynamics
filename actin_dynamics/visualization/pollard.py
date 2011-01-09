@@ -22,10 +22,20 @@ from . import utils
 
 from actin_dynamics.analyses import utils as ana_utils
 
+# Original Colors
+# 006161, 659700, A200
+
+# More Colors
+# Blue,   Orange, Red
+# 005164, A27100, A21300
+
 def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
              fluorescence_filename='pollard_length.dat',
              adppi_filename='pollard_cleavage.dat',
-             alpha=0.2):
+             alpha=0.2,
+             fluorescence_color='#006161',
+             adppi_color='#659700',
+             factin_color='#A20000'):
     # Load the data.
     fluor_data = io.data.load_data(fluorescence_filename)
     adppi_data = io.data.load_data(adppi_filename)
@@ -36,8 +46,11 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
                                              1 / final_fluorescence_value)
 
     # Plot the data.
-    basic.plot_scatter_measurement(adppi_data, color='blue')
-    basic.plot_smooth_measurement(fluor_data, color='green', linewidth=2)
+    basic.plot_scatter_measurement(adppi_data, label='F-ADPPi Data',
+                                   color=adppi_color)
+    basic.plot_smooth_measurement(fluor_data, label='Pyrene Data',
+                                  color=fluorescence_color,
+                                  linewidth=2)
 
     # HDF data access.
     simulations, analysis = io.hdf.utils.get_ps_ana(hdf_file)
@@ -60,7 +73,9 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
             'pyrene_fluorescence')
     fluor_sim = ana_utils.scale_measurement(fluor_sim,
                                             1 / final_fluorescence_value)
-    basic.plot_smooth_measurement(fluor_sim, color='green', fill_alpha=alpha,
+    basic.plot_smooth_measurement(fluor_sim, label='Pyrene Sim',
+                                  color=fluorescence_color,
+                                  fill_alpha=alpha,
                                   linestyle='dashed')
 
     # F-ADP-Pi-actin
@@ -68,7 +83,9 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
 
     scaled_adppi = ana_utils.scale_measurement(adppi_measurement, ftc)
 
-    basic.plot_smooth_measurement(scaled_adppi, color='blue', fill_alpha=alpha,
+    basic.plot_smooth_measurement(scaled_adppi, label='F-ADPPi Sim',
+                                  color=adppi_color,
+                                  fill_alpha=alpha,
                                   linestyle='dashed')
 
     # Simulated F-actin concentration
@@ -76,7 +93,9 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
     scaled_length = ana_utils.scale_measurement(length_sim, ftc)
     subtraced_length = ana_utils.add_number(scaled_length, -seed_concentration)
 
-    basic.plot_smooth_measurement(subtraced_length, color='red', fill_alpha=alpha,
+    basic.plot_smooth_measurement(subtraced_length, label='F-actin Sim',
+                                  color=factin_color,
+                                  fill_alpha=alpha,
                                   linestyle='dashed')
 
     # Display requested parameters
@@ -93,5 +112,7 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
 
     pylab.xlabel('Time (s)')
     pylab.ylabel('Concentration (uM)')
+
+    pylab.legend(numpoints=1, loc=7)
 
     pylab.show()
