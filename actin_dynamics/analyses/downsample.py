@@ -14,7 +14,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy
-import scipy.interpolate
+
+from . import interpolation
 
 from actin_dynamics.io import hdf as _hdf
 
@@ -55,28 +56,6 @@ def collection_measurements(measurements, sample_times):
     results = {}
     # XXX make simulation.measurements.iteritems()
     for m in measurements:
-        results[m.name] = resample(m.read(), sample_times)
+        results[m.name] = zip(*interpolation.resample_measurement(
+                zip(*m.read()), sample_times))
     return results
-
-
-# This is the only function in this file that does actual work.
-def resample(data, sample_times):
-    '''
-    Downsample data to sample_times.
-
-    For now this is linear interpolation, but later it might need to become
-    a previous-value interpolation.
-    '''
-    times, values = zip(*data)
-    if len(values) < 2:
-        return [(t, values[0]) for t in sample_times]
-    elif len(values) < 4:
-        interp = scipy.interpolate.interp1d(times, values, bounds_error=False,
-                                            fill_value=values[-1])
-        return zip(sample_times, interp(sample_times))
-    else:
-        bbox = [min(sample_times[0], times[0]),
-                max(sample_times[-1], times[-1])]
-        interp = scipy.interpolate.InterpolatedUnivariateSpline(
-                times, values, bbox=bbox)
-        return zip(sample_times, interp(sample_times))
