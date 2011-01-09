@@ -14,26 +14,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy
-import pylab
-
-def plot_scatter_measurement(measurement, color='blue', fmt='o'):
-    error_bars = get_error_bars(measurement)
-    times, values = measurement[:2]
-
-    if error_bars:
-        pylab.errorbar(times, values, yerr=error_bars, color=color, fmt=fmt)
-    else:
-        pylab.scatter(times, values, color=color, fmt=fmt)
-
-def plot_smooth_measurement(measurement, color='blue', fill_alpha=0.5):
-    bounds = get_bounds(measurement)
-    times, values = measurement[:2]
-
-    if bounds:
-        pylab.fill_between(times, bounds[0], bounds[1],
-                           color=color, alpha=fill_alpha)
-
-    pylab.plot(times, values, color=color)
 
 def get_bounds(measurement):
     if 3 == len(measurement):
@@ -57,3 +37,17 @@ def get_error_bars(measurement):
         return avg - lower, upper - avg
 
     return False
+
+def get_measurement_and_error(collection, measurement_name,
+                              error_suffix='_error'):
+    measurement = getattr(collection, measurement_name).read()
+    error = getattr(collection, measurement_name + error_suffix).read()
+
+    times, values = zip(*measurement)
+    etime, errors = zip(*error)
+
+#    # XXX Fix the fitting...
+#    values = numpy.array(values)/39.5
+#    errors = numpy.array(errors)/39.5
+
+    return times, values, errors

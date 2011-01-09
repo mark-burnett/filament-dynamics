@@ -15,11 +15,11 @@
 
 import itertools
 
-def measurement_chi_squared(a, b, epsilon=0.01):
+def measurement_chi_squared(a, b, minimum_error=0.001):
     '''
     Assumes equal length measurements a and b.
 
-    Epsilon is used as the minimum squared error at each point.
+    Total squared errors less than minimum_error will be ignored.
     '''
     result = 0
     for ma, mb in itertools.izip(a, b):
@@ -35,9 +35,9 @@ def measurement_chi_squared(a, b, epsilon=0.01):
         elif 4 == len(mb):
             total_square_error += (mb[3] - mb[2])**2
 
-        if total_square_error < epsilon:
-            total_square_error = epsilon
+        if total_square_error < minimum_error:
+            total_square_error = 1
 
-        result += (ma[2] - mb[2])**2 / total_square_error
+        result += (ma[1] - mb[1])**2 / total_square_error
 
     return result / len(a)

@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import numpy
+
 from . import concentrations as _concentrations
 from . import downsample as _downsample
 from . import interpolation as _interpolation
@@ -52,7 +54,10 @@ def perform_pollard(hdf_file=None,
 
     # Resample the fluorescence data.
     sample_times = range(41)
-    fluorescence_data = _interpolation.resample(fluor_measurement, sample_times)
+    print numpy.array(fluor_measurement)
+    fluorescence_data = _interpolation.resample_measurement(fluor_measurement,
+                                                            sample_times)
+    print numpy.array(fluorescence_data)
 
     # Do the work.
     simulations, analysis = _hdf.utils.get_ps_ana(hdf_file)

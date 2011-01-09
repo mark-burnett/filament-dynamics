@@ -17,14 +17,34 @@ import pylab
 
 from actin_dynamics import io
 
+from . import basic
 from . import utils
 
 def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
              fluorescence_filename='pollard_length.dat',
              adppi_filename='pollard_cleavage.dat'):
     # Load the data.
-    fluor_measurement = io.data.load_data(fluorescence_filename)
+    fluor_data = io.data.load_data(fluorescence_filename)
     adppi_data = io.data.load_data(adppi_filename)
 
-    utils.plot_scatter_measurement(adppi_data)
+    # Plot the data.
+    basic.plot_scatter_measurement(adppi_data, color='black')
+    basic.plot_smooth_measurement(fluor_data, color='green', linewidth=2)
+
+    # Get the simulation results.
+    simulations, analysis = io.hdf.utils.get_ps_ana(hdf_file)
+
+    parameter_sets = analysis.create_or_select_child('pollard')
+    pollard_ps = parameter_sets.select_child_number(parameter_set_number)
+    fluor_sim = utils.get_measurement_and_error(pollard_ps.measurement_summary,
+            'pyrene_fluorescence')
+
+    # Plot the simulation results.
+    basic.plot_smooth_measurement(fluor_sim, color='green', fill_alpha='0.3',
+                                  linestyle='dashed')
+
+    # Misc. configuration
+    pylab.xlim((0, 45))
+    pylab.ylim((0, 7))
+
     pylab.show()

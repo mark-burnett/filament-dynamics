@@ -65,9 +65,3 @@ def add_measurements(errors=True, *measurements):
         return times, values, errors
     else:
         raise NotImplementedError()
-
-
-def chi_squared(data, sim_avg, sim_std):
-    return (sum(((d - a) / s)**2
-                for d, a, s in itertools.izip(data, sim_avg, sim_std))
-            / len(data))

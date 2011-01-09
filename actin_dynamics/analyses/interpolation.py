@@ -27,6 +27,7 @@ def resample(data, sample_times):
     if len(values) < 2:
         return sample_times, [values[0] for t in sample_times]
     elif len(values) < 4:
+        print 'hi'
         interp = scipy.interpolate.interp1d(times, values, bounds_error=False,
                                             fill_value=values[-1])
         return sample_times, interp(sample_times)

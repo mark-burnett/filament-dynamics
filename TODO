@@ -6,6 +6,11 @@ Make some visualization aids.
     prettify 1d chi^2 plot
     2d chi^2 surface
 
+Clean up HDF io so that measurement reads/writes are consistent with
+    my preferred style.
+
+Clean up downsample analysis so that it uses the interpolation module.
+
 Add start message to console.py
 
 
