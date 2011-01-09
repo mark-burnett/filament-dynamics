@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import numpy
+
 from scipy import optimize as _optimize
 
 from . import fitting as _fitting
@@ -39,9 +41,6 @@ def all_measurements(input_parameter_sets, output_parameter_sets, data,
         # Write fluorescence_chi_squared.
         output_ps.values['fluorescence_chi_squared'] = chi_squared
 
-        # XXX debug
-        break
-
 
 def get_fluorescence(parameter_set=None, coefficients=None):
     '''
@@ -54,11 +53,6 @@ def get_fluorescence(parameter_set=None, coefficients=None):
     atp_data   = _utils.get_measurement(parameter_set, 'pyrene_atp_count')
     adppi_data = _utils.get_measurement(parameter_set, 'pyrene_adppi_count')
     adp_data   = _utils.get_measurement(parameter_set, 'pyrene_adp_count')
-
-    print 'atp_data'
-    print atp_data
-
-    print 'data', atp_data[1][-1], adppi_data[1][-1], adp_data[1][-1]
 
     if coefficients is None:
         # XXX These may not match literature values, I can't check now.
@@ -80,9 +74,12 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
     '''
     Returns normalization parameter and chi squared of fit.
     '''
+    sv = numpy.array(fluorescence_sim[1])
+    dv = numpy.array(fluorescence_data[1])
+
     # Create residual function
     def model_function(normalization):
-        if normalization <= 0:
+        if normalization[0] <= 0:
             return 5000
         scaled_sim = _utils.scale_measurement(fluorescence_sim, normalization[0])
         cs = _fitting.measurement_chi_squared(fluorescence_data, scaled_sim)
@@ -92,10 +89,8 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
     times, data = fluorescence_data
     stimes, sim_avg, sim_error = fluorescence_sim
     normalization_guess = data[-1] / sim_avg[-1]
-#    normalization_guess = 1
-#    return normalization_guess, 1
 
     fit_results = _optimize.fmin(model_function, normalization_guess,
-                                 disp=True, full_output=True)
+                                 disp=False, full_output=True)
 
     return fit_results[0][0], fit_results[1]

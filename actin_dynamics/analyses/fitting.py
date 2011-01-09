@@ -13,31 +13,26 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import numpy
+
 import itertools
 
 def measurement_chi_squared(a, b, minimum_error=0.001):
-    '''
-    Assumes equal length measurements a and b.
+    av = numpy.array(a[1])
+    bv = numpy.array(b[1])
 
-    Total squared errors less than minimum_error will be ignored.
-    '''
-    result = 0
-    for ma, mb in itertools.izip(a, b):
-        # Find total square error for this point
-        total_square_error = 0
-        if 3 == len(ma):
-            total_square_error += ma[2]**2
-        elif 4 == len(ma):
-            total_square_error += (ma[3] - ma[2])**2
+    errors = numpy.array([minimum_error for v in av])
+    if 3 == len(a):
+        errors += numpy.power(a[2], 2)
+    elif 4 == len(a):
+        errors += numpy.power(numpy.array(a[3]) - numpy.array(a[2]), 2)
+    if 3 == len(b):
+        errors += numpy.power(b[2], 2)
+    elif 4 == len(b):
+        errors += numpy.power(numpy.array(b[3]) - numpy.array(b[2]), 2)
 
-        if 3 == len(mb):
-            total_square_error += mb[2]**2
-        elif 4 == len(mb):
-            total_square_error += (mb[3] - mb[2])**2
+    for i, e in enumerate(errors):
+        if e < minimum_error:
+            errors[i] = 1
 
-        if total_square_error < minimum_error:
-            total_square_error = 1
-
-        result += (ma[1] - mb[1])**2 / total_square_error
-
-    return result / len(a)
+    return sum(numpy.power(av-bv,2) / errors)

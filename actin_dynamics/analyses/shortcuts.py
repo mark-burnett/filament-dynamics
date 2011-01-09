@@ -54,10 +54,8 @@ def perform_pollard(hdf_file=None,
 
     # Resample the fluorescence data.
     sample_times = range(41)
-    print numpy.array(fluor_measurement)
     fluorescence_data = _interpolation.resample_measurement(fluor_measurement,
                                                             sample_times)
-    print numpy.array(fluorescence_data)
 
     # Do the work.
     simulations, analysis = _hdf.utils.get_ps_ana(hdf_file)

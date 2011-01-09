@@ -48,7 +48,7 @@ def resample(data, new_x):
     result = []
     for x in new_x:
         try:
-            y = linterp(x)
+            y = float(linterp(x))
         except ValueError:
             if x < x_data[0]:
                 y = linear_project(x_data[0], y_data[0],
