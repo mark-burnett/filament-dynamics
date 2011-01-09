@@ -44,12 +44,6 @@ class Values(_base_table_wrappers.DictionaryTable):
         except:
             return cls(parent_group.values)
 
-
-# XXX Value may not be used.
-class Value(_base_table_wrappers.SingleValueTable):
-    column_name = 'value'
-    description = _table_formats.SingleValue
-
 class State(_base_table_wrappers.SingleValueTable):
     column_name = 'state'
     description = _table_formats.State

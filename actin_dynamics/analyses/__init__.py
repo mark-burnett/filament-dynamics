@@ -15,4 +15,4 @@
 
 from .shortcuts import *
 
-import fluorescence
+from num_events import get_num_events

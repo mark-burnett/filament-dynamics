@@ -21,7 +21,7 @@ from . import fitting as _fitting
 from . import utils as _utils
 
 def all_measurements(input_parameter_sets, output_parameter_sets, data,
-                     coefficients=None):
+                     coefficients=None, error_suffix='_error'):
     for input_ps in input_parameter_sets:
         # Calculate fluorescence curve.
         simulation = get_fluorescence(input_ps, coefficients=coefficients)
@@ -30,13 +30,9 @@ def all_measurements(input_parameter_sets, output_parameter_sets, data,
 
         # Write fluorescence
         output_ps = output_parameter_sets.create_or_select_child(input_ps.name)
-        output_measurement = output_ps.measurement_summary.create_or_select_child(
-                'pyrene_fluorescence')
-        output_measurement.write(zip(*norm_simulation[:2]))
-        error_measurement = output_ps.measurement_summary.create_or_select_child(
-                'pyrene_fluorescence_error')
-        error = zip(norm_simulation[0], norm_simulation[2])
-        error_measurement.write(error)
+        _utils.write_measurement(output_ps,
+                                 'pyrene_fluorescence', norm_simulation,
+                                 error_suffix=error_suffix)
 
         # Write fluorescence_chi_squared.
         output_ps.values['fluorescence_chi_squared'] = chi_squared

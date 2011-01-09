@@ -60,7 +60,7 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
     pollard_parameter_sets = analysis.create_or_select_child('pollard')
     pollard_ps = pollard_parameter_sets.select_child_number(parameter_set_number)
 
-    average_parameter_sets = analysis.create_or_select_child('average')
+    average_parameter_sets = analysis.create_or_select_child('sem')
     average_ps = average_parameter_sets.select_child_number(parameter_set_number)
 
     # Used parameters

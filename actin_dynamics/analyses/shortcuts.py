@@ -19,7 +19,7 @@ from . import concentrations as _concentrations
 from . import downsample as _downsample
 from . import interpolation as _interpolation
 from . import fluorescence as _fluorescence
-from . import stats as _stats
+from . import standard_error_of_mean as _standard_error_of_mean
 
 from actin_dynamics.io import hdf as _hdf
 from actin_dynamics.io import data as _dataio
@@ -39,11 +39,9 @@ def perform_common(hdf_file=None):
     _downsample.all_measurements(parameter_sets_wrapper,
                                  downsample_analysis_wrapper)
 
-    average_analaysis_wrapper = analyses_wrapper.create_child('average')
-    _stats.average_all(downsample_analysis_wrapper, average_analaysis_wrapper)
-
-    std_analaysis_wrapper = analyses_wrapper.create_child('standard_deviation')
-    _stats.std_all(downsample_analysis_wrapper, std_analaysis_wrapper)
+    sem_analysis_wrapper = analyses_wrapper.create_child('sem')
+    _standard_error_of_mean.all_measurements(downsample_analysis_wrapper,
+                                             sem_analysis_wrapper)
 
 def perform_pollard(hdf_file=None,
                     fluorescence_filename='pollard_length.dat',
@@ -63,11 +61,11 @@ def perform_pollard(hdf_file=None,
     # Pyrene fluorescence
     pollard_results = analysis.create_or_select_child('pollard')
     pollard_results.delete_children()
-    _fluorescence.all_measurements(analysis.average, pollard_results,
+    _fluorescence.all_measurements(analysis.sem, pollard_results,
                                    fluorescence_data)
 
     # ADPPi concentration
     _concentrations.adppi_fit(simulations=simulations,
-                              input_parameter_sets=analysis.average,
+                              input_parameter_sets=analysis.sem,
                               output_parameter_sets=pollard_results, 
                               data=adppi_data)

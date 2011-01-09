@@ -28,7 +28,6 @@ def load_data(filename):
     with open(filename) as f:
         reader = csv.reader(f, dialect=DataThiefDialect)
         for row in reader:
-            if 0 != len(row) and '#' != row[0]:
-                new_row = map(float, row)
-                results.append(new_row)
+            new_row = map(float, row)
+            results.append(new_row)
     return zip(*results)

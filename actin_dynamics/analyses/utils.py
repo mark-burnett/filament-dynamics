@@ -14,25 +14,27 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import copy
-import itertools
-import math
 
 import numpy
 
-def get_measurement(parameter_set, measurement_name, error_type='filament'):
+def write_measurement(parameter_set, measurement_name,
+                      measurement, error_suffix='_error'):
+    output = parameter_set.measurement_summary.create_or_select_child(
+            measurement_name)
+    output.write(zip(*measurement[:2]))
+    error = parameter_set.measurement_summary.create_or_select_child(
+            measurement_name + error_suffix)
+    error.write(zip(measurement[0], measurement[2]))
+
+
+def get_measurement(parameter_set, measurement_name, error_suffix='_error'):
     '''
     Gets a measurement calculates its standard error.
     '''
     times, values = zip(*getattr(parameter_set.measurement_summary,
                                  measurement_name).read())
-
-    if 'filament' == error_type:
-        N = parameter_set.values['num_filaments']
-    elif 'simulation' == error_type:
-        N = parameter_set.values['num_simulations']
-
-    scale = 1.0 / math.sqrt(float(N))
-    errors = [v * scale for v in values]
+    jimes, errors = zip(*getattr(parameter_set.measurement_summary,
+                                 measurement_name + error_suffix).read())
 
     return times, values, errors
 
