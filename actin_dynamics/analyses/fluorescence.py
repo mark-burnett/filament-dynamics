@@ -82,7 +82,8 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
         if normalization[0] <= 0:
             return 5000
         scaled_sim = _utils.scale_measurement(fluorescence_sim, normalization[0])
-        cs = _fitting.measurement_chi_squared(fluorescence_data, scaled_sim)
+#        cs = _fitting.measurement_chi_squared(fluorescence_data, scaled_sim)
+        cs = _fitting.measurement_other(fluorescence_data, scaled_sim)
         return cs
 
     # Use scipy to generate the results.

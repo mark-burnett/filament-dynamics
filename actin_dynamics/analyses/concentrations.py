@@ -33,7 +33,8 @@ def adppi_fit(simulations=None, input_parameter_sets=None,
                 raw_sim_data, sample_times)
         scaled_sim_data = utils.scale_measurement(sampled_sim_data, ftc)
 
-        chi_squared = fitting.measurement_chi_squared(scaled_sim_data, data)
+#        chi_squared = fitting.measurement_chi_squared(scaled_sim_data, data)
+        chi_squared = fitting.measurement_other(scaled_sim_data, data)
 
         output_ps = output_parameter_sets.create_or_select_child(input_ps.name)
         output_ps.values['adppi_chi_squared'] = chi_squared
