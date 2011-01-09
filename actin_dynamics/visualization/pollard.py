@@ -29,13 +29,17 @@ from actin_dynamics.analyses import utils as ana_utils
 # Blue,   Orange, Red
 # 005164, A27100, A21300
 
+DEFAULT_FACTIN_COLOR = '#A20000'
+DEFAULT_ADPPI_COLOR  = '#659700'
+DEFAULT_FLUORESCENCE_COLOR = '#006161'
+
 def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
              fluorescence_filename='pollard_length.dat',
              adppi_filename='pollard_cleavage.dat',
              alpha=0.2,
-             fluorescence_color='#006161',
-             adppi_color='#659700',
-             factin_color='#A20000'):
+             fluorescence_color=DEFAULT_FLUORESCENCE_COLOR,
+             adppi_color=DEFAULT_ADPPI_COLOR,
+             factin_color=DEFAULT_FACTIN_COLOR):
     # Load the data.
     fluor_data = io.data.load_data(fluorescence_filename)
     adppi_data = io.data.load_data(adppi_filename)
@@ -46,6 +50,7 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
                                              1 / final_fluorescence_value)
 
     # Plot the data.
+    pylab.figure()
     basic.plot_scatter_measurement(adppi_data, label='F-ADPPi Data',
                                    color=adppi_color)
     basic.plot_smooth_measurement(fluor_data, label='Pyrene Data',
@@ -60,8 +65,8 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
     pollard_parameter_sets = analysis.create_or_select_child('pollard')
     pollard_ps = pollard_parameter_sets.select_child_number(parameter_set_number)
 
-    average_parameter_sets = analysis.create_or_select_child('sem')
-    average_ps = average_parameter_sets.select_child_number(parameter_set_number)
+    sem_parameter_sets = analysis.create_or_select_child('sem')
+    sem_ps = sem_parameter_sets.select_child_number(parameter_set_number)
 
     # Used parameters
     ftc = parameters['filament_tip_concentration']
@@ -79,7 +84,7 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
                                   linestyle='dashed')
 
     # F-ADP-Pi-actin
-    adppi_measurement = ana_utils.get_measurement(average_ps, 'pyrene_adppi_count')
+    adppi_measurement = ana_utils.get_measurement(sem_ps, 'pyrene_adppi_count')
 
     scaled_adppi = ana_utils.scale_measurement(adppi_measurement, ftc)
 
@@ -89,7 +94,7 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
                                   linestyle='dashed')
 
     # Simulated F-actin concentration
-    length_sim = ana_utils.get_measurement(average_ps, 'length')
+    length_sim = ana_utils.get_measurement(sem_ps, 'length')
     scaled_length = ana_utils.scale_measurement(length_sim, ftc)
     subtraced_length = ana_utils.add_number(scaled_length, -seed_concentration)
 
@@ -99,9 +104,9 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
                                   linestyle='dashed')
 
     # Display requested parameters
-    title = ''
+    title = 'Parameter Set %d\n' % parameter_set_number
     for label in parameter_labels:
-        if title and title[-1] != ' ':
+        if title[-1] != '\n' and title[-1] != ' ':
             title += ' -- '
         title += label + ': ' + str(parameters[label])
 
@@ -114,5 +119,63 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
     pylab.ylabel('Concentration (uM)')
 
     pylab.legend(numpoints=1, loc=7)
+
+    pylab.show()
+
+def all_filaments(hdf_file=None, parameter_set_number=None,
+                  adppi_filename='pollard_cleavage.dat',
+                  factin_color=DEFAULT_FACTIN_COLOR,
+                  adppi_color=DEFAULT_ADPPI_COLOR,
+                  trace_alpha=0.1):
+    # ADP-Pi data access
+    adppi_data = io.data.load_data(adppi_filename)
+
+    # HDF data access.
+    simulations, analysis = io.hdf.utils.get_ps_ana(hdf_file)
+
+    parameters = simulations.select_child_number(parameter_set_number).parameters
+
+    downsampled_parameter_sets = analysis.create_or_select_child('downsample')
+    parameter_set = downsampled_parameter_sets.select_child_number(
+            parameter_set_number)
+
+    # Used parameters
+    ftc = parameters['filament_tip_concentration']
+    seed_concentration = parameters['seed_concentration']
+
+    pylab.figure()
+    adppi_data_line = basic.plot_scatter_measurement(adppi_data,
+            label='F-ADPPi Data', color=adppi_color)
+
+    for filament in parameter_set.iter_filaments():
+        # Length
+        length = zip(*filament.measurements.length.read())
+        scaled_length = ana_utils.scale_measurement(length, ftc)
+        subtraced_length = ana_utils.add_number(scaled_length,
+                                                -seed_concentration)
+        factin_line = basic.plot_smooth_measurement(subtraced_length,
+                                      color=factin_color,
+                                      line_alpha=trace_alpha)
+
+        # ADPPi
+        adppi_count = zip(*filament.measurements.pyrene_adppi_count)
+        scaled_adppi = ana_utils.scale_measurement(adppi_count, ftc)
+        adppi_line = basic.plot_smooth_measurement(scaled_adppi,
+                                      color=adppi_color,
+                                      line_alpha=trace_alpha)
+
+    title = 'Parameter Set %d' % parameter_set_number
+
+    pylab.title(title)
+
+    pylab.xlim((0, 41))
+    pylab.ylim((0, 7))
+
+    pylab.xlabel('Time (s)')
+    pylab.ylabel('Concentration (uM)')
+
+    pylab.legend((adppi_data_line[0], adppi_line, factin_line),
+                 ('F-ADP-Pi Data', 'F-ADP-Pi Sim', 'F-actin Sim'),
+                 loc=4, numpoints=1)
 
     pylab.show()

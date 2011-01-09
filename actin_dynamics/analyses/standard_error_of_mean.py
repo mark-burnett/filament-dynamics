@@ -50,7 +50,6 @@ def summarize_simulation_measurements(input_ps, output_ps, error_suffix=None):
 # XXX This function is almost identical to the previous.
 def summarize_filament_measurements(input_ps, output_ps, error_suffix=None):
     measurement_names = _get_filament_measurement_names(input_ps)
-    print measurement_names
 
     for measurement_name in measurement_names:
         all_values = []

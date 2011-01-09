@@ -22,13 +22,14 @@ def plot_scatter_measurement(measurement, color='blue', fmt='o', **kwargs):
     times, values = measurement[:2]
 
     if error_bars:
-        pylab.errorbar(times, values, yerr=error_bars, color=color, fmt=fmt,
-                       **kwargs)
+        return pylab.errorbar(times, values, yerr=error_bars, color=color,
+                              fmt=fmt,
+                              **kwargs)
     else:
-        pylab.scatter(times, values, color=color, **kwargs)
+        return pylab.scatter(times, values, color=color, **kwargs)
 
 def plot_smooth_measurement(measurement, color='black', fill_alpha=0.5,
-                            linestyle='solid', **kwargs):
+                            linestyle='solid', line_alpha=1, **kwargs):
     bounds = utils.get_bounds(measurement)
     times, values = measurement[:2]
 
@@ -36,4 +37,5 @@ def plot_smooth_measurement(measurement, color='black', fill_alpha=0.5,
         pylab.fill_between(times, bounds[0], bounds[1],
                            color=color, alpha=fill_alpha, **kwargs)
 
-    pylab.plot(times, values, color=color, linestyle=linestyle, **kwargs)
+    return pylab.plot(times, values, color=color, linestyle=linestyle,
+                      alpha=line_alpha, **kwargs)

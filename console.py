@@ -21,7 +21,6 @@ import tables as _tables
 from IPython.Shell import IPShellEmbed as _IPShellEmbed
 
 from actin_dynamics.io import hdf as _hdf
-#from actin_dynamics.visualization import length, fluorescence
 
 def _parse_command_line():
     parser = _argparse.ArgumentParser()

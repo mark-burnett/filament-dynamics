@@ -62,6 +62,11 @@ class SimulationCollection(_base_group_wrappers.Collection):
 
 
 class ParameterSetWrapper(_base_group_wrappers.GroupWrapper):
+    def iter_filaments(self):
+        for sim in self.simulations:
+            for filament in sim.filaments:
+                yield filament
+
     @property
     def simulations(self):
         return SimulationCollection.create_or_select(
