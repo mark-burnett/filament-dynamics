@@ -36,6 +36,19 @@ def get_measurement(parameter_set, measurement_name, error_type='filament'):
 
     return times, values, errors
 
+
+def add_number(measurement, number):
+    result = [list(component) for component in measurement]
+
+    for i, row in enumerate(zip(*result)):
+        old_value = result[1][i]
+        result[1][i] += number
+        if 3 == len(result):
+            result[2][i] *= result[1][i] / old_value
+
+    return result
+
+
 def scale_measurement(measurement, factor):
     time = measurement[0]
     rest = measurement[1:]

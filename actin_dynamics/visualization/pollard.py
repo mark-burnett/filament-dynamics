@@ -24,13 +24,19 @@ from actin_dynamics.analyses import utils as ana_utils
 
 def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
              fluorescence_filename='pollard_length.dat',
-             adppi_filename='pollard_cleavage.dat'):
+             adppi_filename='pollard_cleavage.dat',
+             alpha=0.2):
     # Load the data.
     fluor_data = io.data.load_data(fluorescence_filename)
     adppi_data = io.data.load_data(adppi_filename)
 
+    # Scale fluorescence data to end at 1
+    final_fluorescence_value = fluor_data[1][-1]
+    fluor_data = ana_utils.scale_measurement(fluor_data,
+                                             1 / final_fluorescence_value)
+
     # Plot the data.
-    basic.plot_scatter_measurement(adppi_data, color='black')
+    basic.plot_scatter_measurement(adppi_data, color='blue')
     basic.plot_smooth_measurement(fluor_data, color='green', linewidth=2)
 
     # HDF data access.
@@ -44,24 +50,48 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
     average_parameter_sets = analysis.create_or_select_child('average')
     average_ps = average_parameter_sets.select_child_number(parameter_set_number)
 
+    # Used parameters
+    ftc = parameters['filament_tip_concentration']
+    seed_concentration = parameters['seed_concentration']
+
     # Get and plot the simulation results.
     # Fluorescence
     fluor_sim = utils.get_measurement_and_error(pollard_ps.measurement_summary,
             'pyrene_fluorescence')
-    basic.plot_smooth_measurement(fluor_sim, color='green', fill_alpha=0.3,
+    fluor_sim = ana_utils.scale_measurement(fluor_sim,
+                                            1 / final_fluorescence_value)
+    basic.plot_smooth_measurement(fluor_sim, color='green', fill_alpha=alpha,
                                   linestyle='dashed')
 
     # F-ADP-Pi-actin
-    ftc = parameters['filament_tip_concentration']
     adppi_measurement = ana_utils.get_measurement(average_ps, 'pyrene_adppi_count')
 
     scaled_adppi = ana_utils.scale_measurement(adppi_measurement, ftc)
 
-    basic.plot_smooth_measurement(scaled_adppi, color='blue', fill_alpha=0.3,
+    basic.plot_smooth_measurement(scaled_adppi, color='blue', fill_alpha=alpha,
                                   linestyle='dashed')
 
+    # Simulated F-actin concentration
+    length_sim = ana_utils.get_measurement(average_ps, 'length')
+    scaled_length = ana_utils.scale_measurement(length_sim, ftc)
+    subtraced_length = ana_utils.add_number(scaled_length, -seed_concentration)
+
+    basic.plot_smooth_measurement(subtraced_length, color='red', fill_alpha=alpha,
+                                  linestyle='dashed')
+
+    # Display requested parameters
+    title = ''
+    for label in parameter_labels:
+        if title and title[-1] != ' ':
+            title += ' -- '
+        title += label + ': ' + str(parameters[label])
+
     # Misc. configuration
-    pylab.xlim((0, 45))
+    pylab.xlim((0, 41))
     pylab.ylim((0, 7))
+    pylab.title(title)
+
+    pylab.xlabel('Time (s)')
+    pylab.ylabel('Concentration (uM)')
 
     pylab.show()
