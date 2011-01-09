@@ -20,6 +20,8 @@ from actin_dynamics import io
 from . import basic
 from . import utils
 
+from actin_dynamics.analyses import utils as ana_utils
+
 def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
              fluorescence_filename='pollard_length.dat',
              adppi_filename='pollard_cleavage.dat'):
@@ -31,16 +33,31 @@ def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
     basic.plot_scatter_measurement(adppi_data, color='black')
     basic.plot_smooth_measurement(fluor_data, color='green', linewidth=2)
 
-    # Get the simulation results.
+    # HDF data access.
     simulations, analysis = io.hdf.utils.get_ps_ana(hdf_file)
 
-    parameter_sets = analysis.create_or_select_child('pollard')
-    pollard_ps = parameter_sets.select_child_number(parameter_set_number)
+    parameters = simulations.select_child_number(parameter_set_number).parameters
+
+    pollard_parameter_sets = analysis.create_or_select_child('pollard')
+    pollard_ps = pollard_parameter_sets.select_child_number(parameter_set_number)
+
+    average_parameter_sets = analysis.create_or_select_child('average')
+    average_ps = average_parameter_sets.select_child_number(parameter_set_number)
+
+    # Get and plot the simulation results.
+    # Fluorescence
     fluor_sim = utils.get_measurement_and_error(pollard_ps.measurement_summary,
             'pyrene_fluorescence')
+    basic.plot_smooth_measurement(fluor_sim, color='green', fill_alpha=0.3,
+                                  linestyle='dashed')
 
-    # Plot the simulation results.
-    basic.plot_smooth_measurement(fluor_sim, color='green', fill_alpha='0.3',
+    # F-ADP-Pi-actin
+    ftc = parameters['filament_tip_concentration']
+    adppi_measurement = ana_utils.get_measurement(average_ps, 'pyrene_adppi_count')
+
+    scaled_adppi = ana_utils.scale_measurement(adppi_measurement, ftc)
+
+    basic.plot_smooth_measurement(scaled_adppi, color='blue', fill_alpha=0.3,
                                   linestyle='dashed')
 
     # Misc. configuration

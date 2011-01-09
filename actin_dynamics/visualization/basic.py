@@ -17,7 +17,7 @@ import pylab
 
 from . import utils
 
-def plot_scatter_measurement(measurement, color='black', fmt='o', **kwargs):
+def plot_scatter_measurement(measurement, color='blue', fmt='o', **kwargs):
     error_bars = utils.get_error_bars(measurement)
     times, values = measurement[:2]
 
@@ -28,7 +28,7 @@ def plot_scatter_measurement(measurement, color='black', fmt='o', **kwargs):
         pylab.scatter(times, values, color=color, **kwargs)
 
 def plot_smooth_measurement(measurement, color='black', fill_alpha=0.5,
-                            **kwargs):
+                            linestyle='solid', **kwargs):
     bounds = utils.get_bounds(measurement)
     times, values = measurement[:2]
 
@@ -36,4 +36,4 @@ def plot_smooth_measurement(measurement, color='black', fill_alpha=0.5,
         pylab.fill_between(times, bounds[0], bounds[1],
                            color=color, alpha=fill_alpha, **kwargs)
 
-    pylab.plot(times, values, color=color, **kwargs)
+    pylab.plot(times, values, color=color, linestyle=linestyle, **kwargs)
