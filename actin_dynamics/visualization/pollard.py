@@ -13,29 +13,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import csv
+import pylab
 
-class GnuplotDialect(csv.Dialect):
-    delimiter = ' '
-    quotechar = '"'
-    doublequote = True
-    skipinitialspace = True
-    lineterminator = '\n'
-    quoting = csv.QUOTE_NONNUMERIC
+from actin_dynamics import io
 
-def write_measurements(file_object, measurements):
-    writer = csv.writer(file_object, dialect=GnuplotDialect)
-    rows = _combine_measurements(measurements)
-    writer.writerows(rows)
+from . import utils
 
-def _combine_measurements(measurements):
-    times = measurements[0][0]
+def full_run(hdf_file=None, parameter_set_number=None, parameter_labels=[],
+             fluorescence_filename='pollard_length.dat',
+             adppi_filename='pollard_cleavage.dat'):
+    # Load the data.
+    fluor_measurement = io.data.load_data(fluorescence_filename)
+    adppi_data = io.data.load_data(adppi_filename)
 
-    results = []
-    for i, t in enumerate(times):
-        row = [t]
-        for mt, ma, ml, mu in measurements:
-            row.extend([ma[i], ml[i], mu[i]])
-        results.append(row)
-
-    return results
+    utils.plot_scatter_measurement(adppi_data)
+    pylab.show()

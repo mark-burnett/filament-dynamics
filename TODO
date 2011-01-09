@@ -1,14 +1,13 @@
-Automate fluorescence chi squared.
 Make some visualization aids.
+    full plot of a single parameter set
+        include everything
+        allow parameter labels
+            ftc, etc
+    prettify 1d chi^2 plot
+    2d chi^2 surface
+
 Add start message to console.py
-Automate f-adp-pi concentration chi squared.
 
-
-Things to Automate:
-    fitting:
-        fit fluorescence normalization
-        chi^2 vs single arbitrary parameter
-        chi^2 surface plot vs 2 parameters
 
 Simulations to Run:
     pollard:
@@ -18,6 +17,3 @@ Simulations to Run:
 
         length, pi for various cooperativities and cleavage rates
             need chi^2 plots for this
-
-Other things to worry about:
-    error estimates
