@@ -13,30 +13,56 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import scipy
+import scipy.interpolate
 
-def resample(data, sample_times):
-    '''
-    Downsample data to sample_times.
+#def resample(data, sample_times):
+#    '''
+#    Downsample data to sample_times.
+#
+#    Tries to use well behaved interpolation methods if there are
+#    enough points.  If not, it improvises.
+#    '''
+#    times, values = data
+#
+#    if len(values) < 2:
+#        return sample_times, [values[0] for t in sample_times]
+#    elif len(values) < 4:
+#        interp = scipy.interpolate.interp1d(times, values, bounds_error=False,
+#                                            fill_value=values[-1])
+#        return sample_times, interp(sample_times)
+#    else:
+#        bbox = [min(sample_times[0], times[0]),
+#                max(sample_times[-1], times[-1])]
+#        interp = scipy.interpolate.InterpolatedUnivariateSpline(
+#                times, values, bbox=bbox)
+#        return sample_times, interp(sample_times)
 
-    Tries to use well behaved interpolation methods if there are
-    enough points.  If not, it improvises.
-    '''
-    times, values = data
+def resample(data, new_x):
+    x_data, y_data = data
 
-    if len(values) < 2:
-        return sample_times, [values[0] for t in sample_times]
-    elif len(values) < 4:
-        print 'hi'
-        interp = scipy.interpolate.interp1d(times, values, bounds_error=False,
-                                            fill_value=values[-1])
-        return sample_times, interp(sample_times)
-    else:
-        bbox = [min(sample_times[0], times[0]),
-                max(sample_times[-1], times[-1])]
-        interp = scipy.interpolate.InterpolatedUnivariateSpline(
-                times, values, bbox=bbox)
-        return sample_times, interp(sample_times)
+    if 1 == len(x_data):
+        return new_x, [y_data[0] for x in new_x]
+
+    linterp = scipy.interpolate.interp1d(x_data, y_data)
+
+    result = []
+    for x in new_x:
+        try:
+            y = linterp(x)
+        except ValueError:
+            if x < x_data[0]:
+                y = linear_project(x_data[0], y_data[0],
+                                   x_data[1], y_data[1], x)
+            elif x > x_data[-1]:
+                y = linear_project(x_data[-2], y_data[-2],
+                                   x_data[-1], y_data[-1], x)
+        result.append(y)
+
+    return new_x, result
+
+def linear_project(x1, y1, x2, y2, x3):
+    m = (y2 - y1) / (x2 - x1)
+    return y1 + m * (x3 - x1)
 
 def resample_measurement(measurement, sample_times):
     # Resample value
