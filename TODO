@@ -1,10 +1,12 @@
 Immediate concerns:
-    Decide on error analysis.
-        standard error of the mean for bulk things
-            N = # filaments for filament measurements
-            N = # simulations for concentration measurements
+    Interpolation for downsampling looks bad for last data point.
+
+    Pick goodness of fit metric.
+        chi^2
+        2 * (a-b)^2 / ((a + b) * std)
 
     Make some visualization aids.
+        get good color scheme
         prettify 1d chi^2 plot
         2d chi^2 surface
         way to slice based on parameter values/ranges
@@ -13,19 +15,20 @@ Immediate concerns:
 
 
 Broken Windows:
-    analysis and visualization utils mismatch
-        merge into analysis, better separate,
-            or pull out of both into separate area
     Clean up HDF io so that measurement reads/writes are consistent with
         my preferred style.
 
 
 Usability:
     Add start message to console.py
+    Consider using hdf_file as a global in analysis and visualization code.
+    Rename analyses to analysis and drop simulation, analysis from
+        console namespace.
 
 
 Enhancements:
     Use multiprocess.Pool for the common analysis.
+        * This is becoming a big deal.  Analysis takes longer than sim.
     Link parameters to analysis from simulations.
         Requires newer version of pytables.
 

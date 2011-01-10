@@ -15,6 +15,14 @@
 
 import numpy
 
+def parameter_title(parameter_set_number, parameters=None, parameter_labels=[]):
+    title = 'Parameter Set %d\n' % parameter_set_number
+    for label in parameter_labels:
+        if title[-1] != '\n' and title[-1] != ' ':
+            title += ' -- '
+        title += label + ': ' + str(parameters[label])
+    return title
+
 def get_bounds(measurement):
     if 3 == len(measurement):
         avg = numpy.array(measurement[1])
@@ -37,17 +45,3 @@ def get_error_bars(measurement):
         return avg - lower, upper - avg
 
     return False
-
-def get_measurement_and_error(collection, measurement_name,
-                              error_suffix='_error'):
-    measurement = getattr(collection, measurement_name).read()
-    error = getattr(collection, measurement_name + error_suffix).read()
-
-    times, values = zip(*measurement)
-    etime, errors = zip(*error)
-
-#    # XXX Fix the fitting...
-#    values = numpy.array(values)/39.5
-#    errors = numpy.array(errors)/39.5
-
-    return times, values, errors
