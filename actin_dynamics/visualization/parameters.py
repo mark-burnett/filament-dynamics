@@ -21,11 +21,7 @@ from actin_dynamics.io import hdf
 def value_vs_parameter(hdf_file=None,
                        analysis_name=None,
                        parameter_name=None,
-                       value_name=None,
-                       *args, **kwargs):
-    '''
-    Additional args and keyword args are passed on to pylab.plot()
-    '''
+                       value_name=None):
     parameter_parameter_sets, analysis = hdf.utils.get_ps_ana(hdf_file)
     value_parameter_sets = analysis.create_or_select_child(analysis_name)
 
@@ -38,8 +34,36 @@ def value_vs_parameter(hdf_file=None,
         value_ps = value_parameter_sets.select_child_number(ps_index)
         values.append(value_ps.values[value_name])
 
+    pylab.figure()
     pylab.xlabel(parameter_name)
     pylab.ylabel(value_name)
 
     pylab.plot(parameters, values)
+    pylab.show()
+
+def value_vs_2_parameters(hdf_file=None,
+                          analysis_name=None,
+                          parameter_names=None,
+                          value_name=None):
+    parameter_parameter_sets, analysis = hdf.utils.get_ps_ana(hdf_file)
+    value_parameter_sets = analysis.create_or_select_child(analysis_name)
+
+    parameters = []
+    values = []
+    for ps_index in xrange(len(parameter_parameter_sets)):
+        parameter_ps = parameter_parameter_sets.select_child_number(ps_index)
+        parameters.append([parameter_ps.parameters[name] for name in parameter_names])
+
+        value_ps = value_parameter_sets.select_child_number(ps_index)
+        values.append(value_ps.values[value_name])
+
+    x, y = zip(*parameters)
+
+    pylab.figure()
+
+    pylab.xlabel(parameter_names[0])
+    pylab.ylabel(parameter_names[1])
+
+    pylab.contourf(x, y, values)
+
     pylab.show()
