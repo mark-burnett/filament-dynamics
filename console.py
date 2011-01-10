@@ -20,8 +20,6 @@ import tables as _tables
 
 from IPython.Shell import IPShellEmbed as _IPShellEmbed
 
-from actin_dynamics.io import hdf as _hdf
-
 def _parse_command_line():
     parser = _argparse.ArgumentParser()
     parser.add_argument('--simulation_file', default='output.h5',
@@ -33,14 +31,20 @@ def _analyze_main():
 
     # Read in hdf file
     hdf_file = _tables.openFile(filename=_args.simulation_file, mode='a')
-    simulations, analysis = _hdf.utils.get_ps_ana(hdf_file)
 
     from actin_dynamics import analyses
     from actin_dynamics import visualization
 
     # Drop into shell
-    _shell = _IPShellEmbed(argv=[])
-    _shell()
+    banner = '\nWelcome to the actin dynamics analysis console.'
+
+    global_namespace = {'hdf_file': hdf_file}
+    local_namespace = {'analyses': analyses, 'visualization': visualization,
+                       'root': hdf_file.getNode('/')}
+
+    _shell = _IPShellEmbed(banner=banner)
+    _shell(global_ns=global_namespace, local_ns=local_namespace)
+
     hdf_file.close()
 
 if '__main__' == __name__:
