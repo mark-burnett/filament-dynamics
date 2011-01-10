@@ -24,7 +24,7 @@ from . import standard_error_of_mean as _standard_error_of_mean
 from actin_dynamics.io import hdf as _hdf
 from actin_dynamics.io import data as _dataio
 
-def perform_common(hdf_file=None):
+def perform_common(hdf_file):
     simulations_group = hdf_file.getNode('/Simulations')
     analysis_group = _hdf.utils.get_or_create_group(hdf_file, 'Analysis',
             description='Analysis of simulation results.')
@@ -43,7 +43,7 @@ def perform_common(hdf_file=None):
     _standard_error_of_mean.all_measurements(downsample_analysis_wrapper,
                                              sem_analysis_wrapper)
 
-def perform_pollard(hdf_file=None,
+def perform_pollard(hdf_file,
                     fluorescence_filename='pollard_length.dat',
                     adppi_filename='pollard_cleavage.dat'):
     # Load the data.

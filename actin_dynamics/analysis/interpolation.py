@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import bisect
+
 import scipy.interpolate
 
 #def resample(data, sample_times):
@@ -37,7 +39,7 @@ import scipy.interpolate
 #                times, values, bbox=bbox)
 #        return sample_times, interp(sample_times)
 
-def resample(data, new_x):
+def linear_resample(data, new_x):
     x_data, y_data = data
 
     if 1 == len(x_data):
@@ -64,7 +66,30 @@ def linear_project(x1, y1, x2, y2, x3):
     m = (y2 - y1) / (x2 - x1)
     return y1 + m * (x3 - x1)
 
-def resample_measurement(measurement, sample_times):
+def previous_value_resample(data, new_x):
+    x_data, y_data = data
+
+    low_x = 0
+
+    results = []
+    for x in new_x:
+        left_xi  = bisect.bisect_left(x_data, x, lo=low_x)
+        right_xi = bisect.bisect_right(x_data, x, lo=low_x)
+        xi = max(left_xi, right_xi) - 1
+        results.append(y_data[xi])
+        low_x = xi
+
+    return new_x, results
+
+
+# Interpolation methods should be registered here for convenience.
+interpolation_methods = {'linear': linear_resample,
+                         'previous_value': previous_value_resample}
+
+
+def resample_measurement(measurement, sample_times, method='linear'):
+    resample = interpolation_methods[method]
+
     # Resample value
     value_data = measurement[:2]
 

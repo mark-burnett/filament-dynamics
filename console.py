@@ -14,38 +14,38 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import argparse as _argparse
+import argparse as argparse
 
-import tables as _tables
+import tables as tables
 
-from IPython.Shell import IPShellEmbed as _IPShellEmbed
+from IPython.Shell import IPShellEmbed as IPShellEmbed
 
-def _parse_command_line():
-    parser = _argparse.ArgumentParser()
+def parse_command_line():
+    parser = argparse.ArgumentParser()
     parser.add_argument('--simulation_file', default='output.h5',
                         help='Simulation output pickle file name.')
     return parser.parse_args()
 
-def _analyze_main():
-    _args = _parse_command_line()
-
+def open_console(simulation_file):
     # Read in hdf file
-    hdf_file = _tables.openFile(filename=_args.simulation_file, mode='a')
+    hdf_file = tables.openFile(filename=simulation_file, mode='a')
 
-    from actin_dynamics import analyses
-    from actin_dynamics import visualization
-
-    # Drop into shell
+    # Setup welcome message.
     banner = '\nWelcome to the actin dynamics analysis console.'
 
-    global_namespace = {'hdf_file': hdf_file}
-    local_namespace = {'analyses': analyses, 'visualization': visualization,
-                       'root': hdf_file.getNode('/')}
+    # Create namespaces.
+    from actin_dynamics import analysis
+    from actin_dynamics import visualization
 
-    _shell = _IPShellEmbed(banner=banner)
-    _shell(global_ns=global_namespace, local_ns=local_namespace)
+    local_namespace  = {'analysis': analysis, 'visualization': visualization,
+                        'hdf_file': hdf_file}
+
+    # Create shell.
+    shell = IPShellEmbed(argv=[], banner=banner)
+    shell(local_ns=local_namespace)
 
     hdf_file.close()
 
 if '__main__' == __name__:
-    _analyze_main()
+    args = parse_command_line()
+    open_console(args.simulation_file)

@@ -57,5 +57,5 @@ def collection_measurements(measurements, sample_times):
     # XXX make simulation.measurements.iteritems()
     for m in measurements:
         results[m.name] = zip(*interpolation.resample_measurement(
-                zip(*m.read()), sample_times))
+                zip(*m.read()), sample_times, method='previous_value'))
     return results

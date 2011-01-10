@@ -1,5 +1,6 @@
 Immediate concerns:
     Interpolation for downsampling looks bad for last data point.
+        Add previous value interpolation for data downsampling.
 
     Pick goodness of fit metric.
         chi^2
@@ -21,9 +22,8 @@ Broken Windows:
 
 Usability:
     Add start message to console.py
+        Needs to have some basic help.
     Consider using hdf_file as a global in analysis and visualization code.
-    Rename analyses to analysis and drop simulation, analysis from
-        console namespace.
 
 
 Enhancements:

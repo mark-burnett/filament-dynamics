@@ -20,7 +20,7 @@ from actin_dynamics import io
 from . import basic
 from . import utils
 
-from actin_dynamics.analyses import utils as ana_utils
+from actin_dynamics.analysis import utils as ana_utils
 
 
 # Original Colors
