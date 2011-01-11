@@ -13,18 +13,16 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import tables
+import cPickle
+import gzip
 
-class Measurement(tables.IsDescription):
-    time  = tables.FloatCol()
-    value = tables.FloatCol()
+def write_object(data, filename):
+    with open(filename, mode='wb') as f:
+        compressor = gzip.GzipFile(fileobj=f)
+        cPickle.dump(data, compressor, protocol=cPickle.HIGHEST_PROTOCOL)
+        compressor.close()
 
-class State(tables.IsDescription):
-    state = tables.StringCol(6)
-
-class Parameter(tables.IsDescription):
-    name  = tables.StringCol(64)
-    value = tables.FloatCol()
-
-class SingleValue(tables.IsDescription):
-    value = tables.FloatCol()
+def read_object(data, filename):
+    with open(filename) as f:
+        compressor = gzip.GzipFile(fileobj=f)
+        return cPickle.load(compressor)

@@ -17,15 +17,10 @@
     This module contains a general Kinetic Monte Carlo simulation.
 """
 
-import traceback
-
-import copy
 import bisect
-import collections
-
-import random
-
 import math
+import random
+import traceback
 
 from . import utils
 
@@ -34,9 +29,9 @@ class Simulation(object):
     Kinetic Monte Carlo simulation object.
     """
     __slots__ = ['transitions', 'concentrations', 'measurements',
-                 'end_conditions', 'filaments', 'rng', 'parameters']
+                 'end_conditions', 'filaments', 'rng']
     def __init__(self, transitions=None, concentrations=None, measurements=None,
-                 end_conditions=None, filaments=None, parameters=None, rng=None):
+                 end_conditions=None, filaments=None, rng=None):
         """
         'transitions' list of transition objects.  Each object represents
             a set of possible state changes.
@@ -48,8 +43,14 @@ class Simulation(object):
         self.measurements   = measurements
         self.end_conditions = end_conditions
         self.filaments      = filaments
-        self.parameters     = parameters
         self.rng            = rng
+
+def run_and_report_sim(sim):
+    print 'running'
+    run_simulation(sim)
+    print 'reporting'
+    return report_measurements(sim)
+
 
 def run_simulation(sim):
     """
@@ -119,13 +120,18 @@ def run_simulation(sim):
         traceback.print_exc()
         raise
 
-    # Compile measurements
-    concentration_measurements = {}
+
+def report_measurements(sim):
+    concentration_results = {}
     for state, c in sim.concentrations.iteritems():
-        concentration_measurements[state] = c.data
+        concentration_results[state] = c.data
 
-    raw_filaments = [f.states for f in sim.filaments]
-    filament_measurements = [f.measurements for f in sim.filaments]
+    filament_results = []
+    for filament in sim.filaments:
+        fr = {}
+        fr['final_state']  = filament.states
+        fr['measurements'] = filament.measurements
+        filament_results.append(fr)
 
-    return (sim.parameters, concentration_measurements,
-            raw_filaments, filament_measurements)
+    return {'concentrations': concentration_results,
+            'filaments':      filament_results}

@@ -17,8 +17,7 @@ from . import shortcuts
 
 from ..simulations import Simulation
 
-def make_simulation(object_graph, raw_parameters):
-    par_set_num, parameters = raw_parameters
+def make_simulation(object_graph, parameters):
     filaments = shortcuts.make_filaments(object_graph['filaments'],
                                          parameters)
 
@@ -32,16 +31,21 @@ def make_simulation(object_graph, raw_parameters):
             object_graph['end_conditions'], parameters)
 
     concentrations = shortcuts.make_concentrations(
-        object_graph['concentrations'], parameters)
+            object_graph['concentrations'], parameters)
 
     return Simulation(transitions=transitions, concentrations=concentrations,
                       measurements=measurements, end_conditions=end_conditions,
-                      filaments=filaments, parameters=raw_parameters)
+                      filaments=filaments)
 
+
+def _single_simulation_generator(object_graph, parameters, number_simulations):
+    current_sim = 0
+    while current_sim < number_simulations:
+        yield make_simulation(object_graph, parameters)
+        current_sim += 1
 
 def simulation_generator(object_graph, parameters, number_simulations):
-    for current_pars in enumerate(parameters):
-        current_sim = 0
-        while current_sim < number_simulations:
-            yield make_simulation(object_graph, current_pars)
-            current_sim += 1
+    for current_pars in parameters:
+        yield current_pars, _single_simulation_generator(object_graph,
+                                                         current_pars,
+                                                         number_simulations)

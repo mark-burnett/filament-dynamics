@@ -15,35 +15,35 @@
 
 import multiprocessing
 
-import tables
-
-from .io import hdf
-from .simulations import run_simulation
-
-_compession_filter = tables.Filters(complevel=9)
+from . import io as _io
+from . import simulations as _simulations
 
 def run_simulations(simulation_factory, output_file_name):
-    with tables.openFile(output_file_name, mode='w',
-                         filters=_compession_filter) as output_file:
-        hdf_writer = hdf.SimulationWriter(output_file)
-        pool = multiprocessing.Pool()
+    pool = multiprocessing.Pool()
 
-        try:
-            for sim in simulation_factory:
-                pool.apply_async(run_simulation, (sim,),
-                                 callback=hdf_writer.write_result)
+    try:
+        results = []
+        for parameter_set, ssg in simulation_factory:
+            ps_result = pool.map(_simulations.run_and_report_sim, ssg)
+            # Must pass a timeout or keyboard interrupt fails
+#            ps_result.get(999999)
+            results.append({'parameters':  parameter_set,
+                            'simulations': ps_result})
 
-            pool.close()
-            pool.join()
-        except KeyboardInterrupt:
-            # Handle CTRL-C
-            pool.terminate()
-            raise
+        pool.close()
+        pool.join()
+
+    except KeyboardInterrupt:
+        # Handle CTRL-C
+        pool.terminate()
+        raise
+    
+    _io.compressed.write_object(results, output_file_name)
 
 def sp_run_simulations(simulation_factory, output_file_name):
-    with tables.openFile(output_file_name, mode='w',
-                         filters=_compession_filter) as output_file:
-        hdf_writer = hdf.SimulationWriter(output_file)
+    results = []
+    for parameter_set in simulation_factory:
+        ps_result = map(_simulations.run_simulation, simulation_factory)
+        results.append({'parameters': parameter_set, 'simulations': ps_result})
 
-        for sim in simulation_factory:
-            hdf_writer.write_result(run_simulation(sim))
+    _io.write_simulation_data(results, output_file_name)

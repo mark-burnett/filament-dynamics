@@ -25,7 +25,7 @@ def parse_command_line():
                         help='Object graph definition file.')
     parser.add_argument('--parameters', default='parameters.yaml',
                         help='Parameters file.')
-    parser.add_argument('--output_file', default='output.h5',
+    parser.add_argument('--output_file', default='output.sim',
                         help='Output pickle file name.')
     parser.add_argument('--num_sims', type=int, default=1,
                         help='Number of simulations per parameter set.')

@@ -17,7 +17,7 @@ import random
 
 import unittest
 
-from actin_dynamics.simulations import Simulation, run_simulation
+from actin_dynamics.simulations import Simulation, run_simulation, report_measurements
 from actin_dynamics.filaments.single_strand_filaments import Filament
 
 from tests.mocks.end_conditions import MockEndCondition
@@ -39,7 +39,11 @@ class BasicSimulationTests(unittest.TestCase):
                          measurements=measurements, end_conditions=ecs,
                          filaments=filaments, rng=rng)
 
-        pars, sim_data, final_state, filament_data = run_simulation(sim)
+        run_simulation(sim)
+        measurements = report_measurements(sim)
+        sim_data = measurements['concentrations']
+        final_state = [f['final_state'] for f in measurements['filaments']]
+        filament_data = [f['measurements'] for f in measurements['filaments']]
 
         self.assertEqual([8], list(final_state[0]))
         self.assertEqual(0, len(sim_data))
@@ -60,7 +64,9 @@ class BasicSimulationTests(unittest.TestCase):
                          measurements=measurements, end_conditions=ecs,
                          filaments=filaments, rng=rng)
 
-        pars, sim_data, final_state, filament_data = run_simulation(sim)
+        run_simulation(sim)
+        measurements = report_measurements(sim)
+        filament_data = [f['measurements'] for f in measurements['filaments']]
 
         self.assertEqual(2, len(filament_data[0]))
         self.assertEqual(filament_data[0]['measurement_1'],
