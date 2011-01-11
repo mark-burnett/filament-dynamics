@@ -17,25 +17,21 @@ import numpy
 
 from scipy import optimize as _optimize
 
+from . import interpolation as _interpolation
 from . import fitting as _fitting
 from . import utils as _utils
 
-def all_measurements(input_parameter_sets, output_parameter_sets, data,
-                     coefficients=None, error_suffix='_error'):
-    for input_ps in input_parameter_sets:
-        # Calculate fluorescence curve.
-        simulation = get_fluorescence(input_ps, coefficients=coefficients)
-        normalization, chi_squared = fit_normalization(simulation, data)
-        norm_simulation = _utils.scale_measurement(simulation, normalization)
+def fluorescence_fit(parameter_set, fluorescence_data, coefficients=None):
+    # Calculate fluorescence curve.
+    simulation = get_fluorescence(parameter_set, coefficients=coefficients)
+    normalization, fluor_fit = fit_normalization(simulation, data)
+    norm_simulation = _utils.scale_measurement(simulation, normalization)
 
-        # Write fluorescence
-        output_ps = output_parameter_sets.create_or_select_child(input_ps.name)
-        _utils.write_measurement(output_ps,
-                                 'pyrene_fluorescence', norm_simulation,
-                                 error_suffix=error_suffix)
+    # Write fluorescence
+    parameter_set['measurements']['pyrene_fluorescence'] = norm_simulation
 
-        # Write fluorescence_chi_squared.
-        output_ps.values['fluorescence_chi_squared'] = chi_squared
+    # Write goodness of fit.
+    parameter_set['values']['fluorescence_fit'] = fluor_fit
 
 
 def get_fluorescence(parameter_set=None, coefficients=None):
@@ -58,7 +54,8 @@ def get_fluorescence(parameter_set=None, coefficients=None):
 
     # Scale everything
     scaled_atp_data   = _utils.scale_measurement(atp_data, coefficients['atp'])
-    scaled_adppi_data = _utils.scale_measurement(adppi_data, coefficients['adppi'])
+    scaled_adppi_data = _utils.scale_measurement(adppi_data,
+                                                 coefficients['adppi'])
     scaled_adp_data   = _utils.scale_measurement(adp_data, coefficients['adp'])
 
     # Add everything
@@ -78,7 +75,6 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
         if normalization[0] <= 0:
             return 5000
         scaled_sim = _utils.scale_measurement(fluorescence_sim, normalization[0])
-#        cs = _fitting.measurement_chi_squared(fluorescence_data, scaled_sim)
         cs = _fitting.measurement_other(fluorescence_data, scaled_sim)
         return cs
 
@@ -91,3 +87,20 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
                                  disp=False, full_output=True)
 
     return fit_results[0][0], fit_results[1]
+
+
+def adppi_fit(parameter_set, data, source='sem'):
+    ftc = parameter_set['parameters']['filament_tip_concentration']
+    sample_times, data_values, data_lower_boud, data_upper_bound = data
+
+    for ps_index in xrange(len(input_parameter_sets)):
+        # Get and resample simulation results
+        # XXX We are only using pyrene adppi, we should be using both.
+        raw_sim_data = parameter_set[source]['pyrene_adppi_count']
+        sampled_sim_data = _interpolation.resample_measurement(
+                raw_sim_data, sample_times)
+        scaled_sim_data = _utils.scale_measurement(sampled_sim_data, ftc)
+
+        chi_squared = fitting.measurement_other(scaled_sim_data, data)
+
+        parameter_set['values']['adppi_chi_squared'] = chi_squared

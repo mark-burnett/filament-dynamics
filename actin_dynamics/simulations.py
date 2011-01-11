@@ -46,9 +46,7 @@ class Simulation(object):
         self.rng            = rng
 
 def run_and_report_sim(sim):
-    print 'running'
     run_simulation(sim)
-    print 'reporting'
     return report_measurements(sim)
 
 
@@ -124,13 +122,14 @@ def run_simulation(sim):
 def report_measurements(sim):
     concentration_results = {}
     for state, c in sim.concentrations.iteritems():
-        concentration_results[state] = c.data
+        concentration_results[state] = zip(*c.data)
 
     filament_results = []
     for filament in sim.filaments:
         fr = {}
         fr['final_state']  = filament.states
-        fr['measurements'] = filament.measurements
+        fr['measurements'] = dict((name, zip(*values))
+                for name, values in filament.measurements.iteritems())
         filament_results.append(fr)
 
     return {'concentrations': concentration_results,

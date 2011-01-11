@@ -13,64 +13,30 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import collections
 import math
+import operator
 
 import numpy
 
-from . import utils
 
-def all_measurements(input_parameter_sets, output_parameter_sets,
-                     error_suffix='_error'):
-    for input_ps in input_parameter_sets:
-        output_ps = output_parameter_sets.create_or_select_child(input_ps.name)
+def all_measurements(parameter_sets, source='downsampled'):
+    analysis = {}
+    for parameter_set in parameter_sets:
+        for name, values in concentration_measurements(parameter_set):
+            analysis[name] = calculate_sem_trace(values)
 
-        summarize_simulation_measurements(input_ps, output_ps, error_suffix)
-        summarize_filament_measurements(input_ps, output_ps, error_suffix)
+        for name, values in filament_measurements(parameter_set):
+            analysis[name] = calculate_sem_trace(values)
 
-
-# XXX This function is almost identical to the next.
-def summarize_simulation_measurements(input_ps, output_ps, error_suffix=None):
-    measurement_names = _get_simulation_measurement_names(input_ps)
-
-    for measurement_name in measurement_names:
-        all_values = []
-        for simulation in input_ps.simulations:
-            measurement = getattr(simulation.simulation_measurements,
-                                  measurement_name)
-            times, values = zip(*measurement.read())
-            all_values.append(values)
-
-        means, errors = analyize_values(all_values)
-
-        utils.write_measurement(output_ps, measurement_name,
-                                (times, means, errors),
-                                error_suffix=error_suffix)
+    return analysis
 
 
-# XXX This function is almost identical to the previous.
-def summarize_filament_measurements(input_ps, output_ps, error_suffix=None):
-    measurement_names = _get_filament_measurement_names(input_ps)
-
-    for measurement_name in measurement_names:
-        all_values = []
-        for simulation in input_ps.simulations:
-            for filament in simulation.filaments:
-                measurement = getattr(filament.measurements,
-                                      measurement_name)
-                times, values = zip(*measurement.read())
-            all_values.append(values)
-
-        means, errors = analyize_values(all_values)
-
-        utils.write_measurement(output_ps, measurement_name,
-                                (times, means, errors),
-                                error_suffix=error_suffix)
-
-
-def analyize_values(values):
+def calculate_sem_trace(measurements):
     '''
     Workhorse function.  Calculates the standard error of the mean.
     '''
+    values = map(operator.itemgetter(1), measurements)
     sqrt_N = math.sqrt(len(values))
     transposed_values = numpy.array(values).transpose()
 
@@ -80,14 +46,19 @@ def analyize_values(values):
         means.append(numpy.average(tv))
         errors.append(numpy.std(tv) / sqrt_N)
 
-    return means, errors
+    times = measurements[0][0]
 
+    return times, means, errors
 
-def _get_filament_measurement_names(parameter_set):
-    first_simulation = next(iter(parameter_set.simulations))
-    first_filament = next(iter(first_simulation.filaments))
-    return [m.name for m in first_filament.measurements]
+def concentration_measurements(parameter_set):
+    results = collections.defaultdict(list)
+    for simulation in parameter_set:
+        for name, measurement in simulation['concentrations'].iteritems():
+            results[name].append(measurement)
 
-def _get_simulation_measurement_names(parameter_set):
-    first_simulation = next(iter(parameter_set.simulations))
-    return [m.name for m in first_simulation.simulation_measurements]
+def filament_measurements(parameter_set):
+    results = collections.defaultdict(list)
+    for simulation in parameter_set:
+        for filament in simulation['filaments']:
+            for name, measurement in filament['measurements'].iteritems():
+                results[name].append(measurement)

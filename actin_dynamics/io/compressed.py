@@ -22,7 +22,7 @@ def write_object(data, filename):
         cPickle.dump(data, compressor, protocol=cPickle.HIGHEST_PROTOCOL)
         compressor.close()
 
-def read_object(data, filename):
+def read_object(filename):
     with open(filename) as f:
         compressor = gzip.GzipFile(fileobj=f)
         return cPickle.load(compressor)

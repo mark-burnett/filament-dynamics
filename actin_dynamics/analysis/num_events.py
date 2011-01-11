@@ -13,32 +13,31 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def get_num_events(simulations=None, parameter_set_number=None):
-    ps = simulations.select_child_number(parameter_set_number)
+def get_num_events(parameter_set):
     num_events = 0
-    for simulation in ps.simulations:
-        for filament in simulation.filaments:
-            m = filament.measurements
-            num_events += len(m.barbed_pyrene_atp_polymerization) - 1
-            num_events += len(m.barbed_pyrene_adppi_polymerization) - 1
-            num_events += len(m.barbed_pyrene_adp_polymerization) - 1
-            num_events += len(m.barbed_adp_polymerization) - 1
+    for simulation in parameter_set['simulations']:
+        for filament in simulation['filaments']:
+            m = filament['measurements']
+            num_events += len(m['barbed_pyrene_atp_polymerization'][0]) - 1
+            num_events += len(m['barbed_pyrene_adppi_polymerization'][0]) - 1
+            num_events += len(m['barbed_pyrene_adp_polymerization'][0]) - 1
+            num_events += len(m['barbed_adp_polymerization'][0]) - 1
 
-            num_events += len(m.pointed_pyrene_atp_polymerization) - 1
-            num_events += len(m.pointed_pyrene_adppi_polymerization) - 1
-            num_events += len(m.pointed_pyrene_adp_polymerization) - 1
-            num_events += len(m.pointed_adp_polymerization) - 1
+            num_events += len(m['pointed_pyrene_atp_polymerization'][0]) - 1
+            num_events += len(m['pointed_pyrene_adppi_polymerization'][0]) - 1
+            num_events += len(m['pointed_pyrene_adp_polymerization'][0]) - 1
+            num_events += len(m['pointed_adp_polymerization'][0]) - 1
 
-            num_events += len(m.barbed_pyrene_atp_depolymerization) - 1
-            num_events += len(m.barbed_pyrene_adppi_depolymerization) - 1
-            num_events += len(m.barbed_pyrene_adp_depolymerization) - 1
-            num_events += len(m.barbed_adp_depolymerization) - 1
+            num_events += len(m['barbed_pyrene_atp_depolymerization'][0]) - 1
+            num_events += len(m['barbed_pyrene_adppi_depolymerization'][0]) - 1
+            num_events += len(m['barbed_pyrene_adp_depolymerization'][0]) - 1
+            num_events += len(m['barbed_adp_depolymerization'][0]) - 1
 
-            num_events += len(m.pointed_pyrene_atp_depolymerization) - 1
-            num_events += len(m.pointed_pyrene_adppi_depolymerization) - 1
-            num_events += len(m.pointed_pyrene_adp_depolymerization) - 1
-            num_events += len(m.pointed_adp_depolymerization) - 1
+            num_events += len(m['pointed_pyrene_atp_depolymerization'][0]) - 1
+            num_events += len(m['pointed_pyrene_adppi_depolymerization'][0]) - 1
+            num_events += len(m['pointed_pyrene_adp_depolymerization'][0]) - 1
+            num_events += len(m['pointed_adp_depolymerization'][0]) - 1
 
-            num_events += len(m.cleavage) - 1
-            num_events += len(m.release) - 1
+            num_events += len(m['cleavage'][0]) - 1
+            num_events += len(m['release'][0]) - 1
     return num_events

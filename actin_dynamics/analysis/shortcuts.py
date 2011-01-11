@@ -15,37 +15,38 @@
 
 import numpy
 
-from . import concentrations as _concentrations
 from . import downsample as _downsample
 from . import interpolation as _interpolation
-from . import fluorescence as _fluorescence
+from . import pollard as _pollard
 from . import standard_error_of_mean as _standard_error_of_mean
 
-from actin_dynamics.io import hdf as _hdf
 from actin_dynamics.io import data as _dataio
 
-def perform_common(hdf_file):
-    simulations_group = hdf_file.getNode('/Simulations')
-    analysis_group = _hdf.utils.get_or_create_group(hdf_file, 'Analysis',
-            description='Analysis of simulation results.')
-    analyses_wrapper = _hdf.MultipleAnalysisWrapper(analysis_group)
+def perform_common(simulation_container):
+    '''
+    Creates a new analysis container based on the simulations provided.
+    '''
+    analysis_container = []
 
-    # Clean up old stuff.
-    analyses_wrapper.delete_children()
+    for parameter_set in simulation_container:
+        analyses = {}
+        analyses['parameters'] = parameter_set['parameters']
+        analyses['downsample'] = _downsample.all_measurements(parameter_set)
 
-    parameter_sets_wrapper = _hdf.MultipleParameterSetWrapper(simulations_group)
+        analyses['sem'] = _standard_error_of_mean.all_measurements(
+                analysis_container)
 
-    downsample_analysis_wrapper = analyses_wrapper.create_child('downsample')
-    _downsample.all_measurements(parameter_sets_wrapper,
-                                 downsample_analysis_wrapper)
+        analysis_container.append(analyses)
 
-    sem_analysis_wrapper = analyses_wrapper.create_child('sem')
-    _standard_error_of_mean.all_measurements(downsample_analysis_wrapper,
-                                             sem_analysis_wrapper)
+    return analysis_container
 
-def perform_pollard(hdf_file,
+
+def perform_pollard(analysis_container,
                     fluorescence_filename='pollard_length.dat',
                     adppi_filename='pollard_cleavage.dat'):
+    '''
+    Appends new analysis to the provided container.
+    '''
     # Load the data.
     fluor_measurement = _dataio.load_data(fluorescence_filename)
     adppi_data = _dataio.load_data(adppi_filename)
@@ -56,16 +57,7 @@ def perform_pollard(hdf_file,
                                                             sample_times)
 
     # Do the work.
-    simulations, analysis = _hdf.utils.get_ps_ana(hdf_file)
-
-    # Pyrene fluorescence
-    pollard_results = analysis.create_or_select_child('pollard')
-    pollard_results.delete_children()
-    _fluorescence.all_measurements(analysis.sem, pollard_results,
-                                   fluorescence_data)
-
-    # ADPPi concentration
-    _concentrations.adppi_fit(simulations=simulations,
-                              input_parameter_sets=analysis.sem,
-                              output_parameter_sets=pollard_results, 
-                              data=adppi_data)
+    for parameter_set in analysis_container:
+        parameter_set['values'] = {}
+        _pollard.fluorescence_fit(parameter_set, fluorescence_data)
+        _pollard.adppi_fit(parameter_set, adppi_data)

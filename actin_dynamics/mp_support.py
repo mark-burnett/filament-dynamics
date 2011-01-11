@@ -24,11 +24,10 @@ def run_simulations(simulation_factory, output_file_name):
     try:
         results = []
         for parameter_set, ssg in simulation_factory:
-            ps_result = pool.map(_simulations.run_and_report_sim, ssg)
+            ps_result = pool.map_async(_simulations.run_and_report_sim, ssg)
             # Must pass a timeout or keyboard interrupt fails
-#            ps_result.get(999999)
             results.append({'parameters':  parameter_set,
-                            'simulations': ps_result})
+                            'simulations': ps_result.get(999999)})
 
         pool.close()
         pool.join()
@@ -42,8 +41,8 @@ def run_simulations(simulation_factory, output_file_name):
 
 def sp_run_simulations(simulation_factory, output_file_name):
     results = []
-    for parameter_set in simulation_factory:
-        ps_result = map(_simulations.run_simulation, simulation_factory)
+    for parameter_set, ssg in simulation_factory:
+        ps_result = map(_simulations.run_simulation, ssg)
         results.append({'parameters': parameter_set, 'simulations': ps_result})
 
-    _io.write_simulation_data(results, output_file_name)
+    _io.compressed.write_object(results, output_file_name)
