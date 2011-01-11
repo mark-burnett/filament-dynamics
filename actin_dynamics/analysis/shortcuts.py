@@ -22,33 +22,24 @@ from . import standard_error_of_mean as _standard_error_of_mean
 
 from actin_dynamics.io import data as _dataio
 
-from actin_dynamics.io import compressed as _compressed
-
-def do_the_work(simulation_filename, analysis_filename):
-    sim = _compressed.read_object(simulation_filename)
-    ana = perform_common(sim)
-    _compressed.write_object(ana, analysis_filename)
-    return ana
-
 
 def perform_common(simulation_container):
     '''
     Creates a new analysis container based on the simulations provided.
     '''
-    analysis_container = []
+    return map(perform_common_single, simulation_container)
 
-    for parameter_set in simulation_container:
-        analyses = {}
-        analyses['parameters'] = parameter_set['parameters']
-        downsampled_results = _downsample.all_measurements(parameter_set)
-        analyses['downsampled'] = downsampled_results
 
-        analyses['sem'] = _standard_error_of_mean.all_measurements(
-                downsampled_results)
+def perform_common_single(parameter_set):
+    analyses = {}
+    analyses['parameters'] = parameter_set['parameters']
+    downsampled_results = _downsample.all_measurements(parameter_set)
+    analyses['downsampled'] = downsampled_results
 
-        analysis_container.append(analyses)
+    analyses['sem'] = _standard_error_of_mean.all_measurements(
+            downsampled_results)
 
-    return analysis_container
+    return analyses
 
 
 def perform_pollard(analysis_container,

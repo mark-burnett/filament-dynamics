@@ -23,6 +23,7 @@ import random
 import traceback
 
 from . import utils
+from . import analysis as _analysis
 
 class Simulation(object):
     """
@@ -45,9 +46,14 @@ class Simulation(object):
         self.filaments      = filaments
         self.rng            = rng
 
+
 def run_and_report_sim(sim):
     run_simulation(sim)
     return report_measurements(sim)
+
+def run_report_and_analyze(sim):
+    sim_results = run_simulation(sim)
+    return _analysis.perform_common_single(sim_results)
 
 
 def run_simulation(sim):
