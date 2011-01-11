@@ -101,6 +101,6 @@ def adppi_fit(parameter_set, data, source='sem'):
             raw_sim_data, sample_times)
     scaled_sim_data = _utils.scale_measurement(sampled_sim_data, ftc)
 
-    chi_squared = _fitting.measurement_other(scaled_sim_data, data)
+    fit_quality = _fitting.measurement_other(scaled_sim_data, data)
 
-    parameter_set['values']['adppi_chi_squared'] = chi_squared
+    parameter_set['values']['adppi_fit'] = fit_quality

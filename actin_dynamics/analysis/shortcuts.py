@@ -22,6 +22,15 @@ from . import standard_error_of_mean as _standard_error_of_mean
 
 from actin_dynamics.io import data as _dataio
 
+from actin_dynamics.io import compressed as _compressed
+
+def do_the_work(simulation_filename, analysis_filename):
+    sim = _compressed.read_object(simulation_filename)
+    ana = perform_common(sim)
+    _compressed.write_object(ana, analysis_filename)
+    return ana
+
+
 def perform_common(simulation_container):
     '''
     Creates a new analysis container based on the simulations provided.

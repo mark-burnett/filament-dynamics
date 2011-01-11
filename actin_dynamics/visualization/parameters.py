@@ -13,23 +13,30 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import collections
+
 import pylab
 
-def value_vs_parameter(analysis_container,
-                       parameter_name=None,
-                       analysis_name=None,
-                       value_name=None):
+def values_vs_parameter(analysis_container,
+                        parameter_name=None,
+                        value_names=None):
     parameters = []
-    values = []
+    values = collections.defaultdict(list)
+
     for parameter_set in analysis_container:
         parameters.append(parameter_set['parameters'][parameter_name])
-        values.append(parameter_set[analysis_name][value_name])
+        for value_name in value_names:
+            values[value_name].append(parameter_set['values'][value_name])
 
     pylab.figure()
     pylab.xlabel(parameter_name)
-    pylab.ylabel(value_name)
+    pylab.ylabel(', '.join(value_names))
 
-    pylab.plot(parameters, values)
+    for name, value in values.iteritems():
+        pylab.plot(parameters, value, label=name)
+
+    pylab.legend()
+
     pylab.show()
 
 #def value_vs_2_parameters(hdf_file=None,
