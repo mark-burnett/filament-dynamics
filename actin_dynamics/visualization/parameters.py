@@ -43,27 +43,38 @@ def value_vs_parameter(hdf_file=None,
 
 def value_vs_2_parameters(hdf_file=None,
                           analysis_name=None,
-                          parameter_names=None,
-                          value_name=None):
+                          x_parameter=None,
+                          y_parameter=None,
+                          value_name=None,
+                          logscale_x=False,
+                          logscale_y=False):
     parameter_parameter_sets, analysis = hdf.utils.get_ps_ana(hdf_file)
     value_parameter_sets = analysis.create_or_select_child(analysis_name)
 
-    parameters = []
+    x = []
+    y = []
     values = []
     for ps_index in xrange(len(parameter_parameter_sets)):
         parameter_ps = parameter_parameter_sets.select_child_number(ps_index)
-        parameters.append([parameter_ps.parameters[name] for name in parameter_names])
+        x.append(parameter_ps.parameters[x_parameter])
+        y.append(parameter_ps.parameters[y_parameter])
 
         value_ps = value_parameter_sets.select_child_number(ps_index)
         values.append(value_ps.values[value_name])
 
-    x, y = zip(*parameters)
+    points = zip(x, y, values)
 
     pylab.figure()
 
-    pylab.xlabel(parameter_names[0])
-    pylab.ylabel(parameter_names[1])
+    pylab.xlabel(x_parameter)
+    pylab.ylabel(y_parameter)
 
-    pylab.contourf(x, y, values)
+    if logscale_x:
+        pylab.semilogx()
+    if logscale_y:
+        pylab.semilogy()
+
+    pylab.contourf(points)
+    pylab.legend()
 
     pylab.show()

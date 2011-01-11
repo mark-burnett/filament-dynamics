@@ -13,7 +13,6 @@ Immediate concerns:
         prettify 1d chi^2 plot
 
 
-
 Broken Windows:
     Clean up HDF io so that measurement reads/writes are consistent with
         my preferred style.
@@ -27,7 +26,8 @@ Usability:
 Enhancements:
     Use multiprocess.Pool for the common analysis.
         * This is becoming a big deal.  Analysis takes longer than sim.
-            The problem is that this appears to be io limited :(
+            The problem is that this appears to be io limited.
+            Basically using HDF may be seriously handicapping me.
     Link parameters to analysis from simulations.
         Requires newer version of pytables.
 
