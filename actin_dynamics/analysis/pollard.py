@@ -21,20 +21,21 @@ from . import interpolation as _interpolation
 from . import fitting as _fitting
 from . import utils as _utils
 
-def fluorescence_fit(parameter_set, fluorescence_data, coefficients=None):
+def fluorescence_fit(parameter_set, data, coefficients=None):
     # Calculate fluorescence curve.
-    simulation = get_fluorescence(parameter_set, coefficients=coefficients)
-    normalization, fluor_fit = fit_normalization(simulation, data)
-    norm_simulation = _utils.scale_measurement(simulation, normalization)
+    sim_results = get_fluorescence(parameter_set['sem'],
+                                   coefficients=coefficients)
+    normalization, fluor_fit = fit_normalization(sim_results, data)
+    norm_simulation = _utils.scale_measurement(sim_results, normalization)
 
     # Write fluorescence
-    parameter_set['measurements']['pyrene_fluorescence'] = norm_simulation
+    parameter_set['sem']['pyrene_fluorescence'] = norm_simulation
 
     # Write goodness of fit.
     parameter_set['values']['fluorescence_fit'] = fluor_fit
 
 
-def get_fluorescence(parameter_set=None, coefficients=None):
+def get_fluorescence(parameter_set, coefficients=None):
     '''
     Gives the unnormalized pyrene fluorescence.
 
@@ -42,9 +43,9 @@ def get_fluorescence(parameter_set=None, coefficients=None):
     Assumes standard sqrt(N) error.
     '''
     # Grab the simulation data
-    atp_data   = _utils.get_measurement(parameter_set, 'pyrene_atp_count')
-    adppi_data = _utils.get_measurement(parameter_set, 'pyrene_adppi_count')
-    adp_data   = _utils.get_measurement(parameter_set, 'pyrene_adp_count')
+    atp_data   = parameter_set['pyrene_atp_count']
+    adppi_data = parameter_set['pyrene_adppi_count']
+    adp_data   = parameter_set['pyrene_adp_count']
 
     if coefficients is None:
         # XXX These may not match literature values, I can't check now.
@@ -91,16 +92,15 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
 
 def adppi_fit(parameter_set, data, source='sem'):
     ftc = parameter_set['parameters']['filament_tip_concentration']
-    sample_times, data_values, data_lower_boud, data_upper_bound = data
+    sample_times = data[0]
 
-    for ps_index in xrange(len(input_parameter_sets)):
-        # Get and resample simulation results
-        # XXX We are only using pyrene adppi, we should be using both.
-        raw_sim_data = parameter_set[source]['pyrene_adppi_count']
-        sampled_sim_data = _interpolation.resample_measurement(
-                raw_sim_data, sample_times)
-        scaled_sim_data = _utils.scale_measurement(sampled_sim_data, ftc)
+    # Get and resample simulation results
+    # XXX We are only using pyrene adppi, we should be using both.
+    raw_sim_data = parameter_set[source]['pyrene_adppi_count']
+    sampled_sim_data = _interpolation.resample_measurement(
+            raw_sim_data, sample_times)
+    scaled_sim_data = _utils.scale_measurement(sampled_sim_data, ftc)
 
-        chi_squared = fitting.measurement_other(scaled_sim_data, data)
+    chi_squared = _fitting.measurement_other(scaled_sim_data, data)
 
-        parameter_set['values']['adppi_chi_squared'] = chi_squared
+    parameter_set['values']['adppi_chi_squared'] = chi_squared

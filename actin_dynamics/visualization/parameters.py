@@ -15,24 +15,15 @@
 
 import pylab
 
-from actin_dynamics.io import hdf
-
-
-def value_vs_parameter(hdf_file=None,
-                       analysis_name=None,
+def value_vs_parameter(analysis_container,
                        parameter_name=None,
+                       analysis_name=None,
                        value_name=None):
-    parameter_parameter_sets, analysis = hdf.utils.get_ps_ana(hdf_file)
-    value_parameter_sets = analysis.create_or_select_child(analysis_name)
-
     parameters = []
     values = []
-    for ps_index in xrange(len(parameter_parameter_sets)):
-        parameter_ps = parameter_parameter_sets.select_child_number(ps_index)
-        parameters.append(parameter_ps.parameters[parameter_name])
-
-        value_ps = value_parameter_sets.select_child_number(ps_index)
-        values.append(value_ps.values[value_name])
+    for parameter_set in analysis_container:
+        parameters.append(parameter_set['parameters'][parameter_name])
+        values.append(parameter_set[analysis_name][value_name])
 
     pylab.figure()
     pylab.xlabel(parameter_name)
@@ -41,40 +32,40 @@ def value_vs_parameter(hdf_file=None,
     pylab.plot(parameters, values)
     pylab.show()
 
-def value_vs_2_parameters(hdf_file=None,
-                          analysis_name=None,
-                          x_parameter=None,
-                          y_parameter=None,
-                          value_name=None,
-                          logscale_x=False,
-                          logscale_y=False):
-    parameter_parameter_sets, analysis = hdf.utils.get_ps_ana(hdf_file)
-    value_parameter_sets = analysis.create_or_select_child(analysis_name)
-
-    x = []
-    y = []
-    values = []
-    for ps_index in xrange(len(parameter_parameter_sets)):
-        parameter_ps = parameter_parameter_sets.select_child_number(ps_index)
-        x.append(parameter_ps.parameters[x_parameter])
-        y.append(parameter_ps.parameters[y_parameter])
-
-        value_ps = value_parameter_sets.select_child_number(ps_index)
-        values.append(value_ps.values[value_name])
-
-    points = zip(x, y, values)
-
-    pylab.figure()
-
-    pylab.xlabel(x_parameter)
-    pylab.ylabel(y_parameter)
-
-    if logscale_x:
-        pylab.semilogx()
-    if logscale_y:
-        pylab.semilogy()
-
-    pylab.contourf(points)
-    pylab.legend()
-
-    pylab.show()
+#def value_vs_2_parameters(hdf_file=None,
+#                          analysis_name=None,
+#                          x_parameter=None,
+#                          y_parameter=None,
+#                          value_name=None,
+#                          logscale_x=False,
+#                          logscale_y=False):
+#    parameter_parameter_sets, analysis = hdf.utils.get_ps_ana(hdf_file)
+#    value_parameter_sets = analysis.create_or_select_child(analysis_name)
+#
+#    x = []
+#    y = []
+#    values = []
+#    for ps_index in xrange(len(parameter_parameter_sets)):
+#        parameter_ps = parameter_parameter_sets.select_child_number(ps_index)
+#        x.append(parameter_ps.parameters[x_parameter])
+#        y.append(parameter_ps.parameters[y_parameter])
+#
+#        value_ps = value_parameter_sets.select_child_number(ps_index)
+#        values.append(value_ps.values[value_name])
+#
+#    points = zip(x, y, values)
+#
+#    pylab.figure()
+#
+#    pylab.xlabel(x_parameter)
+#    pylab.ylabel(y_parameter)
+#
+#    if logscale_x:
+#        pylab.semilogx()
+#    if logscale_y:
+#        pylab.semilogy()
+#
+#    pylab.contourf(points)
+#    pylab.legend()
+#
+#    pylab.show()

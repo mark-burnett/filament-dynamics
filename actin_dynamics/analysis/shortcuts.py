@@ -31,10 +31,11 @@ def perform_common(simulation_container):
     for parameter_set in simulation_container:
         analyses = {}
         analyses['parameters'] = parameter_set['parameters']
-        analyses['downsample'] = _downsample.all_measurements(parameter_set)
+        downsampled_results = _downsample.all_measurements(parameter_set)
+        analyses['downsampled'] = downsampled_results
 
         analyses['sem'] = _standard_error_of_mean.all_measurements(
-                analysis_container)
+                downsampled_results)
 
         analysis_container.append(analyses)
 

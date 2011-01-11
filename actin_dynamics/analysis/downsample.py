@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# XXX can we eliminate numpy here?
 import numpy
 
 from . import interpolation
@@ -21,9 +22,9 @@ def all_measurements(parameter_set, sample_period=1, epsilon=1e-10,
                      source='simulations'):
     analysis = []
     for simulation in parameter_set[source]:
-        sample_times = numpy.arange(0,
+        sample_times = list(numpy.arange(0,
                 parameter_set['parameters']['simulation_duration'] + epsilon,
-                sample_period)
+                sample_period))
 
         sim_results = {}
 

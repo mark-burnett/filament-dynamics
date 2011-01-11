@@ -19,15 +19,16 @@ import operator
 
 import numpy
 
+from . import utils
 
-def all_measurements(parameter_sets, source='downsampled'):
+
+def all_measurements(simulations):
     analysis = {}
-    for parameter_set in parameter_sets:
-        for name, values in concentration_measurements(parameter_set):
-            analysis[name] = calculate_sem_trace(values)
+    for name, measurements in concentration_measurements(simulations).iteritems():
+        analysis[name] = calculate_sem_trace(measurements)
 
-        for name, values in filament_measurements(parameter_set):
-            analysis[name] = calculate_sem_trace(values)
+    for name, measurements in filament_measurements(simulations).iteritems():
+        analysis[name] = calculate_sem_trace(measurements)
 
     return analysis
 
@@ -36,8 +37,8 @@ def calculate_sem_trace(measurements):
     '''
     Workhorse function.  Calculates the standard error of the mean.
     '''
+    sqrt_N = math.sqrt(len(measurements))
     values = map(operator.itemgetter(1), measurements)
-    sqrt_N = math.sqrt(len(values))
     transposed_values = numpy.array(values).transpose()
 
     means  = []
@@ -50,15 +51,18 @@ def calculate_sem_trace(measurements):
 
     return times, means, errors
 
-def concentration_measurements(parameter_set):
+
+def concentration_measurements(simulations):
     results = collections.defaultdict(list)
-    for simulation in parameter_set:
+    for simulation in simulations:
         for name, measurement in simulation['concentrations'].iteritems():
             results[name].append(measurement)
+    return results
 
-def filament_measurements(parameter_set):
+
+def filament_measurements(simulations):
     results = collections.defaultdict(list)
-    for simulation in parameter_set:
-        for filament in simulation['filaments']:
+    for filament in utils.iter_filaments(simulations):
             for name, measurement in filament['measurements'].iteritems():
                 results[name].append(measurement)
+    return results

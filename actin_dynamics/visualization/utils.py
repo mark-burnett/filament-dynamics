@@ -15,10 +15,12 @@
 
 import numpy
 
-def parameter_title(parameter_set_number, parameters=None, parameter_labels=[]):
-    title = 'Parameter Set %d\n' % parameter_set_number
+def parameter_title(parameters=None, parameter_labels=[]):
+#    title = 'Parameter Set %d\n' % parameter_set_number
+    title = ''
     for label in parameter_labels:
-        if title[-1] != '\n' and title[-1] != ' ':
+        if title and title[-1] != ' ':
+#        if title[-1] != '\n' and title[-1] != ' ':
             title += ' -- '
         title += label + ': ' + str(parameters[label])
     return title

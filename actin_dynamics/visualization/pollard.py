@@ -50,7 +50,7 @@ CONCENTRATIONS_ADP_COLOR   = green[scheme_index]
 
 CONCENTRATIONS_PI_COLOR    = orange[scheme_index]
 
-def factin(hdf_file=None, parameter_set_number=None, parameter_labels=[],
+def factin(parameter_set, parameter_labels=[],
            fluorescence_filename='pollard_length.dat',
            adppi_filename='pollard_cleavage.dat',
            fill_alpha=0.2,
@@ -60,6 +60,8 @@ def factin(hdf_file=None, parameter_set_number=None, parameter_labels=[],
     # Load the data.
     fluor_data = io.data.load_data(fluorescence_filename)
     adppi_data = io.data.load_data(adppi_filename)
+
+    parameters = parameter_set['parameters']
 
     # Scale fluorescence data to end at 1
     final_fluorescence_value = fluor_data[1][-1]
@@ -74,23 +76,13 @@ def factin(hdf_file=None, parameter_set_number=None, parameter_labels=[],
                                   color=fluorescence_color,
                                   linewidth=2)
 
-    # HDF data access.
-    simulations, analysis = io.hdf.utils.get_ps_ana(hdf_file)
-    parameters = simulations.select_child_number(parameter_set_number).parameters
-
-    pollard_parameter_sets = analysis.create_or_select_child('pollard')
-    pollard_ps = pollard_parameter_sets.select_child_number(parameter_set_number)
-
-    sem_parameter_sets = analysis.create_or_select_child('sem')
-    sem_ps = sem_parameter_sets.select_child_number(parameter_set_number)
-
     # Used parameters
     ftc = parameters['filament_tip_concentration']
     seed_concentration = parameters['seed_concentration']
 
     # Get and plot the simulation results.
     # Fluorescence
-    fluor_sim = ana_utils.get_measurement(pollard_ps, 'pyrene_fluorescence')
+    fluor_sim = parameter_set['sem']['pyrene_fluorescence']
     fluor_sim = ana_utils.scale_measurement(fluor_sim,
                                             1 / final_fluorescence_value)
     basic.plot_smooth_measurement(fluor_sim, label='Pyrene Sim',
@@ -99,7 +91,7 @@ def factin(hdf_file=None, parameter_set_number=None, parameter_labels=[],
                                   linestyle='dashed')
 
     # F-ADP-Pi-actin
-    adppi_measurement = ana_utils.get_measurement(sem_ps, 'pyrene_adppi_count')
+    adppi_measurement = parameter_set['sem']['pyrene_adppi_count']
 
     scaled_adppi = ana_utils.scale_measurement(adppi_measurement, ftc)
 
@@ -109,7 +101,7 @@ def factin(hdf_file=None, parameter_set_number=None, parameter_labels=[],
                                   linestyle='dashed')
 
     # Simulated F-actin concentration
-    length_sim = ana_utils.get_measurement(sem_ps, 'length')
+    length_sim = parameter_set['sem']['length']
     scaled_length = ana_utils.scale_measurement(length_sim, ftc)
     subtraced_length = ana_utils.add_number(scaled_length, -seed_concentration)
 
@@ -119,8 +111,7 @@ def factin(hdf_file=None, parameter_set_number=None, parameter_labels=[],
                                   linestyle='dashed')
 
     # Misc. configuration
-    title = utils.parameter_title(parameter_set_number, parameters,
-                                   parameter_labels)
+    title = utils.parameter_title(parameters, parameter_labels)
     pylab.title(title)
 
     pylab.xlim((0, 41))
@@ -134,26 +125,16 @@ def factin(hdf_file=None, parameter_set_number=None, parameter_labels=[],
     pylab.show()
 
 
-def filaments(hdf_file=None, parameter_set_number=None, parameter_labels=[],
+def filaments(parameter_set, parameter_labels=[],
               adppi_filename='pollard_cleavage.dat',
               factin_color=FILAMENT_FACTIN_COLOR,
               adppi_color=FILAMENT_ADPPI_COLOR,
               trace_alpha=0.1,
               fill_alpha=0.2):
+    parameters = parameter_set['parameters']
+
     # ADP-Pi data access
     adppi_data = io.data.load_data(adppi_filename)
-
-    # HDF data access.
-    simulations, analysis = io.hdf.utils.get_ps_ana(hdf_file)
-
-    parameters = simulations.select_child_number(parameter_set_number).parameters
-
-    downsampled_parameter_sets = analysis.create_or_select_child('downsample')
-    parameter_set = downsampled_parameter_sets.select_child_number(
-            parameter_set_number)
-
-    sem_parameter_sets = analysis.create_or_select_child('sem')
-    sem_ps = sem_parameter_sets.select_child_number(parameter_set_number)
 
     # Used parameters
     ftc = parameters['filament_tip_concentration']
@@ -163,9 +144,9 @@ def filaments(hdf_file=None, parameter_set_number=None, parameter_labels=[],
     adppi_data_line = basic.plot_scatter_measurement(adppi_data,
             label='F-ADPPi Data', color=adppi_color)
 
-    for filament in parameter_set.iter_filaments():
+    for filament in ana_utils.iter_filaments(parameter_set['downsampled']):
         # Length
-        length = zip(*filament.measurements.length.read())
+        length = filament['measurements']['length']
         scaled_length = ana_utils.scale_measurement(length, ftc)
         subtraced_length = ana_utils.add_number(scaled_length,
                                                 -seed_concentration)
@@ -174,13 +155,13 @@ def filaments(hdf_file=None, parameter_set_number=None, parameter_labels=[],
                                       line_alpha=trace_alpha)
 
         # ADPPi
-        adppi_count = zip(*filament.measurements.pyrene_adppi_count)
+        adppi_count = filament['measurements']['pyrene_adppi_count']
         scaled_adppi = ana_utils.scale_measurement(adppi_count, ftc)
         basic.plot_smooth_measurement(scaled_adppi,
                                       color=adppi_color,
                                       line_alpha=trace_alpha)
 
-    length_sim = ana_utils.get_measurement(sem_ps, 'length')
+    length_sim = parameter_set['sem']['length']
     scaled_length = ana_utils.scale_measurement(length_sim, ftc)
     subtraced_length = ana_utils.add_number(scaled_length, -seed_concentration)
 
@@ -188,13 +169,13 @@ def filaments(hdf_file=None, parameter_set_number=None, parameter_labels=[],
                                                 color=factin_color,
                                                 fill_alpha=fill_alpha)
 
-    adppi = ana_utils.get_measurement(sem_ps, 'pyrene_adppi_count')
+    adppi = parameter_set['sem']['pyrene_adppi_count']
     scaled_adppi = ana_utils.scale_measurement(adppi, ftc)
     adppi_line = basic.plot_smooth_measurement(scaled_adppi,
                                                color=adppi_color,
                                                fill_alpha=fill_alpha)
 
-    title = utils.parameter_title(parameter_set_number, parameters, parameter_labels)
+    title = utils.parameter_title(parameters, parameter_labels)
     pylab.title(title)
 
     pylab.xlim((0, 41))
@@ -210,28 +191,23 @@ def filaments(hdf_file=None, parameter_set_number=None, parameter_labels=[],
     pylab.show()
 
 
-def concentrations(hdf_file=None, parameter_set_number=None, parameter_labels=[],
+def concentrations(parameter_set, parameter_labels=[],
                    atp_color=CONCENTRATIONS_ATP_COLOR,
                    adppi_color=CONCENTRATIONS_ADPPI_COLOR,
                    adp_color=CONCENTRATIONS_ADP_COLOR,
                    pi_color=CONCENTRATIONS_PI_COLOR,
                    fill_alpha=0.2):
-    # HDF setup
-    simulations, analysis = io.hdf.utils.get_ps_ana(hdf_file)
-    parameters = simulations.select_child_number(parameter_set_number).parameters
-
-    sem_parameter_sets = analysis.create_or_select_child('sem')
-    sem_ps = sem_parameter_sets.select_child_number(parameter_set_number)
+    parameters = parameter_set['parameters']
 
     # Extract data
-    atp_sim = ana_utils.get_measurement(sem_ps, 'pyrene_ATP')
-    adppi_sim = ana_utils.get_measurement(sem_ps, 'pyrene_ADPPi')
+    atp_sim   = parameter_set['sem']['pyrene_ATP']
+    adppi_sim = parameter_set['sem']['pyrene_ADPPi']
 
-    pyrene_adp_sim = ana_utils.get_measurement(sem_ps, 'pyrene_ADP')
-    adp_sim = ana_utils.get_measurement(sem_ps, 'ADP')
+    pyrene_adp_sim = parameter_set['sem']['pyrene_ADP']
+    adp_sim = parameter_set['sem']['ADP']
     full_adp_sim = ana_utils.add_measurements(pyrene_adp_sim, adp_sim)
 
-    pi_sim = ana_utils.get_measurement(sem_ps, 'Pi')
+    pi_sim = parameter_set['sem']['Pi']
 
     # Actual Plotting
     pylab.figure()
@@ -253,8 +229,7 @@ def concentrations(hdf_file=None, parameter_set_number=None, parameter_labels=[]
                                   linestyle='dashed')
 
     # Misc. configuration
-    title = utils.parameter_title(parameter_set_number, parameters,
-                                   parameter_labels)
+    title = utils.parameter_title(parameters, parameter_labels)
     pylab.title(title)
 
     pylab.xlim((0, 41))

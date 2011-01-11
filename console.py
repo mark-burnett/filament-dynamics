@@ -22,12 +22,12 @@ def open_console():
 
     # Create namespaces.
     from actin_dynamics import analysis
-#    from actin_dynamics import visualization
+    from actin_dynamics import visualization
     from actin_dynamics import io
 
     local_namespace  = {'analysis': analysis,
-                        'io': io}
-#                        'visualization': visualization}
+                        'io': io,
+                        'visualization': visualization}
 
     # Create shell.
     shell = IPShellEmbed(argv=[], banner=banner)
