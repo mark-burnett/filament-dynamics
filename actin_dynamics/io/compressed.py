@@ -26,3 +26,9 @@ def read_object(filename):
     with open(filename) as f:
         compressor = gzip.GzipFile(fileobj=f)
         return cPickle.load(compressor)
+
+def combine_list_files(filenames):
+    result = []
+    for filename in filenames:
+        result.extend(io.compressed.read_object(filename))
+    return result

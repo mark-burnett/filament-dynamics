@@ -4,13 +4,11 @@ Immediate concerns:
         2 * (a-b)^2 / ((a + b) * std)
 
     Make some visualization aids.
-        2d chi^2 surface
-
         way to slice based on parameter values/ranges
-        print the values of a specific parameter used in the file
 
         get good color scheme
         prettify 1d chi^2 plot
+        prettify 2d chi^2 plot
 
 
 Broken Windows:
@@ -23,10 +21,6 @@ Usability:
 
 
 Enhancements:
-    Use multiprocess.Pool for the common analysis.
-        * This is becoming a big deal.  Analysis takes longer than sim.
-            The problem is that this appears to be io limited.
-            Basically using HDF may be seriously handicapping me.
     Look into PyPy for cli.py
         replace multiprocess module with a script that runs multiple instances.
         perform analysis, combine output files.

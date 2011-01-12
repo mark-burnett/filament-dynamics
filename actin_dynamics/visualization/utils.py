@@ -15,6 +15,12 @@
 
 import numpy
 
+def get_parameter_values(analysis_container, parameter_name):
+    parameter_values = set()
+    for ana in analysis_container:
+        parameter_values.add(ana['parameters'][parameter_name])
+    return sorted(list(parameter_values))
+
 def parameter_title(parameters=None, parameter_labels=[]):
 #    title = 'Parameter Set %d\n' % parameter_set_number
     title = ''
