@@ -18,10 +18,111 @@ import pylab
 from actin_dynamics import io
 
 from . import basic
+from . import parameters
 from . import utils
 
 from actin_dynamics.analysis import utils as ana_utils
 
+def goodness_of_fit(analysis_container,
+                    ftc=True,
+                    cleavage_rate=False,
+                    cleavage_cooperativity=False):
+    # values_vs_parameter plots
+        # parameters:
+            # filament_tip_concentration
+            # cleavage_rate
+            # cleavage_cooperativity
+        # value names:
+            # fluorescence fit
+            # adppi_fit
+    if ftc:
+        _gof_helper(analysis_container,
+                    parameter_name='filament_tip_concentration',
+                    value_names=['adppi_fit', 'fluorescence_fit'],
+                    plot_labels=['ADP-Pi', 'Fluorescence'],
+                    xlabel='Filament Tip Concentration (uM)',
+                    ylabel='Goodness of Fit')
+
+    if cleavage_rate:
+        _gof_helper(analysis_container,
+                    parameter_name='cleavage_rate',
+                    value_names=['adppi_fit', 'fluorescence_fit'],
+                    plot_labels=['ADP-Pi', 'Fluorescence'],
+                    xlabel='Cleavage Rate (s^-1)',
+                    ylabel='Goodness of Fit')
+
+    if cleavage_cooperativity:
+        _gof_helper(analysis_container,
+                    parameter_name='cleavage_cooperativity',
+                    value_names=['adppi_fit', 'fluorescence_fit'],
+                    plot_labels=['ADP-Pi', 'Fluorescence'],
+                    xlabel='Cleavage Cooperativity',
+                    ylabel='Goodness of Fit',
+                    logscale_x=True)
+    
+    pylab.show()
+
+    # 2d value_vs_2_parameters
+        # parameter pairs:
+            # cleavage_rate, cleavage_cooperativity
+
+def _gof_helper(analysis_container, parameter_name=None, value_names=None,
+                plot_labels=None, xlabel=None, ylabel=None, title=None,
+                legend_loc=None, logscale_x=False, logscale_y=False):
+    pylab.figure()
+    parameters.values_vs_parameter(analysis_container,
+            parameter_name=parameter_name,
+            value_names=value_names,
+            plot_labels=plot_labels)
+
+    pylab.xlabel(xlabel)
+    pylab.ylabel(ylabel)
+
+
+    if logscale_x and logscale_y:
+        pylab.loglog()
+    elif logscale_x:
+        pylab.semilogx()
+    elif logscale_y:
+        pylab.semilogy()
+
+    if title:
+        pylab.title(title)
+
+    pylab.legend(loc=legend_loc)
+
+def best_fit_plots(analysis_container,
+                   fluorescence_filename='pollard_length.dat',
+                   adppi_filename='pollard_cleavage.dat',
+                   best_fit='total'):
+    best_par_set = None
+    # Find best parameter set.
+    if 'total' == best_fit:
+        best = None
+        best_index = None
+        for par_set in analysis_container:
+            value = (par_set['values']['fluorescence_fit'] +
+                     par_set['values']['adppi_fit'])
+            if not best or value < best:
+                best = value
+                best_par_set = par_set
+    elif 'fluorescence' == best_fit:
+        raise NotImplementedError()
+    elif 'adppi' == best_fit:
+        raise NotImplementedError()
+
+    # Factin
+    factin(best_par_set,
+           parameter_labels=['filament_tip_concentration', 'cleavage_rate',
+                             'cleavage_cooperativity'])
+    # Filaments
+    filaments(best_par_set,
+              parameter_labels=['filament_tip_concentration', 'cleavage_rate',
+                                'cleavage_cooperativity'])
+    # Concentrations
+    concentrations(best_par_set,
+                   parameter_labels=['filament_tip_concentration',
+                                     'cleavage_rate', 'cleavage_cooperativity'])
 
 # Original Colors
 #DEFAULT_FACTIN_COLOR = '#A20000'

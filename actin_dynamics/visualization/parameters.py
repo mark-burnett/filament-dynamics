@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import collections
+import itertools
 import numpy
 
 import pylab
@@ -22,25 +23,27 @@ from . import utils
 
 def values_vs_parameter(analysis_container,
                         parameter_name=None,
-                        value_names=None):
-    parameters = []
-    values = collections.defaultdict(list)
+                        value_names=None,
+                        plot_labels=None):
+    value_dicts = [dict() for vn in value_names]
 
     for parameter_set in analysis_container:
-        parameters.append(parameter_set['parameters'][parameter_name])
-        for value_name in value_names:
-            values[value_name].append(parameter_set['values'][value_name])
+        for value_name, val_dict in itertools.izip(value_names,
+                                                   value_dicts):
+            par_value = parameter_set['parameters'][parameter_name]
+            value = parameter_set['values'][value_name]
+            val_dict[par_value] = min(value, val_dict.get(par_value, value))
 
-    pylab.figure()
-    pylab.xlabel(parameter_name)
-    pylab.ylabel(', '.join(value_names))
+    parameters  = sorted(value_dicts[0].keys())
+    value_lists = [[val_dict[p] for p in parameters]
+                   for val_dict in value_dicts]
 
-    for name, value in values.iteritems():
-        pylab.plot(parameters, value, label=name)
+    if plot_labels is None:
+        plot_labels = value_names
 
-    pylab.legend()
-
-    pylab.show()
+    # XXX also print total
+    for name, values in itertools.izip(plot_labels, value_lists):
+        pylab.plot(parameters, values, label=name)
 
 def value_vs_2_parameters(analysis_container,
                           x_parameter=None,

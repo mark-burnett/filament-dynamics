@@ -22,12 +22,10 @@ def get_parameter_values(analysis_container, parameter_name):
     return sorted(list(parameter_values))
 
 def parameter_title(parameters=None, parameter_labels=[]):
-#    title = 'Parameter Set %d\n' % parameter_set_number
     title = ''
     for label in parameter_labels:
-        if title and title[-1] != ' ':
-#        if title[-1] != '\n' and title[-1] != ' ':
-            title += ' -- '
+        if title and title[-1] != '\n':
+            title += '\n'
         title += label + ': ' + str(parameters[label])
     return title
 

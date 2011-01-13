@@ -23,8 +23,7 @@ def plot_scatter_measurement(measurement, color='blue', fmt='o', **kwargs):
 
     if error_bars:
         return pylab.errorbar(times, values, yerr=error_bars, color=color,
-                              fmt=fmt,
-                              **kwargs)
+                              fmt=fmt, **kwargs)
     else:
         return pylab.scatter(times, values, color=color, **kwargs)
 
