@@ -47,13 +47,9 @@ class Simulation(object):
         self.rng            = rng
 
 
-def run_and_report_sim(sim):
+def run_and_report(sim):
     run_simulation(sim)
     return report_measurements(sim)
-
-def run_report_and_analyze(sim):
-    sim_results = run_simulation(sim)
-    return _analysis.perform_common_single(sim_results)
 
 
 def run_simulation(sim):
