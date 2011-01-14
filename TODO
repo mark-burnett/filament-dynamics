@@ -4,20 +4,24 @@ Immediate concerns:
         2 * (a-b)^2 / ((a + b) * std)
 
     Make some visualization aids.
-        way to slice based on parameter values/ranges
-
         get good color scheme
         prettify 1d chi^2 plot
         prettify 2d chi^2 plot
 
+    To have big runs, I need to deal with the 8gb memory issue.
+        This should probably be combined with pypy adoption.
+
 
 Broken Windows:
-    Consider performing common analysis immediately and only saving that.
+    Cleaner visualization code.
 
 
 Usability:
     Add start message to console.py
         Needs to have some basic help.
+
+Validation:
+    Analysis code has no unit tests (it's only tested manually).
 
 
 Enhancements:

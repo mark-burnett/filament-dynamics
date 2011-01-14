@@ -55,13 +55,17 @@ def value_vs_2_parameters(analysis_container,
     x_values = utils.get_parameter_values(analysis_container, x_parameter)
     y_values = utils.get_parameter_values(analysis_container, y_parameter)
 
-    z_values = numpy.zeros((len(x_values), len(y_values)))
+    z_values = -numpy.ones((len(x_values), len(y_values)))
     for parameter_set in analysis_container:
         parameters = parameter_set['parameters']
         xi = x_values.index(parameters[x_parameter])
         yi = y_values.index(parameters[y_parameter])
 
-        z_values[xi, yi] = parameter_set['values'][value_name]
+        current_value = parameter_set['values'][value_name]
+        if -1 == z_values[xi, yi]:
+            z_values[xi, yi] = current_value
+        else:
+            z_values[xi, yi] = min(current_value, z_values[xi, yi])
 
     pylab.figure()
 

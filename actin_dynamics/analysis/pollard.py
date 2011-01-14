@@ -48,8 +48,7 @@ def get_fluorescence(parameter_set, coefficients=None):
     adp_data   = parameter_set['pyrene_adp_count']
 
     if coefficients is None:
-        # XXX These may not match literature values, I can't check now.
-        coefficients = {'atp':   0.35,
+        coefficients = {'atp':   0.37,
                         'adppi': 0.56,
                         'adp':   0.75}
 
