@@ -116,7 +116,7 @@ def run_simulation(sim):
             # Perform filament measurements
             for measurement in sim.measurements:
                 measurement.perform(time, sim.filaments)
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
         raise
 

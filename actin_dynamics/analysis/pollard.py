@@ -13,10 +13,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy
-
-from scipy import optimize as _optimize
-
 from . import interpolation as _interpolation
 from . import fitting as _fitting
 from . import utils as _utils
@@ -68,8 +64,7 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
     '''
     Returns normalization parameter and chi squared of fit.
     '''
-    sv = numpy.array(fluorescence_sim[1])
-    dv = numpy.array(fluorescence_data[1])
+    from scipy import optimize as _optimize
 
     # Create residual function
     def model_function(normalization):

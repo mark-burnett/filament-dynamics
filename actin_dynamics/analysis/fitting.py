@@ -13,43 +13,41 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy
-
 import itertools
+import math
+
+from actin_dynamics import vectorize
 
 def measurement_chi_squared(a, b, minimum_error=0.001):
-    av = numpy.array(a[1])
-    bv = numpy.array(b[1])
+    at, av, ae = a
+    bt, bv, be = b
 
-    errors = numpy.zeros(len(av))
+    errors = [0 for a in av]
     if 3 == len(a):
-        errors += numpy.power(a[2], 2)
-    elif 4 == len(a):
-        errors += numpy.power(numpy.array(a[3]) - numpy.array(a[2]), 2)
+        errors = vectorize.add(errors, [ax**2 for ax in ae])
     if 3 == len(b):
-        errors += numpy.power(b[2], 2)
-    elif 4 == len(b):
-        errors += numpy.power(numpy.array(b[3]) - numpy.array(b[2]), 2)
+        errors = vectorize.add(errors, [bx**2 for bx in be])
 
     for i, e in enumerate(errors):
         if e < minimum_error:
             errors[i] = 1
 
-    return sum(numpy.power(av-bv,2) / errors)
+    return sum((ax - bx)**2 / ex
+               for ax, bx, ex in itertools.izip(av, bv, errors))
 
 def measurement_other(a, b, minimum_error=0.0001):
-    av = numpy.array(a[1])
-    bv = numpy.array(b[1])
+    at, av, ae = a
+    bt, bv, be = b
 
-    errors = numpy.array([minimum_error for v in av])
-
+    errors = [0 for a in av]
     if 3 == len(a):
-        errors += numpy.power(a[2], 2)
-    elif 4 == len(a):
-        errors += numpy.power(numpy.array(a[3]) - numpy.array(a[2]), 2)
+        errors = vectorize.add(errors, [ax**2 for ax in ae])
     if 3 == len(b):
-        errors += numpy.power(b[2], 2)
-    elif 4 == len(b):
-        errors += numpy.power(numpy.array(b[3]) - numpy.array(b[2]), 2)
+        errors = vectorize.add(errors, [bx**2 for bx in be])
 
-    return 2 * sum(numpy.power(av-bv, 2) / sum(av + bv) / numpy.sqrt(errors))
+    for i, e in enumerate(errors):
+        if e < minimum_error:
+            errors[i] = 1
+
+    return 2 * sum((ax - bx)**2 / abs(ax + bx) / math.sqrt(ex)
+                   for ax, bx, ex in itertools.izip(ax, bx, ex))

@@ -13,16 +13,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# XXX can we eliminate numpy here?
-import numpy
-
 from . import interpolation
+
+def _arange(min_value, max_value, dx):
+    result = []
+    value = min_value
+    while value < max_value:
+        result.append(value)
+        value += dx
+    return result
 
 def all_measurements(parameter_set, sample_period=1, epsilon=1e-10,
                      source='simulations'):
     analysis = []
     for simulation in parameter_set[source]:
-        sample_times = list(numpy.arange(0,
+        sample_times = list(_arange(0,
                 parameter_set['parameters']['simulation_duration'] + epsilon,
                 sample_period))
 

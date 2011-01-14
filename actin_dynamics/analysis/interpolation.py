@@ -15,29 +15,18 @@
 
 import bisect
 
-import scipy.interpolate
+def _interp1d(x_data, y_data):
+    def inner(x_array):
+        result = []
+        for x in x_array:
+            left_xi  = bisect.bisect_left(x_data, x, lo=low_x)
+            if left_xi + 1< len(x_data):
+                result.append(linear_project(x_data[left],     y_data[left],
+                                             x_data[left + 1], y_data[left + 1],
+                                             x))
+        return result
 
-#def resample(data, sample_times):
-#    '''
-#    Downsample data to sample_times.
-#
-#    Tries to use well behaved interpolation methods if there are
-#    enough points.  If not, it improvises.
-#    '''
-#    times, values = data
-#
-#    if len(values) < 2:
-#        return sample_times, [values[0] for t in sample_times]
-#    elif len(values) < 4:
-#        interp = scipy.interpolate.interp1d(times, values, bounds_error=False,
-#                                            fill_value=values[-1])
-#        return sample_times, interp(sample_times)
-#    else:
-#        bbox = [min(sample_times[0], times[0]),
-#                max(sample_times[-1], times[-1])]
-#        interp = scipy.interpolate.InterpolatedUnivariateSpline(
-#                times, values, bbox=bbox)
-#        return sample_times, interp(sample_times)
+    return inner
 
 def linear_resample(data, new_x):
     x_data, y_data = data
@@ -45,7 +34,7 @@ def linear_resample(data, new_x):
     if 1 == len(x_data):
         return new_x, [y_data[0] for x in new_x]
 
-    linterp = scipy.interpolate.interp1d(x_data, y_data)
+    linterp = _interp1d(x_data, y_data)
 
     result = []
     for x in new_x:

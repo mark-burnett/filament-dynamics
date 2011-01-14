@@ -17,8 +17,6 @@ import collections
 import math
 import operator
 
-import numpy
-
 from . import utils
 
 
@@ -39,13 +37,15 @@ def calculate_sem_trace(measurements):
     '''
     sqrt_N = math.sqrt(len(measurements))
     values = map(operator.itemgetter(1), measurements)
-    transposed_values = numpy.array(values).transpose()
+    transposed_values = zip(*values)
 
     means  = []
     errors = []
     for tv in transposed_values:
-        means.append(numpy.average(tv))
-        errors.append(numpy.std(tv) / sqrt_N)
+        mean = sum(tv) / len(tv)
+        err  = math.sqrt(sum((v - mean)**2 for v in tv) / len(tv)) / sqrt_N
+        means.append(mean)
+        errors.append(err)
 
     times = measurements[0][0]
 

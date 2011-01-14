@@ -13,42 +13,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
-import multiprocessing
+import cPickle as _cPickle
 
-from . import analysis as _analysis
 from . import io as _io
 from . import simulations as _simulations
 
 def run_simulations(simulation_factory, output_file_name):
-    pool = multiprocessing.Pool()
-
-    try:
-        results = []
-        for parameters, ssg in simulation_factory:
-            ps_result = pool.map_async(_simulations.run_and_report, ssg)
-            sim_ps = {'parameters': parameters,
-                      'simulations': ps_result.get(999999)}
-            ana_ps = _analysis.perform_common_single(sim_ps)
-            results.append(ana_ps)
-
-        pool.close()
-        pool.join()
-
-    except KeyboardInterrupt:
-        # Handle CTRL-C
-        pool.terminate()
-        print 'Keyboard Interrupt received.  Writing current reults.'
-    
-    _io.compressed.write_object(results, output_file_name)
-
-def sp_run_simulations(simulation_factory, output_file_name):
-    results = []
+    output_stream = _io.compressed.output_stream(output_file_name)
     for parameter_set, ssg in simulation_factory:
-        ps_result = map(_simulations.run_report_and_analyze, ssg)
-        sim_ps = {'parameters': parameters,
-                  'simulations': ps_result.get(999999)}
-        ana_ps = _analysis.perform_common_single(sim_ps)
-        results.append(ana_ps)
+        ps_result = map(_simulations.run_simulation, ssg)
 
-    _io.compressed.write_object(results, output_file_name)
+        _cPickle.dump({'parameters': parameter_set,
+                       'simulations': ps_result}, output_stream)
+
+    output_stream.close()
