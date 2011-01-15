@@ -27,6 +27,7 @@ def run_simulations(simulation_factory, output_file_name):
 
         full_set = {'parameters': parameter_set, 'simulations': ps_result}
 
-        _cPickle.dump(_perform_common_single(full_set), output_stream)
+        _cPickle.dump(_perform_common_single(full_set), output_stream,
+                      protocol=cPickle.HIGHEST_PROTOCOL)
 
     output_stream.close()

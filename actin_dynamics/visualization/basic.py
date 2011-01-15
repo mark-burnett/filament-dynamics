@@ -38,3 +38,26 @@ def plot_smooth_measurement(measurement, color='black', fill_alpha=0.5,
 
     return pylab.plot(times, values, color=color, linestyle=linestyle,
                       alpha=line_alpha, **kwargs)
+
+def plot_contour(x_values, y_values, z_values, reudction_axis=None,
+                 xlabel=None, ylabel=None,
+                 logscale_x=False, logscale_y=False):
+    if xlabel:
+        pylab.xlabel(xlabel)
+    if ylabel:
+        pylab.ylabel(ylabel)
+
+    if logscale_x and logscale_y:
+        pylab.loglog()
+    elif logscale_x:
+        pylab.semilogx()
+    elif logscale_y:
+        pylab.semilogy()
+
+    reduced_z = z_values
+    if reduction_axis is not None:
+        reduced_z = z_values.min(reduction_axis)
+
+    pylab.contourf(x_values, y_values, reduced_z)
+    pylab.colorbar()
+

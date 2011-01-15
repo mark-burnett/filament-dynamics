@@ -28,7 +28,6 @@ def read_object(filename):
     return cPickle.load(compressor)
 
 def read_objects(filename):
-    print filename
     f = open(filename)
     compressor = gzip.GzipFile(fileobj=f)
     results = []
@@ -38,7 +37,6 @@ def read_objects(filename):
     except EOFError:
         pass
     f.close()
-    print len(results)
     return results
 
 def output_stream(filename):
