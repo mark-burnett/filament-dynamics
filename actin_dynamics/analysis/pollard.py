@@ -69,8 +69,9 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
     def model_function(normalization):
         if normalization[0] <= 0:
             return 5000
-        scaled_sim = _utils.scale_measurement(fluorescence_sim, normalization[0])
-        cs = _fitting.measurement_other(fluorescence_data, scaled_sim)
+        scaled_sim = _utils.scale_measurement(fluorescence_sim,
+                                              normalization[0])
+        cs = _fitting.naked_chi_squared(fluorescence_data, scaled_sim)
         return cs
 
     # Use scipy to generate the results.
@@ -95,6 +96,6 @@ def adppi_fit(parameter_set, data, source='sem'):
             raw_sim_data, sample_times)
     scaled_sim_data = _utils.scale_measurement(sampled_sim_data, ftc)
 
-    fit_quality = _fitting.measurement_other(scaled_sim_data, data)
+    fit_quality = _fitting.measurement_average_divided(scaled_sim_data, data)
 
     parameter_set['values']['adppi_fit'] = fit_quality

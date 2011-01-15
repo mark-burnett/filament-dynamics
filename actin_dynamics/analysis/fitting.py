@@ -35,19 +35,35 @@ def measurement_chi_squared(a, b, minimum_error=0.001):
     return sum((ax - bx)**2 / ex
                for ax, bx, ex in itertools.izip(av, bv, errors))
 
-def measurement_other(a, b, minimum_error=0.0001):
-    at, av, ae = a
-    bt, bv, be = b
+def measurement_average_divided(a, b, minimum_error=0.0001):
+    at, av = a[:2]
+    bt, bv = b[:2]
 
-    errors = [0 for a in av]
+    errors = [0 for x in av]
     if 3 == len(a):
+        ae = a[2]
         errors = vectorize.add(errors, [ax**2 for ax in ae])
+    elif 4 == len(a):
+        al, au = a[2:]
+        errors = vectorize.add(errors, [(aui - ali)**2
+                                        for ali, aui in itertools.izip(al, au)])
     if 3 == len(b):
+        be = b[2]
         errors = vectorize.add(errors, [bx**2 for bx in be])
+    elif 4 == len(b):
+        bl, bu = b[2:]
+        errors = vectorize.add(errors, [(bui - bli)**2
+                                        for bli, bui in itertools.izip(bl, bu)])
 
     for i, e in enumerate(errors):
         if e < minimum_error:
             errors[i] = 1
 
     return 2 * sum((ax - bx)**2 / abs(ax + bx) / math.sqrt(ex)
-                   for ax, bx, ex in itertools.izip(ax, bx, ex))
+                   for ax, bx, ex in itertools.izip(av, bv, errors))
+
+def naked_chi_squared(a, b):
+    at, av = a[:2]
+    bt, bv = b[:2]
+
+    return sum((ax - bx)**2 for ax, bx in itertools.izip(av, bv))

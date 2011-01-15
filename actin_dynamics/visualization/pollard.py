@@ -13,7 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import bisect
+
 import pylab
+import numpy
 
 from actin_dynamics import io
 
@@ -23,38 +26,93 @@ from . import utils
 
 from actin_dynamics.analysis import utils as ana_utils
 
+# Color Scheme Designer 3
+# http://colorschemedesigner.com/#3M62fw0w0w0w0
+blue   = ['#123EAB', '#2A4380', '#06246F', '#466FD5', '#6C8AD5']
+purple = ['#640CAB', '#582781', '#3F046F', '#9240D5', '#A468D5']
+green  = ['#00B945', '#238B49', '#00782D', '#37DC74', '#63DC90']
+orange = ['#FFAB00', '#BF9030', '#A66F00', '#FFC040', '#FFD173']
+
+scheme_index = 0
+
+FACTIN_FACTIN_COLOR       = blue[scheme_index]
+FACTIN_FLUORESCENCE_COLOR = purple[scheme_index]
+FACTIN_ADPPI_COLOR        = green[scheme_index]
+
+FILAMENT_FACTIN_COLOR = FACTIN_FACTIN_COLOR
+FILAMENT_ADPPI_COLOR  = FACTIN_ADPPI_COLOR
+
+CONCENTRATIONS_ATP_COLOR   = blue[scheme_index]
+CONCENTRATIONS_ADPPI_COLOR = purple[scheme_index]
+CONCENTRATIONS_ADP_COLOR   = green[scheme_index]
+
+CONCENTRATIONS_PI_COLOR    = orange[scheme_index]
+
+
 def fit(analysis_container, weights={'adppi_fit': 1}):
     rates, coops, ftcs, z_values = get_fitnesses(analysis_container, weights)
 
     pylab.figure()
+    pylab.suptitle(str(weights))
     pylab.subplot(2, 2, 1)
-    utils.plot_contour(rates, cooperativity, z_values,
+    basic.plot_contour(rates, coops, z_values,
                        reduction_axis=2,
                        xlabel='Cleavage Rate (s^-1)',
                        ylabel='Cleavage Cooperativity',
-                       logscale_x=True,
-                       logscale_y=True)
+                       logscale_y=True,
+                       logscale_z=True)
 
     pylab.subplot(2, 2, 2)
-    utils.plot_contour(filament_tip_concentration, cooperativity, z_values,
+    basic.plot_contour(ftcs, coops, z_values,
                        reduction_axis=0,
                        xlabel='Filament Tip Concentration (uM)',
                        ylabel='Cleavage Cooperativity',
-                       logscale_y=True)
+                       logscale_y=True,
+                       logscale_z=True,
+                       transpose=False)
        
     pylab.subplot(2, 2, 3)
-    utils.plot_contour(rates, filament_tip_concentration, z_values,
+    basic.plot_contour(rates, ftcs, z_values,
                        reduction_axis=1,
                        xlabel='Cleavage Rate (s^-1)',
                        ylabel='Filament Tip Concentration (uM)',
-                       logscale_x=True)
+                       logscale_z=True)
        
     pylab.subplot(2, 2, 4)
     _best_fit_plot(analysis_container, weights=weights)
 
     pylab.show()
 
-def _best_fit_plot(analysis_container, weights={'adppi_fit': 1},
+
+def get_fitnesses(analysis_container, weights):
+    rates = utils.get_parameter_values(analysis_container, 'cleavage_rate')
+    coops = utils.get_parameter_values(analysis_container,
+                                       'cleavage_cooperativity')
+    ftcs = utils.get_parameter_values(analysis_container,
+                                      'filament_tip_concentration')
+
+    fitnesses = -numpy.ones((len(rates), len(coops), len(ftcs)))
+    for parameter_set in analysis_container:
+        parameters = parameter_set['parameters']
+
+        ri = bisect.bisect_left(rates, parameters['cleavage_rate'])
+        ci = bisect.bisect_left(coops, parameters['cleavage_cooperativity'])
+        fi = bisect.bisect_left(ftcs, parameters['filament_tip_concentration'])
+
+        current_value = _weighted_value(parameter_set['values'], weights)
+
+        if -1 == fitnesses[ri, ci, fi]:
+            fitnesses[ri, ci, fi] = current_value
+        else:
+            fitnesses[ri, ci, fi] = min(current_value, fitnesses[ri, ci, fi])
+
+    return rates, coops, ftcs, fitnesses
+
+def _weighted_value(par_set_values, weights):
+    return sum(par_set_values[name] * weight
+               for name, weight in weights.iteritems())
+
+def _best_fit_plot(analysis_container, weights=None,
                    fluorescence_filename='pollard_length.dat',
                    adppi_filename='pollard_cleavage.dat'):
     best = get_best_par_set(analysis_container, weights=weights)
@@ -62,15 +120,16 @@ def _best_fit_plot(analysis_container, weights={'adppi_fit': 1},
     plot_full_par_set(best, fluorescence_filename=fluorescence_filename,
                       adppi_filename=adppi_filename)
 
-def get_best_par_set(analysis_container, weights={'adppi_fit': 1}):
+
+def get_best_par_set(analysis_container, weights=None):
     best = None
     for par_set in analysis_container:
-        value = sum(par_set['values'][name] * weight
-                    for name, weight in weights.iteritems())
+        value = _weighted_value(par_set['values'], weights)
         if not best or value < best:
             best = value
             best_par_set = par_set
-    return best
+    return best_par_set
+
 
 def plot_full_par_set(parameter_set, parameter_labels=[],
            fluorescence_filename='pollard_length.dat',
@@ -88,10 +147,9 @@ def plot_full_par_set(parameter_set, parameter_labels=[],
     # Scale fluorescence data to end at 1
     final_fluorescence_value = fluor_data[1][-1]
     fluor_data = ana_utils.scale_measurement(fluor_data,
-                                             1 / final_fluorescence_value)
+                                             2 / final_fluorescence_value)
 
     # Plot the data.
-    pylab.figure()
     basic.plot_scatter_measurement(adppi_data, label='F-ADPPi Data',
                                    color=adppi_color)
     basic.plot_smooth_measurement(fluor_data, label='Pyrene Data',
@@ -106,7 +164,7 @@ def plot_full_par_set(parameter_set, parameter_labels=[],
     # Fluorescence
     fluor_sim = parameter_set['sem']['pyrene_fluorescence']
     fluor_sim = ana_utils.scale_measurement(fluor_sim,
-                                            1 / final_fluorescence_value)
+                                            2 / final_fluorescence_value)
     basic.plot_smooth_measurement(fluor_sim, label='Pyrene Sim',
                                   color=fluorescence_color,
                                   fill_alpha=fill_alpha,
@@ -132,22 +190,22 @@ def plot_full_par_set(parameter_set, parameter_labels=[],
                                   fill_alpha=fill_alpha,
                                   linestyle='dashed')
 
-    for filament in ana_utils.iter_filaments(parameter_set['downsampled']):
-        # Length
-        length = filament['measurements']['length']
-        scaled_length = ana_utils.scale_measurement(length, ftc)
-        subtraced_length = ana_utils.add_number(scaled_length,
-                                                -seed_concentration)
-        basic.plot_smooth_measurement(subtraced_length,
-                                      color=factin_color,
-                                      line_alpha=trace_alpha)
-
-        # ADPPi
-        adppi_count = filament['measurements']['pyrene_adppi_count']
-        scaled_adppi = ana_utils.scale_measurement(adppi_count, ftc)
-        basic.plot_smooth_measurement(scaled_adppi,
-                                      color=adppi_color,
-                                      line_alpha=trace_alpha)
+#    for filament in ana_utils.iter_filaments(parameter_set['downsampled']):
+#        # Length
+#        length = filament['measurements']['length']
+#        scaled_length = ana_utils.scale_measurement(length, ftc)
+#        subtraced_length = ana_utils.add_number(scaled_length,
+#                                                -seed_concentration)
+#        basic.plot_smooth_measurement(subtraced_length,
+#                                      color=factin_color,
+#                                      line_alpha=trace_alpha)
+#
+#        # ADPPi
+#        adppi_count = filament['measurements']['pyrene_adppi_count']
+#        scaled_adppi = ana_utils.scale_measurement(adppi_count, ftc)
+#        basic.plot_smooth_measurement(scaled_adppi,
+#                                      color=adppi_color,
+#                                      line_alpha=trace_alpha)
 
     # Misc. configuration
     pylab.xlim((0, 41))
@@ -156,7 +214,7 @@ def plot_full_par_set(parameter_set, parameter_labels=[],
     pylab.xlabel('Time (s)')
     pylab.ylabel('Concentration (uM)')
 
-    pylab.legend(numpoints=1, loc=7)
+#    pylab.legend(numpoints=1, loc=7)
 
 
 def goodness_of_fit_1d(analysis_container,
@@ -246,33 +304,6 @@ def best_fit_plots(analysis_container,
     concentrations(best_par_set,
                    parameter_labels=['filament_tip_concentration',
                                      'cleavage_rate', 'cleavage_cooperativity'])
-
-# Original Colors
-#DEFAULT_FACTIN_COLOR = '#A20000'
-#DEFAULT_ADPPI_COLOR  = '#659700'
-#DEFAULT_FLUORESCENCE_COLOR = '#006161'
-
-# Color Scheme Designer 3
-# http://colorschemedesigner.com/#3M62fw0w0w0w0
-blue   = ['#123EAB', '#2A4380', '#06246F', '#466FD5', '#6C8AD5']
-purple = ['#640CAB', '#582781', '#3F046F', '#9240D5', '#A468D5']
-green  = ['#00B945', '#238B49', '#00782D', '#37DC74', '#63DC90']
-orange = ['#FFAB00', '#BF9030', '#A66F00', '#FFC040', '#FFD173']
-
-scheme_index = 0
-
-FACTIN_FACTIN_COLOR       = blue[scheme_index]
-FACTIN_FLUORESCENCE_COLOR = purple[scheme_index]
-FACTIN_ADPPI_COLOR        = green[scheme_index]
-
-FILAMENT_FACTIN_COLOR = FACTIN_FACTIN_COLOR
-FILAMENT_ADPPI_COLOR  = FACTIN_ADPPI_COLOR
-
-CONCENTRATIONS_ATP_COLOR   = blue[scheme_index]
-CONCENTRATIONS_ADPPI_COLOR = purple[scheme_index]
-CONCENTRATIONS_ADP_COLOR   = green[scheme_index]
-
-CONCENTRATIONS_PI_COLOR    = orange[scheme_index]
 
 def factin(parameter_set, parameter_labels=[],
            fluorescence_filename='pollard_length.dat',

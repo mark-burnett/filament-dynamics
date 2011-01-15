@@ -16,14 +16,11 @@
 import bisect
 
 def _interp1d(x_data, y_data):
-    def inner(x_array):
-        result = []
-        for x in x_array:
-            left_xi  = bisect.bisect_left(x_data, x, lo=low_x)
-            if left_xi + 1< len(x_data):
-                result.append(linear_project(x_data[left],     y_data[left],
-                                             x_data[left + 1], y_data[left + 1],
-                                             x))
+    def inner(x):
+        left = bisect.bisect_left(x_data, x)
+        result = linear_project(x_data[left],     y_data[left],
+                                x_data[left + 1], y_data[left + 1],
+                                x)
         return result
 
     return inner
@@ -40,7 +37,7 @@ def linear_resample(data, new_x):
     for x in new_x:
         try:
             y = float(linterp(x))
-        except ValueError:
+        except IndexError:
             if x < x_data[0]:
                 y = linear_project(x_data[0], y_data[0],
                                    x_data[1], y_data[1], x)
