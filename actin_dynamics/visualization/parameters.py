@@ -14,7 +14,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import collections
+import itertools
 import numpy
+import math
 
 import pylab
 
@@ -22,25 +24,27 @@ from . import utils
 
 def values_vs_parameter(analysis_container,
                         parameter_name=None,
-                        value_names=None):
-    parameters = []
-    values = collections.defaultdict(list)
+                        value_names=None,
+                        plot_labels=None):
+    value_dicts = [dict() for vn in value_names]
 
     for parameter_set in analysis_container:
-        parameters.append(parameter_set['parameters'][parameter_name])
-        for value_name in value_names:
-            values[value_name].append(parameter_set['values'][value_name])
+        for value_name, val_dict in itertools.izip(value_names,
+                                                   value_dicts):
+            par_value = parameter_set['parameters'][parameter_name]
+            value = parameter_set['values'][value_name]
+            val_dict[par_value] = min(value, val_dict.get(par_value, value))
 
-    pylab.figure()
-    pylab.xlabel(parameter_name)
-    pylab.ylabel(', '.join(value_names))
+    parameters  = sorted(value_dicts[0].keys())
+    value_lists = [[val_dict[p] for p in parameters]
+                   for val_dict in value_dicts]
 
-    for name, value in values.iteritems():
-        pylab.plot(parameters, value, label=name)
+    if plot_labels is None:
+        plot_labels = value_names
 
-    pylab.legend()
-
-    pylab.show()
+    # XXX also print total
+    for name, values in itertools.izip(plot_labels, value_lists):
+        pylab.plot(parameters, values, label=name)
 
 def value_vs_2_parameters(analysis_container,
                           x_parameter=None,
@@ -52,24 +56,28 @@ def value_vs_2_parameters(analysis_container,
     x_values = utils.get_parameter_values(analysis_container, x_parameter)
     y_values = utils.get_parameter_values(analysis_container, y_parameter)
 
-    z_values = numpy.zeros((len(x_values), len(y_values)))
+    z_values = -numpy.ones((len(x_values), len(y_values)))
     for parameter_set in analysis_container:
         parameters = parameter_set['parameters']
         xi = x_values.index(parameters[x_parameter])
         yi = y_values.index(parameters[y_parameter])
 
-        z_values[xi, yi] = parameter_set['values'][value_name]
+        current_value = math.log(parameter_set['values'][value_name])
+        if -1 == z_values[xi, yi]:
+            z_values[xi, yi] = current_value
+        else:
+            z_values[xi, yi] = min(current_value, z_values[xi, yi])
 
     pylab.figure()
 
     title = utils.parameter_title(parameters, parameter_labels)
     pylab.title(title)
 
-    pylab.xlabel(x_parameter)
-    pylab.ylabel(y_parameter)
+    pylab.xlabel(y_parameter)
+    pylab.ylabel(x_parameter)
 
-    pylab.xlim((x_values[0], x_values[-1]))
-    pylab.ylim((y_values[0], y_values[-1]))
+#    pylab.xlim((x_values[0], x_values[-1]))
+#    pylab.ylim((y_values[0], y_values[-1]))
 
     if logscale_x and logscale_y:
         pylab.loglog()
@@ -78,7 +86,12 @@ def value_vs_2_parameters(analysis_container,
     elif logscale_y:
         pylab.semilogy()
 
-    pylab.contourf(x_values, y_values, z_values)
+    print len(x_values), len(y_values)
+    print z_values.shape
+
+#    pylab.contourf(x_values, y_values, z_values)
+    pylab.contourf(y_values, x_values, z_values)
+#    pylab.contourf(z_values)
     pylab.colorbar()
 
     pylab.show()
