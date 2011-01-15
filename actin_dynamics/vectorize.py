@@ -13,22 +13,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import csv
+import itertools
 
-class DataThiefDialect(csv.Dialect):
-    delimiter = ' '
-    quotechar = '"'
-    doublequote = True
-    skipinitialspace = True
-    lineterminator = '\r\n'
-    quoting = csv.QUOTE_NONNUMERIC
+def add(a, b):
+    result = []
+    for ax, bx in itertools.izip(a, b):
+        result.append(ax + bx)
 
-def load_data(filename):
-    results = []
-#    with open(filename) as f:
-    f = open(filename)
-    reader = csv.reader(f, dialect=DataThiefDialect)
-    for row in reader:
-        new_row = map(float, row)
-        results.append(new_row)
-    return zip(*results)
+    return result
+

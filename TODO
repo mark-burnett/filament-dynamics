@@ -1,3 +1,8 @@
+PyPy Concerns:
+    make sure that variables don't jump outside of blocks
+        this is known to slow down pypy as it falls back on cpython
+
+
 Immediate concerns:
     Pick goodness of fit metric.
         chi^2

@@ -15,8 +15,6 @@
 
 import copy
 
-import numpy
-
 
 def iter_filaments(simulations):
     for simulation in simulations:
@@ -46,21 +44,19 @@ def scale_measurement(measurement, factor):
 
     return list([time]) + scaled_rest
 
-def add_measurements(errors=True, *measurements):
-    if errors:
+def add_measurements(use_errors=True, *measurements):
+    if use_errors:
         times, values, errors = copy.copy(measurements[0])
 
-        values = numpy.array(values)
-        errors = numpy.power(errors, 2)
+        errors = [e**2 for e in errors]
 
         for mtimes, mvalues, merrors in measurements[1:]:
-            mvalues = numpy.array(mvalues)
-            merrors = numpy.power(merrors, 2)
+            merrors = [e**2 for e in merrors]
 
-            values += mvalues
-            errors += merrors
+            values = _vectorize_add(values, mvalues)
+            errors = _vectorize_add(errors, merrors)
 
-        errors = numpy.sqrt(errors)
+        errors = map(math.sqrt, errors)
 
         return times, values, errors
     else:

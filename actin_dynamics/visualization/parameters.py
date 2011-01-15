@@ -16,6 +16,7 @@
 import collections
 import itertools
 import numpy
+import math
 
 import pylab
 
@@ -61,7 +62,7 @@ def value_vs_2_parameters(analysis_container,
         xi = x_values.index(parameters[x_parameter])
         yi = y_values.index(parameters[y_parameter])
 
-        current_value = parameter_set['values'][value_name]
+        current_value = math.log(parameter_set['values'][value_name])
         if -1 == z_values[xi, yi]:
             z_values[xi, yi] = current_value
         else:
@@ -72,11 +73,11 @@ def value_vs_2_parameters(analysis_container,
     title = utils.parameter_title(parameters, parameter_labels)
     pylab.title(title)
 
-    pylab.xlabel(x_parameter)
-    pylab.ylabel(y_parameter)
+    pylab.xlabel(y_parameter)
+    pylab.ylabel(x_parameter)
 
-    pylab.xlim((x_values[0], x_values[-1]))
-    pylab.ylim((y_values[0], y_values[-1]))
+#    pylab.xlim((x_values[0], x_values[-1]))
+#    pylab.ylim((y_values[0], y_values[-1]))
 
     if logscale_x and logscale_y:
         pylab.loglog()
@@ -85,7 +86,12 @@ def value_vs_2_parameters(analysis_container,
     elif logscale_y:
         pylab.semilogy()
 
-    pylab.contourf(x_values, y_values, z_values)
+    print len(x_values), len(y_values)
+    print z_values.shape
+
+#    pylab.contourf(x_values, y_values, z_values)
+    pylab.contourf(y_values, x_values, z_values)
+#    pylab.contourf(z_values)
     pylab.colorbar()
 
     pylab.show()

@@ -49,7 +49,8 @@ def goodness_of_fit(analysis_container,
                     value_names=['adppi_fit', 'fluorescence_fit'],
                     plot_labels=['ADP-Pi', 'Fluorescence'],
                     xlabel='Cleavage Rate (s^-1)',
-                    ylabel='Goodness of Fit')
+                    ylabel='Goodness of Fit',
+                    logscale_x=True)
 
     if cleavage_cooperativity:
         _gof_helper(analysis_container,
@@ -102,14 +103,26 @@ def best_fit_plots(analysis_container,
         best_index = None
         for par_set in analysis_container:
             value = (par_set['values']['fluorescence_fit'] +
-                     par_set['values']['adppi_fit'])
+                     15 * par_set['values']['adppi_fit'])
             if not best or value < best:
                 best = value
                 best_par_set = par_set
     elif 'fluorescence' == best_fit:
-        raise NotImplementedError()
+        best = None
+        best_index = None
+        for par_set in analysis_container:
+            value = par_set['values']['fluorescence_fit']
+            if not best or value < best:
+                best = value
+                best_par_set = par_set
     elif 'adppi' == best_fit:
-        raise NotImplementedError()
+        best = None
+        best_index = None
+        for par_set in analysis_container:
+            value = par_set['values']['adppi_fit']
+            if not best or value < best:
+                best = value
+                best_par_set = par_set
 
     # Factin
     factin(best_par_set,

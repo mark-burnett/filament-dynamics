@@ -17,18 +17,38 @@ import cPickle
 import gzip
 
 def write_object(data, filename):
-    with open(filename, mode='wb') as f:
-        compressor = gzip.GzipFile(fileobj=f)
-        cPickle.dump(data, compressor, protocol=cPickle.HIGHEST_PROTOCOL)
-        compressor.close()
+    f = open(filename, mode='wb')
+    compressor = gzip.GzipFile(fileobj=f)
+    cPickle.dump(data, compressor, protocol=cPickle.HIGHEST_PROTOCOL)
+    compressor.close()
 
 def read_object(filename):
-    with open(filename) as f:
-        compressor = gzip.GzipFile(fileobj=f)
-        return cPickle.load(compressor)
+    f = open(filename)
+    compressor = gzip.GzipFile(fileobj=f)
+    return cPickle.load(compressor)
 
-def combine_list_files(filenames):
-    result = []
+def read_objects(filename):
+    print filename
+    f = open(filename)
+    compressor = gzip.GzipFile(fileobj=f)
+    results = []
+    try:
+        while compressor:
+            results.append(cPickle.load(compressor))
+    except EOFError:
+        pass
+    f.close()
+    print len(results)
+    return results
+
+def output_stream(filename):
+    f = open(filename, mode='wb')
+    compressor = gzip.GzipFile(fileobj=f)
+    return compressor
+
+
+def combine_files(filenames):
+    results = []
     for filename in filenames:
-        result.extend(io.compressed.read_object(filename))
-    return result
+        results.extend(read_objects(filename))
+    return results
