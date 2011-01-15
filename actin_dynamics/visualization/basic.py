@@ -52,13 +52,13 @@ def plot_contour(x_values, y_values, z_values, reduction_axis=None,
     if reduction_axis is not None:
         reduced_z = z_values.min(reduction_axis)
     if logscale_z:
-        reduced_z = numpy.log(reduced_z)
+        reduced_z = numpy.log10(reduced_z)
 
     if transpose:
         reduced_z = reduced_z.transpose()
 
 
-    pylab.contourf(x_values, y_values, reduced_z)
+    pylab.contourf(x_values, y_values, reduced_z, cmap=pylab.cm.PRGn)
     pylab.colorbar()
 
     axes = pylab.gca()

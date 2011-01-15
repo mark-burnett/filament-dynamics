@@ -14,21 +14,34 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import interpolation as _interpolation
-from . import fitting as _fitting
+from . import residuals as _residuals
 from . import utils as _utils
 
 def fluorescence_fit(parameter_set, data, coefficients=None):
     # Calculate fluorescence curve.
     sim_results = get_fluorescence(parameter_set['sem'],
                                    coefficients=coefficients)
-    normalization, fluor_fit = fit_normalization(sim_results, data)
-    norm_simulation = _utils.scale_measurement(sim_results, normalization)
 
-    # Write fluorescence
-    parameter_set['sem']['pyrene_fluorescence'] = norm_simulation
+    x2_norm, x2_fit = fit_normalization(sim_results, data,
+            residual_function=_residuals.chi_squared)
+    sim_x2 = _utils.scale_measurement(sim_results, x2_norm)
 
-    # Write goodness of fit.
-    parameter_set['values']['fluorescence_fit'] = fluor_fit
+    parameter_set['values']['pyrene_fit_chi_squared'] = x2_fit
+    parameter_set['sem']['pyrene_fit_chi_squared'] = sim_x2
+
+    ad_norm, ad_fit = fit_normalization(sim_results, data,
+            residual_function=_residuals.average_divided)
+    sim_ad = _utils.scale_measurement(sim_results, ad_norm)
+
+    parameter_set['values']['pyrene_fit_average_divided'] = ad_fit
+    parameter_set['sem']['pyrene_fit_average_divided'] = sim_ad
+
+    nx2_norm, nx2_fit = fit_normalization(sim_results, data,
+            residual_function=_residuals.naked_chi_squared)
+    sim_nx2 = _utils.scale_measurement(sim_results, nx2_norm)
+
+    parameter_set['values']['pyrene_fit_naked_chi_squared'] = nx2_fit
+    parameter_set['sem']['pyrene_fit_naked_chi_squared'] = sim_nx2
 
 
 def get_fluorescence(parameter_set, coefficients=None):
@@ -59,7 +72,8 @@ def get_fluorescence(parameter_set, coefficients=None):
                                    scaled_adp_data)
 
 
-def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
+def fit_normalization(fluorescence_sim=None, fluorescence_data=None,
+                      residual_function=_residuals.naked_chi_squared):
     '''
     Returns normalization parameter and chi squared of fit.
     '''
@@ -71,7 +85,7 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None):
             return 5000
         scaled_sim = _utils.scale_measurement(fluorescence_sim,
                                               normalization[0])
-        cs = _fitting.naked_chi_squared(fluorescence_data, scaled_sim)
+        cs = residual_function(fluorescence_data, scaled_sim)
         return cs
 
     # Use scipy to generate the results.
@@ -96,6 +110,10 @@ def adppi_fit(parameter_set, data, source='sem'):
             raw_sim_data, sample_times)
     scaled_sim_data = _utils.scale_measurement(sampled_sim_data, ftc)
 
-    fit_quality = _fitting.measurement_average_divided(scaled_sim_data, data)
+    x2       = _residuals.chi_squared(scaled_sim_data, data)
+    avg_div  = _residuals.average_divided(scaled_sim_data, data)
+    naked_x2 = _residuals.naked_chi_squared(scaled_sim_data, data)
 
-    parameter_set['values']['adppi_fit'] = fit_quality
+    parameter_set['values']['adppi_fit_chi_squared'] = x2
+    parameter_set['values']['adppi_fit_average_divided'] = avg_div
+    parameter_set['values']['adppi_fit_naked_chi_squared'] = naked_x2
