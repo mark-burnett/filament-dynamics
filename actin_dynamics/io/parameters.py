@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import itertools
+import math
 
 import yaml
 
@@ -31,7 +32,7 @@ def _product(*args, **kwds):
 def _linspace(min_value, max_value, num_points):
     if num_points > 1:
         dx = float(max_value - min_value) / (num_points - 1)
-        return [min_value + i * dx for i in xrange(num_points + 1)]
+        return [min_value + i * dx for i in xrange(num_points)]
     else:
         return [min_value]
 
@@ -53,10 +54,10 @@ def _make_mesh(min_value, max_value, mesh_size, mesh_type):
     if 'linear' == mesh_type.lower():
         return _linspace(min_value, max_value, mesh_size)
     elif 'log' == mesh_type.lower():
-        umin_value = [math.log(mv) for mv in min_value]
-        umax_value = [math.log(mv) for mv in max_value]
+        umin_value = math.log(min_value)
+        umax_value = math.log(max_value)
         transformed_range = _linspace(umin_value, umax_value, mesh_size)
-        return [math.log(tr) for tr in transformed_range]
+        return [math.exp(tr) for tr in transformed_range]
     else:
         raise RuntimeError('Unsupported mesh type specified for make_mesh.')
 

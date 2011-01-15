@@ -18,12 +18,15 @@ import cPickle as _cPickle
 from . import io as _io
 from . import simulations as _simulations
 
+from .analysis import perform_common_single as _perform_common_single
+
 def run_simulations(simulation_factory, output_file_name):
     output_stream = _io.compressed.output_stream(output_file_name)
     for parameter_set, ssg in simulation_factory:
-        ps_result = map(_simulations.run_simulation, ssg)
+        ps_result = map(_simulations.run_and_report, ssg)
 
-        _cPickle.dump({'parameters': parameter_set,
-                       'simulations': ps_result}, output_stream)
+        full_set = {'parameters': parameter_set, 'simulations': ps_result}
+
+        _cPickle.dump(_perform_common_single(full_set), output_stream)
 
     output_stream.close()

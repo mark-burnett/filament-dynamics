@@ -28,14 +28,27 @@ def read_object(filename):
     return cPickle.load(compressor)
 
 def read_objects(filename):
+    print filename
     f = open(filename)
     compressor = gzip.GzipFile(fileobj=f)
     results = []
-    while compressor:
-        results.append(cPickle.load(compressor))
+    try:
+        while compressor:
+            results.append(cPickle.load(compressor))
+    except EOFError:
+        pass
+    f.close()
+    print len(results)
     return results
 
 def output_stream(filename):
     f = open(filename, mode='wb')
     compressor = gzip.GzipFile(fileobj=f)
     return compressor
+
+
+def combine_files(filenames):
+    results = []
+    for filename in filenames:
+        results.extend(read_objects(filename))
+    return results

@@ -42,8 +42,6 @@ def cli_main():
                                                         args.num_sims)
 
     mp_support.run_simulations(simulation_factory, args.output_file)
-    # NOTE used for profiling
-#    mp_support.sp_run_simulations(simulation_factory, args.output_file)
 
 if '__main__' == __name__:
     cli_main()
