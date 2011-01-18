@@ -51,7 +51,8 @@ CONCENTRATIONS_PI_COLOR    = orange[scheme_index]
 
 def fit(analysis_container, #weights={'pyrene_fit_naked_chi_squared': 1},
         weights={'adppi_fit_chi_squared': 1},
-        pyrene_measurement='pyrene_fit_naked_chi_squared'):
+        pyrene_measurement='pyrene_fit_naked_chi_squared',
+        figure_name='pylab_fig.png'):
     rates, coops, ftcs, z_values = get_fitnesses(analysis_container, weights)
 
     best = get_best_par_set(analysis_container, weights=weights)
@@ -91,6 +92,7 @@ def fit(analysis_container, #weights={'pyrene_fit_naked_chi_squared': 1},
     pylab.subplot(2, 2, 4)
     plot_full_par_set(best, pyrene_measurement=pyrene_measurement)
 
+#    pylab.savefig(figure_name)
     pylab.show()
 
 
@@ -137,7 +139,7 @@ def get_best_par_set(analysis_container, weights=None):
 def plot_full_par_set(parameter_set, parameter_labels=[],
            fluorescence_filename='pollard_length.dat',
            adppi_filename='pollard_cleavage.dat',
-           pyrene_measurement='pyrene_naked_chi_squared',
+           pyrene_measurement='pyrene_fit_naked_chi_squared',
            fill_alpha=0.2, trace_alpha=0.1,
            fluorescence_color=FACTIN_FLUORESCENCE_COLOR,
            adppi_color=FACTIN_ADPPI_COLOR,
@@ -194,23 +196,6 @@ def plot_full_par_set(parameter_set, parameter_labels=[],
                                   fill_alpha=fill_alpha,
                                   linestyle='dashed')
 
-#    for filament in ana_utils.iter_filaments(parameter_set['downsampled']):
-#        # Length
-#        length = filament['measurements']['length']
-#        scaled_length = ana_utils.scale_measurement(length, ftc)
-#        subtraced_length = ana_utils.add_number(scaled_length,
-#                                                -seed_concentration)
-#        basic.plot_smooth_measurement(subtraced_length,
-#                                      color=factin_color,
-#                                      line_alpha=trace_alpha)
-#
-#        # ADPPi
-#        adppi_count = filament['measurements']['pyrene_adppi_count']
-#        scaled_adppi = ana_utils.scale_measurement(adppi_count, ftc)
-#        basic.plot_smooth_measurement(scaled_adppi,
-#                                      color=adppi_color,
-#                                      line_alpha=trace_alpha)
-
     # Misc. configuration
     pylab.xlim((0, 41))
     pylab.ylim((0, 7))
@@ -218,74 +203,72 @@ def plot_full_par_set(parameter_set, parameter_labels=[],
     pylab.xlabel('Time (s)')
     pylab.ylabel('Concentration (uM)')
 
-#    pylab.legend(numpoints=1, loc=7)
+def fit_random(analysis_container, #weights={'pyrene_fit_naked_chi_squared': 1},
+        weights={'adppi_fit_chi_squared': 1},
+        pyrene_measurement='pyrene_fit_naked_chi_squared',
+        figure_name='pylab_fig.png'):
+    cleavages, releases, ftcs, z_values = get_fitnesses_random(analysis_container, weights)
 
+    best = get_best_par_set(analysis_container, weights=weights)
+    parameters = best['parameters']
 
-def goodness_of_fit_1d(analysis_container,
-                       ftc=True,
-                       cleavage_rate=False,
-                       cleavage_cooperativity=False):
-    # values_vs_parameter plots
-        # parameters:
-            # filament_tip_concentration
-            # cleavage_rate
-            # cleavage_cooperativity
-        # value names:
-            # fluorescence fit
-            # adppi_fit
-    if ftc:
-        _gof_helper(analysis_container,
-                    parameter_name='filament_tip_concentration',
-                    value_names=['adppi_fit', 'fluorescence_fit'],
-                    plot_labels=['ADP-Pi', 'Fluorescence'],
-                    xlabel='Filament Tip Concentration (uM)',
-                    ylabel='Goodness of Fit')
+    pylab.figure()
+    title = ('weights = %s\nftc = %s, cleavage = %s, release = %s' %
+             (weights, parameters['filament_tip_concentration'],
+              parameters['cleavage_rate'],
+              parameters['release_rate']))
+    pylab.suptitle(title)
 
-    if cleavage_rate:
-        _gof_helper(analysis_container,
-                    parameter_name='cleavage_rate',
-                    value_names=['adppi_fit', 'fluorescence_fit'],
-                    plot_labels=['ADP-Pi', 'Fluorescence'],
-                    xlabel='Cleavage Rate (s^-1)',
-                    ylabel='Goodness of Fit',
-                    logscale_x=True)
+    pylab.subplot(2, 2, 1)
+    basic.plot_contour(cleavages, releases, z_values,
+                       reduction_axis=2,
+                       xlabel='Cleavage Rate (s^-1)',
+                       ylabel='Release Rate (s^-1)',
+                       logscale_y=True,
+                       logscale_z=True)
 
-    if cleavage_cooperativity:
-        _gof_helper(analysis_container,
-                    parameter_name='cleavage_cooperativity',
-                    value_names=['adppi_fit', 'fluorescence_fit'],
-                    plot_labels=['ADP-Pi', 'Fluorescence'],
-                    xlabel='Cleavage Cooperativity',
-                    ylabel='Goodness of Fit',
-                    logscale_x=True)
-    
+    pylab.subplot(2, 2, 2)
+    basic.plot_contour(ftcs, releases, z_values,
+                       reduction_axis=0,
+                       xlabel='Filament Tip Concentration (uM)',
+                       ylabel='Release Rate (s^-1)',
+                       logscale_y=True,
+                       logscale_z=True,
+                       transpose=False)
+       
+    pylab.subplot(2, 2, 3)
+    basic.plot_contour(cleavages, ftcs, z_values,
+                       reduction_axis=1,
+                       xlabel='Cleavage Rate (s^-1)',
+                       ylabel='Filament Tip Concentration (uM)',
+                       logscale_z=True)
+       
+    pylab.subplot(2, 2, 4)
+    plot_full_par_set(best, pyrene_measurement=pyrene_measurement)
+
+#    pylab.savefig(figure_name)
     pylab.show()
 
-    # 2d value_vs_2_parameters
-        # parameter pairs:
-            # cleavage_rate, cleavage_cooperativity
 
-def _gof_helper(analysis_container, parameter_name=None, value_names=None,
-                plot_labels=None, xlabel=None, ylabel=None, title=None,
-                legend_loc=None, logscale_x=False, logscale_y=False):
-    pylab.figure()
-    parameters.values_vs_parameter(analysis_container,
-            parameter_name=parameter_name,
-            value_names=value_names,
-            plot_labels=plot_labels)
+def get_fitnesses_random(analysis_container, weights):
+    cleavages = utils.get_parameter_values(analysis_container, 'cleavage_rate')
+    releases = utils.get_parameter_values(analysis_container, 'release_rate')
+    ftcs = utils.get_parameter_values(analysis_container,
+                                      'filament_tip_concentration')
 
-    pylab.xlabel(xlabel)
-    pylab.ylabel(ylabel)
+    fitnesses = -numpy.ones((len(cleavages), len(releases), len(ftcs)))
+    for parameter_set in analysis_container:
+        parameters = parameter_set['parameters']
 
+        ri = bisect.bisect_left(cleavages, parameters['cleavage_rate'])
+        ci = bisect.bisect_left(releases, parameters['release_rate'])
+        fi = bisect.bisect_left(ftcs, parameters['filament_tip_concentration'])
 
-    if logscale_x and logscale_y:
-        pylab.loglog()
-    elif logscale_x:
-        pylab.semilogx()
-    elif logscale_y:
-        pylab.semilogy()
+        current_value = _weighted_value(parameter_set['values'], weights)
 
-    if title:
-        pylab.title(title)
+        if -1 == fitnesses[ri, ci, fi]:
+            fitnesses[ri, ci, fi] = current_value
+        else:
+            fitnesses[ri, ci, fi] = min(current_value, fitnesses[ri, ci, fi])
 
-    pylab.legend(loc=legend_loc)
+    return cleavages, releases, ftcs, fitnesses

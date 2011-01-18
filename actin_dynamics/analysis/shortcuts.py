@@ -32,7 +32,7 @@ def perform_common_single(parameter_set):
     analyses = {}
     analyses['parameters'] = parameter_set['parameters']
     downsampled_results = _downsample.all_measurements(parameter_set)
-    analyses['downsampled'] = downsampled_results
+#    analyses['downsampled'] = downsampled_results
 
     analyses['sem'] = _standard_error_of_mean.all_measurements(
             downsampled_results)
