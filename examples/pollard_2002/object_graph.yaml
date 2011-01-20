@@ -9,25 +9,34 @@ filaments:
 
 concentrations:
     - class_name: FixedReagent
-      state: ATP
+      state: pyrene_ATP
       parameters:
           initial_concentration: initial_atp_concentration
           filament_tip_concentration: filament_tip_concentration
           number: number_of_filaments
 
     - class_name: FixedReagent
-      state: ADPPi
+      state: pyrene_ADPPi
       parameters:
           initial_concentration: initial_adppi_concentration
           filament_tip_concentration: filament_tip_concentration
           number: number_of_filaments
 
     - class_name: FixedReagent
-      state: ADP
+      state: pyrene_ADP
       parameters:
           initial_concentration: initial_adp_concentration
           filament_tip_concentration: filament_tip_concentration
           number: number_of_filaments
+
+    - class_name: FixedReagent
+      state: ADP
+      parameters:
+          filament_tip_concentration: filament_tip_concentration
+          number: number_of_filaments
+      fixed_parameters:
+          initial_concentration: 0
+
 
     - class_name: FixedReagent
       state: Pi
@@ -48,13 +57,18 @@ measurements:
 
     - class_name: StateCount
       fixed_parameters:
-          label: atp_count
-          state: ATP
+          label: pyrene_atp_count
+          state: pyrene_ATP
 
     - class_name: StateCount
       fixed_parameters:
-          label: adppi_count
-          state: ADPPi
+          label: pyrene_adppi_count
+          state: pyrene_ADPPi
+
+    - class_name: StateCount
+      fixed_parameters:
+          label: pyrene_adp_count
+          state: pyrene_ADP
 
     - class_name: StateCount
       fixed_parameters:
@@ -65,16 +79,22 @@ transitions:
     # Polymerization
     - class_name: BarbedPolymerization
       fixed_parameters:
-          state: ATP
-          label: barbed_atp_polymerization
+          state: pyrene_ATP
+          label: barbed_pyrene_atp_polymerization
       parameters:
           rate: barbed_atp_polymerization_rate
     - class_name: BarbedPolymerization
       fixed_parameters:
-          state: ADPPi
-          label: barbed_adppi_polymerization
+          state: pyrene_ADPPi
+          label: barbed_pyrene_adppi_polymerization
       parameters:
           rate: barbed_adppi_polymerization_rate
+    - class_name: BarbedPolymerization
+      fixed_parameters:
+          state: pyrene_ADP
+          label: barbed_pyrene_adp_polymerization
+      parameters:
+          rate: barbed_adp_polymerization_rate
     - class_name: BarbedPolymerization
       fixed_parameters:
           state: ADP
@@ -84,16 +104,22 @@ transitions:
 
     - class_name: PointedPolymerization
       fixed_parameters:
-          state: ATP
-          label: pointed_atp_polymerization
+          state: pyrene_ATP
+          label: pointed_pyrene_atp_polymerization
       parameters:
           rate: pointed_atp_polymerization_rate
     - class_name: PointedPolymerization
       fixed_parameters:
-          state: ADPPi
-          label: pointed_adppi_polymerization
+          state: pyrene_ADPPi
+          label: pointed_pyrene_adppi_polymerization
       parameters:
           rate: pointed_adppi_polymerization_rate
+    - class_name: PointedPolymerization
+      fixed_parameters:
+          state: pyrene_ADP
+          label: pointed_pyrene_adp_polymerization
+      parameters:
+          rate: pointed_adp_polymerization_rate
     - class_name: PointedPolymerization
       fixed_parameters:
           state: ADP
@@ -104,16 +130,22 @@ transitions:
     # Depolymerization
     - class_name: BarbedDepolymerization
       fixed_parameters:
-          state: ATP
-          label: barbed_atp_depolymerization
+          state: pyrene_ATP
+          label: barbed_pyrene_atp_depolymerization
       parameters:
           rate: barbed_atp_depolymerization_rate
     - class_name: BarbedDepolymerization
       fixed_parameters:
-          state: ADPPi
-          label: barbed_adppi_depolymerization
+          state: pyrene_ADPPi
+          label: barbed_pyrene_adppi_depolymerization
       parameters:
           rate: barbed_adppi_depolymerization_rate
+    - class_name: BarbedDepolymerization
+      fixed_parameters:
+          state: pyrene_ADP
+          label: barbed_pyrene_adp_depolymerization
+      parameters:
+          rate: barbed_adp_depolymerization_rate
     - class_name: BarbedDepolymerization
       fixed_parameters:
           state: ADP
@@ -123,16 +155,22 @@ transitions:
 
     - class_name: PointedDepolymerization
       fixed_parameters:
-          state: ATP
-          label: pointed_atp_depolymerization
+          state: pyrene_ATP
+          label: pointed_pyrene_atp_depolymerization
       parameters:
           rate: pointed_atp_depolymerization_rate
     - class_name: PointedDepolymerization
       fixed_parameters:
-          state: ADPPi
-          label: pointed_adppi_depolymerization
+          state: pyrene_ADPPi
+          label: pointed_pyrene_adppi_depolymerization
       parameters:
           rate: pointed_adppi_depolymerization_rate
+    - class_name: PointedDepolymerization
+      fixed_parameters:
+          state: pyrene_ADP
+          label: pointed_pyrene_adp_depolymerization
+      parameters:
+          rate: pointed_adp_depolymerization_rate
     - class_name: PointedDepolymerization
       fixed_parameters:
           state: ADP
@@ -144,19 +182,20 @@ transitions:
     - class_name: CooperativeHydrolysis
       fixed_parameters:
           label: cleavage
-          old_state: ATP
-          new_state: ADPPi
+          old_state: pyrene_ATP
+          new_state: pyrene_ADPPi
       parameters:
           rate: cleavage_rate
           cooperativities:
-              ADPPi: cleavage_cooperativity
+              pyrene_ADPPi: cleavage_cooperativity
+              pyrene_ADP: cleavage_cooperativity
               ADP: cleavage_cooperativity
 
     - class_name: RandomHydrolysisWithByproduct
       fixed_parameters:
           label: release
-          old_state: ADPPi
-          new_state: ADP
+          old_state: pyrene_ADPPi
+          new_state: pyrene_ADP
           byproduct: Pi
       parameters:
           rate: release_rate
