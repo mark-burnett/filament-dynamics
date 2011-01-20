@@ -49,7 +49,6 @@ def get_fluorescence(parameter_set, coefficients=None):
     Gives the unnormalized pyrene fluorescence.
 
     parameter_set is the 'average' analysis parameter set
-    Assumes standard sqrt(N) error.
     '''
     # Grab the simulation data
     atp_data   = parameter_set['pyrene_atp_count']
