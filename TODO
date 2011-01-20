@@ -1,5 +1,11 @@
 Broken Windows:
     Cleaner visualization code.
+    rename/refactor file mp_support.py - there is no longer mp support o.O
+
+
+BUGS:
+    Is there a problem with the single random simulation?
+        pyrene sim looks oddly low for first 2 data points somehow.
 
 
 Usability:
