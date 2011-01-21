@@ -15,6 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+import os.path
 
 from actin_dynamics import io, factories
 from actin_dynamics import mp_support
@@ -25,23 +26,56 @@ def parse_command_line():
                         help='Object graph definition file.')
     parser.add_argument('--parameters', default='parameters.yaml',
                         help='Parameters file.')
-    parser.add_argument('--output_file', default='output.sim',
-                        help='Output pickle file name.')
+
+    parser.add_argument('--output_filename', default=None,
+                        help='Output filename.  Overrides prefix + extension.')
+
+    parser.add_argument('--output_prefix', default='output',
+                        help='Beginning of output filename.')
+    parser.add_argument('--output_extension', default='sim',
+                        help='Output filename extension.')
+    parser.add_argument('--output_directory', default='.',
+                        help='Output directory.')
+
     parser.add_argument('--num_sims', type=int, default=1,
                         help='Number of simulations per parameter set.')
+
+    parser.add_argument('--process_number', type=int, default=1,
+                        help='Which process in the set are we?.')
+    parser.add_argument('--num_processes', type=int, default=1,
+                        help='How many processes are running?.')
+
+    parser.add_argument('--split_parameter', default=None,
+                        help='Parameter name to divide processing across.')
+
     return parser.parse_args()
 
-def cli_main():
-    args = parse_command_line()
 
-    parameters = io.parse_parameters_file(open(args.parameters))
-    object_graph = io.parse_object_graph_file(open(args.object_graph))
+def cli_main(parameters_filename, object_graph_filename, process_number,
+             num_processes, output_filename, num_sims, split_parameter):
+    parameters = io.parse_parameters_file(open(parameters_filename),
+                                          split_parameter,
+                                          process_number, num_processes)
+    object_graph = io.parse_object_graph_file(open(object_graph_filename))
 
     simulation_factory = factories.simulation_generator(object_graph,
-                                                        parameters,
-                                                        args.num_sims)
+                                                        parameters, num_sims)
 
-    mp_support.run_simulations(simulation_factory, args.output_file)
+    mp_support.run_simulations(simulation_factory, output_filename)
+
 
 if '__main__' == __name__:
-    cli_main()
+    args = parse_command_line()
+
+    if args.output_filename:
+        output_filename = os.path.join(args.output_directory,
+                                       args.output_filename)
+    else:
+        output_filename = os.path.join(args.output_directory,
+                                       args.output_prefix +
+                                       str(args.process_number) +
+                                       '.' + args.output_extension)
+
+    cli_main(args.parameters, args.object_graph, args.process_number,
+             args.num_processes, output_filename, args.num_sims,
+             args.split_parameter)

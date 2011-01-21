@@ -17,7 +17,18 @@ import collections
 import math
 import operator
 
+from . import downsample
 from . import utils
+
+
+def analyze_parameter_set(parameter_set):
+    analysis = {}
+    analysis['parameters'] = parameter_set['parameters']
+    downsampled_results = downsample.all_measurements(parameter_set)
+
+    analyses['sem'] = all_measurements(downsampled_results)
+
+    return analysis
 
 
 def all_measurements(simulations):

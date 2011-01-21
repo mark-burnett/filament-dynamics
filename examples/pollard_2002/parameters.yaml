@@ -17,8 +17,8 @@ pointed_adppi_depolymerization_rate: [0.02, 0.02, 1, linear]
 pointed_adp_depolymerization_rate:   [0.25, 0.25, 1, linear]
 
 # Hydrolysis parameters
-cleavage_rate: [0.05, 1.00, 50, linear]
-cleavage_cooperativity: [1, 3000000, 50, log]
+cleavage_rate: [0.05, 1.00, 10, linear]
+cleavage_cooperativity: [1, 3000000, 10, log]
 
 release_rate: [0.003, 0.003, 1, linear]
 
@@ -34,7 +34,7 @@ number_of_filaments: [8, 8, 1, linear]
 # Frank's value
 #filament_tip_concentration: [0.0224, 0.0224, 1, linear]
 
-filament_tip_concentration: [0.005, 0.050, 20, linear]
+filament_tip_concentration: [0.005, 0.050, 10, linear]
 
 
 initial_atp_concentration: [6, 6, 1, linear]

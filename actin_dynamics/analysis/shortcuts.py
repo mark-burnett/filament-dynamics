@@ -21,25 +21,6 @@ from . import standard_error_of_mean as _standard_error_of_mean
 from actin_dynamics.io import data as _dataio
 
 
-def perform_common(simulation_container):
-    '''
-    Creates a new analysis container based on the simulations provided.
-    '''
-    return map(perform_common_single, simulation_container)
-
-
-def perform_common_single(parameter_set):
-    analyses = {}
-    analyses['parameters'] = parameter_set['parameters']
-    downsampled_results = _downsample.all_measurements(parameter_set)
-#    analyses['downsampled'] = downsampled_results
-
-    analyses['sem'] = _standard_error_of_mean.all_measurements(
-            downsampled_results)
-
-    return analyses
-
-
 def perform_pollard(analysis_container,
                     fluorescence_filename='pollard_length.dat',
                     adppi_filename='pollard_cleavage.dat'):

@@ -18,7 +18,7 @@ import cPickle as _cPickle
 from . import io as _io
 from . import simulations as _simulations
 
-from .analysis import perform_common_single as _perform_common_single
+from .analysis.standard_error_of_mean import analyze_parameter_set
 
 def run_simulations(simulation_factory, output_file_name):
     output_stream = _io.compressed.output_stream(output_file_name)
@@ -27,7 +27,7 @@ def run_simulations(simulation_factory, output_file_name):
 
         full_set = {'parameters': parameter_set, 'simulations': ps_result}
 
-        analyzed_set = _perform_common_single(full_set)
+        analyzed_set = analyze_parameter_set(full_set)
 
         _cPickle.dump(analyzed_set, output_stream,
                       protocol=_cPickle.HIGHEST_PROTOCOL)

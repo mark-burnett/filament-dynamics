@@ -18,6 +18,8 @@ import math
 
 import yaml
 
+# XXX This is an itertools work-alike.  It is needed because it was
+#     introduced in python 2.6, but pypy is stuck at 2.5 as of now.
 def _product(*args, **kwds):
     # product('ABCD', 'xy') --> Ax Ay Bx By Cx Cy Dx Dy
     # product(range(2), repeat=3) --> 000 001 010 011 100 101 110 111
@@ -61,15 +63,39 @@ def _make_mesh(min_value, max_value, mesh_size, mesh_type):
     else:
         raise RuntimeError('Unsupported mesh type specified for make_mesh.')
 
-def _make_parameter_mesh_iterator(parameter_ranges):
+def _make_split_mesh(process_number, num_processes, *range_info):
+    full_mesh = _make_mesh(*range_info)
+
+    size = len(full_mesh)
+    fraction = float(process_number) / num_processes
+    width = int(size * fraction) # Round down.
+
+    # Be sure to get the extra couple of points on the end.
+    if process_number == num_processes:
+        return full_mesh[(process_number - 1) * width:]
+
+    return full_mesh[(process_number - 1) * width:process_number * width]
+
+
+def _make_parameter_mesh_iterator(parameter_ranges, split_parameter_name,
+                                  process_number, num_processes):
     names = []
     meshes = []
     for name, range_info in parameter_ranges.iteritems():
         names.append(name)
-        meshes.append(_make_mesh(*range_info))
+        if name == split_parameter_name:
+            meshes.append(_make_split_mesh(process_number, num_processes,
+                                           *range_info))
+            pass
+        else:
+            meshes.append(_make_mesh(*range_info))
     
     return ParameterMeshIterator(names, _product(*meshes))
 
-def parse_parameters_file(par_file):
+
+def parse_parameters_file(par_file, split_parameter_name,
+                          process_number, num_processes):
     parameter_ranges = yaml.load(par_file)
-    return _make_parameter_mesh_iterator(parameter_ranges)
+    return _make_parameter_mesh_iterator(parameter_ranges,
+                                         split_parameter_name,
+                                         process_number, num_processes)
