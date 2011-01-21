@@ -67,7 +67,7 @@ def _make_split_mesh(process_number, num_processes, *range_info):
     full_mesh = _make_mesh(*range_info)
 
     size = len(full_mesh)
-    fraction = float(process_number) / num_processes
+    fraction = 1.0 / num_processes
     width = int(size * fraction) # Round down.
 
     # Be sure to get the extra couple of points on the end.
@@ -86,7 +86,6 @@ def _make_parameter_mesh_iterator(parameter_ranges, split_parameter_name,
         if name == split_parameter_name:
             meshes.append(_make_split_mesh(process_number, num_processes,
                                            *range_info))
-            pass
         else:
             meshes.append(_make_mesh(*range_info))
     

@@ -51,7 +51,7 @@ while getopts "d:o:a:n:s:p:" FLAG; do
         "s")
             let NUM_SIMULATIONS=$OPTARG;;
         "p")
-            let SPLIT_PARAMETER=$OPTARG;;
+            SPLIT_PARAMETER=$OPTARG;;
     esac
 done
 
@@ -59,6 +59,7 @@ if [ -z $SPLIT_PARAMETER ]; then
     display_args
     exit -1
 fi
+
 
 FULL_OBJECT_PATH="$DIRECTORY_NAME/$OBJECT_GRAPH_FILENAME"
 FULL_PARAMETERS_PATH="$DIRECTORY_NAME/$PARAMETERS_FILENAME"
