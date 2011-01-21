@@ -38,6 +38,6 @@ def perform_pollard(analysis_container,
 
     # Do the work.
     for parameter_set in analysis_container:
-        parameter_set['values'] = {}
+        parameter_set['pollard'] = {}
         _pollard.fluorescence_fit(parameter_set, fluorescence_data)
         _pollard.adppi_fit(parameter_set, adppi_data)

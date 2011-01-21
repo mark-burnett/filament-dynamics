@@ -13,21 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import csv
+import itertools
 
-class DataThiefDialect(csv.Dialect):
-    delimiter = ' '
-    quotechar = '"'
-    doublequote = True
-    skipinitialspace = True
-    lineterminator = '\r\n'
-    quoting = csv.QUOTE_NONNUMERIC
+from . import pollard
 
-def load_data(filename):
-    results = []
-    f = open(filename)
-    reader = csv.reader(f, dialect=DataThiefDialect)
-    for row in reader:
-        new_row = map(float, row)
-        results.append(new_row)
-    return zip(*results)
+def vector(parameter_set, data=None,
+           functions=(pollard.pyrene_fit, pollard.adppi_fit,), **kwargs):
+    return [f(parameter_set, d, **kwargs)
+            for f, d in itertools.izip(functions, data)]
