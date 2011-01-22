@@ -105,6 +105,9 @@ class TestRankedPopulation(unittest.TestCase):
                        [6],
                        [],
                        []]
+
+        self.sort_order = [5, 6, 3, 4, 1, 2, 0]
+        self.reverse_order = [0, 2, 1, 3, 4, 6, 5]
         
     def build_population(self):
         for i, c in enumerate(self.costs):
@@ -131,8 +134,11 @@ class TestRankedPopulation(unittest.TestCase):
                     self.assertFalse(dominance_heap.trails(c, self.costs[i]),
                                      str((c, i, self.costs[i])))
 
-    def test_mass_push(self):
+    # Integration test.
+    def test_whole_sort(self):
         self.build_population()
+
+        # Make sure each push got the right trails/trumps setup.
         for m in self.population.members:
             index = self.costs.index(m.cost)
             trumps = self.trumps[index]
@@ -145,3 +151,14 @@ class TestRankedPopulation(unittest.TestCase):
             self.assertEqual(len(m.trails), len(trails),
                              str(([t.cost for t in m.trails],
                                   [self.costs[t] for t in trails])))
+
+        # Verify whole sort order.
+        self.assertEqual(self.sort_order,
+                         [m.parameters
+                          for m in self.population.get_best(len(self.costs))])
+
+        # Verify reverse sort order.
+        self.assertEqual(self.reverse_order,
+                         [m.parameters
+                          for m in self.population.get_worst(len(self.costs))])
+
