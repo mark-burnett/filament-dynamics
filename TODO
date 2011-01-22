@@ -15,7 +15,3 @@ Usability:
 
 Validation:
     Analysis code has no unit tests (it's only tested manually).
-
-
-Enhancements:
-    Better way of splitting parameters into multiple runs.

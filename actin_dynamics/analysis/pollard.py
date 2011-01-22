@@ -31,13 +31,8 @@ def get_data(pyrene_filename='data/pollard_2002/pyrene_fluorescence.dat',
     return [resampled_pyrene_data, adppi_data]
 
 
-def pyrene_fit(parameter_set, data, atp_weight=0.37, adppi_weight=0.56,
-               adp_weight=0.75, **kwargs):
-    fluorescence_weights={'atp':   atp_weight,
-                          'adppi': adppi_weight,
-                          'adp':   adp_weight}
-    sim_results = get_fluorescence(parameter_set['sem'],
-                                   coefficients=coefficients)
+def pyrene_fit(parameter_set, data, **kwargs):
+    sim_results = get_fluorescence(parameter_set['sem'], **kwargs)
     nx2_norm, nx2_fit = fit_normalization(sim_results, data,
             residual_function=_residuals.naked_chi_squared)
 
@@ -50,7 +45,7 @@ def adppi_fit(parameter_set, data, **kwargs):
 
     # Get and resample simulation results
     # XXX We are only using pyrene adppi, we should be using both.
-    raw_sim_data = parameter_set[source]['pyrene_adppi_count']
+    raw_sim_data = parameter_set['sem']['pyrene_adppi_count']
     sampled_sim_data = _interpolation.resample_measurement(
             raw_sim_data, sample_times)
     scaled_sim_data = _utils.scale_measurement(sampled_sim_data, ftc)
@@ -85,7 +80,8 @@ def fluorescence_fit(parameter_set, data, coefficients=None):
     parameter_set['sem']['pyrene_fit_naked_chi_squared'] = sim_nx2
 
 
-def get_fluorescence(parameter_set, coefficients=None):
+def get_fluorescence(parameter_set, atp_weight=0.37, adppi_weight=0.56,
+                     adp_weight=0.75, **kwargs):
     '''
     Gives the unnormalized pyrene fluorescence.
 
@@ -96,16 +92,10 @@ def get_fluorescence(parameter_set, coefficients=None):
     adppi_data = parameter_set['pyrene_adppi_count']
     adp_data   = parameter_set['pyrene_adp_count']
 
-    if coefficients is None:
-        coefficients = {'atp':   0.37,
-                        'adppi': 0.56,
-                        'adp':   0.75}
-
     # Scale everything
-    scaled_atp_data   = _utils.scale_measurement(atp_data, coefficients['atp'])
-    scaled_adppi_data = _utils.scale_measurement(adppi_data,
-                                                 coefficients['adppi'])
-    scaled_adp_data   = _utils.scale_measurement(adp_data, coefficients['adp'])
+    scaled_atp_data   = _utils.scale_measurement(atp_data, atp_weight)
+    scaled_adppi_data = _utils.scale_measurement(adppi_data, adppi_weight)
+    scaled_adp_data   = _utils.scale_measurement(adp_data, adp_weight)
 
     # Add everything
     return _utils.add_measurements(scaled_atp_data, scaled_adppi_data,
@@ -139,7 +129,7 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None,
     return fit_results[0][0], fit_results[1]
 
 
-def adppi_fit(parameter_set, data, source='sem'):
+def old_adppi_fit(parameter_set, data, source='sem'):
     ftc = parameter_set['parameters']['filament_tip_concentration']
     sample_times = data[0]
 

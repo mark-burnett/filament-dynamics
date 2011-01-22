@@ -1,4 +1,4 @@
-#    Copyright (C) 2011 Mark Burnett
+#    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,16 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import fitness
-from . import dominance_heap
-from . import pollard
+import os
+import fnmatch
 
-def rank_the_world(analysis_container, atp_weights):
-    data = pollard.get_data()
-    results = dominance_heap.RankedPopulation()
-    for parameter_set in analysis_container:
-        for weight in atp_weights:
-            cost = fitness.vector(parameter_set, data=data,
-                                  atp_weight=weight)
-            results.push((parameter_set, weight), cost)
-    return results
+from . import compressed
+
+def get_sim_filenames(directory):
+    return [os.path.join(directory, f)
+            for f in os.listdir(directory) if fnmatch.fnmatch(f, '*.sim')]
+
+def load_directory(directory):
+    files = get_sim_filenames(directory)
+    return compressed.combine_files(files)

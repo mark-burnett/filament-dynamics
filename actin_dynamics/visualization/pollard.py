@@ -137,8 +137,8 @@ def get_best_par_set(analysis_container, weights=None):
 
 
 def plot_full_par_set(parameter_set, parameter_labels=[],
-           fluorescence_filename='pollard_length.dat',
-           adppi_filename='pollard_cleavage.dat',
+           fluorescence_filename='data/pollard_2002/pyrene_fluorescence.dat',
+           adppi_filename='data/pollard_2002/adppi_concentration.dat',
            pyrene_measurement='pyrene_fit_naked_chi_squared',
            fill_alpha=0.2, trace_alpha=0.1,
            fluorescence_color=FACTIN_FLUORESCENCE_COLOR,
