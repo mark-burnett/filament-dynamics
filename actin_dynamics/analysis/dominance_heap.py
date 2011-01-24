@@ -39,7 +39,7 @@ class RankedObject(object):
 
 
 class RankedPopulation(object):
-    def __init__(self, members=None, max_length=None):
+    def __init__(self, members=None, max_length=1000):
         self.max_length = max_length
         self._up_to_date = False
 
@@ -58,12 +58,14 @@ class RankedPopulation(object):
                 new_item.trails.add(m)
                 m.trumps.add(new_item)
 
-        # Any heap structure that existed is now violated
         self.members.append(new_item)
         self._up_to_date = False
 
+        # We can't simply use push_pop -- the hash doesn't stay invariant.
         if self.max_length and len(self.members) > self.max_length:
             return self.pop()
+
+        return None
 
     def pop(self):
         self._update()
@@ -73,18 +75,26 @@ class RankedPopulation(object):
 
         return result
 
+    
+    def get_best(self, number=1):
+        if 1 == number:
+            return max(self.members)
+        else:
+            self._update()
+            return heapq.nlargest(number, self.members)
+
+    def get_worst(self, number=1):
+        if 1 == number:
+            return min(self.members)
+        else:
+            self._update()
+            return heapq.nsmallest(number, self.members)
+
+
     def _update(self):
         if not self._up_to_date:
             heapq.heapify(self.members)
             self._up_to_date = True
-    
-    def get_best(self, number=1):
-        self._update()
-        return heapq.nlargest(number, self.members)
-
-    def get_worst(self, number=1):
-        self._update()
-        return heapq.nsmallest(number, self.members)
 
 
 # Smaller is better.  We're treating everything as a residual.

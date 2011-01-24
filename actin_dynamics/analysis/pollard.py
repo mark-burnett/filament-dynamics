@@ -20,7 +20,8 @@ from . import utils as _utils
 from actin_dynamics import io
 
 def get_data(pyrene_filename='data/pollard_2002/pyrene_fluorescence.dat',
-             adppi_filename='data/pollard_2002/adppi_concentration.dat'):
+             adppi_filename='data/pollard_2002/adppi_concentration.dat',
+             **kwargs):
     pyrene_data = io.data.load_data(pyrene_filename)
     adppi_data  = io.data.load_data(adppi_filename)
 
@@ -31,15 +32,21 @@ def get_data(pyrene_filename='data/pollard_2002/pyrene_fluorescence.dat',
     return [resampled_pyrene_data, adppi_data]
 
 
-def pyrene_fit(parameter_set, data, **kwargs):
+def pyrene_fit(parameter_set, data, write=False, **kwargs):
     sim_results = get_fluorescence(parameter_set['sem'], **kwargs)
     nx2_norm, nx2_fit = fit_normalization(sim_results, data,
             residual_function=_residuals.naked_chi_squared)
 
+    if write:
+        if getattr(parameter_set, 'pollard', None) is None:
+            parameter_set['pollard'] = {}
+        parameter_set['pollard']['pyrene_fit_naked_chi_squared'] = nx2_fit
+        parameter_set['sem']['pyrene_fit_naked_chi_squared'] = sim_nx2
+
     return nx2_fit
 
 
-def adppi_fit(parameter_set, data, **kwargs):
+def adppi_fit(parameter_set, data, write=False, **kwargs):
     ftc = parameter_set['parameters']['filament_tip_concentration']
     sample_times = data[0]
 
@@ -50,34 +57,12 @@ def adppi_fit(parameter_set, data, **kwargs):
             raw_sim_data, sample_times)
     scaled_sim_data = _utils.scale_measurement(sampled_sim_data, ftc)
 
+    if write:
+        if getattr(parameter_set, 'pollard', None) is None:
+            parameter_set['pollard'] = {}
+        parameter_set['pollard']['adppi_fit_naked_chi_squared'] = naked_x2
+
     return _residuals.naked_chi_squared(scaled_sim_data, data)
-
-
-def fluorescence_fit(parameter_set, data, coefficients=None):
-    # Calculate fluorescence curve.
-    sim_results = get_fluorescence(parameter_set['sem'],
-                                   coefficients=coefficients)
-
-    x2_norm, x2_fit = fit_normalization(sim_results, data,
-            residual_function=_residuals.chi_squared)
-    sim_x2 = _utils.scale_measurement(sim_results, x2_norm)
-
-    parameter_set['pollard']['pyrene_fit_chi_squared'] = x2_fit
-    parameter_set['sem']['pyrene_fit_chi_squared'] = sim_x2
-
-    ad_norm, ad_fit = fit_normalization(sim_results, data,
-            residual_function=_residuals.average_divided)
-    sim_ad = _utils.scale_measurement(sim_results, ad_norm)
-
-    parameter_set['pollard']['pyrene_fit_average_divided'] = ad_fit
-    parameter_set['sem']['pyrene_fit_average_divided'] = sim_ad
-
-    nx2_norm, nx2_fit = fit_normalization(sim_results, data,
-            residual_function=_residuals.naked_chi_squared)
-    sim_nx2 = _utils.scale_measurement(sim_results, nx2_norm)
-
-    parameter_set['pollard']['pyrene_fit_naked_chi_squared'] = nx2_fit
-    parameter_set['sem']['pyrene_fit_naked_chi_squared'] = sim_nx2
 
 
 def get_fluorescence(parameter_set, atp_weight=0.37, adppi_weight=0.56,
@@ -127,23 +112,3 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None,
                                  disp=False, full_output=True)
 
     return fit_results[0][0], fit_results[1]
-
-
-def old_adppi_fit(parameter_set, data, source='sem'):
-    ftc = parameter_set['parameters']['filament_tip_concentration']
-    sample_times = data[0]
-
-    # Get and resample simulation results
-    # XXX We are only using pyrene adppi, we should be using both.
-    raw_sim_data = parameter_set[source]['pyrene_adppi_count']
-    sampled_sim_data = _interpolation.resample_measurement(
-            raw_sim_data, sample_times)
-    scaled_sim_data = _utils.scale_measurement(sampled_sim_data, ftc)
-
-    x2       = _residuals.chi_squared(scaled_sim_data, data)
-    avg_div  = _residuals.average_divided(scaled_sim_data, data)
-    naked_x2 = _residuals.naked_chi_squared(scaled_sim_data, data)
-
-    parameter_set['pollard']['adppi_fit_chi_squared'] = x2
-    parameter_set['pollard']['adppi_fit_average_divided'] = avg_div
-    parameter_set['pollard']['adppi_fit_naked_chi_squared'] = naked_x2
