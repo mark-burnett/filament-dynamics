@@ -9,8 +9,9 @@ See the LICENSE file for more details.
 - Requirements                                                         -
 ------------------------------------------------------------------------
 
-Python version 2.6 or 2.7 (Not 3.x ready yet.)
-    (Version 2.5 is missing the multiprocessing module.)
+CPython version 2.6 or 2.7 (Not 3.x ready yet.)
+
+PyPy version 1.4.1 or higher (simulations will run 2x as fast)
 
 IPython (used for analysis shell)
 
@@ -18,7 +19,6 @@ Python Packages:
 argparse (if using python 2.6)
 discover (if you want to run all the tests at once)
 yaml
-pytables (HDF5 reader/writer)
 
 ------------------------------------------------------------------------
 - Setup                                                                -
@@ -43,25 +43,28 @@ on the project's Google Code site.
 data directory) and place parameters and object graph configuration
 files in that directory:
 
-mkdir data/new_simulation
-cp examples/parameters.yaml examples/object_graph.yaml data/new_simulation
+mkdir results/new_simulation
+cp examples/pollard_2002/*.yaml results/new_simulation/
 
-    Goto that directory and run cli.py:
+    Run the simulations, specifying the number of simulations to run
+per parameter set:
 
-cd data/new_simulation
-../../cli.py
+./sim.sh -d results/new_simulation -n 8
 
     To analyze the data, stay in the same directory and use console.py:
 
-../../console.py
+./console.py
 
-    Once in the console, you can browse the HDF5 data file created by
-the simulation, and use a wide variety of available tools.  Check the
-actin_dynamics/analysis module for more info.
+    Once in the console, you can combine the simulation results using:
 
-    To run a standard suite of measurements, just type:
+ac = io.load_directory('results/new_simulation')
 
-perform_analyses(hdf_file)
+    Now you can perform a variety of available analysis.  Check the
+actin_dynamics/analysis and actin_dynamics/visualization modules for
+more info.  One example would be:
+
+analysis.perform_pollard(ac)
+visualization.pollard.plot_fit(ac)
 
 ------------------------------------------------------------------------
 - Adding Simulations                                                   -

@@ -49,10 +49,10 @@ CONCENTRATIONS_ADP_COLOR   = green[scheme_index]
 CONCENTRATIONS_PI_COLOR    = orange[scheme_index]
 
 
-def fit(analysis_container, #weights={'pyrene_fit_naked_chi_squared': 1},
-        weights={'adppi_fit_chi_squared': 1},
-        pyrene_measurement='pyrene_fit_naked_chi_squared',
-        figure_name='pylab_fig.png'):
+def plot_fit(analysis_container,
+             weights={'pyrene_fit_naked_chi_squared': 1},
+             pyrene_measurement='pyrene_fit_naked_chi_squared',
+             figure_name='pylab_fig.png'):
     rates, coops, ftcs, z_values = get_fitnesses(analysis_container, weights)
 
     best = get_best_par_set(analysis_container, weights=weights)
