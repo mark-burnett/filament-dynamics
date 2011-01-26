@@ -17,12 +17,21 @@ from . import fitness
 from . import dominance_heap
 from . import pollard
 
-def rank_the_world(analysis_container, atp_weights):
-    data = pollard.get_data()
+def rank_the_world(analysis_container, atp_weights, data=None):
+    if data is None:
+        data = pollard.get_data()
     results = dominance_heap.RankedPopulation()
     for parameter_set in analysis_container:
         for weight in atp_weights:
             cost = fitness.vector(parameter_set, data=data,
                                   atp_weight=weight)
             results.push((parameter_set, weight), cost)
+    return results
+
+def best_vs_weight(analysis_container, atp_weights):
+    data = pollard.get_data()
+    results = []
+    for weight in atp_weights:
+        results.append(rank_the_world(analysis_container,
+                                      [weight], data=data).get_best())
     return results

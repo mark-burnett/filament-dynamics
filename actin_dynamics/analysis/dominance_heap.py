@@ -39,7 +39,7 @@ class RankedObject(object):
 
 
 class RankedPopulation(object):
-    def __init__(self, members=None, max_length=1000):
+    def __init__(self, members=None, max_length=500):
         self.max_length = max_length
         self._up_to_date = False
 

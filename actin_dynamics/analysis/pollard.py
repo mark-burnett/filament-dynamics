@@ -34,12 +34,14 @@ def get_data(pyrene_filename='data/pollard_2002/pyrene_fluorescence.dat',
 
 def pyrene_fit(parameter_set, data, write=False, **kwargs):
     sim_results = get_fluorescence(parameter_set['sem'], **kwargs)
+
     nx2_norm, nx2_fit = fit_normalization(sim_results, data,
             residual_function=_residuals.naked_chi_squared)
 
     if write:
         if getattr(parameter_set, 'pollard', None) is None:
             parameter_set['pollard'] = {}
+        sim_nx2 = _utils.scale_measurement(sim_results, nx2_norm)
         parameter_set['pollard']['pyrene_fit_naked_chi_squared'] = nx2_fit
         parameter_set['sem']['pyrene_fit_naked_chi_squared'] = sim_nx2
 
@@ -64,7 +66,6 @@ def adppi_fit(parameter_set, data, write=False, **kwargs):
 
     return _residuals.naked_chi_squared(scaled_sim_data, data)
 
-
 def get_fluorescence(parameter_set, atp_weight=0.37, adppi_weight=0.56,
                      adp_weight=0.75, **kwargs):
     '''
@@ -72,6 +73,8 @@ def get_fluorescence(parameter_set, atp_weight=0.37, adppi_weight=0.56,
 
     parameter_set is the 'average' analysis parameter set
     '''
+#    adp_weight = 0
+#    adppi_weight = 0
     # Grab the simulation data
     atp_data   = parameter_set['pyrene_atp_count']
     adppi_data = parameter_set['pyrene_adppi_count']
@@ -97,7 +100,7 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None,
     # Create residual function
     def model_function(normalization):
         if normalization[0] <= 0:
-            return 5000
+            return 5000000
         scaled_sim = _utils.scale_measurement(fluorescence_sim,
                                               normalization[0])
         cs = residual_function(fluorescence_data, scaled_sim)
@@ -106,7 +109,7 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None,
     # Use scipy to generate the results.
     times, data = fluorescence_data
     stimes, sim_avg, sim_error = fluorescence_sim
-    normalization_guess = data[-1] / sim_avg[-1]
+    normalization_guess = 1 #data[-1] / max(sim_avg[-1], 0.01)
 
     fit_results = _optimize.fmin(model_function, normalization_guess,
                                  disp=False, full_output=True)

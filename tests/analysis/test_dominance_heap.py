@@ -162,3 +162,14 @@ class TestRankedPopulation(unittest.TestCase):
                          [m.parameters
                           for m in self.population.get_worst(len(self.costs))])
 
+    def test_get_best(self):
+        self.build_population()
+        best = self.population.get_best()
+        self.assertEqual(best.parameters, 5)
+        self.assertEqual(best.cost, self.costs[5])
+
+    def test_get_worst(self):
+        self.build_population()
+        worst = self.population.get_worst()
+        self.assertEqual(worst.parameters, 0)
+        self.assertEqual(worst.cost, self.costs[0])

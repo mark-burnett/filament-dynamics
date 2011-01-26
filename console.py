@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env ipython
 #    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -14,24 +14,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from IPython.Shell import IPShellEmbed as IPShellEmbed
-
-def open_console():
-    # Setup welcome message.
-    banner = '\nWelcome to the actin dynamics analysis console.'
-
-    # Create namespaces.
-    from actin_dynamics import analysis
-    from actin_dynamics import visualization
-    from actin_dynamics import io
-
-    local_namespace  = {'analysis': analysis,
-                        'io': io,
-                        'visualization': visualization}
-
-    # Create shell.
-    shell = IPShellEmbed(argv=[], banner=banner)
-    shell(local_ns=local_namespace)
-
-if '__main__' == __name__:
-    open_console()
+from actin_dynamics import analysis
+from actin_dynamics import visualization
+from actin_dynamics import io

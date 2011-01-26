@@ -18,6 +18,7 @@ import itertools
 from . import pollard
 
 def vector(parameter_set, data=None,
-           functions=(pollard.pyrene_fit, pollard.adppi_fit,), **kwargs):
+           functions=(pollard.pyrene_fit,), **kwargs):
+#           functions=(pollard.pyrene_fit, pollard.adppi_fit,), **kwargs):
     return [f(parameter_set, d, **kwargs)
             for f, d in itertools.izip(functions, data)]
