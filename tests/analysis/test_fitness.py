@@ -13,13 +13,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
+import unittest
 
-from . import pollard
+from actin_dynamics.analysis import fitness
 
-def vector(parameter_set, data=None,
-#           functions=(pollard.adppi_fit,), **kwargs):
-           functions=(pollard.pyrene_fit,), **kwargs):
-#           functions=(pollard.pyrene_fit, pollard.adppi_fit,), **kwargs):
-    return [f(parameter_set, d, **kwargs)
-            for f, d in itertools.izip(functions, data)]
+class TestFitnessVector(unittest.TestCase):
+    def setUp(self):
+        self.data = ['normal', 'squared']
+        self.functions = [lambda ps, d: (ps, d),
+                          lambda ps, d: (ps**2, d)]
+        self.parameter_sets = range(5)
+
+    def test_vector(self):
+        expected_results = [[(ps, 'normal'), (ps**2, 'squared')]
+                            for ps in self.parameter_sets]
+
+        for i, ps in enumerate(self.parameter_sets):
+            self.assertEqual(expected_results[i],
+                    fitness.vector(ps, self.data, functions=self.functions))

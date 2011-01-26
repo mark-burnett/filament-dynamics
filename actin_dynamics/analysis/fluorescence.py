@@ -23,8 +23,7 @@ def rank_the_world(analysis_container, atp_weights, data=None):
     results = dominance_heap.RankedPopulation()
     for parameter_set in analysis_container:
         for weight in atp_weights:
-            cost = fitness.vector(parameter_set, data=data,
-                                  atp_weight=weight)
+            cost = fitness.vector(parameter_set, data=data, atp_weight=weight)
             results.push((parameter_set, weight), cost)
     return results
 

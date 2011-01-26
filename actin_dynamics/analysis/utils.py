@@ -47,20 +47,17 @@ def scale_measurement(measurement, factor):
 
     return list([time]) + scaled_rest
 
-def add_measurements(use_errors=True, *measurements):
-    if use_errors:
-        times, values, errors = copy.copy(measurements[0])
+def add_measurements(measurements):
+    times, values, errors = copy.copy(measurements[0])
 
-        errors = [e**2 for e in errors]
+    errors = [e**2 for e in errors]
 
-        for mtimes, mvalues, merrors in measurements[1:]:
-            merrors = [e**2 for e in merrors]
+    for mtimes, mvalues, merrors in measurements[1:]:
+        merrors = [e**2 for e in merrors]
 
-            values = vectorize.add(values, mvalues)
-            errors = vectorize.add(errors, merrors)
+        values = vectorize.add(values, mvalues)
+        errors = vectorize.add(errors, merrors)
 
-        errors = map(math.sqrt, errors)
+    errors = map(math.sqrt, errors)
 
-        return times, values, errors
-    else:
-        raise NotImplementedError()
+    return times, values, errors

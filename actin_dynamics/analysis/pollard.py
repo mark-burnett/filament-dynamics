@@ -19,6 +19,11 @@ from . import utils as _utils
 
 from actin_dynamics import io
 
+def relavent_pars(parameter_set):
+    return (parameter_set['parameters']['cleavage_rate'],
+            parameter_set['parameters']['cleavage_cooperativity'],
+            parameter_set['parameters']['filament_tip_concentration'])
+
 def get_data(pyrene_filename='data/pollard_2002/pyrene_fluorescence.dat',
              adppi_filename='data/pollard_2002/adppi_concentration.dat',
              **kwargs):
@@ -86,8 +91,8 @@ def get_fluorescence(parameter_set, atp_weight=0.37, adppi_weight=0.56,
     scaled_adp_data   = _utils.scale_measurement(adp_data, adp_weight)
 
     # Add everything
-    return _utils.add_measurements(scaled_atp_data, scaled_adppi_data,
-                                   scaled_adp_data)
+    return _utils.add_measurements([scaled_atp_data, scaled_adppi_data,
+                                   scaled_adp_data])
 
 
 def fit_normalization(fluorescence_sim=None, fluorescence_data=None,
@@ -103,13 +108,12 @@ def fit_normalization(fluorescence_sim=None, fluorescence_data=None,
             return 5000000
         scaled_sim = _utils.scale_measurement(fluorescence_sim,
                                               normalization[0])
-        cs = residual_function(fluorescence_data, scaled_sim)
-        return cs
+        return residual_function(fluorescence_data, scaled_sim)
 
     # Use scipy to generate the results.
-    times, data = fluorescence_data
-    stimes, sim_avg, sim_error = fluorescence_sim
-    normalization_guess = 1 #data[-1] / max(sim_avg[-1], 0.01)
+#    times, data = fluorescence_data
+#    stimes, sim_avg, sim_error = fluorescence_sim
+    normalization_guess = 1
 
     fit_results = _optimize.fmin(model_function, normalization_guess,
                                  disp=False, full_output=True)
