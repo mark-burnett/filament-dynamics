@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,23 +13,27 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import csv
+class CommentFilter(object):
+    def __init__(self, stream, ownership=False):
+        self.stream = stream
+        self._ownership = ownership
 
-from . import comments
+    @classmethod
+    def from_filename(cls, filename):
+        return cls(open(filename), ownership=True)
 
-class DataThiefDialect(csv.Dialect):
-    delimiter = ' '
-    quotechar = '"'
-    doublequote = True
-    skipinitialspace = True
-    lineterminator = '\r\n'
-    quoting = csv.QUOTE_NONNUMERIC
+    def __del__(self):
+        if self._ownership:
+            self.stream.close()
 
-def load_data(filename):
-    results = []
-    f = comments.CommentFilter.from_filename(filename)
-    reader = csv.reader(f, dialect=DataThiefDialect)
-    for row in reader:
-        new_row = map(float, row)
-        results.append(new_row)
-    return zip(*results)
+    def __iter__(self):
+        return self
+
+    def next(self):
+        line = self.stream.next()
+        line.strip()
+        while line.startswith('#'):
+            line = self.stream.next()
+            line.strip()
+
+        return line
