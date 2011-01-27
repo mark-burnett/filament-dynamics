@@ -15,6 +15,7 @@
 
 from . import compressed
 from . import data
+from . import pollard
 from .results import load_directory
 
 from parameters import *

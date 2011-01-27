@@ -34,6 +34,8 @@ class RandomHydrolysis(_FilamentTransition):
         target_index = int(r / self.rate)
         current_filament = filaments[filament_index]
         state_index = current_filament.state_index(self.old_state, target_index)
+
+#        assert(current_filament.states[state_index] == self.old_state)
         current_filament[state_index] = self.new_state
 
         _FilamentTransition.perform(self, time, filaments, concentrations,

@@ -22,6 +22,6 @@ import numpy
 import pylab
 
 #atp_weights = numpy.linspace(0.2, 0.7, 10)
-atp_weights = [0.2, 0.7]
-sims = io.compressed.read_object('results/pollard/combined.sim')
-pyrene_data, adppi_data = analysis.pollard.get_data()
+#atp_weights = [0.2, 0.7]
+#sims = io.compressed.read_object('results/pollard/combined.sim')
+#pyrene_data, adppi_data = analysis.pollard.get_data()

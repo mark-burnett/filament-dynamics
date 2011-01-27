@@ -38,7 +38,7 @@ typeset -i SIMNUM NUM_PROCESSES
 
 let NUM_PROCESSES=1
 
-while getopts "d:o:a:n:s:p:" FLAG; do
+while getopts "d:o:a:n:s:p:h" FLAG; do
     case $FLAG in
         "d")
             DIRECTORY_NAME=$OPTARG;;
@@ -52,6 +52,9 @@ while getopts "d:o:a:n:s:p:" FLAG; do
             let NUM_SIMULATIONS=$OPTARG;;
         "p")
             SPLIT_PARAMETER=$OPTARG;;
+        "h")
+            display_args
+            exit 0
     esac
 done
 
