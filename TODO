@@ -1,6 +1,8 @@
-Broken Windows:
-    Cleaner visualization code.
-    rename/refactor file mp_support.py - there is no longer mp support o.O
+Validation:
+    automate some higher level tests
+        kinsim vs my run
+        analytic vs my run
+    Analysis code needs more unit tests.
 
 
 BUGS:
@@ -9,9 +11,15 @@ BUGS:
 
 
 Usability:
-    Add start message to console.py
-        Needs to have some basic help.
+    Put sample rate/early sample rate into parameters file.
 
 
-Validation:
-    Analysis code has no unit tests (it's only tested manually).
+Visualization:
+    Visualization for short time stuff.
+    fitness vector vs atp_weight (with labels)
+    extend reduction plots for 4 hydrolysis parameters
+
+
+Broken Windows:
+    Cleaner visualization code.
+    rename/refactor file mp_support.py - there is no longer mp support o.O
