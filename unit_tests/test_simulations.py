@@ -17,7 +17,8 @@ import random
 
 import unittest
 
-from actin_dynamics.simulations import Simulation, run_simulation, report_measurements
+from actin_dynamics.simulations import Simulation, run_simulation
+from actin_dynamics.run_support import report_measurements
 from actin_dynamics.filaments.single_strand_filaments import Filament
 
 from unit_tests.mocks.end_conditions import MockEndCondition
