@@ -26,12 +26,7 @@ from actin_dynamics.analysis import interpolation
 
 
 def load_kinsim(filename, sample_period, duration):
-    kinsim = io.data.load_data(filename)
-    time, factin, pi, atp = kinsim
-
-    factin = time, factin 
-    pi     = time, pi 
-    atp    = time, atp 
+    factin, pi, atp = io.pollard.get_kinsim(filename)
 
     sample_times = numpy.arange(0, duration + float(sample_period)/2,
                                 sample_period)

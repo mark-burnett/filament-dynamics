@@ -87,13 +87,8 @@ def plot_full_data(parameter_set):
     pylab.legend(loc=5)
 
 def kinsim_compare(parameter_set):
-    pollard_length_sim, pollard_cleavage_sim, kinsim = io.pollard.get_simulations()
-
-    kin_time, kin_factin, kin_pi, kin_atp = kinsim
-
-    kin_factin_sim = kin_time, kin_factin 
-    kin_pi_sim     = kin_time, kin_pi 
-    kin_atp_sim    = kin_time, kin_atp 
+    pollard_length_sim, pollard_cleavage_sim = io.pollard.get_simulations()
+    kin_factin_sim, kin_pi_sim, kin_atp_sim = io.pollard.get_kinsim()
 
     # Useful parameters
     ftc = parameter_set['parameters']['filament_tip_concentration']

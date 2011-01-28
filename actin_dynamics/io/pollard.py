@@ -22,9 +22,18 @@ def get_data(pyrene_filename='data/pollard_2002/pyrene_fluorescence.dat',
     return pyrene_data, adppi_data
 
 def get_simulations(length_filename='data/pollard_2002/length_simulation.dat',
-                    cleavage_filename='data/pollard_2002/cleavage_simulation.dat',
-                    kinsim_filename='data/pollard_2002/kinsim_results.dat'):
+                    cleavage_filename='data/pollard_2002/cleavage_simulation.dat'):
     length_data = data.load_data(length_filename)
     cleavage_data = data.load_data(cleavage_filename)
+    return length_data, cleavage_data
+
+def get_kinsim(kinsim_filename='data/pollard_2002/kinsim_results.dat'):
     kinsim_data = data.load_data(kinsim_filename)
-    return length_data, cleavage_data, kinsim_data
+
+    time, factin_d, pi_d, atp_d = kinsim_data
+
+    factin = time, factin_d
+    pi     = time, pi_d
+    atp    = time, atp_d
+
+    return factin, pi, atp
