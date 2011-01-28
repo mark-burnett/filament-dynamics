@@ -15,9 +15,77 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-echo "Running unit tests."
-bin/run_unit_tests.sh
+
+# Configurable options
+UNIT_TEST_COMMAND=bin/run_unit_tests.sh
+INTEGRATION_TEST_COMMAND=bin/run_integration_tests.sh
+
+DEFAULT_RUN_UNIT_TESTS=true
+DEFAULT_RUN_INTEGRATION_TESTS=false
+
+# Below this point is real code, not options.
+RUN_UNIT_TESTS=false
+RUN_INTEGRATION_TESTS=false
+ARGUMENTS_RECEIVED=false
+
+display_args() {
+    echo "Options:"
+    echo
+    echo "    -u    Run unit tests."
+    echo "    -i    Run integration tests."
+    echo
+    echo "    -h    Print this message."
+    echo
+}
+
+run_unit_tests() {
+    echo "Running unit tests..."
+    echo
+    $UNIT_TEST_COMMAND
+    echo
+}
+
+run_integration_tests() {
+    echo "Running integration tests..."
+    echo
+    $INTEGRATION_TEST_COMMAND
+    echo
+}
+
+while getopts "uih" FLAG; do
+    case $FLAG in
+        "u")
+            ARGUMENTS_RECEIVED=true
+            RUN_UNIT_TESTS=true;;
+        "i")
+            ARGUMENTS_RECEIVED=true
+            RUN_INTEGRATION_TESTS=true;;
+        "h")
+            display_args
+            exit 0
+    esac
+done
+
+echo "Running automated tests."
 echo
+
+if $ARGUMENTS_RECEIVED; then
+    if $RUN_UNIT_TESTS; then
+        run_unit_tests
+    fi
+
+    if $RUN_INTEGRATION_TESTS; then
+        run_integration_tests
+    fi
+else
+    if $DEFAULT_RUN_UNIT_TESTS; then
+        run_unit_tests
+    fi
+
+    if $DEFAULT_RUN_INTEGRATION_TESTS; then
+        run_integration_tests
+    fi
+fi
+
+echo "Tests complete."
 echo
-echo "Running integration tests."
-bin/run_integration_tests.sh
