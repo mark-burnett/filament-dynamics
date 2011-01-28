@@ -23,9 +23,10 @@ def _arange(min_value, max_value, dx):
         value += dx
     return result
 
-def all_measurements(parameter_set, sample_period=1, epsilon=1e-10,
-                     source='simulations'):
+def all_measurements(parameter_set, source='simulations'):
     analysis = []
+    sample_period = parameter_set['parameters']['sample_period']
+    epsilon = float(sample_period) / 2
     for simulation in parameter_set[source]:
         sample_times = list(_arange(0,
                 parameter_set['parameters']['simulation_duration'] + epsilon,
@@ -49,7 +50,6 @@ def all_measurements(parameter_set, sample_period=1, epsilon=1e-10,
         analysis.append(sim_results)
 
     return analysis
-
 
 
 def collection_measurements(measurements, sample_times):

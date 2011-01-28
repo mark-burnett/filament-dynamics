@@ -83,7 +83,7 @@ def _make_parameter_mesh_iterator(parameter_ranges, split_parameter_name,
     meshes = []
     for name, range_info in parameter_ranges.iteritems():
         names.append(name)
-        if name == split_parameter_name:
+        if split_parameter_name and name == split_parameter_name:
             meshes.append(_make_split_mesh(process_number, num_processes,
                                            *range_info))
         else:
@@ -92,8 +92,8 @@ def _make_parameter_mesh_iterator(parameter_ranges, split_parameter_name,
     return ParameterMeshIterator(names, _product(*meshes))
 
 
-def parse_parameters_file(par_file, split_parameter_name,
-                          process_number, num_processes):
+def parse_parameters_file(par_file, split_parameter_name=None,
+                          process_number=0, num_processes=1):
     parameter_ranges = yaml.load(par_file)
     return _make_parameter_mesh_iterator(parameter_ranges,
                                          split_parameter_name,

@@ -18,7 +18,7 @@ import argparse
 import os.path
 
 from actin_dynamics import io, factories
-from actin_dynamics import mp_support
+from actin_dynamics import run_support
 
 def parse_command_line():
     parser = argparse.ArgumentParser()
@@ -61,7 +61,7 @@ def cli_main(parameters_filename, object_graph_filename, process_number,
     simulation_factory = factories.simulation_generator(object_graph,
                                                         parameters, num_sims)
 
-    mp_support.run_simulations(simulation_factory, output_filename)
+    run_support.run_simulations(simulation_factory, output_filename)
 
 
 if '__main__' == __name__:

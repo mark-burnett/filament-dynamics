@@ -1,0 +1,23 @@
+# Polymerization/Depolymerization parameters
+barbed_atp_polymerization_rate:   [10, 10, 1, linear]
+
+# Hydrolysis parameters
+cleavage_rate: [0.3, 0.3, 1, linear]
+
+# Initial Strand
+seed_concentration: [6, 6, 1, linear]
+number_of_filaments: [10, 10, 1, linear]
+
+# Concentrations
+filament_tip_concentration: [0.0112, 0.0112, 1, linear]
+
+initial_atp_concentration: [6, 6, 1, linear]
+initial_adp_concentration: [0, 0, 1, linear]
+
+initial_pi_concentration:    [0, 0, 1, linear]
+
+# End Conditions
+simulation_duration: [40, 40, 1, linear]
+
+# Simulation Parameters
+sample_period: [0.1, 0.1, 1, linear]

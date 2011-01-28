@@ -29,7 +29,7 @@ def add_number(measurement, number):
     result = [list(component) for component in measurement]
 
     for i, row in enumerate(zip(*result)):
-        old_value = result[1][i]
+        old_value = float(result[1][i])
         result[1][i] += number
         if 3 == len(result):
             result[2][i] *= result[1][i] / old_value

@@ -38,7 +38,7 @@ def make_simulation(object_graph, parameters):
                       filaments=filaments)
 
 
-def _single_simulation_generator(object_graph, parameters, number_simulations):
+def single_simulation_generator(object_graph, parameters, number_simulations):
     current_sim = 0
     while current_sim < number_simulations:
         yield make_simulation(object_graph, parameters)
@@ -46,6 +46,6 @@ def _single_simulation_generator(object_graph, parameters, number_simulations):
 
 def simulation_generator(object_graph, parameters, number_simulations):
     for current_pars in parameters:
-        yield current_pars, _single_simulation_generator(object_graph,
-                                                         current_pars,
-                                                         number_simulations)
+        yield current_pars, single_simulation_generator(object_graph,
+                                                        current_pars,
+                                                        number_simulations)

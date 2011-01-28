@@ -20,6 +20,7 @@ import operator
 from . import downsample
 from . import utils
 
+import numpy
 
 def analyze_parameter_set(parameter_set):
     analysis = {}
@@ -42,6 +43,10 @@ def all_measurements(simulations):
     return analysis
 
 
+def std(values, mean):
+    return math.sqrt(sum((v - mean)**2 for v in values) / len(values))
+
+
 def calculate_sem_trace(measurements):
     '''
     Workhorse function.  Calculates the standard error of the mean.
@@ -54,7 +59,7 @@ def calculate_sem_trace(measurements):
     errors = []
     for tv in transposed_values:
         mean = sum(tv) / len(tv)
-        err  = math.sqrt(sum((v - mean)**2 for v in tv) / len(tv)) / sqrt_N
+        err = std(tv, mean) / sqrt_N
         means.append(mean)
         errors.append(err)
 

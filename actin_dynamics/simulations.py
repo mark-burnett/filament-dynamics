@@ -46,12 +46,6 @@ class Simulation(object):
         self.filaments      = filaments
         self.rng            = rng
 
-
-def run_and_report(sim):
-    run_simulation(sim)
-    return report_measurements(sim)
-
-
 def run_simulation(sim):
     """
     Perform the actual simulation, starting with initial_state.
@@ -119,20 +113,3 @@ def run_simulation(sim):
     except Exception:
         traceback.print_exc()
         raise
-
-
-def report_measurements(sim):
-    concentration_results = {}
-    for state, c in sim.concentrations.iteritems():
-        concentration_results[state] = zip(*c.data)
-
-    filament_results = []
-    for filament in sim.filaments:
-        fr = {}
-        fr['final_state']  = filament.states
-        fr['measurements'] = dict((name, zip(*values))
-                for name, values in filament.measurements.iteritems())
-        filament_results.append(fr)
-
-    return {'concentrations': concentration_results,
-            'filaments':      filament_results}

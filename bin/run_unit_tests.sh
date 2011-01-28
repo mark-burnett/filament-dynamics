@@ -15,5 +15,4 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-bin/run_unit_tests.sh
-bin/run_integration_tests.sh
+python -m discover -s unit_tests

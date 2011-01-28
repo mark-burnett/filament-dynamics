@@ -1,0 +1,71 @@
+filaments:
+    class_name: SingleStateFixedLengthFromConcentrations
+    parameters:
+        number: number_of_filaments
+        concentration: seed_concentration
+        filament_tip_concentration: filament_tip_concentration
+    fixed_parameters:
+        state: ADP
+
+concentrations:
+    - class_name: FixedReagent
+      state: ATP
+      parameters:
+          initial_concentration: initial_atp_concentration
+          filament_tip_concentration: filament_tip_concentration
+          number: number_of_filaments
+
+    - class_name: FixedReagent
+      state: ADP
+      parameters:
+          filament_tip_concentration: filament_tip_concentration
+          number: number_of_filaments
+      fixed_parameters:
+          initial_concentration: 0
+
+
+    - class_name: FixedReagent
+      state: Pi
+      parameters:
+          initial_concentration: initial_pi_concentration
+          filament_tip_concentration: filament_tip_concentration
+          number: number_of_filaments
+
+end_conditions:
+    - class_name: Duration
+      parameters:
+          duration: simulation_duration
+
+measurements:
+    - class_name: Length
+      fixed_parameters:
+          label: length
+
+    - class_name: StateCount
+      fixed_parameters:
+          label: atp_count
+          state: ATP
+
+    - class_name: StateCount
+      fixed_parameters:
+          label: adp_count
+          state: ADP
+
+transitions:
+    # Polymerization
+    - class_name: BarbedPolymerization
+      fixed_parameters:
+          state: ATP
+          label: atp_polymerization
+      parameters:
+          rate: barbed_atp_polymerization_rate
+
+    # Hydrolysis
+    - class_name: RandomHydrolysisWithByproduct
+      fixed_parameters:
+          label: hydrolysis
+          old_state: ATP
+          new_state: ADP
+          byproduct: Pi
+      parameters:
+          rate: cleavage_rate

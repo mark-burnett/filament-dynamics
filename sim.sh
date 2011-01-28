@@ -68,7 +68,7 @@ FULL_OBJECT_PATH="$DIRECTORY_NAME/$OBJECT_GRAPH_FILENAME"
 FULL_PARAMETERS_PATH="$DIRECTORY_NAME/$PARAMETERS_FILENAME"
 
 for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
-    ./cli.py --object_graph $FULL_OBJECT_PATH --parameters $FULL_PARAMETERS_PATH --output_directory $DIRECTORY_NAME --num_sims $NUM_SIMULATIONS --process_number $SIMNUM --num_processes $NUM_PROCESSES --split_parameter $SPLIT_PARAMETER &
+    bin/cli.py --object_graph $FULL_OBJECT_PATH --parameters $FULL_PARAMETERS_PATH --output_directory $DIRECTORY_NAME --num_sims $NUM_SIMULATIONS --process_number $SIMNUM --num_processes $NUM_PROCESSES --split_parameter $SPLIT_PARAMETER &
 done
 
 wait
