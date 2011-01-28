@@ -20,6 +20,7 @@ OBJECT_GRAPH_FILENAME="object_graph.yaml"
 PARAMETERS_FILENAME="parameters.yaml"
 DIRECTORY_NAME="."
 NUM_SIMULATIONS="1"
+SPLIT_COMMAND=""
 
 display_args() {
     echo "Options:"
@@ -29,8 +30,6 @@ display_args() {
     echo "    -a <filename>         Parameters file."
     echo "    -n <integer>          Number of processes."
     echo "    -s <integer>          Number of simulations per par set."
-    echo
-    echo "Required arguments:"
     echo "    -p <parameter_name>   Name of parameter for splitting up work."
 }
 
@@ -51,17 +50,12 @@ while getopts "d:o:a:n:s:p:h" FLAG; do
         "s")
             let NUM_SIMULATIONS=$OPTARG;;
         "p")
-            SPLIT_PARAMETER=$OPTARG;;
+            SPLIT_COMMAND="--split_parameter $OPTARG";;
         "h")
             display_args
             exit 0
     esac
 done
-
-if [ -z $SPLIT_PARAMETER ]; then
-    display_args
-    exit -1
-fi
 
 
 FULL_OBJECT_PATH="$DIRECTORY_NAME/$OBJECT_GRAPH_FILENAME"
@@ -74,7 +68,7 @@ for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
                --num_sims         $NUM_SIMULATIONS\
                --process_number   $SIMNUM\
                --num_processes    $NUM_PROCESSES\
-               --split_parameter  $SPLIT_PARAMETER &
+               $SPLIT_COMMAND &
 done
 
 wait

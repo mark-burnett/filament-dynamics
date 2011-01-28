@@ -44,5 +44,5 @@ simulation_duration: [400, 400, 1, linear]
 
 
 # Simulation Parameters
-sample_period: [1, 1, 1, linear}
+sample_period: [1, 1, 1, linear]
 number_of_filaments: [4, 4, 1, linear]
