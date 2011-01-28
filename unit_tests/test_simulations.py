@@ -20,10 +20,10 @@ import unittest
 from actin_dynamics.simulations import Simulation, run_simulation, report_measurements
 from actin_dynamics.filaments.single_strand_filaments import Filament
 
-from tests.mocks.end_conditions import MockEndCondition
-from tests.mocks.measurements import MockMeasurement
-from tests.mocks.random_number_generators import MockRNG
-from tests.mocks.transitions import MockTransition
+from unit_tests.mocks.end_conditions import MockEndCondition
+from unit_tests.mocks.measurements import MockMeasurement
+from unit_tests.mocks.random_number_generators import MockRNG
+from unit_tests.mocks.transitions import MockTransition
 
 
 class BasicSimulationTests(unittest.TestCase):

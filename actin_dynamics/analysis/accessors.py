@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,9 +13,19 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-echo "Running unit tests."
-bin/run_unit_tests.sh
-echo
-echo
-echo "Running integration tests."
-bin/run_integration_tests.sh
+from . import utils
+
+def get(parameter_set, name):
+    return parameter_set['sem'][name]
+
+def get_length(parameter_set):
+    basic_length = parameter_set['sem']['length']
+    subtracted_length = utils.add_number(basic_length,
+            -basic_length[1][0])
+    return utils.scale_measurement(subtracted_length,
+            parameter_set['parameters']['filament_tip_concentration'])
+
+def get_scaled(parameter_set, name):
+    basic = parameter_set['sem'][name]
+    return utils.scale_measurement(basic,
+            parameter_set['parameters']['filament_tip_concentration'])

@@ -19,7 +19,7 @@ from collections import defaultdict
 from actin_dynamics.transitions.vectorial_hydrolysis import *
 from actin_dynamics.filaments.single_strand_filaments import Filament
 
-from tests.mocks.concentrations import MockConcentration
+from unit_tests.mocks.concentrations import MockConcentration
 
 
 class VectorialHydrolysisSingleFilamentTest(unittest.TestCase):

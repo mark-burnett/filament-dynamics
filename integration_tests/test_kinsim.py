@@ -46,9 +46,9 @@ def load_kinsim(filename, sample_period, duration):
 class TestKinsim(unittest.TestCase):
     def setUp(self):
         self.data_sets = [
-                ('tests/integration_tests/kinsim/pollard_og.yaml',
-                 'tests/integration_tests/kinsim/pollard_pars.yaml',
-                 'tests/integration_tests/kinsim/pollard_kinsim.dat')]
+                ('integration_tests/kinsim/pollard_og.yaml',
+                 'integration_tests/kinsim/pollard_pars.yaml',
+                 'integration_tests/kinsim/pollard_kinsim.dat')]
 
         self.num_sims = 10
         self.percent_error = 0.01

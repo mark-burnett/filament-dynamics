@@ -18,7 +18,7 @@ from collections import defaultdict
 
 from actin_dynamics.transitions.concentration_changes import *
 
-from tests.mocks.concentrations import MockConcentration
+from unit_tests.mocks.concentrations import MockConcentration
 
 class ConcentrationChangeTest(unittest.TestCase):
     def setUp(self):
