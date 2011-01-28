@@ -26,3 +26,5 @@ initial_pi_concentration:    [0, 0, 1, linear]
 
 # End Conditions
 simulation_duration: [40, 40, 1, linear]
+
+sample_period: [0.5, 0.5, 1, linear]

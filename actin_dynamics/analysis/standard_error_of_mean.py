@@ -20,8 +20,6 @@ import operator
 from . import downsample
 from . import utils
 
-import numpy
-
 def analyze_parameter_set(parameter_set):
     analysis = {}
     analysis['parameters'] = parameter_set['parameters']

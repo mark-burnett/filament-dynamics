@@ -16,24 +16,24 @@ pointed_atp_depolymerization_rate:   [0.8,  0.8,  1, linear]
 pointed_adppi_depolymerization_rate: [0.02, 0.02, 1, linear]
 pointed_adp_depolymerization_rate:   [0.25, 0.25, 1, linear]
 
+
 # Hydrolysis parameters
 cleavage_rate: [0.05, 1.00, 10, linear]
 cleavage_cooperativity: [1, 3000000, 10, log]
 
-release_rate: [0.003, 0.003, 1, linear]
+release_rate: [0.003, 1, 10, log]
+release_cooperativity: [1, 3000000, 10, log]
 
 
 # Initial Strand
 seed_concentration: [6, 6, 1, linear]
-number_of_filaments: [8, 8, 1, linear]
 
 
 # Concentrations
 filament_tip_concentration: [0.005, 0.050, 10, linear]
 
-
-initial_atp_concentration: [4, 4, 1, linear]
-initial_adp_concentration: [0, 0, 1, linear]
+initial_atp_concentration: [3.6, 3.6, 1, linear]
+initial_adp_concentration: [0.4, 0.4, 1, linear]
 
 initial_adppi_concentration: [0, 0, 1, linear]
 initial_pi_concentration:    [0, 0, 1, linear]
@@ -41,3 +41,8 @@ initial_pi_concentration:    [0, 0, 1, linear]
 
 # End Conditions
 simulation_duration: [400, 400, 1, linear]
+
+
+# Simulation Parameters
+sample_period: [1, 1, 1, linear]
+number_of_filaments: [4, 4, 1, linear]

@@ -1,6 +1,5 @@
 Validation:
     automate some higher level tests
-        kinsim vs my run
         analytic vs my run
     Analysis code needs more unit tests.
 
@@ -8,10 +7,6 @@ Validation:
 BUGS:
     Is there a problem with the single random simulation?
         pyrene sim looks oddly low for first 2 data points somehow.
-
-
-Usability:
-    Put sample rate/early sample rate into parameters file.
 
 
 Visualization:
@@ -22,4 +17,3 @@ Visualization:
 
 Broken Windows:
     Cleaner visualization code.
-    rename/refactor file mp_support.py - there is no longer mp support o.O
