@@ -19,6 +19,7 @@ from . import basic
 
 from actin_dynamics import io
 
+from actin_dynamics.analysis import accessors
 from actin_dynamics.analysis import utils
 
 
@@ -35,56 +36,35 @@ ADPPI_COLORS = green
 
 
 def plot_full_data(parameter_set):
+    # Get data from files.
     pyrene_data, adppi_data = io.pollard.get_data()
-    pollard_length_sim, pollard_cleavage_sim = io.pollard.get_simulations()
 
-    # Useful parameters
-    ftc = parameter_set['parameters']['filament_tip_concentration']
-    seed_conc = parameter_set['parameters']['seed_concentration']
 
-    # Length in the simulation should match pollard's length and fluorescence.
-    length_sim = parameter_set['sem']['length']
-    length_sim = utils.scale_measurement(length_sim, ftc)
-    length_sim = utils.add_number(length_sim, -seed_conc)
+    # Get simulation results.
+    length_sim = accessors.get_length(parameter_set)
+    adppi_sim  = accessors.get_scaled(parameter_set, 'pyrene_adppi_count')
+    pyrene_sim = accessors.get_fluorescence(parameter_set)
 
-    # Cleavage should match pollard's cleavage sim.
-    cleavage_sim = parameter_set['sem']['cleavage']
-    cleavage_sim = utils.scale_measurement(cleavage_sim, ftc)
 
-    # ADP-Pi is what was really measured.
-    adppi_sim = parameter_set['sem']['pyrene_adppi_count']
-    adppi_sim = utils.scale_measurement(adppi_sim, ftc)
-
-    atp_sim = parameter_set['sem']['pyrene_atp_count']
-    atp_sim = utils.scale_measurement(atp_sim, ftc)
-
-    # Start doing some real plotting!
+    # Plot.
     pylab.figure()
     basic.plot_smooth_measurement(pyrene_data, label='Pyrene Data',
-                                  color=blue[0])
-    basic.plot_smooth_measurement(pollard_length_sim,
-                                  label='Pollard Length Sim',
-                                  color=blue[1])
+                                  color=purple[0])
+    basic.plot_smooth_measurement(pyrene_sim, label='Pyrene Sim',
+                                  color=purple[1])
+
     basic.plot_smooth_measurement(length_sim, label='Length Sim',
-                                  color=blue[2])
+                                  color=blue[1])
 
     basic.plot_scatter_measurement(adppi_data, label='F-ADP-Pi Data',
                                    color=green[0])
     basic.plot_smooth_measurement(adppi_sim, label='F-ADP-Pi Sim',
                                   color=green[1])
 
-    basic.plot_smooth_measurement(cleavage_sim, label='Cleavage Sim',
-                                  color=orange[1])
-    basic.plot_smooth_measurement(pollard_cleavage_sim,
-                                  label='Pollard Cleavage Sim',
-                                  color=orange[2])
-
-    basic.plot_smooth_measurement(atp_sim, label='F-ATP Sim',
-                                  color=purple[1])
-
     pylab.xlim((0, 40))
     pylab.ylim((0, 7))
-    pylab.legend(loc=5)
+    pylab.legend(loc=4)
+
 
 def kinsim_compare(parameter_set):
     pollard_length_sim, pollard_cleavage_sim = io.pollard.get_simulations()
@@ -94,21 +74,11 @@ def kinsim_compare(parameter_set):
     ftc = parameter_set['parameters']['filament_tip_concentration']
     seed_conc = parameter_set['parameters']['seed_concentration']
 
-    # Length in the simulation should match pollard's length and fluorescence.
-    length_sim = parameter_set['sem']['length']
-    length_sim = utils.scale_measurement(length_sim, ftc)
-    length_sim = utils.add_number(length_sim, -seed_conc)
-
-    # Cleavage should match pollard's cleavage sim.
-    cleavage_sim = parameter_set['sem']['cleavage']
-    cleavage_sim = utils.scale_measurement(cleavage_sim, ftc)
-
-    # ADP-Pi is what was really measured.
-    adppi_sim = parameter_set['sem']['pyrene_adppi_count']
-    adppi_sim = utils.scale_measurement(adppi_sim, ftc)
-
-    atp_sim = parameter_set['sem']['pyrene_atp_count']
-    atp_sim = utils.scale_measurement(atp_sim, ftc)
+    # Get simulation results.
+    length_sim   = accessors.get_length(parameter_set)
+    cleavage_sim = accessors.get_scaled(parameter_set, 'cleavage')
+    adppi_sim    = accessors.get_scaled(parameter_set, 'pyrene_adppi_count')
+    atp_sim      = accessors.get_scaled(parameter_set, 'pyrene_atp_count')
 
     # Start doing some real plotting!
     pylab.figure()
