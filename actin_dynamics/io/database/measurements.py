@@ -15,7 +15,9 @@
 
 import elixir as _elixir
 
-class Measurement(_elixir.Entity):
+from . import mixins as _mixins
+
+class Measurement(_elixir.Entity, _mixins.Convenience):
     _elixir.using_options(tablename='measurement')
 
     name   = _elixir.Field(_elixir.String(50))

@@ -15,11 +15,10 @@
 
 import elixir as _elixir
 
-class Run(_elixir.Entity):
-    _elixir.using_options(tablename='run')
+from . import mixins as _mixins
 
-    num_simulations = _elixir.Field(_elixir.Integer)
-    num_filaments   = _elixir.Field(_elixir.Integer)
+class Run(_elixir.Entity, _mixins.Convenience):
+    _elixir.using_options(tablename='run')
 
     parameters   = _elixir.OneToMany('Parameter')
     measurements = _elixir.OneToMany('Measurement')

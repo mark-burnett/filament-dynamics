@@ -15,7 +15,9 @@
 
 import elixir as _elixir
 
-class Parameter(_elixir.Entity):
+from . import mixins as _mixins
+
+class Parameter(_elixir.Entity, _mixins.Convenience):
     _elixir.using_options(tablename='parameter')
 
     name  = _elixir.Field(_elixir.String(50))

@@ -13,17 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import elixir as _elixir
-
-from . import mixins as _mixins
-
-class Group(_elixir.Entity, _mixins.Convenience):
-    _elixir.using_options(tablename='group')
-
-    name        = _elixir.Field(_elixir.String(50))
-    description = _elixir.Field(_elixir.String)
-
-    timestamp = _elixir.Field(_elixir.DateTime)
-    revision  = _elixir.Field(_elixir.String(50))
-
-    runs = _elixir.OneToMany('Run')
+class Convenience(object):
+    @classmethod
+    def get_or_create(cls, *args, **kwargs):
+        result = cls.get_by(*args, **kwargs)
+        if result:
+            return result
+        return cls(*args, **kwargs)

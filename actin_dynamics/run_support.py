@@ -29,8 +29,8 @@ def typical_run(parameters, simulation_iterator):
 
 def run_simulations(simulation_factory, output_file_name):
     output_stream = _io.compressed.output_stream(output_file_name)
-    for parameter_set, ssg in simulation_factory:
-        analyzed_set = typical_run(parameter_set, ssg)
+    for parameters, simulation_iterator in simulation_factory:
+        analyzed_set = typical_run(parameters, simulation_iterator)
 
         _cPickle.dump(analyzed_set, output_stream,
                       protocol=_cPickle.HIGHEST_PROTOCOL)

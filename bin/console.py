@@ -18,6 +18,8 @@ from actin_dynamics import analysis
 from actin_dynamics import visualization
 from actin_dynamics import io
 
+from actin_dynamics.io import database
+
 import numpy
 import pylab
 
