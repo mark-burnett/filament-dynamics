@@ -1,4 +1,4 @@
-#!/usr/bin/env pypy
+#!/usr/bin/env python
 
 #    Copyright (C) 2011 Mark Burnett
 #

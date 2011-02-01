@@ -38,6 +38,13 @@ class SimulationParameter(Parameter):
 
     run = _elixir.ManyToOne('Run')
 
+class SimulationValue(Parameter):
+    _elixir.using_options(inheritance='multi',
+            tablename='simulation_value')
+
+    run = _elixir.ManyToOne('Run')
+
+
 class AnalysisParameter(Parameter):
     _elixir.using_options(inheritance='multi',
             tablename='analysis_parameter')

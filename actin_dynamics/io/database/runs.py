@@ -24,7 +24,9 @@ class Run(_elixir.Entity, _mixins.Convenience):
 
     parameters   = _elixir.OneToMany('SimulationParameter')
     measurements = _elixir.OneToMany('Measurement')
-    analyses     = _elixir.OneToMany('Analysis')
+
+    analyses = _elixir.OneToMany('Analysis')
+    values   = _elixir.OneToMany('SimulationValue')
 
     group = _elixir.ManyToOne('Group')
 
@@ -46,6 +48,10 @@ class Run(_elixir.Entity, _mixins.Convenience):
 
     def get_parameter(self, name):
         return _parameters.SimulationParameter.query.filter_by(run=self,
+                name=name).first().value
+
+    def get_value(self, name):
+        return _parameters.SimulationValue.query.filter_by(run=self,
                 name=name).first().value
 
     def get_measurement(self, name):
