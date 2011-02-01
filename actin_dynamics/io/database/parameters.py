@@ -24,3 +24,11 @@ class Parameter(_elixir.Entity, _mixins.Convenience):
     value = _elixir.Field(_elixir.Float)
 
     run = _elixir.ManyToOne('Run')
+
+    @classmethod
+    def from_dict(cls, parameters):
+        results = []
+        for name, value in parameters.iteritems():
+            results.append(cls(name=name, value=value))
+
+        return results

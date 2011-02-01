@@ -16,6 +16,8 @@
 import elixir as _elixir
 
 from . import mixins as _mixins
+from . import parameters as _parameters
+from . import measurements as _measurements
 
 class Run(_elixir.Entity, _mixins.Convenience):
     _elixir.using_options(tablename='run')
@@ -24,3 +26,22 @@ class Run(_elixir.Entity, _mixins.Convenience):
     measurements = _elixir.OneToMany('Measurement')
 
     group = _elixir.ManyToOne('Group')
+
+    @classmethod
+    def from_analyzed_set(cls, analyzed_set):
+        run = cls()
+        run.parameters = _parameters.Parameter.from_dict(
+                analyzed_set['parameters'])
+
+        run.measurements = _measurements.Measurement.from_dict(
+                analyzed_set['sem'])
+
+        return run
+
+    def get_parameter(self, name):
+        return _parameters.Parameter.query.filter_by(run=self,
+                                                     name=name).first().value
+
+    def get_measurement(self, name):
+        return _measurements.Measurement.query.filter_by(run=self,
+                name=name).first().as_tuple

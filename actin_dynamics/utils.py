@@ -13,6 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import mercurial.hg
+import mercurial.ui
+
 def running_total(values):
     """
     Generator that calculates a running total of a sequence.
@@ -21,3 +24,8 @@ def running_total(values):
     for v in values:
         total += v
         yield total
+
+def get_mercurial_revision():
+    repo = mercurial.hg.repository(mercurial.ui.ui(), '.')
+    parent = repo.parents()[0]
+    return '%s:%s' % (parent.rev(), parent.hex())

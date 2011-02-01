@@ -27,3 +27,8 @@ import pylab
 #atp_weights = [0.2, 0.7]
 #sims = io.compressed.read_object('results/pollard/combined.sim')
 #pyrene_data, adppi_data = analysis.pollard.get_data()
+
+import elixir
+
+elixir.metadata.bind = 'sqlite:///test.sqlite'
+elixir.setup_all()

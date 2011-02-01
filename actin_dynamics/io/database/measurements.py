@@ -16,6 +16,7 @@
 import elixir as _elixir
 
 from . import mixins as _mixins
+from . import measurement_values as _measurement_values
 
 class Measurement(_elixir.Entity, _mixins.Convenience):
     _elixir.using_options(tablename='measurement')
@@ -24,3 +25,26 @@ class Measurement(_elixir.Entity, _mixins.Convenience):
 
     run    = _elixir.ManyToOne('Run')
     values = _elixir.OneToMany('MeasurementValue')
+
+    @classmethod
+    def from_dict(cls, measurements):
+        results = []
+        for name, measurement in measurements.iteritems():
+            m = cls(name=name)
+            m.values = _measurement_values.MeasurementValue.from_list(
+                    measurement)
+            results.append(m)
+
+        return results
+
+    @property
+    def as_tuple(self):
+        times = []
+        values = []
+        errors = []
+        for mv in self.values:
+            times.append(mv.time)
+            values.append(mv.value)
+            errors.append(mv.error)
+
+        return times, values, errors

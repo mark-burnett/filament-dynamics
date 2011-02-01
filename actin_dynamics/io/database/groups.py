@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime as _datetime
+
 import elixir as _elixir
 
 from . import mixins as _mixins
@@ -23,7 +25,7 @@ class Group(_elixir.Entity, _mixins.Convenience):
     name        = _elixir.Field(_elixir.String(50))
     description = _elixir.Field(_elixir.String)
 
-    timestamp = _elixir.Field(_elixir.DateTime)
+    timestamp = _elixir.Field(_elixir.DateTime, default=_datetime.datetime.now)
     revision  = _elixir.Field(_elixir.String(50))
 
     runs = _elixir.OneToMany('Run')

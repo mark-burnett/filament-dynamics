@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools as _itertools
+
 import elixir as _elixir
 
 from . import mixins as _mixins
@@ -25,3 +27,10 @@ class MeasurementValue(_elixir.Entity, _mixins.Convenience):
     time  = _elixir.Field(_elixir.Float())
     value = _elixir.Field(_elixir.Float())
     error = _elixir.Field(_elixir.Float())
+
+    @classmethod
+    def from_list(cls, measurement):
+        results = [cls(time=t, value=v, error=e)
+                   for t, v, e in _itertools.izip(*measurement)]
+
+        return results
