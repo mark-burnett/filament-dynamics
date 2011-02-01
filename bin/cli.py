@@ -1,5 +1,6 @@
 #!/usr/bin/env pypy
-#    Copyright (C) 2010 Mark Burnett
+
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,7 +16,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-import os.path
+
+import elixir
 
 from actin_dynamics import io, factories
 from actin_dynamics import run_support
@@ -27,15 +29,7 @@ def parse_command_line():
     parser.add_argument('--parameters', default='parameters.yaml',
                         help='Parameters file.')
 
-    parser.add_argument('--output_filename', default=None,
-                        help='Output filename.  Overrides prefix + extension.')
-
-    parser.add_argument('--output_prefix', default='output',
-                        help='Beginning of output filename.')
-    parser.add_argument('--output_extension', default='sim',
-                        help='Output filename extension.')
-    parser.add_argument('--output_directory', default='.',
-                        help='Output directory.')
+    parser.add_argument('--group_name', default=None, help='Group_name.')
 
     parser.add_argument('--num_sims', type=int, default=1,
                         help='Number of simulations per parameter set.')
@@ -52,7 +46,9 @@ def parse_command_line():
 
 
 def cli_main(parameters_filename, object_graph_filename, process_number,
-             num_processes, output_filename, num_sims, split_parameter):
+             num_processes, group_name, num_sims, split_parameter):
+    elixir.metadata.bind = 'sqlite:///test.sqlite'
+    elixir.setup_all()
     parameters = io.parse_parameters_file(open(parameters_filename),
                                           split_parameter,
                                           process_number, num_processes)
@@ -61,21 +57,12 @@ def cli_main(parameters_filename, object_graph_filename, process_number,
     simulation_factory = factories.simulation_generator(object_graph,
                                                         parameters, num_sims)
 
-    run_support.run_simulations(simulation_factory, output_filename)
+    run_support.run_simulations(simulation_factory, group_name)
 
 
 if '__main__' == __name__:
     args = parse_command_line()
 
-    if args.output_filename:
-        output_filename = os.path.join(args.output_directory,
-                                       args.output_filename)
-    else:
-        output_filename = os.path.join(args.output_directory,
-                                       args.output_prefix +
-                                       str(args.process_number) +
-                                       '.' + args.output_extension)
-
     cli_main(args.parameters, args.object_graph, args.process_number,
-             args.num_processes, output_filename, args.num_sims,
+             args.num_processes, args.group_name, args.num_sims,
              args.split_parameter)

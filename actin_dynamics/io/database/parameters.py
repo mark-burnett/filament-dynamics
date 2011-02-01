@@ -1,5 +1,4 @@
-#!/usr/bin/env ipython
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -14,21 +13,22 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from actin_dynamics import analysis
-from actin_dynamics import visualization
-from actin_dynamics import io
+import elixir as _elixir
 
-from actin_dynamics.io import database
+from . import mixins as _mixins
 
-import numpy
-import pylab
+class Parameter(_elixir.Entity, _mixins.Convenience):
+    _elixir.using_options(tablename='parameter')
 
-#atp_weights = numpy.linspace(0.2, 0.7, 10)
-#atp_weights = [0.2, 0.7]
-#sims = io.compressed.read_object('results/pollard/combined.sim')
-#pyrene_data, adppi_data = analysis.pollard.get_data()
+    name  = _elixir.Field(_elixir.String(50))
+    value = _elixir.Field(_elixir.Float)
 
-import elixir
+    run = _elixir.ManyToOne('Run')
 
-elixir.metadata.bind = 'sqlite:///test.sqlite'
-elixir.setup_all()
+    @classmethod
+    def from_dict(cls, parameters):
+        results = []
+        for name, value in parameters.iteritems():
+            results.append(cls(name=name, value=value))
+
+        return results

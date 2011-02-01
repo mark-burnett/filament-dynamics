@@ -21,6 +21,7 @@ PARAMETERS_FILENAME="parameters.yaml"
 DIRECTORY_NAME="."
 NUM_SIMULATIONS="1"
 SPLIT_COMMAND=""
+GROUP_NAME=""
 
 display_args() {
     echo "Options:"
@@ -31,13 +32,15 @@ display_args() {
     echo "    -n <integer>          Number of processes."
     echo "    -s <integer>          Number of simulations per par set."
     echo "    -p <parameter_name>   Name of parameter for splitting up work."
+    echo "    -g <group name>       Name of database group (required)."
+    echo
 }
 
 typeset -i SIMNUM NUM_PROCESSES
 
 let NUM_PROCESSES=1
 
-while getopts "d:o:a:n:s:p:h" FLAG; do
+while getopts "d:o:a:n:s:p:g:h" FLAG; do
     case $FLAG in
         "d")
             DIRECTORY_NAME=$OPTARG;;
@@ -51,20 +54,26 @@ while getopts "d:o:a:n:s:p:h" FLAG; do
             let NUM_SIMULATIONS=$OPTARG;;
         "p")
             SPLIT_COMMAND="--split_parameter $OPTARG";;
+        "g")
+            GROUP_NAME=$OPTARG;;
         "h")
             display_args
             exit 0
     esac
 done
 
+#if [ -z $GROUP_NAME ]; then
+#    display_args
+#    exit 0
+#fi
 
 FULL_OBJECT_PATH="$DIRECTORY_NAME/$OBJECT_GRAPH_FILENAME"
 FULL_PARAMETERS_PATH="$DIRECTORY_NAME/$PARAMETERS_FILENAME"
 
 for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
-    bin/cli.py --object_graph     $FULL_OBJECT_PATH\
+    PYTHONPATH=. bin/cli.py --object_graph     $FULL_OBJECT_PATH\
                --parameters       $FULL_PARAMETERS_PATH\
-               --output_directory $DIRECTORY_NAME\
+               --group_name       "$GROUP_NAME"\
                --num_sims         $NUM_SIMULATIONS\
                --process_number   $SIMNUM\
                --num_processes    $NUM_PROCESSES\

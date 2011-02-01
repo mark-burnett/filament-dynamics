@@ -1,5 +1,4 @@
-#!/usr/bin/env ipython
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -14,21 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from actin_dynamics import analysis
-from actin_dynamics import visualization
-from actin_dynamics import io
+from groups import *
+from measurement_values import *
+from measurements import *
+from parameters import *
+from runs import *
 
-from actin_dynamics.io import database
-
-import numpy
-import pylab
-
-#atp_weights = numpy.linspace(0.2, 0.7, 10)
-#atp_weights = [0.2, 0.7]
-#sims = io.compressed.read_object('results/pollard/combined.sim')
-#pyrene_data, adppi_data = analysis.pollard.get_data()
-
-import elixir
-
-elixir.metadata.bind = 'sqlite:///test.sqlite'
-elixir.setup_all()
+del groups
+del measurement_values
+del measurements
+del parameters
+del runs

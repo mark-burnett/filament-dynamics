@@ -13,10 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import cPickle as _cPickle
+import elixir
 
 from . import io as _io
 from . import simulations as _simulations
+from . import utils
 
 from .analysis.standard_error_of_mean import analyze_parameter_set
 
@@ -27,15 +28,17 @@ def typical_run(parameters, simulation_iterator):
     return analyze_parameter_set(full_set)
 
 
-def run_simulations(simulation_factory, output_file_name):
-    output_stream = _io.compressed.output_stream(output_file_name)
-    for parameter_set, ssg in simulation_factory:
-        analyzed_set = typical_run(parameter_set, ssg)
+def run_simulations(simulation_factory, group_name):
+    group = _io.database.Group.get_or_create(name=group_name)
+    group.revision = utils.get_mercurial_revision()
 
-        _cPickle.dump(analyzed_set, output_stream,
-                      protocol=_cPickle.HIGHEST_PROTOCOL)
+    for parameters, simulation_iterator in simulation_factory:
+        analyzed_set = typical_run(parameters, simulation_iterator)
 
-    output_stream.close()
+        run = _io.database.Run.from_analyzed_set(analyzed_set)
+        group.runs.append(run)
+
+    elixir.session.commit()
 
 
 def run_and_report(sim):
