@@ -13,12 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from analyses import *
 from groups import *
 from measurement_values import *
 from measurements import *
 from parameters import *
 from runs import *
 
+del analyses
 del groups
 del measurement_values
 del measurements

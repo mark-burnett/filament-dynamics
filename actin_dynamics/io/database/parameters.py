@@ -18,12 +18,10 @@ import elixir as _elixir
 from . import mixins as _mixins
 
 class Parameter(_elixir.Entity, _mixins.Convenience):
-    _elixir.using_options(tablename='parameter')
+    _elixir.using_options(inheritance='multi')
 
-    name  = _elixir.Field(_elixir.String(50))
-    value = _elixir.Field(_elixir.Float)
-
-    run = _elixir.ManyToOne('Run')
+    name  = _elixir.Field(_elixir.String(50), index=True)
+    value = _elixir.Field(_elixir.Float, index=True)
 
     @classmethod
     def from_dict(cls, parameters):
@@ -32,3 +30,22 @@ class Parameter(_elixir.Entity, _mixins.Convenience):
             results.append(cls(name=name, value=value))
 
         return results
+
+
+class SimulationParameter(Parameter):
+    _elixir.using_options(inheritance='multi',
+            tablename='simulation_parameter')
+
+    run = _elixir.ManyToOne('Run')
+
+class AnalysisParameter(Parameter):
+    _elixir.using_options(inheritance='multi',
+            tablename='analysis_parameter')
+
+    analysis = _elixir.ManyToOne('Analysis')
+
+class AnalysisValue(Parameter):
+    _elixir.using_options(inheritance='multi',
+            tablename='analysis_value')
+
+    analysis = _elixir.ManyToOne('Analysis')

@@ -20,7 +20,8 @@ import elixir as _elixir
 from . import mixins as _mixins
 
 class MeasurementValue(_elixir.Entity, _mixins.Convenience):
-    _elixir.using_options(tablename='measurement_value')
+    _elixir.using_options(tablename='measurement_value',
+                          order_by=['measurement_id', 'time'])
 
     measurement = _elixir.ManyToOne('Measurement')
 

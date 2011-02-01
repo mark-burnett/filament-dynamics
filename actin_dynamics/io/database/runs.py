@@ -22,15 +22,16 @@ from . import measurements as _measurements
 class Run(_elixir.Entity, _mixins.Convenience):
     _elixir.using_options(tablename='run')
 
-    parameters   = _elixir.OneToMany('Parameter')
+    parameters   = _elixir.OneToMany('SimulationParameter')
     measurements = _elixir.OneToMany('Measurement')
+    analyses     = _elixir.OneToMany('Analysis')
 
     group = _elixir.ManyToOne('Group')
 
     @classmethod
     def from_analyzed_set(cls, analyzed_set):
         run = cls()
-        run.parameters = _parameters.Parameter.from_dict(
+        run.parameters = _parameters.SimulationParameter.from_dict(
                 analyzed_set['parameters'])
 
         run.measurements = _measurements.Measurement.from_dict(
@@ -38,9 +39,14 @@ class Run(_elixir.Entity, _mixins.Convenience):
 
         return run
 
+    @property
+    def parameters_dict(self):
+        return dict((p.name, p.value) for p in self.parameters)
+
+
     def get_parameter(self, name):
-        return _parameters.Parameter.query.filter_by(run=self,
-                                                     name=name).first().value
+        return _parameters.SimulationParameter.query.filter_by(run=self,
+                name=name).first().value
 
     def get_measurement(self, name):
         return _measurements.Measurement.query.filter_by(run=self,
