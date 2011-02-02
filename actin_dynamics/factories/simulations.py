@@ -44,8 +44,9 @@ def single_simulation_generator(object_graph, parameters, number_simulations):
         yield make_simulation(object_graph, parameters)
         current_sim += 1
 
-def simulation_generator(object_graph, parameters, number_simulations):
+def simulation_generator(object_graph, parameters):
     for current_pars in parameters:
+        number_simulations = parameters['number_of_simulations']
         yield current_pars, single_simulation_generator(object_graph,
                                                         current_pars,
                                                         number_simulations)

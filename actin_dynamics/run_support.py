@@ -28,15 +28,13 @@ def typical_run(parameters, simulation_iterator):
     return analyze_parameter_set(full_set)
 
 
-def run_simulations(simulation_factory, group_name):
-    group = _io.database.Group.get_or_create(name=group_name)
-
+def run_simulations(simulation_factory, group):
     for parameters, simulation_iterator in simulation_factory:
         analyzed_set = typical_run(parameters, simulation_iterator)
 
         run = _io.database.Run.from_analyzed_set(analyzed_set)
         run.group = group
-        elixir.session.commit()
+        elixir.session.flush()
 
 
 

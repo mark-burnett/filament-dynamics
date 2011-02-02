@@ -31,8 +31,6 @@ display_args() {
     echo "    -o <filename>         Object Graph file."
     echo "    -a <filename>         Parameters file."
     echo "    -n <integer>          Number of processes."
-    echo "    -s <integer>          Number of simulations per par set."
-    echo "    -p <parameter_name>   Name of parameter for splitting up work."
     echo "    -g <group name>       Name of database group (required)."
     echo
 }
@@ -41,7 +39,7 @@ typeset -i SIMNUM NUM_PROCESSES
 
 let NUM_PROCESSES=1
 
-while getopts "d:o:a:n:s:p:g:c:h" FLAG; do
+while getopts "d:o:a:n:g:c:h" FLAG; do
     case $FLAG in
         "d")
             DIRECTORY_NAME=$OPTARG;;
@@ -51,10 +49,6 @@ while getopts "d:o:a:n:s:p:g:c:h" FLAG; do
             PARAMETERS_FILENAME=$OPTARG;;
         "n")
             let NUM_PROCESSES=$OPTARG;;
-        "s")
-            let NUM_SIMULATIONS=$OPTARG;;
-        "p")
-            SPLIT_COMMAND="--split_parameter $OPTARG";;
         "g")
             GROUP_NAME=$OPTARG;;
         "c")
@@ -73,20 +67,15 @@ done
 FULL_OBJECT_PATH="$DIRECTORY_NAME/$OBJECT_GRAPH_FILENAME"
 FULL_PARAMETERS_PATH="$DIRECTORY_NAME/$PARAMETERS_FILENAME"
 
-PYTHONPATH=. bin/create_group.py \
+PYTHONPATH=. bin/create_jobs.py \
+               --parameters       $FULL_PARAMETERS_PATH\
                --group_name       "$GROUP_NAME"\
                $CONFIG_COMMAND || exit 1
 
 for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
-    PYTHONPATH=. bin/cli.py \
+    PYTHONPATH=. bin/run_jobs.py \
                --object_graph     $FULL_OBJECT_PATH\
-               --parameters       $FULL_PARAMETERS_PATH\
-               --group_name       "$GROUP_NAME"\
-               --num_sims         $NUM_SIMULATIONS\
-               --process_number   $SIMNUM\
-               --num_processes    $NUM_PROCESSES\
-               $CONFIG_COMMAND\
-               $SPLIT_COMMAND &
+               $CONFIG_COMMAND &
 done
 
 wait

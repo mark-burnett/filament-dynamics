@@ -16,10 +16,9 @@
 import elixir as _elixir
 
 from . import mixins as _mixins
-
 from . import parameters as _parameters
 
-class Job(_elixir.Entity, _mixins.GetOrCreate, _mixins.HasParameters):
+class Job(_elixir.Entity, _mixins.HasParameters):
     _elixir.using_options(tablename='job')
 
 # XXX I can't use this until later versions of sqlalchemy.
@@ -31,10 +30,7 @@ class Job(_elixir.Entity, _mixins.GetOrCreate, _mixins.HasParameters):
     parameters = _elixir.OneToMany('JobParameter')
     group      = _elixir.ManyToOne('Group')
 
-#    @property
-#    def parameters_dict(self):
-#        return dict((p.name, p.value) for p in self.parameters)
-#
-#    def get_parameter(self, name):
-#        return _parameters.JobParameter.query.filter_by(run=self,
-#                name=name).first().value
+    @classmethod
+    def from_parameters_dict(cls, parameters, group):
+        return cls(group=group,
+                   parameters=_parameters.JobParameters.from_dict(parameters))
