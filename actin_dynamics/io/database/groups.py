@@ -17,9 +17,9 @@ import datetime as _datetime
 
 import elixir as _elixir
 
-from . import mixins as _mixins
+from . import mixins as _bases_classes
 
-class Group(_elixir.Entity, _mixins.Convenience):
+class Group(_elixir.Entity, _bases_classes.GetOrCreate):
     _elixir.using_options(tablename='group')
 
     name        = _elixir.Field(_elixir.String(50))

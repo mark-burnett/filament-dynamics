@@ -15,9 +15,10 @@
 
 import elixir as _elixir
 
+from . import mixins as _bases_classes
 from . import parameters as _parameters
 
-class Analysis(_elixir.Entity):
+class Analysis(_elixir.Entity, _bases_classes.HasParameters):
     _elixir.using_options(tablename='analysis')
 
     parameters = _elixir.OneToMany('AnalysisParameter')

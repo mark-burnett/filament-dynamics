@@ -4,3 +4,5 @@ syntax:glob
 results/
 yaml
 argparse.py
+sqlalchemy
+elixir

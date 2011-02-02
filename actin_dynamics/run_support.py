@@ -30,15 +30,14 @@ def typical_run(parameters, simulation_iterator):
 
 def run_simulations(simulation_factory, group_name):
     group = _io.database.Group.get_or_create(name=group_name)
-    group.revision = utils.get_mercurial_revision()
 
     for parameters, simulation_iterator in simulation_factory:
         analyzed_set = typical_run(parameters, simulation_iterator)
 
         run = _io.database.Run.from_analyzed_set(analyzed_set)
-        group.runs.append(run)
+        run.group = group
+        elixir.session.commit()
 
-    elixir.session.commit()
 
 
 def run_and_report(sim):

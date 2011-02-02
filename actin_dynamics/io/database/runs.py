@@ -19,7 +19,7 @@ from . import mixins as _mixins
 from . import parameters as _parameters
 from . import measurements as _measurements
 
-class Run(_elixir.Entity, _mixins.Convenience):
+class Run(_elixir.Entity, _mixins.GetOrCreate, _mixins.HasParameters):
     _elixir.using_options(tablename='run')
 
     parameters   = _elixir.OneToMany('SimulationParameter')
@@ -41,14 +41,14 @@ class Run(_elixir.Entity, _mixins.Convenience):
 
         return run
 
-    @property
-    def parameters_dict(self):
-        return dict((p.name, p.value) for p in self.parameters)
-
-
-    def get_parameter(self, name):
-        return _parameters.SimulationParameter.query.filter_by(run=self,
-                name=name).first().value
+#    @property
+#    def parameters_dict(self):
+#        return dict((p.name, p.value) for p in self.parameters)
+#
+#
+#    def get_parameter(self, name):
+#        return _parameters.SimulationParameter.query.filter_by(run=self,
+#                name=name).first().value
 
     def get_value(self, name):
         return _parameters.SimulationValue.query.filter_by(run=self,

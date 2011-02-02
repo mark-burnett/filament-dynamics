@@ -13,10 +13,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class Convenience(object):
+class GetOrCreate(object):
     @classmethod
     def get_or_create(cls, *args, **kwargs):
         result = cls.get_by(*args, **kwargs)
         if result:
             return result
         return cls(*args, **kwargs)
+
+
+class HasParameters(object):
+    @property
+    def parameters_dict(self):
+        return dict((p.name, p.value) for p in self.parameters)
+
+    def get_parameter(self, name):
+        for p in self.parameters:
+            if p.name == name:
+                return p.value

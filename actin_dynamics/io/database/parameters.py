@@ -15,44 +15,22 @@
 
 import elixir as _elixir
 
-from . import mixins as _mixins
-
-class Parameter(_elixir.Entity, _mixins.Convenience):
-    _elixir.using_options(inheritance='multi')
-
-    name  = _elixir.Field(_elixir.String(50), index=True)
-    value = _elixir.Field(_elixir.Float, index=True)
-
-    @classmethod
-    def from_dict(cls, parameters):
-        results = []
-        for name, value in parameters.iteritems():
-            results.append(cls(name=name, value=value))
-
-        return results
+from . import base_classes as _base_classes
 
 
-class SimulationParameter(Parameter):
-    _elixir.using_options(inheritance='multi',
-            tablename='simulation_parameter')
-
-    run = _elixir.ManyToOne('Run')
-
-class SimulationValue(Parameter):
-    _elixir.using_options(inheritance='multi',
-            tablename='simulation_value')
+class SimulationParameter(_base_classes.FloatDict):
+    _elixir.using_options(inheritance='multi', tablename='simulation_parameter')
 
     run = _elixir.ManyToOne('Run')
 
 
-class AnalysisParameter(Parameter):
-    _elixir.using_options(inheritance='multi',
-            tablename='analysis_parameter')
+class AnalysisParameter(_base_classes.FloatDict):
+    _elixir.using_options(inheritance='multi', tablename='analysis_parameter')
 
     analysis = _elixir.ManyToOne('Analysis')
 
-class AnalysisValue(Parameter):
-    _elixir.using_options(inheritance='multi',
-            tablename='analysis_value')
 
-    analysis = _elixir.ManyToOne('Analysis')
+class JobParameter(_base_classes.FloatDict):
+    _elixir.using_options(inheritance='multi', tablename='job_parameter')
+
+    job = _elixir.ManyToOne('Job')

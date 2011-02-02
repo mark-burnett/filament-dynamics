@@ -19,7 +19,7 @@ import elixir as _elixir
 
 from . import mixins as _mixins
 
-class MeasurementValue(_elixir.Entity, _mixins.Convenience):
+class MeasurementValue(_elixir.Entity, _mixins.GetOrCreate):
     _elixir.using_options(tablename='measurement_value',
                           order_by=['measurement_id', 'time'])
 

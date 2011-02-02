@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-
-#    Copyright (C) 2010-2011 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,11 +13,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-echo 'Dropping old database.'
-sudo -u postgres dropdb actin_dynamics
+import elixir as _elixir
 
-echo 'Creating new database.'
-sudo -u postgres createdb -O aduser actin_dynamics
+from . import base_classes as _base_classes
 
-echo 'Creating tables.'
-bin/create_tables.py
+
+class SimulationValue(_base_classes.FloatDict):
+    _elixir.using_options(inheritance='multi', tablename='simulation_value')
+
+    run = _elixir.ManyToOne('Run')
+
+
+class AnalysisValue(_base_classes.FloatDict):
+    _elixir.using_options(inheritance='multi', tablename='analysis_value')
+
+    analysis = _elixir.ManyToOne('Analysis')

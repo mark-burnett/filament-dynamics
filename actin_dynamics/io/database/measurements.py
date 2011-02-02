@@ -18,7 +18,7 @@ import elixir as _elixir
 from . import mixins as _mixins
 from . import measurement_values as _measurement_values
 
-class Measurement(_elixir.Entity, _mixins.Convenience):
+class Measurement(_elixir.Entity, _mixins.GetOrCreate):
     _elixir.using_options(tablename='measurement')
 
     name   = _elixir.Field(_elixir.String(50))

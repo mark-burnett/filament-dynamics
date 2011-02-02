@@ -21,21 +21,23 @@ import configobj
 
 import elixir
 
-from actin_dynamics import io
-
+from actin_dynamics import io, utils
 
 def parse_command_line():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--group_name', default=None, help='Group_name.')
     parser.add_argument('--config', default='config.ini',
                         help='Configuration file name')
     return parser.parse_args()
 
 
-def create_tables(config_filename):
+def create_group(config_filename, group_name):
     io.db_config.setup_database(configobj.ConfigObj(config_filename))
-    elixir.create_all()
+    group = io.database.Group.get_or_create(name=group_name)
+    group.revision = utils.get_mercurial_revision()
+    elixir.session.commit()
 
 
 if '__main__' == __name__:
     args = parse_command_line()
-    create_tables(args.config)
+    create_group(args.config, args.group_name)
