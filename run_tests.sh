@@ -40,14 +40,12 @@ display_args() {
 
 run_unit_tests() {
     echo "Running unit tests..."
-    echo
     $UNIT_TEST_COMMAND
     echo
 }
 
 run_integration_tests() {
     echo "Running integration tests..."
-    echo
     $INTEGRATION_TEST_COMMAND
     echo
 }

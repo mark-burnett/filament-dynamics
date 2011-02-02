@@ -23,6 +23,7 @@ from actin_dynamics import run_support
 
 from actin_dynamics.analysis import accessors
 from actin_dynamics.analysis import interpolation
+from actin_dynamics.analysis import utils
 
 
 def load_kinsim(filename, sample_period, duration):
@@ -36,6 +37,22 @@ def load_kinsim(filename, sample_period, duration):
     sampled_atp    = interpolation.resample_measurement(atp, sample_times)
 
     return sampled_factin, sampled_pi, sampled_atp
+
+
+
+# Helper code taken from old accessor stuff.
+def get_length(parameter_set):
+    basic_length = parameter_set['sem']['length']
+    subtracted_length = utils.add_number(basic_length,
+            -basic_length[1][0])
+    return utils.scale_measurement(subtracted_length,
+            parameter_set['parameters']['filament_tip_concentration'])
+
+def get_scaled(parameter_set, name):
+    basic = parameter_set['sem'][name]
+    return utils.scale_measurement(basic,
+            parameter_set['parameters']['filament_tip_concentration'])
+
 
 
 class TestKinsim(unittest.TestCase):
@@ -60,9 +77,9 @@ class TestKinsim(unittest.TestCase):
 
             analyzed_set = run_support.typical_run(pars, sg)
 
-            length_sim = accessors.get_length(analyzed_set)
-            pi_sim     = accessors.get(analyzed_set, 'Pi')
-            atp_sim    = accessors.get_scaled(analyzed_set, 'atp_count')
+            length_sim = get_length(analyzed_set)
+            pi_sim     = analyzed_set['sem']['Pi']
+            atp_sim    = get_scaled(analyzed_set, 'atp_count')
 
             factin_kin, pi_kin, atp_kin = load_kinsim(k_file,
                     pars['sample_period'], pars['simulation_duration'])
