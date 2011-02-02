@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import compressed
+from . import db_config
 from . import data
 from . import database
 from . import pollard

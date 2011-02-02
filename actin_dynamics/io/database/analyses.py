@@ -1,5 +1,4 @@
-#!/usr/bin/env ipython
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -14,27 +13,23 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import argparse
-import configobj
+import elixir as _elixir
 
-import elixir
+from . import parameters as _parameters
 
+class Analysis(_elixir.Entity):
+    _elixir.using_options(tablename='analysis')
 
-import numpy
-import pylab
+    parameters = _elixir.OneToMany('AnalysisParameter')
+    values     = _elixir.OneToMany('AnalysisValue')
 
+    run = _elixir.ManyToOne('Run')
 
-from actin_dynamics import analysis
-from actin_dynamics import visualization
-from actin_dynamics import io
+    @classmethod
+    def from_dicts(cls, parameter_dict=None, value_dict=None):
+        analysis = cls()
+        analysis.parameters = _parameters.AnalysisParameter.from_dict(
+                parameter_dict)
+        analysis.values = _parameters.AnalysisValue.from_dict(value_dict)
 
-from actin_dynamics.io import database
-
-def _parse_command_line():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default='config.ini',
-                        help='Configuration file name')
-    return parser.parse_args()
-
-_args = _parse_command_line()
-io.db_config.setup_database(configobj.ConfigObj(_args.config))
+        return analysis

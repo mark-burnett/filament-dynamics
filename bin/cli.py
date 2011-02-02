@@ -16,8 +16,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-
-import elixir
+import configobj
 
 from actin_dynamics import io, factories
 from actin_dynamics import run_support
@@ -42,13 +41,18 @@ def parse_command_line():
     parser.add_argument('--split_parameter', default=None,
                         help='Parameter name to divide processing across.')
 
+    parser.add_argument('--config', default='config.ini',
+                        help='Configuration file name')
+
     return parser.parse_args()
+
+
+def setup_database(config_filename):
+    io.db_config.setup_database(configobj.ConfigObj(config_filename))
 
 
 def cli_main(parameters_filename, object_graph_filename, process_number,
              num_processes, group_name, num_sims, split_parameter):
-    elixir.metadata.bind = 'sqlite:///test.sqlite'
-    elixir.setup_all()
     parameters = io.parse_parameters_file(open(parameters_filename),
                                           split_parameter,
                                           process_number, num_processes)
@@ -63,6 +67,7 @@ def cli_main(parameters_filename, object_graph_filename, process_number,
 if '__main__' == __name__:
     args = parse_command_line()
 
+    setup_database(args.config)
     cli_main(args.parameters, args.object_graph, args.process_number,
              args.num_processes, args.group_name, args.num_sims,
              args.split_parameter)
