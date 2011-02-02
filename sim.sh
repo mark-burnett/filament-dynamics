@@ -79,3 +79,5 @@ for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
 done
 
 wait
+
+PYTHONPATH=. bin/cleanup_jobs.py $CONFIG_COMMAND

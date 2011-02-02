@@ -28,4 +28,5 @@ class Group(_elixir.Entity, _bases_classes.GetOrCreate):
     timestamp = _elixir.Field(_elixir.DateTime, default=_datetime.datetime.now)
     revision  = _elixir.Field(_elixir.String(50))
 
-    runs = _elixir.OneToMany('Run')
+    runs = _elixir.OneToMany('Run', cascade='all,delete')
+    jobs = _elixir.OneToMany('Job', cascade='all,delete')

@@ -18,12 +18,11 @@
 import argparse
 import configobj
 
-from actin_dynamics import io, factories, job_control, run_support
+from actin_dynamics import io
+from actin_dynamics import job_control
 
 def parse_command_line():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--object_graph', default='object_graph.yaml',
-                        help='Object graph definition file.')
 
     parser.add_argument('--config', default='config.ini',
                         help='Configuration file name')
@@ -35,16 +34,13 @@ def setup_database(config_filename):
     io.db_config.setup_database(configobj.ConfigObj(config_filename))
 
 
-def main(object_graph_filename):
-    object_graph = io.parse_object_graph_file(open(object_graph_filename))
-
-    for job in job_control.job_iterator():
-        run_support.run_simulation_job(object_graph, job)
-        job_control.complete_job(job)
+def cleanup_jobs():
+    job_control.cleanup_jobs()
 
 
 if '__main__' == __name__:
     args = parse_command_line()
 
     setup_database(args.config)
-    main(args.object_graph)
+    cleanup_jobs()
+

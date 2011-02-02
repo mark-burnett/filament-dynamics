@@ -24,7 +24,8 @@ class Measurement(_elixir.Entity, _mixins.GetOrCreate):
     name   = _elixir.Field(_elixir.String(50))
 
     run    = _elixir.ManyToOne('Run')
-    values = _elixir.OneToMany('MeasurementValue')
+    values = _elixir.OneToMany('MeasurementValue',
+                               cascade='all,delete,delete-orphan')
 
     @classmethod
     def from_dict(cls, measurements):

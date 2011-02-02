@@ -27,10 +27,11 @@ class Job(_elixir.Entity, _mixins.HasParameters):
     in_progress = _elixir.Field(_elixir.Boolean, default=False)
     complete    = _elixir.Field(_elixir.Boolean, default=False)
 
-    parameters = _elixir.OneToMany('JobParameter')
+    parameters = _elixir.OneToMany('JobParameter',
+                                   cascade='all,delete,delete-orphan')
     group      = _elixir.ManyToOne('Group')
 
     @classmethod
     def from_parameters_dict(cls, parameters, group):
         return cls(group=group,
-                   parameters=_parameters.JobParameters.from_dict(parameters))
+                   parameters=_parameters.JobParameter.from_dict(parameters))

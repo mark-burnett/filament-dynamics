@@ -22,11 +22,15 @@ from . import measurements as _measurements
 class Run(_elixir.Entity, _mixins.GetOrCreate, _mixins.HasParameters):
     _elixir.using_options(tablename='run')
 
-    parameters   = _elixir.OneToMany('SimulationParameter')
-    measurements = _elixir.OneToMany('Measurement')
+    parameters   = _elixir.OneToMany('SimulationParameter',
+                                     cascade='all,delete,delete-orphan')
+    measurements = _elixir.OneToMany('Measurement',
+                                     cascade='all,delete,delete-orphan')
 
-    analyses = _elixir.OneToMany('Analysis')
-    values   = _elixir.OneToMany('SimulationValue')
+    analyses = _elixir.OneToMany('Analysis',
+                                 cascade='all,delete,delete-orphan')
+    values   = _elixir.OneToMany('SimulationValue',
+                                 cascade='all,delete,delete-orphan')
 
     group = _elixir.ManyToOne('Group')
 

@@ -21,8 +21,10 @@ from . import parameters as _parameters
 class Analysis(_elixir.Entity, _bases_classes.HasParameters):
     _elixir.using_options(tablename='analysis')
 
-    parameters = _elixir.OneToMany('AnalysisParameter')
-    values     = _elixir.OneToMany('AnalysisValue')
+    parameters = _elixir.OneToMany('AnalysisParameter',
+                                   cascade='all,delete,delete-orphan')
+    values     = _elixir.OneToMany('AnalysisValue',
+                                   cascade='all,delete,delete-orphan')
 
     run = _elixir.ManyToOne('Run')
 

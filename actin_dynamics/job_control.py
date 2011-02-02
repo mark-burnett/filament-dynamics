@@ -34,10 +34,11 @@ def get_job():
             break
 
         try:
-            job = job_query.with_locking('update_nowait').one()
+            job = job_query.with_lockmode('update_nowait').one()
             job.in_progress = True
             elixir.session.commit()
-        except:
+        except Exception as e:
+            print e
             elixir.session.rollback()
             job = None
 
@@ -47,8 +48,10 @@ def get_job():
 def cleanup_jobs():
     job_query = database.Job.query
 
-    job_query.filter_by(in_progress=True).update(in_progress=False, complete=False)
-    job_query.filter_by(complete=True).delete()
+    for job in job_query.filter_by(complete=True):
+        job.delete()
+    job_query.filter_by(in_progress=True).update({'in_progress': False,
+                                                  'complete': False})
     elixir.session.commit()
 
 
