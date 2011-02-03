@@ -21,31 +21,32 @@ import configobj
 from actin_dynamics import io
 from actin_dynamics import job_control
 
-def parse_command_line():
+def parse_command_line(args):
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--parameters', default='parameters.yaml',
                         help='Parameters file.')
 
+    parser.add_argument('--object_graph', default='object_graph.yaml',
+                        help='Object Graph file.')
+
     parser.add_argument('--group_name', default=None, help='Group_name.')
 
-    parser.add_argument('--config', default='config.ini',
-                        help='Configuration file name')
-
-    return parser.parse_args()
+    return parser.parse_args(args)
 
 
 def setup_database(config_filename):
     io.db_config.setup_database(configobj.ConfigObj(config_filename))
 
 
-def create_jobs(parameters_filename, group_name):
+def create_jobs(parameters_filename, object_graph_filename, group_name):
     parameters = io.parse_parameters_file(open(parameters_filename))
-    job_control.create_jobs(parameters, group_name)
+    object_graph_yaml = open(object_graph_filename).read()
+    job_control.create_jobs(parameters, object_graph_yaml, group_name)
 
 
 if '__main__' == __name__:
-    args = parse_command_line()
+    remaining_argv = io.db_config.setup_database()
+    args = parse_command_line(remaining_argv)
 
-    setup_database(args.config)
-    create_jobs(args.parameters, args.group_name)
+    create_jobs(args.parameters, args.object_graph, args.group_name)

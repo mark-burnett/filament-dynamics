@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -13,22 +15,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-[database]
-# Simple sqlite test database.
-# SQLite is not suitable for multiple process access.
-#server_type=sqlite
-#database_name=test.sqlite
+from actin_dynamics import io, job_control
 
-# Postgres allows multiple processes to read and write simultaneously.
-#server_type=postgres
-#host=localhost
-#username=aduser
-#password=filamentous
-#database_name=actin_dynamics
-
-# Mysql might work better with pypy.
-server_type=mysql
-host=localhost
-username=aduser
-password=filamentous
-database_name=actin_dynamics
+if '__main__' == __name__:
+    io.db_config.setup_database()
+    job_control.delete_all_jobs()

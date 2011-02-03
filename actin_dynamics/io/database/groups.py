@@ -22,8 +22,8 @@ from . import mixins as _bases_classes
 class Group(_elixir.Entity, _bases_classes.GetOrCreate):
     _elixir.using_options(tablename='group')
 
-    name        = _elixir.Field(_elixir.String(50))
-    description = _elixir.Field(_elixir.String)
+    name         = _elixir.Field(_elixir.String(50))
+    object_graph = _elixir.Field(_elixir.String(10000))
 
     timestamp = _elixir.Field(_elixir.DateTime, default=_datetime.datetime.now)
     revision  = _elixir.Field(_elixir.String(50))

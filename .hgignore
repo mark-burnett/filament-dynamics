@@ -2,7 +2,4 @@ syntax:glob
 \.*.swp
 *.pyc
 results/
-yaml
-argparse.py
-sqlalchemy
-elixir
+modules/

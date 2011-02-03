@@ -15,32 +15,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import argparse
-import configobj
-
-from actin_dynamics import io
-from actin_dynamics import job_control
-
-def parse_command_line():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--config', default='config.ini',
-                        help='Configuration file name')
-
-    return parser.parse_args()
-
-
-def setup_database(config_filename):
-    io.db_config.setup_database(configobj.ConfigObj(config_filename))
-
+from actin_dynamics import io, job_control
 
 def cleanup_jobs():
     job_control.cleanup_jobs()
 
 
 if '__main__' == __name__:
-    args = parse_command_line()
-
-    setup_database(args.config)
+    io.db_config.setup_database()
     cleanup_jobs()
 

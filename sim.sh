@@ -24,6 +24,8 @@ SPLIT_COMMAND=""
 GROUP_NAME=""
 CONFIG_COMMAND=""
 
+USE_PATH=.:modules/
+
 display_args() {
     echo "Options:"
     echo
@@ -67,17 +69,16 @@ done
 FULL_OBJECT_PATH="$DIRECTORY_NAME/$OBJECT_GRAPH_FILENAME"
 FULL_PARAMETERS_PATH="$DIRECTORY_NAME/$PARAMETERS_FILENAME"
 
-PYTHONPATH=. bin/create_jobs.py \
+PYTHONPATH=$USE_PATH bin/create_jobs.py \
                --parameters       $FULL_PARAMETERS_PATH\
+               --object_graph     $FULL_OBJECT_PATH\
                --group_name       "$GROUP_NAME"\
                $CONFIG_COMMAND || exit 1
 
 for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
-    PYTHONPATH=. bin/run_jobs.py \
-               --object_graph     $FULL_OBJECT_PATH\
-               $CONFIG_COMMAND &
+    PYTHONPATH=$USE_PATH bin/run_jobs.py $CONFIG_COMMAND &
 done
 
 wait
 
-PYTHONPATH=. bin/cleanup_jobs.py $CONFIG_COMMAND
+PYTHONPATH=$USE_PATH bin/cleanup_jobs.py $CONFIG_COMMAND

@@ -16,10 +16,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 echo 'Dropping old database.'
-sudo -u postgres dropdb actin_dynamics
+mysqladmin -u aduser -p'filamentous' -f drop actin_dynamics
+#sudo -u postgres dropdb actin_dynamics
 
 echo 'Creating new database.'
-sudo -u postgres createdb -O aduser actin_dynamics
+mysqladmin -u aduser -p'filamentous' create actin_dynamics
+#sudo -u postgres createdb -O aduser actin_dynamics
 
 echo 'Creating tables.'
 bin/create_tables.py

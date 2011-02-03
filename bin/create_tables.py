@@ -15,27 +15,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-import argparse
-import configobj
-
 import elixir
 
 from actin_dynamics import io
 
-
-def parse_command_line():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default='config.ini',
-                        help='Configuration file name')
-    return parser.parse_args()
-
-
-def create_tables(config_filename):
-    io.db_config.setup_database(configobj.ConfigObj(config_filename))
-    elixir.create_all()
-
-
 if '__main__' == __name__:
-    args = parse_command_line()
-    create_tables(args.config)
+    io.db_config.setup_database()
+    elixir.create_all()

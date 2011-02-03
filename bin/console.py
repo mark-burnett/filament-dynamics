@@ -14,11 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import argparse
-import configobj
-
 import elixir
-
 
 import numpy
 import pylab
@@ -30,11 +26,4 @@ from actin_dynamics import io
 
 from actin_dynamics.io import database
 
-def _parse_command_line():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default='config.ini',
-                        help='Configuration file name')
-    return parser.parse_args()
-
-_args = _parse_command_line()
-io.db_config.setup_database(configobj.ConfigObj(_args.config))
+io.db_config.setup_database()

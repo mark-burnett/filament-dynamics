@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import time
+
 import elixir
 
 from .io import database
@@ -26,23 +28,21 @@ def job_iterator():
         if job:
             yield job
 
-def get_job():
+def get_job(retries=1000):
     job_query = database.Job.query.filter_by(in_progress=False, complete=False)
-    job = None
-    while not job:
-        if not job_query.count():
-            break
+    for i in xrange(retries):
 
         try:
-            job = job_query.with_lockmode('update_nowait').one()
+            job = job_query.with_lockmode('update_nowait').first()
             job.in_progress = True
             elixir.session.commit()
-        except Exception as e:
-            print e
+            return job
+        except elixir.sqlalchemy.exceptions.OperationalError:
             elixir.session.rollback()
-            job = None
-
-    return job
+            time.sleep(0.005)
+            if not job_query.count():
+                return
+    raise RuntimeError('Failed to get a job.  Giving up after %s retries.' % retries)
 
 
 def cleanup_jobs():
@@ -55,16 +55,22 @@ def cleanup_jobs():
     elixir.session.commit()
 
 
-def create_jobs(parameter_iterator, group_name):
+def create_jobs(parameter_iterator, object_graph_yaml, group_name):
     group = database.Group.get_or_create(name=group_name)
-    group.revision = utils.get_mercurial_revision()
+#    group.revision = utils.get_mercurial_revision()
+    group.object_graph = object_graph_yaml
 
-    for parameters in parameter_iterator:
-        database.Job.from_parameters_dict(parameters, group)
+    jobs = [database.Job.from_parameters_dict(pars, group)
+            for pars in parameter_iterator]
 
     elixir.session.commit()
 
 def complete_job(job):
     job.complete = True
     job.in_progress = False
+    elixir.session.commit()
+
+def delete_all_jobs():
+    for job in database.Job.query:
+        job.delete()
     elixir.session.commit()

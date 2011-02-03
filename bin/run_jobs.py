@@ -15,36 +15,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import argparse
-import configobj
+from actin_dynamics import io, job_control, run_support
 
-from actin_dynamics import io, factories, job_control, run_support
-
-def parse_command_line():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--object_graph', default='object_graph.yaml',
-                        help='Object graph definition file.')
-
-    parser.add_argument('--config', default='config.ini',
-                        help='Configuration file name')
-
-    return parser.parse_args()
-
-
-def setup_database(config_filename):
-    io.db_config.setup_database(configobj.ConfigObj(config_filename))
-
-
-def main(object_graph_filename):
-    object_graph = io.parse_object_graph_file(open(object_graph_filename))
-
+def main():
     for job in job_control.job_iterator():
-        run_support.run_simulation_job(object_graph, job)
+        run_support.run_simulation_job(job)
         job_control.complete_job(job)
 
 
 if '__main__' == __name__:
-    args = parse_command_line()
-
-    setup_database(args.config)
-    main(args.object_graph)
+    io.db_config.setup_database()
+    main()

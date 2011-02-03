@@ -13,6 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import argparse
+import configobj
+
 import elixir
 
 class DatabaseConfiguration(object):
@@ -41,10 +44,22 @@ class DatabaseConfiguration(object):
         result += '/' + self.database_name
         return result
 
-def setup_database(configobj):
+def setup_database():
     '''
     Takes a 'configobj' object and sets up the elixir database.
     '''
-    db_co = DatabaseConfiguration.from_configobj(configobj)
+    ns, remaining_argv = parse_database_command_line()
+    db_co = DatabaseConfiguration.from_configobj(
+            configobj.ConfigObj(ns.config))
     elixir.metadata.bind = db_co.bind
     elixir.setup_all()
+
+    return remaining_argv
+
+def parse_database_command_line():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--config', default='config.ini',
+                        help='Configuration file name')
+
+    return parser.parse_known_args()

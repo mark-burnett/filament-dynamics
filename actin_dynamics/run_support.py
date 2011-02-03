@@ -14,23 +14,27 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import elixir
+import yaml
 
 from . import io as _io
 from . import simulations as _simulations
-from . import utils
 
 from . import factories
 
 from .analysis.standard_error_of_mean import analyze_parameter_set
 
-def run_simulation_job(object_graph, job):
-    parameters = job.parameters_dict
+def run_simulation_job(job):
+    parameters   = job.parameters_dict
+    object_graph = yaml.loads(job.group.object_graph)
+
     sim_generator = factories.simulation_generator(object_graph, parameters)
-    analyzed_set = typical_run(parameters, sim_generator)
+    analyzed_set  = typical_run(parameters, sim_generator)
 
     run = _io.database.Run.from_analyzed_set(analyzed_set)
     run.group = job.group
+
     elixir.session.flush()
+
 
 def typical_run(parameters, simulation_iterator):
     sim_results = map(run_and_report, simulation_iterator)
@@ -45,8 +49,6 @@ def run_simulations(simulation_factory, group):
 
         run = _io.database.Run.from_analyzed_set(analyzed_set)
         run.group = group
-        elixir.session.flush()
-
 
 
 def run_and_report(sim):
