@@ -1,0 +1,34 @@
+# Polymerization/Depolymerization parameters
+barbed_atp_polymerization_rate:   [11.6, 11.6, 1, linear]
+barbed_adppi_polymerization_rate: [ 3.4,  3.4, 1, linear]
+barbed_adp_polymerization_rate:   [ 2.9,  2.9, 1, linear]
+
+barbed_atp_depolymerization_rate:   [1.4, 1.4, 1, linear]
+barbed_adppi_depolymerization_rate: [0.2, 0.2, 1, linear]
+barbed_adp_depolymerization_rate:   [5.4, 5.4, 1, linear]
+
+
+# Hydrolysis parameters
+cleavage_rate: [0.005, 0.75,  100, linear]
+release_rate:  [0.003, 0.003,   1, linear]
+
+
+# Concentrations
+filament_tip_concentration: [0.005, 0.05, 100, linear]
+
+initial_atp_concentration:        [0.3, 0.3, 1, linear]
+initial_pyrene_atp_concentration: [5.7, 5.7, 1, linear]
+
+
+# Initial Strands
+seed_concentration: [6, 6, 1, linear]
+
+
+# End Conditions
+simulation_duration: [40, 40, 1, linear]
+
+
+# Simulation Parameters
+sample_period: [0.5, 0.5, 1, linear]
+number_of_filaments: [6, 6, 1, linear]
+number_of_simulations: [10, 10, 1, linear]

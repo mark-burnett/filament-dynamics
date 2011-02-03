@@ -1,5 +1,4 @@
 syntax:glob
 \.*.swp
 *.pyc
-results/
 modules/
