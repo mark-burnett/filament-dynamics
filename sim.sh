@@ -23,6 +23,7 @@ NUM_SIMULATIONS="1"
 SPLIT_COMMAND=""
 GROUP_NAME=""
 CONFIG_COMMAND=""
+CREATE_JOBS=true
 
 USE_PATH=.:modules/
 
@@ -34,6 +35,8 @@ display_args() {
     echo "    -a <filename>         Parameters file."
     echo "    -n <integer>          Number of processes."
     echo "    -g <group name>       Name of database group (required)."
+    echo "    -j                    Do not create jobs, just complete them."
+    echo "                              Note:  only '-n <integer>' argument used."
     echo
 }
 
@@ -41,7 +44,7 @@ typeset -i SIMNUM NUM_PROCESSES
 
 let NUM_PROCESSES=1
 
-while getopts "d:o:a:n:g:c:h" FLAG; do
+while getopts "d:o:a:n:g:c:jh" FLAG; do
     case $FLAG in
         "d")
             DIRECTORY_NAME=$OPTARG;;
@@ -55,6 +58,8 @@ while getopts "d:o:a:n:g:c:h" FLAG; do
             GROUP_NAME=$OPTARG;;
         "c")
             CONFIG_COMMAND="--config $OPTARG";;
+        "j")
+            CREATE_JOBS=false;;
         "h")
             display_args
             exit 0
@@ -66,19 +71,24 @@ done
 #    exit 0
 #fi
 
-FULL_OBJECT_PATH="$DIRECTORY_NAME/$OBJECT_GRAPH_FILENAME"
-FULL_PARAMETERS_PATH="$DIRECTORY_NAME/$PARAMETERS_FILENAME"
+if $CREATE_JOBS; then
+    echo "Creating jobs..."
+    FULL_OBJECT_PATH="$DIRECTORY_NAME/$OBJECT_GRAPH_FILENAME"
+    FULL_PARAMETERS_PATH="$DIRECTORY_NAME/$PARAMETERS_FILENAME"
 
-PYTHONPATH=$USE_PATH bin/create_jobs.py \
-               --parameters       $FULL_PARAMETERS_PATH\
-               --object_graph     $FULL_OBJECT_PATH\
-               --group_name       "$GROUP_NAME"\
-               $CONFIG_COMMAND || exit 1
+    PYTHONPATH=$USE_PATH bin/create_jobs.py \
+                   --parameters       $FULL_PARAMETERS_PATH\
+                   --object_graph     $FULL_OBJECT_PATH\
+                   --group_name       "$GROUP_NAME"\
+                   $CONFIG_COMMAND || exit 1
+fi
 
+echo "Running jobs..."
 for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
     PYTHONPATH=$USE_PATH bin/run_jobs.py $CONFIG_COMMAND &
 done
 
 wait
 
+echo "Cleaning up unfinished jobs..."
 PYTHONPATH=$USE_PATH bin/cleanup_jobs.py $CONFIG_COMMAND

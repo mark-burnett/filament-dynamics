@@ -28,10 +28,9 @@ def job_iterator():
         if job:
             yield job
 
-def get_job(retries=1000):
+def get_job(retries=1000, sleep_time=0.005):
     job_query = database.Job.query.filter_by(in_progress=False, complete=False)
     for i in xrange(retries):
-
         try:
             job = job_query.with_lockmode('update_nowait').first()
             job.in_progress = True
@@ -39,7 +38,7 @@ def get_job(retries=1000):
             return job
         except elixir.sqlalchemy.exceptions.OperationalError:
             elixir.session.rollback()
-            time.sleep(0.005)
+            time.sleep(sleep_time)
             if not job_query.count():
                 return
     raise RuntimeError('Failed to get a job.  Giving up after %s retries.' % retries)
@@ -48,20 +47,26 @@ def get_job(retries=1000):
 def cleanup_jobs():
     job_query = database.Job.query
 
-    for job in job_query.filter_by(complete=True):
-        job.delete()
+    job_query.filter_by(complete=True).delete()
+#    for job in job_query.filter_by(complete=True):
+#        job.delete()
     job_query.filter_by(in_progress=True).update({'in_progress': False,
                                                   'complete': False})
     elixir.session.commit()
 
 
-def create_jobs(parameter_iterator, object_graph_yaml, group_name):
+def create_jobs(parameter_iterator, object_graph_yaml, group_name, flush_count=100):
     group = database.Group.get_or_create(name=group_name)
-#    group.revision = utils.get_mercurial_revision()
+    group.revision = utils.get_mercurial_revision()
     group.object_graph = object_graph_yaml
 
-    jobs = [database.Job.from_parameters_dict(pars, group)
-            for pars in parameter_iterator]
+    i = 0
+    for pars in parameter_iterator:
+        job = database.Job.from_parameters_dict(pars, group)
+        i += 1
+        if flush_count == i:
+            elixir.session.flush()
+            i = 0
 
     elixir.session.commit()
 
@@ -71,6 +76,5 @@ def complete_job(job):
     elixir.session.commit()
 
 def delete_all_jobs():
-    for job in database.Job.query:
-        job.delete()
+    database.Job.query.delete()
     elixir.session.commit()

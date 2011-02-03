@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import elixir
+import StringIO
 import yaml
 
 from . import io as _io
@@ -25,15 +26,13 @@ from .analysis.standard_error_of_mean import analyze_parameter_set
 
 def run_simulation_job(job):
     parameters   = job.parameters_dict
-    object_graph = yaml.loads(job.group.object_graph)
+    object_graph = yaml.load(StringIO.StringIO(job.group.object_graph))
 
     sim_generator = factories.simulation_generator(object_graph, parameters)
     analyzed_set  = typical_run(parameters, sim_generator)
 
     run = _io.database.Run.from_analyzed_set(analyzed_set)
     run.group = job.group
-
-    elixir.session.flush()
 
 
 def typical_run(parameters, simulation_iterator):
