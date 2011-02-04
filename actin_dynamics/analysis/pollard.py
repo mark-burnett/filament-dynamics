@@ -41,8 +41,8 @@ def pyrene_analysis(group, atp_weights=[0.37],
                 parameter_dict={'atp_weight':   atp_weight,
                                 'adppi_weight': adppi_weight,
                                 'adp_weight':   adp_weight},
-                value_dict={'pyrene_normalization': norm,
-                            'pyrene_chi_squared':   fit}))
+                value_dict={'pollard_pyrene_normalization': norm,
+                            'pollard_pyrene_chi_squared':   fit}))
 
         elixir.session.flush()
     elixir.session.commit()
@@ -54,7 +54,7 @@ def adppi_analysis(group, flush_count=1000):
     for run in group.runs:
         fit = adppi_fit(run, adppi_data)
         run.values.extend(io.database.SimulationValue.from_dict(
-            {'adppi_chi_squared': fit}))
+            {'pollard_adppi_chi_squared': fit}))
 
         i += 1
         if i == flush_count:

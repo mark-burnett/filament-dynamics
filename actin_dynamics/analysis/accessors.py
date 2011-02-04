@@ -30,3 +30,10 @@ def get_scaled(run, measurement_name,
                parameter_name='filament_tip_concentration'):
     basic = run.get_measurement(measurement_name)
     return utils.scale_measurement(basic, run.get_parameter(parameter_name))
+
+def get_multilpe_scaled(run, measurement_names,
+                        parameter_name='filament_tip_concentration'):
+    results = []
+    for name in measurement_names:
+        results.append(get_scaled(run, name, parameter_name=parameter_name))
+    return utils.add_measurements(results)
