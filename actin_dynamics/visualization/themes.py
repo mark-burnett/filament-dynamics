@@ -42,7 +42,7 @@ class Theme(object):
 class Polymerization(Theme):
     def __init__(self, specialized_properties={}, duration=40, **kwargs):
         self.duration = duration
-        Theme.__init__(**kwargs)
+        Theme.__init__(self, **kwargs)
 
         self.properties = self.default_properties()
         self.properties.update(specialized_properties)
@@ -59,18 +59,18 @@ class Polymerization(Theme):
 
         pi_color     = self.color_scheme.color
 
-        return {'F-actin':        {fg_colors[0]},
-                'F-ATP-actin':    {atp_colors[0]},
-                'F-ADP-Pi-actin': {adppi_colors[0]},
-                'F-ADP-actin':    {adp_colors[0]},
+        return {'F-actin':        {'color': fg_colors[0]},
+                'F-ATP-actin':    {'color': atp_colors[0]},
+                'F-ADP-Pi-actin': {'color': adppi_colors[0]},
+                'F-ADP-actin':    {'color': adp_colors[0]},
 
-                'pyrene':         {pyrene_color},
+                'pyrene':         {'color': pyrene_color},
 
-                'G-actin':        {fg_colors[1]},
-                'G-ATP-actin':    {atp_colors[1]},
-                'G-ADP-Pi-actin': {adppi_colors[1]},
-                'G-ADP-actin':    {adp_colors[1]},
-                'Pi':             {pi_color},
+                'G-actin':        {'color': fg_colors[1]},
+                'G-ATP-actin':    {'color': atp_colors[1]},
+                'G-ADP-Pi-actin': {'color': adppi_colors[1]},
+                'G-ADP-actin':    {'color': adp_colors[1]},
+                'Pi':             {'color': pi_color},
 
                 'data_line':      {'linestyle': '-',
                                    'linewidth': 2},

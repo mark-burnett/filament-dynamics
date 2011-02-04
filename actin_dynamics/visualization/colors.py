@@ -28,14 +28,21 @@ class ColorScheme(object):
     def analog(self, count):
         for i, clist in enumerate(self.colors):
             if i not in self.used_analogs:
-                if len(clist) < count:
+                if count < len(clist):
                     self.used_analogs.add(i)
-                    colors = select_analogs(clist, count)
-                    for c in colors:
-                        self.used_colors.add(colors)
+                    colors = self._select_analogs(clist, count)
                     self.used_lists[i] += len(colors)
                     return colors
-        raise RuntimeError('Not enough colors to choose analogs.')
+        raise RuntimeError('Not enough colors.')
+
+    # XXX This needs a better heuristic.
+    def _select_analogs(self, clist, count):
+        spacing = len(clist) / count
+        proposed = clist[:count+1:spacing]
+        for p in proposed:
+            if p in self.used_colors:
+                raise RuntimeError('Not enough colors.')
+        return proposed
 
 
     @property
@@ -53,14 +60,14 @@ class ColorScheme(object):
         return self.colors[i]
 
     def _middle_out_search(self, clist):
-        center = math.ceil(float(len(clist) / 2))
+        center = int(math.ceil(float(len(clist) / 2)))
 
         for i in xrange(len(clist)):
             if i % 2:
-                index = center - i
+                color = clist[center - i]
             else:
-                index = center + i
-            color = clist[index]
+                color = clist[center + i]
+
             if color not in self.used_colors:
                 self.used_colors.add(color)
                 return color
@@ -71,11 +78,6 @@ class ColorScheme(object):
     def reset(self):
         self.used_colors.clear()
         self.used_analogs.clear()
-
-# XXX This needs a better heuristic.
-def select_analogs(clist, count):
-    spacing = len(clist) / count
-    return clist[:count:spacing]
 
 
 # Color Scheme Designer 3

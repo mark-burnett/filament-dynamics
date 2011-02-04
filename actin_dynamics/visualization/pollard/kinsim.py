@@ -62,6 +62,7 @@ def kinsim_comparison(run=None, pollard_simulations=False, theme=None):
 
 def get_kinsim_results(run):
     factin = accessors.get_factin(run)
-    pi     = accessors.get_scaled(run, 'Pi')
-    atp    = accessors.get_scaled(run, 'atp_count')
+    pi     = run.get_measurement('Pi')
+    atp    = accessors.get_multiple_scaled(run, ['pyrene_atp_count',
+                                                 'atp_count'])
     return factin, pi, atp

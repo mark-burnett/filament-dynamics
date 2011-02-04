@@ -30,20 +30,17 @@ def plot_run(run, final_pyrene_value=3, theme=None, with_data=True):
     # Stochastic simulation results.
     factin = accessors.get_factin(run)
     measurements.plot_smooth(factin, label='Stochastic F-actin',
-                             color='blue',
                              **theme('F-actin', 'sim_line'))
 
     pyrene, pyrene_parameters = accessors.get_pyrene(run)
     pyrene_scale_factor = final_pyrene_value / float(pyrene[1][-1])
     scaled_pyrene = utils.scale_measurement(pyrene, pyrene_scale_factor)
     measurements.plot_smooth(scaled_pyrene, label='Stochastic Pyrene',
-                             color='red',
                              **theme('pyrene', 'sim_line'))
 
     adppi = accessors.get_multiple_scaled(run, ['pyrene_adppi_count',
                                                 'adppi_count'])
     measurements.plot_smooth(adppi, label='Stochastic F-ADP-Pi-actin',
-                             color='green',
                              **theme('F-ADP-Pi-actin', 'sim_line'))
 
     # Pollard data
@@ -54,7 +51,7 @@ def plot_run(run, final_pyrene_value=3, theme=None, with_data=True):
                                                      pyrene_scale_factor)
         measurements.plot_smooth(scaled_pyrene_data, label='Pyrene Data',
                                  **theme('pyrene', 'data_line'))
-        measurements.plot_scatter(adppi_data, label='ADP-Pi Data',
-                                  **theme('ADP-Pi', 'data_points'))
+        measurements.plot_scatter(adppi_data, label='F-ADP-Pi Data',
+                                  **theme('F-ADP-Pi-actin', 'data_points'))
 
     theme.finalize()
