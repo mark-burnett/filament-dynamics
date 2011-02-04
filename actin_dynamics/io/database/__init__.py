@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from analyses import *
+from base_classes import *
 from groups import *
 from jobs import *
 from measurement_values import *
@@ -23,6 +24,7 @@ from runs import *
 from values import *
 
 del analyses
+del base_classes
 del groups
 del jobs
 del measurement_values
@@ -31,5 +33,4 @@ del parameters
 del runs
 del values
 
-del base_classes
 del mixins

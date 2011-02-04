@@ -36,9 +36,9 @@ class HasParameters(object):
 class HasValues(object):
     @property
     def values_dict(self):
-        return dict((p.name, p.value) for p in self.values)
+        return dict((v.name, v.value) for v in self.values)
 
     def get_value(self, name):
-        for p in self.values:
-            if p.name == name:
-                return p.value
+        for v in self.values:
+            if v.name == name:
+                return v.value

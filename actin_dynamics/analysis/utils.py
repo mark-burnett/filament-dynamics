@@ -47,6 +47,7 @@ def scale_measurement(measurement, factor):
 
     return list([time]) + scaled_rest
 
+
 def add_measurements(measurements):
     times, values, errors = copy.copy(measurements[0])
 

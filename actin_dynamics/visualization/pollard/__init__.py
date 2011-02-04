@@ -12,3 +12,9 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+from kinsim import kinsim_comparison
+from single_run import plot_run
+
+del kinsim
+del single_run

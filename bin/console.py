@@ -43,6 +43,8 @@ def get_database_dict():
 def console_main():
     io.db_config.setup_database()
 
+    pylab.ion()
+
     namespace = get_database_dict()
     namespace['elixir'] = elixir
     namespace['visualization'] = visualization

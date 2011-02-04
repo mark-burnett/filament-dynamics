@@ -35,7 +35,8 @@ def get_interpolated_pyrene_data(sample_times=None, **kwargs):
 
 
 def get_simulations(length_filename='data/pollard_2002/length_simulation.dat',
-                    cleavage_filename='data/pollard_2002/cleavage_simulation.dat'):
+                    cleavage_filename='data/pollard_2002/cleavage_simulation.dat',
+                    atp_filename='data/pollard_2002/atp_simulation.dat'):
     length_data = data.load_data(length_filename)
     cleavage_data = data.load_data(cleavage_filename)
     return length_data, cleavage_data

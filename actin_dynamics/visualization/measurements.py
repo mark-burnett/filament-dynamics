@@ -16,6 +16,7 @@
 import numpy
 import pylab
 
+
 def plot_smooth(measurement,
                 color='black', linestyle='solid',
                 line_alpha=1, fill_alpha=0.5,
@@ -31,8 +32,8 @@ def plot_smooth(measurement,
                       alpha=line_alpha, **kwargs)
 
 
-def plot_scatter(measurement, color='blue', fmt='o', **kwargs):
-    error_bars = utils.get_error_bars(measurement)
+def plot_scatter(measurement, color='black', fmt='o', **kwargs):
+    error_bars = get_error_bars(measurement)
     times, values = measurement[:2]
 
     if error_bars:

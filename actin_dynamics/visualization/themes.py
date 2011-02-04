@@ -15,18 +15,15 @@
 
 import pylab
 
-# Color Scheme Designer 3
-# http://colorschemedesigner.com/#3M62fw0w0w0w0
-blue   = ['#123EAB', '#2A4380', '#06246F', '#466FD5', '#6C8AD5']
-purple = ['#640CAB', '#582781', '#3F046F', '#9240D5', '#A468D5']
-green  = ['#00B945', '#238B49', '#00782D', '#37DC74', '#63DC90']
-orange = ['#FFAB00', '#BF9030', '#A66F00', '#FFC040', '#FFD173']
-
-LENGTH_COLORS = blue
-CLEAVAGE_COLORS = orange
-ADPPI_COLORS = green
+from . import colors
 
 class Theme(object):
+    def __init__(self, color_scheme=None):
+        if color_scheme:
+            self.color_scheme = color_scheme
+        else:
+            self.color_scheme = colors.ColorScheme(colors.default_colors)
+
     def initialize(self):
         pylab.figure()
 
@@ -34,16 +31,58 @@ class Theme(object):
         pass
 
     def __call__(self, *identifiers):
-        return {}
+        result = {}
+        for i in identifiers:
+            result.update(self.properties[i])
+        return result
 
-# Expected KINSIM identifiers:
-#   F-actin, Pi, F-ATP-actin,
+# Expected Polymerization identifiers:
+#   F-actin, Pi, F-ATP-actin, F-ADP-Pi-actin, pyrene
 #   data, sim
-class KINSIM(Theme):
-    def finalize(self):
-        pylab.xlim(0, 40)
-        pylab.ylim(0, 7)
-        pylab.legend(loc=5)
+class Polymerization(Theme):
+    def __init__(self, specialized_properties={}, duration=40, **kwargs):
+        self.duration = duration
+        Theme.__init__(**kwargs)
 
-    def __call__(self, *identifiers):
-        return {}
+        self.properties = self.default_properties()
+        self.properties.update(specialized_properties)
+
+    def default_properties(self):
+        # Get colors from scheme.
+        fg_colors    = self.color_scheme.analog(2)
+
+        atp_colors   = self.color_scheme.analog(2)
+        adppi_colors = self.color_scheme.analog(2)
+        adp_colors   = self.color_scheme.analog(2)
+
+        pyrene_color = self.color_scheme.color
+
+        pi_color     = self.color_scheme.color
+
+        return {'F-actin':        {fg_colors[0]},
+                'F-ATP-actin':    {atp_colors[0]},
+                'F-ADP-Pi-actin': {adppi_colors[0]},
+                'F-ADP-actin':    {adp_colors[0]},
+
+                'pyrene':         {pyrene_color},
+
+                'G-actin':        {fg_colors[1]},
+                'G-ATP-actin':    {atp_colors[1]},
+                'G-ADP-Pi-actin': {adppi_colors[1]},
+                'G-ADP-actin':    {adp_colors[1]},
+                'Pi':             {pi_color},
+
+                'data_line':      {'linestyle': '-',
+                                   'linewidth': 2},
+                'sim_line':       {'linestyle': '--',
+                                   'linewidth': 2},
+
+                'data_points':    {},
+                'sim_points':     {}}
+
+    def finalize(self):
+        pylab.xlim(0, self.duration)
+        pylab.ylim(0, 7)
+        pylab.xlabel('Time (s)')
+        pylab.ylabel('Concentration (uM)')
+        pylab.legend(loc=4)

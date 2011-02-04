@@ -22,7 +22,7 @@ from .. import themes
 def kinsim_comparison(run=None, pollard_simulations=False, theme=None):
     # Get color and style settings.
     if not theme:
-        theme = themes.KINSIM()
+        theme = themes.Polymerization()
 
     theme.initialize()
 
@@ -30,33 +30,33 @@ def kinsim_comparison(run=None, pollard_simulations=False, theme=None):
     kin_factin_sim, kin_pi_sim, kin_atp_sim = io.pollard.get_kinsim()
 
     measurements.plot_smooth(kin_factin_sim, label='KINSIM F-actin',
-                             **theme('F-actin', 'data'))
+                             **theme('F-actin', 'data_line'))
     measurements.plot_smooth(kin_pi_sim, label='KINSIM Pi',
-                             **theme('Pi', 'data'))
+                             **theme('Pi', 'data_line'))
     measurements.plot_smooth(kin_atp_sim, label='KINSIM F-ATP',
-                             **theme('F-ATP-actin', 'data'))
+                             **theme('F-ATP-actin', 'data_line'))
 
     # Pollard simulations
     if pollard_simulations:
         p_factin_sim, p_pi_sim, p_atp_sim = io.pollard.get_simulations()
 
         measurements.plot_smooth(p_factin_sim, label='Pollard F-actin',
-                                 **theme('F-actin', 'sim'))
+                                 **theme('F-actin', 'sim_line'))
         measurements.plot_smooth(p_pi_sim, label='Pollard Pi',
-                                 **theme('Pi', 'sim'))
+                                 **theme('Pi', 'sim_line'))
         measurements.plot_smooth(p_atp_sim, label='Pollard F-ATP',
-                                 **theme('F-ATP-actin', 'sim'))
+                                 **theme('F-ATP-actin', 'sim_line'))
 
     # My stochastic simulation
     if run:
         my_factin_sim, my_pi_sim, my_atp_sim = get_kinsim_results(run)
 
         measurements.plot_smooth(my_factin_sim, label='Stochastic F-actin',
-                                 **theme('F-actin', 'sim'))
+                                 **theme('F-actin', 'sim_line'))
         measurements.plot_smooth(my_pi_sim, label='Stochastic Pi',
-                                 **theme('Pi', 'sim'))
+                                 **theme('Pi', 'sim_line'))
         measurements.plot_smooth(my_atp_sim, label='Stochastic F-ATP',
-                                 **theme('F-ATP-actin', 'sim'))
+                                 **theme('F-ATP-actin', 'sim_line'))
 
     theme.finalize()
 
