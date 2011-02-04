@@ -33,6 +33,8 @@ def get_job(retries=1000, sleep_time=0.005):
     for i in xrange(retries):
         try:
             job = job_query.with_lockmode('update_nowait').first()
+            if job is None:
+                return
             job.in_progress = True
             elixir.session.commit()
             return job

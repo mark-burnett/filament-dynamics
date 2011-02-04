@@ -1,4 +1,4 @@
-#!/usr/bin/env ipython
+#!/usr/bin/env python
 #    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@ import elixir
 import numpy
 import pylab
 
+from IPython.Shell import IPShellEmbed
 
 from actin_dynamics import analysis
 from actin_dynamics import visualization
@@ -26,4 +27,20 @@ from actin_dynamics import io
 
 from actin_dynamics.io import database
 
-io.db_config.setup_database()
+
+banner = '''
+Welcome to the actin dynamics interactive console!'''
+
+def console_main():
+    io.db_config.setup_database()
+    shell = IPShellEmbed(argv=[], banner=banner)
+    shell(local_ns={'database': database,
+                    'elixir': elixir,
+                    'analysis': analysis,
+                    'visualization': visualization,
+                    'numpy': numpy,
+#                    'scipy': scipy,
+                    'pylab': pylab})
+
+if '__main__' == __name__:
+    console_main()

@@ -45,9 +45,6 @@ class DatabaseConfiguration(object):
         return result
 
 def setup_database():
-    '''
-    Takes a 'configobj' object and sets up the elixir database.
-    '''
     ns, remaining_argv = parse_database_command_line()
     db_co = DatabaseConfiguration.from_configobj(
             configobj.ConfigObj(ns.config))
