@@ -9,14 +9,14 @@ barbed_adp_depolymerization_rate:   [5.4, 5.4, 1, linear]
 
 
 # Hydrolysis parameters
-cleavage_rate:          [0.005, 0.75, 100, linear]
-cleavage_cooperativity: [1, 3000000, 100, log]
+cleavage_rate:          [0.005, 0.75, 50, linear]
+cleavage_cooperativity: [1, 5000000, 50, log]
 
 release_rate: [0.003, 0.003,   1, linear]
 
 
 # Concentrations
-filament_tip_concentration: [0.005, 0.05, 100, linear]
+filament_tip_concentration: [0.005, 0.05, 50, linear]
 
 initial_atp_concentration:        [0.3, 0.3, 1, linear]
 initial_pyrene_atp_concentration: [5.7, 5.7, 1, linear]

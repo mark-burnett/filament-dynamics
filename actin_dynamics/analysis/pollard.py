@@ -33,6 +33,7 @@ def pyrene_analysis(group, atp_weights=[0.37],
         for (atp_weight, adppi_weight, adp_weight
                 ) in itertools.product(atp_weights, adppi_weights, adp_weights):
             fit, norm = _fluorescence.get_pyrene_fit(run,
+                                                     pyrene_data=pyrene_data,
                                                      atp_weight=atp_weight,
                                                      adppi_weight=adppi_weight,
                                                      adp_weight=adp_weight)

@@ -32,7 +32,7 @@ def get_job(retries=1000, sleep_time=0.005):
     job_query = database.Job.query.filter_by(in_progress=False, complete=False)
     for i in xrange(retries):
         try:
-            job = job_query.with_lockmode('update_nowait').first()
+            job = job_query.with_lockmode('update').first()
             if job is None:
                 return
             job.in_progress = True
@@ -50,8 +50,6 @@ def cleanup_jobs():
     job_query = database.Job.query
 
     job_query.filter_by(complete=True).delete()
-#    for job in job_query.filter_by(complete=True):
-#        job.delete()
     job_query.filter_by(in_progress=True).update({'in_progress': False,
                                                   'complete': False})
     elixir.session.commit()
@@ -63,15 +61,9 @@ def create_jobs(parameter_iterator, object_graph_yaml, group_name,
     group.revision = utils.get_mercurial_revision()
     group.object_graph = object_graph_yaml
 
-    i = 0
     for pars in parameter_iterator:
         job = database.Job.from_parameters_dict(pars, group)
-        i += 1
-        if flush_count == i:
-            elixir.session.flush()
-            i = 0
-
-    elixir.session.commit()
+        elixir.session.commit()
 
 def complete_job(job):
     job.complete = True

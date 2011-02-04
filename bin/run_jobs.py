@@ -15,14 +15,28 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import argparse
+import time
+
 from actin_dynamics import io, job_control, run_support
 
-def main():
+def parse_args(argv):
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--delay', type=float, default=0,
+                        help='Sleep before running.')
+
+    return parser.parse_args(argv)
+
+def main(delay):
+    time.sleep(delay)
     for job in job_control.job_iterator():
         run_support.run_simulation_job(job)
         job_control.complete_job(job)
 
 
 if '__main__' == __name__:
-    io.db_config.setup_database()
-    main()
+    ns = io.db_config.setup_database()
+    args = parse_args(ns)
+
+    main(args.delay)

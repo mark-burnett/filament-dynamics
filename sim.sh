@@ -24,6 +24,8 @@ SPLIT_COMMAND=""
 GROUP_NAME=""
 CONFIG_COMMAND=""
 CREATE_JOBS=true
+typeset -i BASE_DELAY
+let BASE_DELAY=3
 
 USE_PATH=.:modules/
 
@@ -71,7 +73,15 @@ done
 #    exit 0
 #fi
 
+echo "Starting job runners..."
+for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
+    DELAY=$((BASE_DELAY + SIMNUM))
+    PYTHONPATH=$USE_PATH bin/run_jobs.py --delay $DELAY $CONFIG_COMMAND &
+    echo "Started process #$SIMNUM"
+done
+
 if $CREATE_JOBS; then
+    echo
     echo "Creating jobs..."
     FULL_OBJECT_PATH="$DIRECTORY_NAME/$OBJECT_GRAPH_FILENAME"
     FULL_PARAMETERS_PATH="$DIRECTORY_NAME/$PARAMETERS_FILENAME"
@@ -81,12 +91,11 @@ if $CREATE_JOBS; then
                    --object_graph     $FULL_OBJECT_PATH\
                    --group_name       "$GROUP_NAME"\
                    $CONFIG_COMMAND || exit 1
+    echo "Jobs created."
 fi
 
-echo "Running jobs..."
-for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
-    PYTHONPATH=$USE_PATH bin/run_jobs.py $CONFIG_COMMAND &
-done
+echo "Waiting to complete..."
+
 
 wait
 

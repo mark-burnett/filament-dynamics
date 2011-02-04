@@ -27,6 +27,8 @@ from actin_dynamics import analysis
 from actin_dynamics import visualization
 from actin_dynamics import io
 
+import actin_dynamics.analysis.pollard
+
 from actin_dynamics.io import database
 
 

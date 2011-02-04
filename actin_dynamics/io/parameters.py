@@ -63,38 +63,17 @@ def _make_mesh(min_value, max_value, mesh_size, mesh_type):
     else:
         raise RuntimeError('Unsupported mesh type specified for make_mesh.')
 
-def _make_split_mesh(process_number, num_processes, *range_info):
-    full_mesh = _make_mesh(*range_info)
 
-    size = len(full_mesh)
-    fraction = 1.0 / num_processes
-    width = int(size * fraction) # Round down.
-
-    # Be sure to get the extra couple of points on the end.
-    if process_number == num_processes:
-        return full_mesh[(process_number - 1) * width:]
-
-    return full_mesh[(process_number - 1) * width:process_number * width]
-
-
-def _make_parameter_mesh_iterator(parameter_ranges, split_parameter_name,
-                                  process_number, num_processes):
+def _make_parameter_mesh_iterator(parameter_ranges):
     names = []
     meshes = []
     for name, range_info in parameter_ranges.iteritems():
         names.append(name)
-        if split_parameter_name and name == split_parameter_name:
-            meshes.append(_make_split_mesh(process_number, num_processes,
-                                           *range_info))
-        else:
-            meshes.append(_make_mesh(*range_info))
+        meshes.append(_make_mesh(*range_info))
     
     return ParameterMeshIterator(names, _product(*meshes))
 
 
-def parse_parameters_file(par_file, split_parameter_name=None,
-                          process_number=0, num_processes=1):
+def parse_parameters_file(par_file):
     parameter_ranges = yaml.load(par_file)
-    return _make_parameter_mesh_iterator(parameter_ranges,
-                                         split_parameter_name,
-                                         process_number, num_processes)
+    return _make_parameter_mesh_iterator(parameter_ranges)
