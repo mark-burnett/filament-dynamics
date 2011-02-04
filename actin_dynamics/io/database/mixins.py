@@ -31,3 +31,14 @@ class HasParameters(object):
         for p in self.parameters:
             if p.name == name:
                 return p.value
+
+
+class HasValues(object):
+    @property
+    def values_dict(self):
+        return dict((p.name, p.value) for p in self.values)
+
+    def get_value(self, name):
+        for p in self.values:
+            if p.name == name:
+                return p.value

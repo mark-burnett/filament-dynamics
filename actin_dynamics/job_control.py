@@ -57,7 +57,8 @@ def cleanup_jobs():
     elixir.session.commit()
 
 
-def create_jobs(parameter_iterator, object_graph_yaml, group_name, flush_count=100):
+def create_jobs(parameter_iterator, object_graph_yaml, group_name,
+                flush_count=100):
     group = database.Group.get_or_create(name=group_name)
     group.revision = utils.get_mercurial_revision()
     group.object_graph = object_graph_yaml

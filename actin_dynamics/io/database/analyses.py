@@ -15,10 +15,11 @@
 
 import elixir as _elixir
 
-from . import mixins as _bases_classes
+from . import mixins as _mixins
 from . import parameters as _parameters
+from . import values as _values
 
-class Analysis(_elixir.Entity, _bases_classes.HasParameters):
+class Analysis(_elixir.Entity, _mixins.HasParameters, _mixins.HasValues):
     _elixir.using_options(tablename='analysis')
 
     parameters = _elixir.OneToMany('AnalysisParameter',
@@ -33,6 +34,6 @@ class Analysis(_elixir.Entity, _bases_classes.HasParameters):
         analysis = cls()
         analysis.parameters = _parameters.AnalysisParameter.from_dict(
                 parameter_dict)
-        analysis.values = _parameters.AnalysisValue.from_dict(value_dict)
+        analysis.values = _values.AnalysisValue.from_dict(value_dict)
 
         return analysis

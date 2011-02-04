@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
 import elixir
 
 from . import accessors as _accessors
@@ -22,31 +23,45 @@ from . import residuals as _residuals
 
 from actin_dynamics import io
 
-def pyrene_analysis(group, atp_weights):
+def pyrene_analysis(group, atp_weights=[0.37],
+                    adppi_weights=[0.56],
+                    adp_weights=[0.75]):
     run = io.database.Run.query.filter_by(group=group).first()
     sample_times = run.get_measurement('pyrene_atp_count')[0]
     pyrene_data = io.pollard.get_interpolated_pyrene_data(sample_times)
     for run in group.runs:
-        for weight in atp_weights:
-            fit, norm = _fluorescence.get_pyrene_fit(run, atp_weight=weight)
+        for (atp_weight, adppi_weight, adp_weight
+                ) in itertools.product(atp_weights, adppi_weights, adp_weights):
+            fit, norm = _fluorescence.get_pyrene_fit(run,
+                                                     atp_weight=atp_weight,
+                                                     adppi_weight=adppi_weight,
+                                                     adp_weight=adp_weight)
 
             run.analyses.append(io.database.Analysis.from_dicts(
-                parameter_dict={'atp_weight': weight},
+                parameter_dict={'atp_weight':   atp_weight,
+                                'adppi_weight': adppi_weight,
+                                'adp_weight':   adp_weight},
                 value_dict={'pyrene_normalization': norm,
-                            'pyrene_chi_squared': fit}))
+                            'pyrene_chi_squared':   fit}))
 
-    # XXX consider moving inside run loop
-    elixir.session.flush()
+        elixir.session.flush()
+    elixir.session.commit()
 
 
-def adppi_analysis(group):
+def adppi_analysis(group, flush_count=1000):
     adppi_data = io.pollard.get_adppi_data()
+    i = 0
     for run in group.runs:
         fit = adppi_fit(run, adppi_data)
         run.values.extend(io.database.SimulationValue.from_dict(
             {'adppi_chi_squared': fit}))
 
-    elixir.session.flush()
+        i += 1
+        if i == flush_count:
+            elixir.session.flush()
+            i = 0
+
+    elixir.session.commit()
 
 def adppi_fit(run, data):
     # XXX We are only using pyrene adppi, we should be using both.
