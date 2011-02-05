@@ -1,3 +1,14 @@
+For Talk:
+    "basic" plots
+        1d chi squared plots
+            (fit sensitivity plots)
+
+        chi squared surface plots
+
+    "assembled" plots
+        duplicate pollard fit without pyrene correction
+        sensivity to parameters for simple random model
+
 Validation:
     automate some higher level tests
         analytic vs my run
@@ -6,14 +17,10 @@ Validation:
 
 BUGS:
     Is there a problem with the single random simulation?
-        pyrene sim looks oddly low for first 2 data points somehow.
+        a pyrene sim looked oddly low for first 2 data points.
+            have not been able to duplicate.
 
 
 Visualization:
     Visualization for short time stuff.
-    fitness vector vs atp_weight (with labels)
     extend reduction plots for 4 hydrolysis parameters
-
-
-Broken Windows:
-    Cleaner visualization code.

@@ -34,22 +34,35 @@ def job_iterator():
             yield job
 
 def get_job():
-    # XXX MySQL specific?
+    try:
+        return _get_job_mysql()
+    except elixir.sqlalchemy.exc.OperationalError:
+        elixir.session.rollback()
+        global get_job
+        get_job = _get_job_fallback
+        return _get_job_fallback()
+
+def _get_job_mysql():
     update_sql = 'UPDATE job SET pid = %s WHERE pid = 0 LIMIT 1;' % PID
     if elixir.metadata.bind.execute(update_sql):
         # There should be exactly one of these.
-        try:
-            return database.Job.query.filter_by(pid=PID, complete=False).one()
-        except elixir.sqlalchemy.exc.NoResultFound:
-            pass
+        return database.Job.query.filter_by(pid=PID, complete=False).first()
+
+def _get_job_fallback():
+    job_query = database.Job.query.filter_by(pid=0, complete=False)
+    job = job_query.with_lockmode('update').first()
+    if job:
+        job.pid = PID
+        elixir.session.commit()
+
+    return job
 
 
 def cleanup_jobs():
     job_query = database.Job.query
 
     job_query.filter_by(complete=True).delete()
-    job_query.filter('pid != 0').update({'pid': 0,
-                                                'complete': False})
+    job_query.update({'pid': 0})
     elixir.session.commit()
 
 
