@@ -32,7 +32,8 @@ def run_simulation_job(job):
     analyzed_set  = typical_run(parameters, sim_generator)
 
     run = _io.database.Run.from_analyzed_set(analyzed_set)
-    run.group = job.group
+    run.group  = job.group
+    run.job_id = job.id
 
 
 def typical_run(parameters, simulation_iterator):

@@ -23,6 +23,8 @@ class Run(_elixir.Entity, _mixins.GetOrCreate,
           _mixins.HasParameters, _mixins.HasValues):
     _elixir.using_options(tablename='run')
 
+    job_id = _elixir.Field(_elixir.Integer)
+
     parameters   = _elixir.OneToMany('SimulationParameter',
                                      cascade='all,delete,delete-orphan')
     measurements = _elixir.OneToMany('Measurement',

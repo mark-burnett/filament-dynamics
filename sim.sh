@@ -20,10 +20,13 @@ OBJECT_GRAPH_FILENAME="object_graph.yaml"
 PARAMETERS_FILENAME="parameters.yaml"
 DIRECTORY_NAME="."
 NUM_SIMULATIONS="1"
+
 SPLIT_COMMAND=""
-GROUP_NAME=""
 CONFIG_COMMAND=""
+
+DIR_NAME_AS_GROUP_NAME=true
 CREATE_JOBS=true
+
 typeset -i BASE_DELAY
 let BASE_DELAY=3
 
@@ -57,6 +60,7 @@ while getopts "d:o:a:n:g:c:jh" FLAG; do
         "n")
             let NUM_PROCESSES=$OPTARG;;
         "g")
+            DIR_NAME_AS_GROUP_NAME=false
             GROUP_NAME=$OPTARG;;
         "c")
             CONFIG_COMMAND="--config $OPTARG";;
@@ -72,6 +76,10 @@ done
 #    display_args
 #    exit 0
 #fi
+
+if $DIR_NAME_AS_GROUP_NAME; then
+    GROUP_NAME=$DIRECTORY_NAME
+fi
 
 echo "Starting job runners..."
 for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do

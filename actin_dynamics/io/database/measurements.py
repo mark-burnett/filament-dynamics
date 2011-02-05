@@ -21,7 +21,7 @@ from . import measurement_values as _measurement_values
 class Measurement(_elixir.Entity, _mixins.GetOrCreate):
     _elixir.using_options(tablename='measurement')
 
-    name   = _elixir.Field(_elixir.String(50))
+    name   = _elixir.Field(_elixir.String(64))
 
     run    = _elixir.ManyToOne('Run')
     values = _elixir.OneToMany('MeasurementValue',

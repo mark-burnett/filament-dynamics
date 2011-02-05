@@ -20,7 +20,7 @@ from . import mixins as _mixins
 class FloatDict(_elixir.Entity, _mixins.GetOrCreate):
     _elixir.using_options(inheritance='multi', tablename='float_dict')
 
-    name  = _elixir.Field(_elixir.String(50), index=True)
+    name  = _elixir.Field(_elixir.String(64), index=True)
     value = _elixir.Field(_elixir.Float, index=True)
 
     @classmethod

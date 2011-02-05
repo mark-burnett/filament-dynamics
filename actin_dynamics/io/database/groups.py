@@ -22,11 +22,11 @@ from . import mixins as _bases_classes
 class Group(_elixir.Entity, _bases_classes.GetOrCreate):
     _elixir.using_options(tablename='group')
 
-    name         = _elixir.Field(_elixir.String(50))
+    name         = _elixir.Field(_elixir.String(256))
     object_graph = _elixir.Field(_elixir.String(32768)) # 32kB file.
 
     timestamp = _elixir.Field(_elixir.DateTime, default=_datetime.datetime.now)
-    revision  = _elixir.Field(_elixir.String(50))
+    revision  = _elixir.Field(_elixir.String(64))
 
     runs = _elixir.OneToMany('Run', cascade='all,delete')
     jobs = _elixir.OneToMany('Job', cascade='all,delete')

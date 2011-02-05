@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import time
 
 import elixir
@@ -21,6 +22,8 @@ from .io import database
 
 from . import utils
 
+PID = os.getpid()
+
 def job_iterator():
     job = True
     while job:
@@ -28,22 +31,12 @@ def job_iterator():
         if job:
             yield job
 
-def get_job(retries=1000, sleep_time=0.005):
-    job_query = database.Job.query.filter_by(in_progress=False, complete=False)
-    for i in xrange(retries):
-        try:
-            job = job_query.with_lockmode('update').first()
-            if job is None:
-                return
-            job.in_progress = True
-            elixir.session.commit()
-            return job
-        except elixir.sqlalchemy.exceptions.OperationalError:
-            elixir.session.rollback()
-            time.sleep(sleep_time)
-            if not job_query.count():
-                return
-    raise RuntimeError('Failed to get a job.  Giving up after %s retries.' % retries)
+def get_job():
+    # XXX MySQL specific?
+    update_sql = 'UPDATE job SET pid = %s WHERE pid = 0 LIMIT 1;' % PID
+    if elixir.metadata.bind.execute(update_sql):
+        # There should be exactly one of these.
+        return database.Job.query.filter_by(pid=PID, complete=False).one()
 
 
 def cleanup_jobs():
@@ -67,9 +60,16 @@ def create_jobs(parameter_iterator, object_graph_yaml, group_name,
 
 def complete_job(job):
     job.complete = True
-    job.in_progress = False
+#    job.in_progress = False
     elixir.session.commit()
 
 def delete_all_jobs():
     database.Job.query.delete()
     elixir.session.commit()
+
+
+def duplicate_results_exist(group):
+    for i1, r1 in enumerate(database.Run.query.filter_by(group=group)):
+        for i2, r2 in enumerate(database.Run.query.filter_by(group=group)):
+            if i1 != i2 and r1.job_id == r2.job_id:
+                return r1, r2

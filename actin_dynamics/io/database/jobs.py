@@ -21,10 +21,7 @@ from . import parameters as _parameters
 class Job(_elixir.Entity, _mixins.HasParameters):
     _elixir.using_options(tablename='job')
 
-# XXX I can't use this until later versions of sqlalchemy.
-#  This makes me wish I were using a rolling release distro like arch.
-#    status = _elixir.Field(_elixir.Enum(['waiting', 'in progress', 'complete']))
-    in_progress = _elixir.Field(_elixir.Boolean, default=False)
+    pid = _elixir.Field(_elixir.Integer, default=0)
     complete    = _elixir.Field(_elixir.Boolean, default=False)
 
     parameters = _elixir.OneToMany('JobParameter',
