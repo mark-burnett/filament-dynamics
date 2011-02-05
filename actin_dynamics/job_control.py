@@ -22,7 +22,9 @@ from .io import database
 
 from . import utils
 
+
 PID = os.getpid()
+
 
 def job_iterator():
     job = True
@@ -36,20 +38,22 @@ def get_job():
     update_sql = 'UPDATE job SET pid = %s WHERE pid = 0 LIMIT 1;' % PID
     if elixir.metadata.bind.execute(update_sql):
         # There should be exactly one of these.
-        return database.Job.query.filter_by(pid=PID, complete=False).one()
+        try:
+            return database.Job.query.filter_by(pid=PID, complete=False).one()
+        except elixir.sqlalchemy.exc.NoResultFound:
+            pass
 
 
 def cleanup_jobs():
     job_query = database.Job.query
 
     job_query.filter_by(complete=True).delete()
-    job_query.filter_by(in_progress=True).update({'in_progress': False,
-                                                  'complete': False})
+    job_query.filter('pid != 0').update({'pid': 0,
+                                                'complete': False})
     elixir.session.commit()
 
 
-def create_jobs(parameter_iterator, object_graph_yaml, group_name,
-                flush_count=100):
+def create_jobs(parameter_iterator, object_graph_yaml, group_name):
     group = database.Group.get_or_create(name=group_name)
     group.revision = utils.get_mercurial_revision()
     group.object_graph = object_graph_yaml
@@ -58,15 +62,23 @@ def create_jobs(parameter_iterator, object_graph_yaml, group_name,
         job = database.Job.from_parameters_dict(pars, group)
         elixir.session.commit()
 
+
 def complete_job(job):
     job.complete = True
-#    job.in_progress = False
     elixir.session.commit()
+
 
 def delete_all_jobs():
     database.Job.query.delete()
     elixir.session.commit()
 
+
+def duplicate_jobs_exist():
+    for i1, j1 in enumerate(database.Job.query):
+        j1p = j1.parameters_dict
+        for i2, j2 in enumerate(database.Job.query):
+            if i1 != i2 and j1p == j2.parameters_dict:
+                return j1, j2
 
 def duplicate_results_exist(group):
     for i1, r1 in enumerate(database.Run.query.filter_by(group=group)):

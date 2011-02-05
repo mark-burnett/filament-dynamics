@@ -39,7 +39,11 @@ def make_simulation(object_graph, parameters):
 
 
 def simulation_generator(object_graph, parameters):
-    number_simulations = parameters['number_of_simulations']
+    try:
+        number_simulations = parameters['number_of_simulations']
+    except:
+        print parameters
+        raise
 
     for i in xrange(int(number_simulations)):
         yield make_simulation(object_graph, parameters)

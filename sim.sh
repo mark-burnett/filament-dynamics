@@ -28,7 +28,7 @@ DIR_NAME_AS_GROUP_NAME=true
 CREATE_JOBS=true
 
 typeset -i BASE_DELAY
-let BASE_DELAY=3
+let BASE_DELAY=5
 
 USE_PATH=.:modules/
 
