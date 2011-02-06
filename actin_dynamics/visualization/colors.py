@@ -47,8 +47,8 @@ class ColorScheme(object):
 
     @property
     def color(self):
-        clist = self._get_underused_clist()
-        return self._middle_out_search(clist)
+        list_index = self._get_underused_clist()
+        return self._middle_out_search(list_index)
 
     def _get_underused_clist(self):
         best = -1
@@ -57,23 +57,17 @@ class ColorScheme(object):
             if num < best_num:
                 best = i
                 best_num = num
-        return self.colors[i]
+        return best
 
-    def _middle_out_search(self, clist):
-        center = int(math.ceil(float(len(clist) / 2)))
-
-        for i in xrange(len(clist)):
-            if i % 2:
-                color = clist[center - i]
-            else:
-                color = clist[center + i]
-
+    def _middle_out_search(self, list_index):
+        clist = self.colors[list_index]
+        for color in iter_middle_out(clist):
             if color not in self.used_colors:
                 self.used_colors.add(color)
+                self.used_lists[list_index] += 1
                 return color
 
         raise RuntimeError('Out of colors.')
-
 
     def reset(self):
         self.used_colors.clear()
@@ -88,3 +82,16 @@ default_colors = [
         ['#3F046F', '#582781', '#640CAB', '#9240D5', '#A468D5'], # purple
         ['#00782D', '#238B49', '#00B945', '#37DC74', '#63DC90'], # green
         ['#A66F00', '#BF9030', '#FFAB00', '#FFC040', '#FFD173']] # orange
+
+def iter_middle_out(seq):
+    center = int(math.ceil(float(len(seq) / 2)))
+    i = 0
+    count = 0
+    while count < len(seq):
+        count += 1
+        yield seq[center - i]
+        if i and count < len(seq):
+            count += 1
+            yield seq[center + i]
+        i += 1
+

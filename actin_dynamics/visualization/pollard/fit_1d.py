@@ -13,10 +13,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from fit_1d import adppi
-from kinsim import kinsim_comparison
-from single_run import plot_run
+from .. import themes
+from .. import variation
 
-del fit_1d
-del kinsim
-del single_run
+def adppi(group, theme=None):
+    if not theme:
+        theme = themes.Variation()
+
+    theme.initialize()
+
+    variation.run_val_vs_par(group, abscissa='cleavage_rate',
+                   ordinate='pollard_adppi_chi_squared',
+                   label='Cleavage Rate', theme=theme)
+
+    variation.run_val_vs_par(group, abscissa='filament_tip_concentration',
+                   ordinate='pollard_adppi_chi_squared',
+                   label='FTC', theme=theme)
+
+    theme.finalize()

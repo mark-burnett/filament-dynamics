@@ -79,6 +79,11 @@ def av_ap_reduce(group, value_name=None, parameter_name=None,
     return abscissa_values, ordinate_values
 
 
+def av_rp_reduce(group, value_name=None, parameter_name=None,
+                 reduction_function=min):
+    pass
+
+
 def _get_parameters_mesh(iterator, parameter_name):
     values = set()
     for i in iterator:
