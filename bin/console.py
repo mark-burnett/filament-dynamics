@@ -33,7 +33,10 @@ from actin_dynamics.io import database
 
 
 banner = '''
-Welcome to the actin dynamics interactive console!'''
+    Actin Dynamics Copyright (C) 2011  Mark Burnett
+    This program comes with ABSOLUTELY NO WARRANTY.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; for details read the LICENSE file.'''
 
 def get_database_dict():
     result = copy.copy(database.__dict__)

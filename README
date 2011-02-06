@@ -11,9 +11,8 @@ See the LICENSE file for more details.
 
 CPython version 2.6 or 2.7 (Not 3.x ready yet.)
 
-PyPy version 1.4.1 or higher (simulations will run 2x as fast)
-
-mysql (or postgresql)
+mysql
+    you can just use sqlite for testing, but for the real deal, use mysql
 
 IPython (used for analysis shell)
 
@@ -21,8 +20,8 @@ Python Packages:
 argparse (if using python 2.6)
 configobj
 elixir
-discover (if you want to run all the tests at once)
-mysqldb (or psycopg2)
+discover
+mysqldb
 sqlalchemy
 yaml
 

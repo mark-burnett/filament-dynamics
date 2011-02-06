@@ -5,7 +5,6 @@ from actin_dynamics.filaments.single_strand_filaments import Filament
 from actin_dynamics import concentrations
 
 # This would be a decent test to adapt and add for good measure.
-#        # XXX DEBUG debug
 #        for s, l in self.state_indices.items():
 #            assert(len(l) == self._sequence.count(s))
 #            for i in l:

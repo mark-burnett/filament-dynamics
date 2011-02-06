@@ -45,15 +45,31 @@ def pyrene_analysis(group, atp_weights=[0.37],
                 value_dict={'pollard_pyrene_normalization': norm,
                             'pollard_pyrene_chi_squared':   fit}))
 
-        elixir.session.flush()
-    elixir.session.commit()
+        elixir.session.commit()
 
+def flat_pyrene_analysis(group):
+    run = io.database.Run.query.filter_by(group=group).first()
+    sample_times = run.get_measurement('length')[0]
+    pyrene_data = io.pollard.get_interpolated_pyrene_data(sample_times)
+    for run in group.runs:
+        fit, norm = _fluorescence.get_pyrene_fit(run,
+                                                 pyrene_data=pyrene_data,
+                                                 atp_weight=1,
+                                                 adppi_weight=1,
+                                                 adp_weight=1)
+
+        run.values.append(io.database.SimulationValue(
+            name='pollard_length_chi_squared', value=fit))
+        run.values.append(io.database.SimulationValue(
+            name='pollard_length_normalization', value=norm))
+
+        elixir.session.commit()
 
 def adppi_analysis(group, flush_count=1000):
     adppi_data = io.pollard.get_adppi_data()
     i = 0
     for run in group.runs:
-        fit = adppi_fit(run, adppi_data)
+        fit = _fit_adppi(run, adppi_data)
         run.values.extend(io.database.SimulationValue.from_dict(
             {'pollard_adppi_chi_squared': fit}))
 
@@ -64,9 +80,9 @@ def adppi_analysis(group, flush_count=1000):
 
     elixir.session.commit()
 
-def adppi_fit(run, data):
-    # XXX We are only using pyrene adppi, we should be using both.
-    simulation_data = _accessors.get_scaled(run, 'pyrene_adppi_count')
+def _fit_adppi(run, data):
+    simulation_data = _accessors.get_multiple_scaled(run, ['pyrene_adppi_count',
+                                                           'adppi_count'])
 
     sample_times = data[0]
     sampled_sim_data = _interpolation.resample_measurement(
