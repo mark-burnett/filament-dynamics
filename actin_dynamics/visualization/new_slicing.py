@@ -80,6 +80,8 @@ class Slicer(object):
 
 def _convert_results_to_array(query, meshes):
     shape = [len(m) for m in meshes]
+    if sum(shape) == 0:
+        return numpy.array([query.first()])
     result = numpy.zeros(shape)
 
     for row in query:
