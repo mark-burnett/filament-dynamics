@@ -8,6 +8,11 @@ For Talk:
     "assembled" plots
         duplicate pollard fit without pyrene correction
         sensivity to parameters for simple random model
+        corrolation plots
+
+    infrastructure
+        make a summary table for each group contianing parameters and values
+
 
 Validation:
     automate some higher level tests
@@ -22,5 +27,6 @@ BUGS:
 
 
 Visualization:
+    Refactor Theme to only contain color and linestyle/width info.
     Visualization for short time stuff.
     extend reduction plots for 4 hydrolysis parameters
