@@ -29,3 +29,11 @@ def get_mercurial_revision():
     repo = mercurial.hg.repository(mercurial.ui.ui(), '.')
     parent = repo.parents()[0]
     return '%s:%s' % (parent.rev(), parent.hex())
+
+def map_attribute(iterator=None, attribute=None, function=None):
+    '''
+    returns function(i.attribute for i in iterator)
+    '''
+    return function(itertools.imap(lambda i: operator.getattr(i, attribute),
+                              iterator))
+

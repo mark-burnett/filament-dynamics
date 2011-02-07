@@ -78,6 +78,10 @@ class Slicer(object):
         return values, column_names, meshes
 
 
+    def minimum_values(self, *abscissae_names):
+        pass
+
+
 def _convert_results_to_array(query, meshes):
     shape = [len(m) for m in meshes]
     if sum(shape) == 0:
@@ -128,9 +132,12 @@ def _fill_table(summary_class, group,
                 value_name=None, value_type=None,
                 run_parameters=None, analysis_parameters=None):
     if 'run' == value_type.lower():
-        return _fill_run_table(summary_class, group,
-                               value_name=value_name,
-                               run_parameters=run_parameters)
+        if not analysis_parameters:
+            return _fill_run_table(summary_class, group,
+                                   value_name=value_name,
+                                   run_parameters=run_parameters)
+        else:
+            raise RuntimeError("This shouldn't happen.")
     elif 'analysis' == value_type.lower():
         return _fill_analysis_table(summary_class, group,
                                     value_name=value_name,
@@ -141,10 +148,19 @@ def _fill_analysis_table(summary_class, group, value_name=None,
                          run_parameters=None, analysis_parameters=None):
     for run in database.Run.query.filter_by(group=group):
         run_properties = _extract_properties(run, run_parameters)
-        for analysis in database.Analysis.query.filter_by(run=run):
-            properties = _extract_properties(analysis, analysis_parameters,
-                                             value_name=value_name)
+
+        analysis_query = database.Analysis.query.filter_by(run=run)
+        meshes = _get_analysis_meshes(analysis_query, analysis_parameters)
+        print 'ana meshes', meshes
+
+        for analysis_values in _iterate_meshes(meshes):
+            best_value = _analysis_min_value(analysis_query,
+                                             analysis_values,
+                                             value_name)
+
+            properties = analysis_values
             properties.update(run_properties)
+            properties['value'] = best_value
 
             new_object = summary_class(**properties)
             new_object.run_id = run.id
@@ -152,6 +168,41 @@ def _fill_analysis_table(summary_class, group, value_name=None,
 
     # XXX Be wary of burning through too much memory by not committing sooner.
     elixir.session.commit()
+
+
+# XXX There may be a way to speed this up with real queries.
+#       It probably requires completely abandoning elixir...which I will do..
+def _get_analysis_meshes(query, parameter_names):
+    values = dict((n, set()) for n in parameter_names)
+    for analysis in query:
+        for name in parameter_names:
+            values[name].add(analysis.get_parameter(name))
+    return dict((n, sorted(values[n])) for n in parameter_names)
+
+
+def _iterate_meshes(meshes):
+    names = meshes.keys()
+    for values in itertools.product(*meshes.itervalues()):
+        yield dict((n, v) for n, v in itertools.izip(names, values))
+
+
+def _analysis_min_value(analyses, analysis_values, value_name):
+    best = None
+    for a in analyses:
+        if a.contains_parameters(analysis_values):
+            this_value = a.get_value(value_name)
+            if best is None or this_value < best:
+                best = this_value
+
+    return best
+
+
+# XXX interesting utility...maybe useful for reduce functionality in slicer
+#  easy to generalize into f(x.attr for x in iterator)
+def _minimize_attribute(iterator, attr_name):
+    return min(itertools.imap(lambda i: operator.getattr(i, attr_name),
+                              iterator))
+
 
 def _fill_run_table(summary_class, group, value_name, run_parameters):
     for run in database.Run.query.filter_by(group=group):

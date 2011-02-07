@@ -32,6 +32,14 @@ class HasParameters(object):
             if p.name == name:
                 return p.value
 
+    # XXX Warning, this is a bit slow.
+    #  It's basically m * n, when it could be n.
+    def contains_parameters(self, parameters):
+        for name, parameter in parameters.iteritems():
+            if self.get_parameter(name) != parameter:
+                return False
+        return True
+
 
 class HasValues(object):
     @property
@@ -42,3 +50,11 @@ class HasValues(object):
         for v in self.values:
             if v.name == name:
                 return v.value
+
+    # XXX Warning, this is a bit slow.
+    #  It's basically m * n, when it could be n.
+    def contains_values(self, values):
+        for name, value in values.iteritems():
+            if self.get_value(name) != value:
+                return False
+        return True
