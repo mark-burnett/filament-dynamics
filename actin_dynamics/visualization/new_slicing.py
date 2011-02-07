@@ -13,17 +13,19 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import copy
+import itertools
 
-from sqlalchemy import schema, types, orm
+import numpy
 
+from sqlalchemy import schema, types, orm, sql
 import elixir
 
 from actin_dynamics.io import database
 
 class Slicer(object):
-    def __init__(self, summary_class):
+    def __init__(self, summary_class, table):
         self.summary_class = summary_class
+        self.table         = table
 
     @classmethod
     def from_group(cls, group,
@@ -34,7 +36,10 @@ class Slicer(object):
                               run_values=run_values,
                               analysis_values=analysis_values)
 
-        summary_class = _create_class(table)
+        column_names = (run_parameters + analysis_parameters +
+                        run_values + analysis_values)
+
+        summary_class = _create_class(table, column_names)
 
         if analysis_parameters or analysis_values:
             _fill_full_table(summary_class, group,
@@ -44,9 +49,22 @@ class Slicer(object):
             _fill_run_only_table(summary_class, group,
                                  run_parameters, run_values)
 
-        return cls(summary_class)
+        return cls(summary_class, table)
+
+    # XXX slice for one particular value.
+    def slice(self, value, **fixed_values):
+        column_names = [c for c in self.summary_class.column_names
+                        if c not in fixed_values]
+        query = elixir.session.query(*[getattr(self.summary_class, name)
+                                       for name in column_names]
+                ).filter_by(**fixed_values)
+        return _convert_results_to_array(query), column_names
+
+def _convert_results_to_array(query):
+    return query.all()
 
 
+# XXX Generate a meaningful unique id for the table
 def _create_table(run_parameters, analysis_parameters,
                   run_values, analysis_values, unique_id='temp'):
     columns = []
@@ -56,35 +74,27 @@ def _create_table(run_parameters, analysis_parameters,
     for name in itertools.chain(run_values, analysis_values):
         columns.append(schema.Column(name, types.Float))
 
-    table = schema.table('slicing_%s' % unique_id, elixir.session.metadata,
+    table = schema.Table('slicing_%s' % unique_id, elixir.metadata,
                          schema.Column('id', types.Integer, primary_key=True),
                          schema.Column('run_id', types.Integer,
                                        schema.ForeignKey('run.id')),
                          prefixes=['TEMPORARY'],
                          *columns)
-    elixir.session.metadata.create_all()
+    elixir.metadata.create_all()
 
     return table
 
-def _create_class(table):
+def _create_class(table, columns):
     class TempTable(object):
-        pass
-        # XXX Make sqlalchemy clonable mixin
-        #  it won't be needed here though...
-#        @classmethod
-#        def clone(cls, source):
-#            properties = {}
-#            mapper = orm.object_mapper(source)
-#            for col in mapper.columns:
-#                if col.primary_key or col.foreign_keys:
-#                    continue
-#                properties[col.name] = getattr(source, col.name)
-#
-#            return cls(**properties)
+        column_names = columns
+        def __init__(self, **kwargs):
+            for key, value in kwargs.iteritems():
+                setattr(self, key, value)
 
     orm.mapper(TempTable, table)
 
     return TempTable
+
 
 def _fill_full_table(summary_class, group,
                      run_parameters, run_values,
@@ -96,7 +106,10 @@ def _fill_full_table(summary_class, group,
                                              analysis_parameters,
                                              analysis_values)
             properties.update(run_properties)
+
             new_object = summary_class(**properties)
+            new_object.run_id = run.id
+            elixir.session.add(new_object)
 
     # XXX Be wary of burning through too much memory by not committing sooner.
     elixir.session.commit()
@@ -104,10 +117,13 @@ def _fill_full_table(summary_class, group,
 def _fill_run_only_table(summary_class, group, run_parameters, run_values):
     for run in database.Run.query.filter_by(group=group):
         run_properties = _extract_properties(run, run_parameters, run_values)
-        new_object = summary_class(run_properties)
+        new_object = summary_class(**run_properties)
+        new_object.run_id = run.id
+        elixir.session.add(new_object)
 
     # XXX Be wary of burning through too much memory by not committing sooner.
     elixir.session.commit()
+
 
 def _extract_properties(obj, parameter_names, value_names):
     parameters = dict((name, obj.get_parameter(name))
