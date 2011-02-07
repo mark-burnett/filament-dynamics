@@ -13,7 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import bisect
 import itertools
+import operator
 
 import numpy
 
@@ -28,56 +30,80 @@ class Slicer(object):
         self.table         = table
 
     @classmethod
-    def from_group(cls, group,
-                   run_parameters=[], analysis_parameters=[],
-                   run_values=[],     analysis_values=[]):
+    def from_group(cls, group, value_name, value_type='run',
+                   run_parameters=[], analysis_parameters=[]):
+        '''
+        value_type specifies whether to look in runs or analyses
+                for the value name.
+        value_type can either be 'run' or 'value'.
+        '''
         table = _create_table(run_parameters=run_parameters,
-                              analysis_parameters=analysis_parameters,
-                              run_values=run_values,
-                              analysis_values=analysis_values)
-
-        column_names = (run_parameters + analysis_parameters +
-                        run_values + analysis_values)
+                              analysis_parameters=analysis_parameters)
+        column_names = run_parameters + analysis_parameters
 
         summary_class = _create_class(table, column_names)
 
-        if analysis_parameters or analysis_values:
-            _fill_full_table(summary_class, group,
-                             run_parameters, run_values,
-                             analysis_parameters, analysis_values)
-        else:
-            _fill_run_only_table(summary_class, group,
-                                 run_parameters, run_values)
+        _fill_table(summary_class, group,
+                    value_name=value_name, value_type=value_type,
+                    run_parameters=run_parameters,
+                    analysis_parameters=analysis_parameters)
 
-        return cls(summary_class, table)
+        return cls(summary_class=summary_class, table=table)
 
-    # XXX slice for one particular value.
-    def slice(self, value, **fixed_values):
+
+    def _get_column(self, column_name):
+        return getattr(self.summary_class, column_name)
+
+    def _get_columns(self, column_names):
+        return [self._get_column(name) for name in column_names]
+
+
+    def _get_meshes(self, columns):
+        results = []
+        for column in columns:
+            query = elixir.session.query(column).distinct().order_by(column)
+            results.append(map(operator.itemgetter(0), query))
+        return results
+
+
+    def slice(self, **fixed_values):
         column_names = [c for c in self.summary_class.column_names
                         if c not in fixed_values]
-        query = elixir.session.query(*[getattr(self.summary_class, name)
-                                       for name in column_names]
+        columns = self._get_columns(column_names)
+        query = elixir.session.query(self.summary_class.value, *columns
                 ).filter_by(**fixed_values)
-        return _convert_results_to_array(query), column_names
+        meshes = self._get_meshes(columns)
 
-def _convert_results_to_array(query):
-    return query.all()
+        values = _convert_results_to_array(query, meshes)
+        return values, column_names, meshes
+
+
+def _convert_results_to_array(query, meshes):
+    shape = [len(m) for m in meshes]
+    result = numpy.zeros(shape)
+
+    for row in query:
+        slices = []
+        for i, abscissa_values in enumerate(meshes):
+            index = bisect.bisect_left(abscissa_values, row[i + 1])
+            slices.append(slice(index, index + 1))
+
+        result[slices] = row[0] # Assign value.
+
+    return result
 
 
 # XXX Generate a meaningful unique id for the table
-def _create_table(run_parameters, analysis_parameters,
-                  run_values, analysis_values, unique_id='temp'):
+def _create_table(run_parameters, analysis_parameters, unique_id='temp'):
     columns = []
     for name in itertools.chain(run_parameters, analysis_parameters):
         columns.append(schema.Column(name, types.Float, index=True))
-
-    for name in itertools.chain(run_values, analysis_values):
-        columns.append(schema.Column(name, types.Float))
 
     table = schema.Table('slicing_%s' % unique_id, elixir.metadata,
                          schema.Column('id', types.Integer, primary_key=True),
                          schema.Column('run_id', types.Integer,
                                        schema.ForeignKey('run.id')),
+                         schema.Column('value', types.Float),
                          prefixes=['TEMPORARY'],
                          *columns)
     elixir.metadata.create_all()
@@ -96,15 +122,26 @@ def _create_class(table, columns):
     return TempTable
 
 
-def _fill_full_table(summary_class, group,
-                     run_parameters, run_values,
-                     analysis_parameters, analysis_values):
+def _fill_table(summary_class, group,
+                value_name=None, value_type=None,
+                run_parameters=None, analysis_parameters=None):
+    if 'run' == value_type.lower():
+        return _fill_run_table(summary_class, group,
+                               value_name=value_name,
+                               run_parameters=run_parameters)
+    elif 'analysis' == value_type.lower():
+        return _fill_analysis_table(summary_class, group,
+                                    value_name=value_name,
+                                    run_parameters=run_parameters,
+                                    analysis_parameters=analysis_parameters)
+
+def _fill_analysis_table(summary_class, group, value_name=None,
+                         run_parameters=None, analysis_parameters=None):
     for run in database.Run.query.filter_by(group=group):
-        run_properties = _extract_properties(run, run_parameters, run_values)
+        run_properties = _extract_properties(run, run_parameters)
         for analysis in database.Analysis.query.filter_by(run=run):
-            properties = _extract_properties(analysis,
-                                             analysis_parameters,
-                                             analysis_values)
+            properties = _extract_properties(analysis, analysis_parameters,
+                                             value_name=value_name)
             properties.update(run_properties)
 
             new_object = summary_class(**properties)
@@ -114,9 +151,9 @@ def _fill_full_table(summary_class, group,
     # XXX Be wary of burning through too much memory by not committing sooner.
     elixir.session.commit()
 
-def _fill_run_only_table(summary_class, group, run_parameters, run_values):
+def _fill_run_table(summary_class, group, value_name, run_parameters):
     for run in database.Run.query.filter_by(group=group):
-        run_properties = _extract_properties(run, run_parameters, run_values)
+        run_properties = _extract_properties(run, run_parameters, value_name=value_name)
         new_object = summary_class(**run_properties)
         new_object.run_id = run.id
         elixir.session.add(new_object)
@@ -125,10 +162,10 @@ def _fill_run_only_table(summary_class, group, run_parameters, run_values):
     elixir.session.commit()
 
 
-def _extract_properties(obj, parameter_names, value_names):
-    parameters = dict((name, obj.get_parameter(name))
-                      for name in parameter_names)
-    values     = dict((name, obj.get_value(name)) for name in value_names)
+def _extract_properties(obj, parameter_names, value_name=None):
+    results = dict((name, obj.get_parameter(name))
+                    for name in parameter_names)
+    if value_name:
+        results['value'] = obj.get_value(value_name)
 
-    parameters.update(values)
-    return parameters
+    return results
