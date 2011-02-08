@@ -19,7 +19,7 @@ import operator
 
 import numpy
 
-from sqlalchemy import schema, types, orm, sql
+from sqlalchemy import schema, types, orm
 import elixir
 
 from actin_dynamics.io import database
@@ -65,6 +65,12 @@ class Slicer(object):
             results.append(map(operator.itemgetter(0), query))
         return results
 
+    def _get_mesh_dicts(self, column_names):
+        columns = self._get_columns(column_names)
+        values  = self._get_meshes(columns)
+
+        return dict((n, v) for n, v in itertools.izip(column_names, values))
+
 
     def slice(self, **fixed_values):
         column_names = [c for c in self.summary_class.column_names
@@ -79,7 +85,17 @@ class Slicer(object):
 
 
     def minimum_values(self, *abscissae_names):
-        pass
+        meshes = self._get_meshes(self._get_columns(abscissae_names))
+
+        shape = [len(m) for m in meshes]
+        result = numpy.zeros(shape)
+
+        for indexes, mesh_point in _iterate_meshes(abscissae_names, meshes,
+                                                   enum=True):
+            best = elixir.session.query(self.summary_class.value
+                    ).filter_by(**mesh_point).order_by('value').first()
+            result[indexes] = best[0]
+        return result, abscissae_names, meshes
 
 
 def _convert_results_to_array(query, meshes):
@@ -151,9 +167,8 @@ def _fill_analysis_table(summary_class, group, value_name=None,
 
         analysis_query = database.Analysis.query.filter_by(run=run)
         meshes = _get_analysis_meshes(analysis_query, analysis_parameters)
-        print 'ana meshes', meshes
 
-        for analysis_values in _iterate_meshes(meshes):
+        for analysis_values in _iterate_meshes(analysis_parameters, meshes):
             best_value = _analysis_min_value(analysis_query,
                                              analysis_values,
                                              value_name)
@@ -177,13 +192,19 @@ def _get_analysis_meshes(query, parameter_names):
     for analysis in query:
         for name in parameter_names:
             values[name].add(analysis.get_parameter(name))
-    return dict((n, sorted(values[n])) for n in parameter_names)
+    return [values[n] for n in parameter_names]
 
 
-def _iterate_meshes(meshes):
-    names = meshes.keys()
-    for values in itertools.product(*meshes.itervalues()):
-        yield dict((n, v) for n, v in itertools.izip(names, values))
+def _iterate_meshes(names, meshes, enum=False):
+    if enum:
+        iterator = itertools.product(*map(enumerate, meshes))
+        for ivals in iterator:
+            indexes = map(operator.itemgetter(0), ivals)
+            values  = map(operator.itemgetter(1), ivals)
+            yield indexes, dict((n, v) for n, v in itertools.izip(names, values))
+    else:
+        for values in itertools.product(*meshes):
+            yield dict((n, v) for n, v in itertools.izip(names, values))
 
 
 def _analysis_min_value(analyses, analysis_values, value_name):
@@ -195,13 +216,6 @@ def _analysis_min_value(analyses, analysis_values, value_name):
                 best = this_value
 
     return best
-
-
-# XXX interesting utility...maybe useful for reduce functionality in slicer
-#  easy to generalize into f(x.attr for x in iterator)
-def _minimize_attribute(iterator, attr_name):
-    return min(itertools.imap(lambda i: operator.getattr(i, attr_name),
-                              iterator))
 
 
 def _fill_run_table(summary_class, group, value_name, run_parameters):
