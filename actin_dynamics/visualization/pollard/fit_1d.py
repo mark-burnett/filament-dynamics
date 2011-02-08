@@ -13,21 +13,28 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .. import themes
-from .. import variation
+import itertools
 
-def adppi(group, theme=None):
+from .. import themes
+from .. import slicing
+from .. import measurements
+
+def adppi(slicer, abscissa_name, theme=None):
+
+    best_val, all_names, best_x = slicer.minimum_values()
+
+    fixed_point = dict((n, x) for n, x in itertools.izip(all_names, best_x)
+                       if n != abscissa_name)
+
+    min_y, junk_name, min_x = slicer.minimum_values(abscissa_name)
+    sl_y, junk_name, sl_x = slicer.slice(**fixed_point)
+
     if not theme:
-        theme = themes.Variation()
+        theme = themes.Variation(xlabel=abscissa_name)
 
     theme.initialize()
 
-    variation.run_val_vs_par(group, abscissa='cleavage_rate',
-                   ordinate='pollard_adppi_chi_squared',
-                   label='Cleavage Rate', theme=theme)
-
-    variation.run_val_vs_par(group, abscissa='filament_tip_concentration',
-                   ordinate='pollard_adppi_chi_squared',
-                   label='FTC', theme=theme)
-
+    measurements.plot_smooth((min_x[0], min_y), **theme())
+    measurements.plot_smooth((sl_x[0], sl_y), **theme())
+    
     theme.finalize()

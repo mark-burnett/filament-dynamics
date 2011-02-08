@@ -30,13 +30,20 @@ class Slicer(object):
         self.table         = table
 
     @classmethod
-    def from_group(cls, group, value_name, value_type='run',
-                   run_parameters=[], analysis_parameters=[]):
+    def from_group(cls, group, value_name, value_type=None,
+                   run_parameters=None, analysis_parameters=None):
         '''
         value_type specifies whether to look in runs or analyses
                 for the value name.
         value_type can either be 'run' or 'value'.
         '''
+        if value_type is None:
+            value_type = 'run'
+        if run_parameters is None:
+            run_parameters = []
+        if analysis_parameters is None:
+            analysis_parameters = []
+
         table = _create_table(run_parameters=run_parameters,
                               analysis_parameters=analysis_parameters)
         column_names = run_parameters + analysis_parameters
@@ -88,6 +95,9 @@ class Slicer(object):
         meshes = self._get_meshes(self._get_columns(abscissae_names))
 
         shape = [len(m) for m in meshes]
+        if not shape:
+            best = elixir.session.query(self.summary_class).order_by('value').first()
+            return _format_result(best, self.table)
         result = numpy.zeros(shape)
 
         for indexes, mesh_point in _iterate_meshes(abscissae_names, meshes,
@@ -236,3 +246,8 @@ def _extract_properties(obj, parameter_names, value_name=None):
         results['value'] = obj.get_value(value_name)
 
     return results
+
+def _format_result(obj, table):
+    names  = table.c.keys()[3:]
+    values = [getattr(obj, name) for name in names]
+    return [obj.value], names, values
