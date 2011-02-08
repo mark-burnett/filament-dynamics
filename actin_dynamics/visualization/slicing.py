@@ -31,7 +31,8 @@ class Slicer(object):
 
     @classmethod
     def from_group(cls, group, value_name, value_type=None,
-                   run_parameters=None, analysis_parameters=None):
+                   run_parameters=None, analysis_parameters=None,
+                   table_name=None):
         '''
         value_type specifies whether to look in runs or analyses
                 for the value name.
@@ -43,9 +44,12 @@ class Slicer(object):
             run_parameters = []
         if analysis_parameters is None:
             analysis_parameters = []
+        if table_name is None:
+            table_name = 'slicing_temp'
 
         table = _create_table(run_parameters=run_parameters,
-                              analysis_parameters=analysis_parameters)
+                              analysis_parameters=analysis_parameters,
+                              table_name=table_name)
         column_names = run_parameters + analysis_parameters
 
         summary_class = _create_class(table, column_names)
@@ -96,7 +100,8 @@ class Slicer(object):
 
         shape = [len(m) for m in meshes]
         if not shape:
-            best = elixir.session.query(self.summary_class).order_by('value').first()
+            best = elixir.session.query(self.summary_class
+                    ).order_by('value').first()
             return _format_result(best, self.table)
         result = numpy.zeros(shape)
 
@@ -104,7 +109,7 @@ class Slicer(object):
                                                    enum=True):
             best = elixir.session.query(self.summary_class.value
                     ).filter_by(**mesh_point).order_by('value').first()
-            result[indexes] = best[0]
+            result[tuple(indexes)] = best[0]
         return result, abscissae_names, meshes
 
 
@@ -126,12 +131,12 @@ def _convert_results_to_array(query, meshes):
 
 
 # XXX Generate a meaningful unique id for the table
-def _create_table(run_parameters, analysis_parameters, unique_id='temp'):
+def _create_table(run_parameters, analysis_parameters, table_name):
     columns = []
     for name in itertools.chain(run_parameters, analysis_parameters):
         columns.append(schema.Column(name, types.Float, index=True))
 
-    table = schema.Table('slicing_%s' % unique_id, elixir.metadata,
+    table = schema.Table(table_name, elixir.metadata,
                          schema.Column('id', types.Integer, primary_key=True),
                          schema.Column('run_id', types.Integer,
                                        schema.ForeignKey('run.id')),

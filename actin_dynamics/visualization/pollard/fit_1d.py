@@ -15,11 +15,13 @@
 
 import itertools
 
+import numpy
+import pylab
+
 from .. import themes
-from .. import slicing
 from .. import measurements
 
-def adppi(slicer, abscissa_name, theme=None):
+def simple(slicer, abscissa_name, min_color=None, slice_color=None):
 
     best_val, all_names, best_x = slicer.minimum_values()
 
@@ -29,12 +31,16 @@ def adppi(slicer, abscissa_name, theme=None):
     min_y, junk_name, min_x = slicer.minimum_values(abscissa_name)
     sl_y, junk_name, sl_x = slicer.slice(**fixed_point)
 
-    if not theme:
-        theme = themes.Variation(xlabel=abscissa_name)
+    measurements.plot_smooth((min_x[0], min_y), color=min_color, linewidth=2)
+    measurements.plot_smooth((sl_x[0], sl_y), color=slice_color, linewidth=2)
 
-    theme.initialize()
+def contour(slicer, abscissae_names, logscale_z=True):
+    values, names, meshes = slicer.minimum_values(*abscissae_names)
 
-    measurements.plot_smooth((min_x[0], min_y), **theme())
-    measurements.plot_smooth((sl_x[0], sl_y), **theme())
-    
-    theme.finalize()
+    if logscale_z:
+        values = numpy.log10(values)
+
+    pylab.contourf(meshes[0], meshes[1], values, cmap=pylab.cm.PRGn)
+
+    pylab.xlim(meshes[0][0], meshes[0][-1])
+    pylab.ylim(meshes[1][0], meshes[1][-1])

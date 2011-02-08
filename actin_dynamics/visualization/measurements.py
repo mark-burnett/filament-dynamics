@@ -28,8 +28,9 @@ def plot_smooth(measurement,
         pylab.fill_between(times, bounds[0], bounds[1],
                            color=color, alpha=fill_alpha, **kwargs)
 
-    return pylab.plot(times, values, color=color, linestyle=linestyle,
-                      alpha=line_alpha, **kwargs)
+    pylab.plot(times, values, color=color, linestyle=linestyle,
+               alpha=line_alpha, **kwargs)
+    pylab.xlim(times[0], times[-1])
 
 
 def plot_scatter(measurement, color='black', fmt='o', **kwargs):
