@@ -174,6 +174,8 @@ def _fill_table(summary_class, group,
                                     value_name=value_name,
                                     run_parameters=run_parameters,
                                     analysis_parameters=analysis_parameters)
+    else:
+        raise RuntimeError("Illegal value_type specified.")
 
 def _fill_analysis_table(summary_class, group, value_name=None,
                          run_parameters=None, analysis_parameters=None):

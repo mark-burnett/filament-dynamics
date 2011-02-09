@@ -17,6 +17,7 @@ import itertools
 
 import numpy
 import pylab
+import matplotlib.ticker
 
 from .. import themes
 from .. import measurements
@@ -40,13 +41,30 @@ def simple(slicer, abscissa_name, min_color=None, slice_color=None,
         pylab.gca().set_yscale('log')
     pylab.xlim(min_x[0][0], min_x[0][-1])
 
-def contour(slicer, abscissae_names, logscale_z=True):
+def contour(slicer, abscissae_names, max_val,
+            logscale_x=False, logscale_y=False, logscale_z=False):
     values, names, meshes = slicer.minimum_values(*abscissae_names)
 
     if logscale_z:
         values = numpy.log10(values)
 
-    pylab.contourf(meshes[0], meshes[1], values, cmap=pylab.cm.PRGn)
+    # XXX Apparently, you have to transpose stuff for matplotlib...
+    values = values.transpose()
+    X, Y = numpy.meshgrid(meshes[0], meshes[1])
+
+    locator = matplotlib.ticker.MaxNLocator(10)
+    locator.create_dummy_axis()
+    locator.set_bounds(0, max_val)
+    levels = locator()
+
+    result = pylab.contourf(X, Y, values, levels, cmap=pylab.cm.PRGn)
+
+    if logscale_x:
+        pylab.gca().set_xscale('log')
+    if logscale_y:
+        pylab.gca().set_yscale('log')
 
     pylab.xlim(meshes[0][0], meshes[0][-1])
     pylab.ylim(meshes[1][0], meshes[1][-1])
+
+    return result
