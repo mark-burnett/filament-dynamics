@@ -21,7 +21,8 @@ import pylab
 from .. import themes
 from .. import measurements
 
-def simple(slicer, abscissa_name, min_color=None, slice_color=None):
+def simple(slicer, abscissa_name, min_color=None, slice_color=None,
+           logscale_x=False, logscale_y=False):
 
     best_val, all_names, best_x = slicer.minimum_values()
 
@@ -33,6 +34,11 @@ def simple(slicer, abscissa_name, min_color=None, slice_color=None):
 
     measurements.plot_smooth((min_x[0], min_y), color=min_color, linewidth=2)
     measurements.plot_smooth((sl_x[0], sl_y), color=slice_color, linewidth=2)
+    if logscale_x:
+        pylab.gca().set_xscale('log')
+    if logscale_y:
+        pylab.gca().set_yscale('log')
+    pylab.xlim(min_x[0][0], min_x[0][-1])
 
 def contour(slicer, abscissae_names, logscale_z=True):
     values, names, meshes = slicer.minimum_values(*abscissae_names)

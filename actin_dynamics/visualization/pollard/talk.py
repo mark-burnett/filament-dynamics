@@ -103,18 +103,61 @@ def coop_adppi(group):
                   min_color=COLORS[2][0], slice_color=COLORS[2][3])
     pylab.xlabel('Filament Tip Concentration (uM)')
     pylab.ylabel('F-ADP-Pi Fit (AU)')
+    pylab.ylim(0, 14)
 
     pylab.subplot(1,3,2)
     fit_1d.simple(slicer, 'cleavage_rate',
                   min_color=COLORS[2][0], slice_color=COLORS[2][3])
     pylab.xlabel('Cleavage Rate (s^-1)')
     pylab.ylabel('F-ADP-Pi Fit (AU)')
+    pylab.ylim(0, 14)
 
     pylab.subplot(1,3,3)
     fit_1d.simple(slicer, 'cleavage_cooperativity',
-                  min_color=COLORS[2][0], slice_color=COLORS[2][3])
+                  min_color=COLORS[2][0], slice_color=COLORS[2][3],
+                  logscale_x=True)
     pylab.xlabel('Cleavage Cooperativity')
     pylab.ylabel('F-ADP-Pi Fit (AU)')
+    pylab.ylim(0, 14)
+
+    pylab.figure()
+
+    fit_1d.contour(slicer, abscissae_names=['cleavage_rate',
+                                            'filament_tip_concentration'])
+    pylab.xlabel('Cleavage Rate (s^-1)')
+    pylab.ylabel('Filament Tip Concentration (uM)')
+    pylab.colorbar()
+
+def coop_length(group):
+    slicer = slicing.Slicer.from_group(group, 'pollard_length_chi_squared',
+                                run_parameters=['filament_tip_concentration',
+                                                'cleavage_rate',
+                                                'cleavage_cooperativity'],
+                                table_name='crl')
+
+    pylab.figure()
+
+    pylab.subplot(1,3,1)
+    fit_1d.simple(slicer, 'filament_tip_concentration',
+                  min_color=COLORS[0][0], slice_color=COLORS[0][3])
+    pylab.xlabel('Filament Tip Concentration (uM)')
+    pylab.ylabel('F-ADP-Pi Fit (AU)')
+    pylab.ylim(0, 0.6)
+
+    pylab.subplot(1,3,2)
+    fit_1d.simple(slicer, 'cleavage_rate',
+                  min_color=COLORS[0][0], slice_color=COLORS[0][3])
+    pylab.xlabel('Cleavage Rate (s^-1)')
+    pylab.ylabel('F-ADP-Pi Fit (AU)')
+    pylab.ylim(0, 0.6)
+
+    pylab.subplot(1,3,3)
+    fit_1d.simple(slicer, 'cleavage_cooperativity',
+                  min_color=COLORS[0][0], slice_color=COLORS[0][3],
+                  logscale_x=True)
+    pylab.xlabel('Cleavage Cooperativity')
+    pylab.ylabel('F-ADP-Pi Fit (AU)')
+    pylab.ylim(0, 0.6)
 
     pylab.figure()
 
