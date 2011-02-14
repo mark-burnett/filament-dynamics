@@ -66,8 +66,15 @@ sqlalchemy.Index('session_parameters_unique_columns',
 
 
 # Bindings (map strings/yaml repr to object factories)
+bind_module_name_table = sqlalchemy.table('bind_module_names',
+                                          global_state.metadata
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('name',  sqlalchemy.String(MAX_NAME_LENGTH)))
+
 bind_table = sqlalchemy.table('binds', global_state.metadata,
         sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_module_name_id', sqlalchemy.Integer
+                          sqlalchemy.ForeignKey('bind_module_name.id')),
         sqlalchemy.Column('class_name', sqlalchemy.String(MAX_NAME_LENGTH)))
 
 bind_fixed_parameters_table = sqlalchemy.table('bind_fixed_parameters',
@@ -100,56 +107,7 @@ experiment_table = sqlalchemy.table('objective_names',
                           sqlalchemy.ForeignKey('sessions.id')),
         sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
 
-experiment_filaments_table = sqlalchemy.table('experiment_filaments'
-                                              global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('bind.id')),
-        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('experiment.id')))
-
-experiment_concentrations_table = sqlalchemy.table('experiment_concentrations'
-                                              global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('bind.id')),
-        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('experiment.id')))
-
-experiment_transitions_table = sqlalchemy.table('experiment_transitions'
-                                              global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('bind.id')),
-        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('experiment.id')))
-
-experiment_end_conditions_table = sqlalchemy.table('experiment_end_conditions'
-                                              global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('bind.id')),
-        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('experiment.id')))
-
-experiment_measurements_table = sqlalchemy.table('experiment_measurements'
-                                              global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('bind.id')),
-        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('experiment.id')))
-
-
-experiment_analysis_table = sqlalchemy.table('experiment_analysis'
-                                              global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('bind.id')),
-        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('experiment.id')))
-
-experiment_objective_table = sqlalchemy.table('experiment_objective'
+experiment_bind_table = sqlalchemy.table('experiment_binds'
                                               global_state.metadata,
         sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
         sqlalchemy.Column('bind_id', sqlalchemy.Integer,
@@ -166,15 +124,7 @@ model_table = sqlalchemy.table('objective_names',
                           sqlalchemy.ForeignKey('sessions.id')),
         sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
 
-model_concentrations_table = sqlalchemy.table('model_concentrations'
-                                              global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('bind.id')),
-        sqlalchemy.Column('model_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('model.id')))
-
-model_transitions_table = sqlalchemy.table('model_transitions'
+model_bind_table = sqlalchemy.table('model_binds'
                                               global_state.metadata,
         sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
         sqlalchemy.Column('bind_id', sqlalchemy.Integer,
