@@ -13,7 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sqlalchemy
+from sqlalchemy import schema
 
 from . import global_state
 
@@ -24,227 +24,206 @@ MAX_NAME_LENGTH = 128
 # ---------------------------------------------------------------------
 # - Level 1 (top level): session                                      -
 # ---------------------------------------------------------------------
-session_table = sqlalchemy.table('sessions', global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True))
+session_table = schema.Table('sessions', global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('name', schema.String(MAX_NAME_LENGTH)))
 
 # Names
-parameter_name_table = sqlalchemy.table('parameter_names',
-                                        global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('session_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('sessions.id')),
-        sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
+parameter_name_table = schema.Table('parameter_names', global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('session_id', schema.Integer,
+                      schema.ForeignKey('sessions.id')),
+        schema.Column('name', schema.String(MAX_NAME_LENGTH),
+                          index=True))
 
-analysis_name_table = sqlalchemy.table('analysis_names',
-                                       global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('session_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('sessions.id')),
-        sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
+analysis_name_table = schema.Table('analysis_names', global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('session_id', schema.Integer,
+                      schema.ForeignKey('sessions.id')),
+        schema.Column('name', schema.String(MAX_NAME_LENGTH)))
 
-objective_name_table = sqlalchemy.table('objective_names',
-                                        global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('session_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('sessions.id')),
-        sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
+objective_name_table = schema.Table('objective_names', global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('session_id', schema.Integer,
+                      schema.ForeignKey('sessions.id')),
+        schema.Column('name', schema.String(MAX_NAME_LENGTH)))
 
 # Parameters
-session_parameters_table = sqlalchemy.table('session_parameters',
-                                      global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('session_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('sessions.id')),
-        sqlalchemy.Column('parameter_name_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('parameter_names.id')),
-        sqlalchemy.Column('value', sqlalchemy.Float, index=True))
+session_parameters_table = schema.Table('session_parameters',
+                                        global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('session_id', schema.Integer,
+                      schema.ForeignKey('sessions.id')),
+        schema.Column('parameter_name_id', schema.Integer,
+                      schema.ForeignKey('parameter_names.id')),
+        schema.Column('value', schema.Float, index=True))
 
-sqlalchemy.Index('session_parameters_unique_columns',
-                 session_parameters_table.c.session_id,
-                 session_parameters_table.c.parameter_name_id,
-                 unique=True)
+schema.Index('session_parameters_unique_columns',
+             session_parameters_table.c.session_id,
+             session_parameters_table.c.parameter_name_id,
+             unique=True)
 
 
 # Bindings (map strings/yaml repr to object factories)
-bind_module_name_table = sqlalchemy.table('bind_module_names',
-                                          global_state.metadata
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('name',  sqlalchemy.String(MAX_NAME_LENGTH)))
+bind_module_name_table = schema.Table('bind_module_names',
+                                      global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('name',  schema.String(MAX_NAME_LENGTH)))
 
-bind_table = sqlalchemy.table('binds', global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_module_name_id', sqlalchemy.Integer
-                          sqlalchemy.ForeignKey('bind_module_name.id')),
-        sqlalchemy.Column('class_name', sqlalchemy.String(MAX_NAME_LENGTH)))
+bind_table = schema.Table('binds', global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('bind_module_name_id', schema.Integer
+                      schema.ForeignKey('bind_module_name.id')),
+        schema.Column('class_name', schema.String(MAX_NAME_LENGTH)))
 
-bind_fixed_parameters_table = sqlalchemy.table('bind_fixed_parameters',
-                                               global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_id', sqlalchemy.Integer
-                          sqlalchemy.ForeignKey('binds.id')),
-        sqlalchemy.Column('name',  sqlalchemy.String(MAX_NAME_LENGTH)),
-        sqlalchemy.Column('value', sqlalchemy.String(MAX_NAME_LENGTH)))
+bind_fixed_parameters_table = schema.Table('bind_fixed_parameters',
+                                           global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('bind_id', schema.Integer
+                      schema.ForeignKey('binds.id')),
+        schema.Column('name',  schema.String(MAX_NAME_LENGTH)),
+        schema.Column('value', schema.String(MAX_NAME_LENGTH)))
 
-bind_parameters_table = sqlalchemy.table('bind_parameters',
-                                         global_state.metadata
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_id', sqlalchemy.Integer
-                          sqlalchemy.ForeignKey('binds.id')),
-        sqlalchemy.Column('parameter_name_id', sqlalchemy.Integer
-                          sqlalchemy.ForeignKey('parameter_names.id')))
+bind_parameters_table = schema.Table('bind_parameters', global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('bind_id', schema.Integer
+                      schema.ForeignKey('binds.id')),
+        schema.Column('parameter_name_id', schema.Integer
+                      schema.ForeignKey('parameter_names.id')))
 
-sqlalchemy.Index('bind_parameters_unique_columns',
-                 bind_parameters_table.c.bind_id,
-                 bind_parameters_table.c.parameter_name_id,
-                 unique=True)
+schema.Index('bind_parameters_unique_columns',
+             bind_parameters_table.c.bind_id,
+             bind_parameters_table.c.parameter_name_id,
+             unique=True)
 
 
 # Experiment definitions
-experiment_table = sqlalchemy.table('objective_names',
-                                    global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('session_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('sessions.id')),
-        sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
+experiment_table = schema.Table('objective_names', global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('session_id', schema.Integer,
+                      schema.ForeignKey('sessions.id')),
+        schema.Column('name', schema.String(MAX_NAME_LENGTH)))
 
-experiment_bind_table = sqlalchemy.table('experiment_binds'
-                                              global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('bind.id')),
-        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('experiment.id')))
+experiment_bind_table = schema.Table('experiment_binds' global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('bind_id', schema.Integer,
+                      schema.ForeignKey('bind.id')),
+        schema.Column('experiment_id', schema.Integer,
+                      schema.ForeignKey('experiment.id')))
 
 
 # Model definitions
-model_table = sqlalchemy.table('objective_names',
-                                    global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('session_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('sessions.id')),
-        sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
+model_table = schema.Table('objective_names', global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('session_id', schema.Integer,
+                      schema.ForeignKey('sessions.id')),
+        schema.Column('name', schema.String(MAX_NAME_LENGTH)))
 
-model_bind_table = sqlalchemy.table('model_binds'
-                                              global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('bind.id')),
-        sqlalchemy.Column('model_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('model.id')))
+model_bind_table = schema.Table('model_binds' global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('bind_id', schema.Integer,
+                      schema.ForeignKey('bind.id')),
+        schema.Column('model_id', schema.Integer,
+                      schema.ForeignKey('model.id')))
 
 
 # ---------------------------------------------------------------------
 # - Level 2: run                                                      -
 # ---------------------------------------------------------------------
-run_table = sqlalchemy.table('runs', global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('session_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('sessions.id')))
+run_table = schema.Table('runs', global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('session_id', schema.Integer,
+                      schema.ForeignKey('sessions.id')))
 
 
-run_parameters_table = sqlalchemy.table('run_parameters',
-                                   global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('run_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('run.id')),
-        sqlalchemy.Column('parameter_name_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('parameter_names.id'))),
-        sqlalchemy.Column('value', sqlalchemy.Float, index=True))
+run_parameters_table = schema.Table('run_parameters',
+                                    global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('run_id', schema.Integer,
+                      schema.ForeignKey('run.id')),
+        schema.Column('parameter_name_id', schema.Integer,
+                      schema.ForeignKey('parameter_names.id'))),
+        schema.Column('value', schema.Float, index=True))
 
-sqlalchemy.Index('run_parameters_unique_columns',
-                 run_parameters_table.c.run_id,
-                 run_parameters_table.c.parameter_name_id,
-                 unique=True)
+schema.Index('run_parameters_unique_columns',
+             run_parameters_table.c.run_id,
+             run_parameters_table.c.parameter_name_id,
+             unique=True)
 
 
 # ---------------------------------------------------------------------
 # - Level 3: analysis                                                 -
 # ---------------------------------------------------------------------
-analysis_table = sqlalchemy.table('analyses', global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('run_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('run.id')),
-        sqlalchemy.Column('analysis_name_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('analysis_names.id')))
+analysis_table = schema.Table('analyses', global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('run_id', schema.Integer,
+                      schema.ForeignKey('run.id')),
+        schema.Column('analysis_name_id', schema.Integer,
+                      schema.ForeignKey('analysis_names.id')))
 
-sqlalchemy.Index('analysis_unique_columns',
-                 analysis_table.c.run_id,
-                 analysis_table.c.analysis_name_id,
-                 unique=True)
-
-
-analysis_parameters_table = sqlalchemy.table('analysis_parameters',
-                                   global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('analysis_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('analyses.id')),
-        sqlalchemy.Column('parameter_name_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('parameter_names.id'))),
-        sqlalchemy.Column('value', sqlalchemy.Float, index=True))
-
-sqlalchemy.Index('analysis_parameters_unique_columns',
-                 analysis_parameters_table.c.analysis_id,
-                 analysis_parameters_table.c.parameter_name_id,
-                 unique=True)
+schema.Index('analysis_unique_columns',
+             analysis_table.c.run_id,
+             analysis_table.c.analysis_name_id,
+             unique=True)
 
 
-analysis_results_table = sqlalchemy.table('analysis_results',
-                                          global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('analysis_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('analyses.id')),
-        sqlalchemy.Column('analysis_name_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('analysis_names.id'))),
-        sqlalchemy.Column('abscissa', sqlalchemy.Float),
-        sqlalchemy.Column('ordinate', sqlalchemy.Float))
+analysis_results_table = schema.Table('analysis_results',
+                                      global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('analysis_id', schema.Integer,
+                      schema.ForeignKey('analyses.id')),
+        schema.Column('analysis_name_id', schema.Integer,
+                      schema.ForeignKey('analysis_names.id'))),
+        schema.Column('abscissa', schema.Float),
+        schema.Column('ordinate', schema.Float))
 
-sqlalchemy.Index('analysis_results_unique_columns',
-                 analysis_results_table.c.analysis_id,
-                 analysis_results_table.c.analysis_name_id,
-                 unique=True)
+schema.Index('analysis_results_unique_columns',
+             analysis_results_table.c.analysis_id,
+             analysis_results_table.c.analysis_name_id,
+             unique=True)
 
 
 # ---------------------------------------------------------------------
 # - Level 4: objective                                                -
 # ---------------------------------------------------------------------
-objective_table = sqlalchemy.table('objectives', global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('analysis_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('analyses.id')),
-        sqlalchemy.Column('objective_name_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('objective_names.id')))
+objective_table = schema.Table('objectives', global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('analysis_id', schema.Integer,
+                      schema.ForeignKey('analyses.id')),
+        schema.Column('objective_name_id', schema.Integer,
+                      schema.ForeignKey('objective_names.id')))
 
-sqlalchemy.Index('objectives_unique_columns',
-                 objective_table.c.analysis_id,
-                 objective_table.c.objective_name_id,
-                 unique=True)
-
-
-objective_parameters_table = sqlalchemy.table('objective_parameters',
-                                   global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('objective_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('objective.id')),
-        sqlalchemy.Column('parameter_name_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('parameter_names.id'))),
-        sqlalchemy.Column('value', sqlalchemy.Float, index=True))
-
-sqlalchemy.Index('objective_parameters_unique_columns',
-                 objective_parameters_table.c.objective_id,
-                 objective_parameters_table.c.parameter_name_id,
-                 unique=True)
+schema.Index('objectives_unique_columns',
+             objective_table.c.analysis_id,
+             objective_table.c.objective_name_id,
+             unique=True)
 
 
-objective_results_table = sqlalchemy.table('objective_results',
-                                           global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('objective_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('objective.id')),
-        sqlalchemy.Column('objective_name_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('objective_names.id'))),
-        sqlalchemy.Column('value', sqlalchemy.Float, index=True))
+objective_parameters_table = schema.Table('objective_parameters',
+                                          global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('objective_id', schema.Integer,
+                      schema.ForeignKey('objective.id')),
+        schema.Column('parameter_name_id', schema.Integer,
+                      schema.ForeignKey('parameter_names.id'))),
+        schema.Column('value', schema.Float, index=True))
 
-sqlalchemy.Index('objective_results_unique_columns',
-                 objective_results_table.c.objective_id,
-                 objective_results_table.c.objective_name_id,
-                 unique=True)
+schema.Index('objective_parameters_unique_columns',
+             objective_parameters_table.c.objective_id,
+             objective_parameters_table.c.parameter_name_id,
+             unique=True)
+
+
+objective_results_table = schema.Table('objective_results',
+                                       global_state.metadata,
+        schema.Column('id', schema.Integer, primary_key=True),
+        schema.Column('objective_id', schema.Integer,
+                      schema.ForeignKey('objective.id')),
+        schema.Column('objective_name_id', schema.Integer,
+                      schema.ForeignKey('objective_names.id'))),
+        schema.Column('value', schema.Float, index=True))
+
+schema.Index('objective_results_unique_columns',
+             objective_results_table.c.objective_id,
+             objective_results_table.c.objective_name_id,
+             unique=True)
