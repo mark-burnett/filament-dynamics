@@ -1,0 +1,161 @@
+simulation:
+    filaments:
+        class_name: SingleStateFixedLengthFromConcentrations
+        parameters:
+            number: number_of_filaments
+            concentration: seed_concentration
+            filament_tip_concentration: filament_tip_concentration
+        fixed_parameters:
+            state: ADP
+
+    concentrations:
+        - class_name: FixedReagent
+          state: pyrene_ATP
+          parameters:
+              initial_concentration: initial_pyrene_atp_concentration
+              filament_tip_concentration: filament_tip_concentration
+              number: number_of_filaments
+
+        - class_name: FixedReagent
+          state: ATP
+          parameters:
+              initial_concentration: initial_atp_concentration
+              filament_tip_concentration: filament_tip_concentration
+              number: number_of_filaments
+
+        - class_name: FixedReagent
+          state: pyrene_ADPPi
+          parameters:
+              filament_tip_concentration: filament_tip_concentration
+              number: number_of_filaments
+          fixed_parameters:
+              initial_concentration: 0
+
+        - class_name: FixedReagent
+          state: ADPPi
+          parameters:
+              filament_tip_concentration: filament_tip_concentration
+              number: number_of_filaments
+          fixed_parameters:
+              initial_concentration: 0
+
+        - class_name: FixedReagent
+          state: pyrene_ADP
+          parameters:
+              filament_tip_concentration: filament_tip_concentration
+              number: number_of_filaments
+          fixed_parameters:
+              initial_concentration: 0
+
+        - class_name: FixedReagent
+          state: ADP
+          parameters:
+              filament_tip_concentration: filament_tip_concentration
+              number: number_of_filaments
+          fixed_parameters:
+              initial_concentration: 0
+
+
+        - class_name: FixedReagent
+          state: Pi
+          parameters:
+              filament_tip_concentration: filament_tip_concentration
+              number: number_of_filaments
+          fixed_parameters:
+              initial_concentration: 0
+
+    end_conditions:
+        - class_name: Duration
+          parameters:
+              duration: simulation_duration
+
+    measurements:
+        - class_name: Length
+          fixed_parameters:
+              label: length
+
+        - class_name: StateCount
+          fixed_parameters:
+              label: pyrene_atp_count
+              state: pyrene_ATP
+
+        - class_name: StateCount
+          fixed_parameters:
+              label: atp_count
+              state: ATP
+
+        - class_name: StateCount
+          fixed_parameters:
+              label: pyrene_adppi_count
+              state: pyrene_ADPPi
+
+        - class_name: StateCount
+          fixed_parameters:
+              label: adppi_count
+              state: ADPPi
+
+        - class_name: StateCount
+          fixed_parameters:
+              label: pyrene_adp_count
+              state: pyrene_ADP
+
+        - class_name: StateCount
+          fixed_parameters:
+              label: adp_count
+              state: ADP
+
+analysis:
+    - class_name: StandardErrorOfTheMean
+      fixed_parameters:
+          measurements: - pyrene_atp_count
+                        - pyrene_adppi_count
+                        - pyrene_adp_count
+                        - adppi_count
+
+objectives:
+    - class_name: SimpleDataFit
+      fixed_parameters:
+          label: pollard_adppi_chi_squared
+          data_file: 'pollard_2002/adppi_concentration.dat'
+          residual_function: naked_chi_squared
+          interpolate_simulations: True
+
+    - class_name: PyreneFit
+      parameters:
+          sample_period: sample_period
+          duration:      simulation_duration
+
+          atp_weight:   pyrene_atp_weight
+          adppi_weight: pyrene_adppi_weight
+          adp_weight:   pyrene_adp_weight
+
+      fixed_parameters:
+          label: pollard_pyrene_chi_squared
+          data_file: 'pollard_2002/pyrene_fluorescence.dat'
+          residual_function: naked_chi_squared
+          interpolate_data: True
+          atp_state:   pyrene_ATP
+          adppi_state: pyrene_ADPPi
+          adp_state:   pyrene_ADP
+
+# Required parameters
+simulation_parameters:
+    - # Initial concentrations
+    - initial_atp_concentration
+    - initial_pyrene_atp_concentration
+    - seed_concentration
+
+    - # End Conditions
+    - simulation_duration
+
+    - # Misc
+    - sample_period
+    - number_of_filaments
+    # XXX Where should number of sims go?
+    - number_of_simulations
+    - filament_tip_concentration
+
+objective_parameters:
+    - pyrene_atp_weight
+    - pyrene_adppi_weight
+    - pyrene_adp_weight
