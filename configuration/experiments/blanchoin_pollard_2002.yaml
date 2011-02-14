@@ -9,61 +9,63 @@ simulation:
             state: ADP
 
     concentrations:
-        - class_name: FixedReagent
-          state: pyrene_ATP
-          parameters:
-              initial_concentration: initial_pyrene_atp_concentration
-              filament_tip_concentration: filament_tip_concentration
-              number: number_of_filaments
+        pyrene_ATP:
+            class_name: FixedReagent
+            parameters:
+                initial_concentration: initial_pyrene_atp_concentration
+                filament_tip_concentration: filament_tip_concentration
+                number: number_of_filaments
 
-        - class_name: FixedReagent
-          state: ATP
-          parameters:
-              initial_concentration: initial_atp_concentration
-              filament_tip_concentration: filament_tip_concentration
-              number: number_of_filaments
+        ATP:
+            class_name: FixedReagent
+            parameters:
+                initial_concentration: initial_atp_concentration
+                filament_tip_concentration: filament_tip_concentration
+                number: number_of_filaments
 
-        - class_name: FixedReagent
-          state: pyrene_ADPPi
-          parameters:
-              filament_tip_concentration: filament_tip_concentration
-              number: number_of_filaments
-          fixed_parameters:
-              initial_concentration: 0
+        pyrene_ADPPi:
+            class_name: FixedReagent
+            parameters:
+                filament_tip_concentration: filament_tip_concentration
+                number: number_of_filaments
+            fixed_parameters:
+                initial_concentration: 0
 
-        - class_name: FixedReagent
-          state: ADPPi
-          parameters:
-              filament_tip_concentration: filament_tip_concentration
-              number: number_of_filaments
-          fixed_parameters:
-              initial_concentration: 0
+        ADPPi:
+            class_name: FixedReagent
+            parameters:
+                filament_tip_concentration: filament_tip_concentration
+                number: number_of_filaments
+            fixed_parameters:
+                initial_concentration: 0
 
-        - class_name: FixedReagent
-          state: pyrene_ADP
-          parameters:
-              filament_tip_concentration: filament_tip_concentration
-              number: number_of_filaments
-          fixed_parameters:
-              initial_concentration: 0
+        pyrene_ADP:
+            class_name: FixedReagent
+            parameters:
+                filament_tip_concentration: filament_tip_concentration
+                number: number_of_filaments
+            fixed_parameters:
+                initial_concentration: 0
 
-        - class_name: FixedReagent
-          state: ADP
-          parameters:
-              filament_tip_concentration: filament_tip_concentration
-              number: number_of_filaments
-          fixed_parameters:
-              initial_concentration: 0
+        ADP:
+            class_name: FixedReagent
+            parameters:
+                filament_tip_concentration: filament_tip_concentration
+                number: number_of_filaments
+            fixed_parameters:
+                initial_concentration: 0
 
 
-        - class_name: FixedReagent
-          state: Pi
-          parameters:
-              filament_tip_concentration: filament_tip_concentration
-              number: number_of_filaments
-          fixed_parameters:
-              initial_concentration: 0
+        Pi:
+            class_name: FixedReagent
+            parameters:
+                filament_tip_concentration: filament_tip_concentration
+                number: number_of_filaments
+            fixed_parameters:
+                initial_concentration: 0
 
+    # XXX Assign labels to end conditions
+    #       it would be nice to know which ones end.
     end_conditions:
         - class_name: Duration
           parameters:
@@ -104,12 +106,25 @@ simulation:
                 state: ADP
 
 analysis:
-    - class_name: StandardErrorOfTheMean
-      fixed_parameters:
-          measurements: - pyrene_atp_count
-                        - pyrene_adppi_count
-                        - pyrene_adp_count
-                        - adppi_count
+    pyrene_atp_count:
+        class_name: StandardErrorOfTheMean
+            fixed_parameters:
+                measurement: pyrene_atp_count
+
+    pyrene_adppi_count:
+        class_name: StandardErrorOfTheMean
+            fixed_parameters:
+                measurement: pyrene_adppi_count
+
+    adppi_count:
+        class_name: StandardErrorOfTheMean
+            fixed_parameters:
+                measurement: adppi_count
+
+    pyrene_adp_count:
+        class_name: StandardErrorOfTheMean
+            fixed_parameters:
+                measurement: pyrene_adp_count
 
 objectives:
     pollard_adppi_fit:
