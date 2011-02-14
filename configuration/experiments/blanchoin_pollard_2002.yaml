@@ -115,6 +115,7 @@ objectives:
     pollard_adppi_fit:
         class_name: SimpleDataFit
         fixed_parameters:
+            measurements: [pyrene_adppi_count, adppi_count]
             data_file: 'pollard_2002/adppi_concentration.dat'
             residual_function: naked_chi_squared
             interpolate_simulations: True
