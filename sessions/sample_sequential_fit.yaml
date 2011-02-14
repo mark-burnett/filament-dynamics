@@ -1,0 +1,11 @@
+session_name: 'Sample Global Fit Session'
+
+collection:
+    filename: 'three_state_random_sample.yaml'
+
+mechanism:
+    type: sequential_fit
+    sequence:
+        - pollard_pyrene_fit: - filament_tip_concentration
+                              - pyrene_atp_weight
+        - pollard_adppi_fit:  - cleavage_rate

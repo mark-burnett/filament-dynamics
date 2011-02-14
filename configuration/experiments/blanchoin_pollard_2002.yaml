@@ -70,39 +70,38 @@ simulation:
               duration: simulation_duration
 
     measurements:
-        - class_name: Length
-          fixed_parameters:
-              label: length
+        length:
+            class_name: Length
 
-        - class_name: StateCount
-          fixed_parameters:
-              label: pyrene_atp_count
-              state: pyrene_ATP
+        pyrene_atp_count:
+            class_name: StateCount
+            fixed_parameters:
+                state: pyrene_ATP
 
-        - class_name: StateCount
-          fixed_parameters:
-              label: atp_count
-              state: ATP
+        atp_count:
+            class_name: StateCount
+            fixed_parameters:
+                state: ATP
 
-        - class_name: StateCount
-          fixed_parameters:
-              label: pyrene_adppi_count
-              state: pyrene_ADPPi
+        pyrene_adppi_count:
+            class_name: StateCount
+            fixed_parameters:
+                state: pyrene_ADPPi
 
-        - class_name: StateCount
-          fixed_parameters:
-              label: adppi_count
-              state: ADPPi
+        adppi_count:
+            class_name: StateCount
+            fixed_parameters:
+                state: ADPPi
 
-        - class_name: StateCount
-          fixed_parameters:
-              label: pyrene_adp_count
-              state: pyrene_ADP
+        pyrene_adp_count:
+            class_name: StateCount
+            fixed_parameters:
+                state: pyrene_ADP
 
-        - class_name: StateCount
-          fixed_parameters:
-              label: adp_count
-              state: ADP
+        adp_count:
+            class_name: StateCount
+            fixed_parameters:
+                state: ADP
 
 analysis:
     - class_name: StandardErrorOfTheMean
@@ -113,30 +112,30 @@ analysis:
                         - adppi_count
 
 objectives:
-    - class_name: SimpleDataFit
-      fixed_parameters:
-          label: pollard_adppi_chi_squared
-          data_file: 'pollard_2002/adppi_concentration.dat'
-          residual_function: naked_chi_squared
-          interpolate_simulations: True
+    pollard_adppi_fit:
+        class_name: SimpleDataFit
+        fixed_parameters:
+            data_file: 'pollard_2002/adppi_concentration.dat'
+            residual_function: naked_chi_squared
+            interpolate_simulations: True
 
-    - class_name: PyreneFit
-      parameters:
-          sample_period: sample_period
-          duration:      simulation_duration
+    pollard_pyrene_fit:
+        class_name: PyreneFit
+        parameters:
+            sample_period: sample_period
+            duration:      simulation_duration
 
-          atp_weight:   pyrene_atp_weight
-          adppi_weight: pyrene_adppi_weight
-          adp_weight:   pyrene_adp_weight
+            atp_weight:   pyrene_atp_weight
+            adppi_weight: pyrene_adppi_weight
+            adp_weight:   pyrene_adp_weight
 
-      fixed_parameters:
-          label: pollard_pyrene_chi_squared
-          data_file: 'pollard_2002/pyrene_fluorescence.dat'
-          residual_function: naked_chi_squared
-          interpolate_data: True
-          atp_state:   pyrene_ATP
-          adppi_state: pyrene_ADPPi
-          adp_state:   pyrene_ADP
+        fixed_parameters:
+            data_file: 'pollard_2002/pyrene_fluorescence.dat'
+            residual_function: naked_chi_squared
+            interpolate_data: True
+            atp_state:   pyrene_ATP
+            adppi_state: pyrene_ADPPi
+            adp_state:   pyrene_ADP
 
 # Required parameters
 simulation_parameters:
@@ -151,8 +150,6 @@ simulation_parameters:
     - # Misc
     - sample_period
     - number_of_filaments
-    # XXX Where should number of sims go?
-    - number_of_simulations
     - filament_tip_concentration
 
 objective_parameters:

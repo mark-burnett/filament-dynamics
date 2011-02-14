@@ -1,0 +1,12 @@
+session_name: 'Sample Mesh Session'
+
+collection:
+    filename: 'three_state_random_sample.yaml'
+
+mechanism:
+    type: mesh
+
+    filament_tip_concentration: [10, linear]
+
+    cleavage_rate: [10, linear]
+    release_rate:  [10, linear]

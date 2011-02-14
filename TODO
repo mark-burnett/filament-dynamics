@@ -1,32 +1,24 @@
-For Talk:
-    "basic" plots
-        1d chi squared plots
-            (fit sensitivity plots)
+Session management
+Parameters management
+Sensible input format
+Job control
+Database internals
+Analysis registration
+Slicing/summary table
 
-        chi squared surface plots
+###
+Definitions
+    ?collection? = range of parameters, set model, set experiments
+        each collection can have many sessions
+    session = single mechanism used on a ?collection?
+        e.g. a big mesh run on a model/expt for visualization
+    * parameter set = collection of parameters needed to run a stage
+        e.g. simulation parameter set, or analysis parameter set
+    run = multiple simulations of a model + experiment with a single parameter set
 
-    "assembled" plots
-        duplicate pollard fit without pyrene correction
-        sensivity to parameters for simple random model
-        corrolation plots
-
-    infrastructure
-        make a summary table for each group contianing parameters and values
-
-
-Validation:
-    automate some higher level tests
-        analytic vs my run
-    Analysis code needs more unit tests.
-
-
-BUGS:
-    Is there a problem with the single random simulation?
-        a pyrene sim looked oddly low for first 2 data points.
-            have not been able to duplicate.
-
-
-Visualization:
-    Refactor Theme to only contain color and linestyle/width info.
-    Visualization for short time stuff.
-    extend reduction plots for 4 hydrolysis parameters
+###
+Goals
+    run on a mesh -> visualize slices
+    global fit to loads of data
+        wtf visualization can i do?
+            run 1d slice meshes afterwards for visualization?
