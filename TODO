@@ -8,9 +8,7 @@ Slicing/summary table
 
 ###
 Definitions
-    ?collection? = range of parameters, set model, set experiments
-        each collection can have many sessions
-    session = single mechanism used on a ?collection?
+    session = single mechanism used on a set of models + experiments + parameters
         e.g. a big mesh run on a model/expt for visualization
     * parameter set = collection of parameters needed to run a stage
         e.g. simulation parameter set, or analysis parameter set

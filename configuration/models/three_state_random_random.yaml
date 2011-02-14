@@ -122,39 +122,39 @@ transitions:
         parameters:
             rate: release_rate
 
-# Specifying the parameter names used lets me give better error messages.
-simulation_parameters:
-    - barbed_atp_polymerization_rate
-    - barbed_adppi_polymerization_rate
-    - barbed_adp_polymerization_rate
-
-    - barbed_atp_depolymerization_rate
-    - barbed_adppi_depolymerization_rate
-    - barbed_adp_depolymerization_rate
-
-    - pointed_atp_polymerization_rate
-    - pointed_adppi_polymerization_rate
-    - pointed_adp_polymerization_rate
-
-    - pointed_atp_depolymerization_rate
-    - pointed_adppi_depolymerization_rate
-    - pointed_adp_depolymerization_rate
-
-    - barbed_pyrene_atp_polymerization_rate
-    - barbed_pyrene_adppi_polymerization_rate
-    - barbed_pyrene_adp_polymerization_rate
-
-    - barbed_pyrene_atp_depolymerization_rate
-    - barbed_pyrene_adppi_depolymerization_rate
-    - barbed_pyrene_adp_depolymerization_rate
-
-    - pointed_pyrene_atp_polymerization_rate
-    - pointed_pyrene_adppi_polymerization_rate
-    - pointed_pyrene_adp_polymerization_rate
-
-    - pointed_pyrene_atp_depolymerization_rate
-    - pointed_pyrene_adppi_depolymerization_rate
-    - pointed_pyrene_adp_depolymerization_rate
-
-    - cleavage_rate
-    - release_rate
+# XXX I should no longer need this duplicated dsl code.
+#required_parameters:
+#    - barbed_atp_polymerization_rate
+#    - barbed_adppi_polymerization_rate
+#    - barbed_adp_polymerization_rate
+#
+#    - barbed_atp_depolymerization_rate
+#    - barbed_adppi_depolymerization_rate
+#    - barbed_adp_depolymerization_rate
+#
+#    - pointed_atp_polymerization_rate
+#    - pointed_adppi_polymerization_rate
+#    - pointed_adp_polymerization_rate
+#
+#    - pointed_atp_depolymerization_rate
+#    - pointed_adppi_depolymerization_rate
+#    - pointed_adp_depolymerization_rate
+#
+#    - barbed_pyrene_atp_polymerization_rate
+#    - barbed_pyrene_adppi_polymerization_rate
+#    - barbed_pyrene_adp_polymerization_rate
+#
+#    - barbed_pyrene_atp_depolymerization_rate
+#    - barbed_pyrene_adppi_depolymerization_rate
+#    - barbed_pyrene_adp_depolymerization_rate
+#
+#    - pointed_pyrene_atp_polymerization_rate
+#    - pointed_pyrene_adppi_polymerization_rate
+#    - pointed_pyrene_adp_polymerization_rate
+#
+#    - pointed_pyrene_atp_depolymerization_rate
+#    - pointed_pyrene_adppi_depolymerization_rate
+#    - pointed_pyrene_adp_depolymerization_rate
+#
+#    - cleavage_rate
+#    - release_rate

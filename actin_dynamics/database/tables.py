@@ -19,41 +19,37 @@ from . import global_state
 
 MAX_NAME_LENGTH = 128
 
-# XXX add multiple column indexes
 # The database is mostly hierarchical, so this file is organized by level.
 
-# Level 0 (top level): collection
-collection_table = sqlalchemy.table('collections', global_state.metadata,
+# ---------------------------------------------------------------------
+# - Level 1 (top level): session                                      -
+# ---------------------------------------------------------------------
+session_table = sqlalchemy.table('sessions', global_state.metadata,
         sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True))
 
+# Names
 parameter_name_table = sqlalchemy.table('parameter_names',
                                         global_state.metadata,
         sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('collection_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('collections.id')),
+        sqlalchemy.Column('session_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('sessions.id')),
         sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
 
 analysis_name_table = sqlalchemy.table('analysis_names',
                                        global_state.metadata,
         sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('collection_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('collections.id')),
+        sqlalchemy.Column('session_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('sessions.id')),
         sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
 
 objective_name_table = sqlalchemy.table('objective_names',
                                         global_state.metadata,
         sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('collection_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('collections.id')),
+        sqlalchemy.Column('session_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('sessions.id')),
         sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
 
-
-# Level 1: session
-session_table = sqlalchemy.table('sessions', global_state.metadata,
-        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-        sqlalchemy.Column('collection_id', sqlalchemy.Integer,
-                          sqlalchemy.ForeignKey('collections.id')))
-
+# Parameters
 session_parameters_table = sqlalchemy.table('session_parameters',
                                       global_state.metadata,
         sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
@@ -69,7 +65,127 @@ sqlalchemy.Index('session_parameters_unique_columns',
                  unique=True)
 
 
-# Level 2: run
+# Bindings (map strings/yaml repr to object factories)
+bind_table = sqlalchemy.table('binds', global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('class_name', sqlalchemy.String(MAX_NAME_LENGTH)))
+
+bind_fixed_parameters_table = sqlalchemy.table('bind_fixed_parameters',
+                                               global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_id', sqlalchemy.Integer
+                          sqlalchemy.ForeignKey('binds.id')),
+        sqlalchemy.Column('name',  sqlalchemy.String(MAX_NAME_LENGTH)),
+        sqlalchemy.Column('value', sqlalchemy.String(MAX_NAME_LENGTH)))
+
+bind_parameters_table = sqlalchemy.table('bind_parameters',
+                                         global_state.metadata
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_id', sqlalchemy.Integer
+                          sqlalchemy.ForeignKey('binds.id')),
+        sqlalchemy.Column('parameter_name_id', sqlalchemy.Integer
+                          sqlalchemy.ForeignKey('parameter_names.id')))
+
+sqlalchemy.Index('bind_parameters_unique_columns',
+                 bind_parameters_table.c.bind_id,
+                 bind_parameters_table.c.parameter_name_id,
+                 unique=True)
+
+
+# Experiment definitions
+experiment_table = sqlalchemy.table('objective_names',
+                                    global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('session_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('sessions.id')),
+        sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
+
+experiment_filaments_table = sqlalchemy.table('experiment_filaments'
+                                              global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('bind.id')),
+        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('experiment.id')))
+
+experiment_concentrations_table = sqlalchemy.table('experiment_concentrations'
+                                              global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('bind.id')),
+        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('experiment.id')))
+
+experiment_transitions_table = sqlalchemy.table('experiment_transitions'
+                                              global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('bind.id')),
+        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('experiment.id')))
+
+experiment_end_conditions_table = sqlalchemy.table('experiment_end_conditions'
+                                              global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('bind.id')),
+        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('experiment.id')))
+
+experiment_measurements_table = sqlalchemy.table('experiment_measurements'
+                                              global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('bind.id')),
+        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('experiment.id')))
+
+
+experiment_analysis_table = sqlalchemy.table('experiment_analysis'
+                                              global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('bind.id')),
+        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('experiment.id')))
+
+experiment_objective_table = sqlalchemy.table('experiment_objective'
+                                              global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('bind.id')),
+        sqlalchemy.Column('experiment_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('experiment.id')))
+
+
+# Model definitions
+model_table = sqlalchemy.table('objective_names',
+                                    global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('session_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('sessions.id')),
+        sqlalchemy.Column('name', sqlalchemy.String(MAX_NAME_LENGTH)))
+
+model_concentrations_table = sqlalchemy.table('model_concentrations'
+                                              global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('bind.id')),
+        sqlalchemy.Column('model_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('model.id')))
+
+model_transitions_table = sqlalchemy.table('model_transitions'
+                                              global_state.metadata,
+        sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+        sqlalchemy.Column('bind_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('bind.id')),
+        sqlalchemy.Column('model_id', sqlalchemy.Integer,
+                          sqlalchemy.ForeignKey('model.id')))
+
+
+# ---------------------------------------------------------------------
+# - Level 2: run                                                      -
+# ---------------------------------------------------------------------
 run_table = sqlalchemy.table('runs', global_state.metadata,
         sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
         sqlalchemy.Column('session_id', sqlalchemy.Integer,
@@ -91,7 +207,9 @@ sqlalchemy.Index('run_parameters_unique_columns',
                  unique=True)
 
 
-# Level 3: analysis
+# ---------------------------------------------------------------------
+# - Level 3: analysis                                                 -
+# ---------------------------------------------------------------------
 analysis_table = sqlalchemy.table('analyses', global_state.metadata,
         sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
         sqlalchemy.Column('run_id', sqlalchemy.Integer,
@@ -136,7 +254,9 @@ sqlalchemy.Index('analysis_results_unique_columns',
                  unique=True)
 
 
-# Level 4: objective
+# ---------------------------------------------------------------------
+# - Level 4: objective                                                -
+# ---------------------------------------------------------------------
 objective_table = sqlalchemy.table('objectives', global_state.metadata,
         sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
         sqlalchemy.Column('analysis_id', sqlalchemy.Integer,

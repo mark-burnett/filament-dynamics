@@ -1,8 +1,18 @@
-session_name: 'Sample Global Fit Session'
+import: ['three_state_random_sample.yaml']
 
-collection:
-    filename: 'three_state_random_sample.yaml'
+session_name: 'Sample Global Fit Session'
 
 mechanism:
     type: global_fit
     ranking_algorithm: dominance
+
+parameters:
+    pyrene_atp_weight:
+        type:  fixed
+        value: 0.37
+    pyrene_adppi_weight:
+        type:  fixed
+        value: 0.56
+    pyrene_adp_weight:
+        type:  fixed
+        value: 0.75

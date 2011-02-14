@@ -65,7 +65,7 @@ simulation:
                 initial_concentration: 0
 
     # XXX Assign labels to end conditions
-    #       it would be nice to know which ones end.
+    #       it would be nice to know which one causes exit.
     end_conditions:
         - class_name: Duration
           parameters:
@@ -85,6 +85,12 @@ simulation:
             fixed_parameters:
                 state: ATP
 
+        total_atp_count:
+            class_name: StateCountSum
+            fixed_parameters:
+                base_state: ATP
+                prefix: pyrene_
+
         pyrene_adppi_count:
             class_name: StateCount
             fixed_parameters:
@@ -95,6 +101,12 @@ simulation:
             fixed_parameters:
                 state: ADPPi
 
+        total_adppi_count:
+            class_name: StateCountSum
+            fixed_parameters:
+                base_state: ADPPi
+                prefix: pyrene_
+
         pyrene_adp_count:
             class_name: StateCount
             fixed_parameters:
@@ -104,6 +116,12 @@ simulation:
             class_name: StateCount
             fixed_parameters:
                 state: ADP
+
+        total_adp_count:
+            class_name: StateCountSum
+            fixed_parameters:
+                base_state: ADP
+                prefix: pyrene_
 
 analysis:
     pyrene_atp_count:
@@ -130,7 +148,7 @@ objectives:
     pollard_adppi_fit:
         class_name: SimpleDataFit
         fixed_parameters:
-            measurements: [pyrene_adppi_count, adppi_count]
+            measurements: total_adppi_count
             data_file: 'pollard_2002/adppi_concentration.dat'
             residual_function: naked_chi_squared
             interpolate_simulations: True
@@ -153,22 +171,24 @@ objectives:
             adppi_state: pyrene_ADPPi
             adp_state:   pyrene_ADP
 
-# Required parameters
-simulation_parameters:
-    - # Initial concentrations
-    - initial_atp_concentration
-    - initial_pyrene_atp_concentration
-    - seed_concentration
-
-    - # End Conditions
-    - simulation_duration
-
-    - # Misc
-    - sample_period
-    - number_of_filaments
-    - filament_tip_concentration
-
-objective_parameters:
-    - pyrene_atp_weight
-    - pyrene_adppi_weight
-    - pyrene_adp_weight
+# XXX I should no longer need this duplicated dsl code.
+#required_parameters:
+#    # Simulation parameters
+#
+#    # Initial concentrations
+#    - initial_atp_concentration
+#    - initial_pyrene_atp_concentration
+#    - seed_concentration
+#
+#    # End Conditions
+#    - simulation_duration
+#
+#    # Misc
+#    - sample_period
+#    - number_of_filaments
+#    - filament_tip_concentration
+#
+#    # Objective parameters
+#    - pyrene_atp_weight
+#    - pyrene_adppi_weight
+#    - pyrene_adp_weight
