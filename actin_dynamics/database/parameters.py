@@ -36,6 +36,24 @@ _orm.mapper(SessionParameter, _session_parameter_join, properties={
     'name_id':  _session_parameter_join.c.parameter_names_id,
     'value_id': _session_parameter_join.c.session_parameters_id})
 
+class ExperimentParameter(Parameter): pass
+
+_experiment_parameter_join = _sql.join(_tables.parameter_name_table,
+                                _tables.experiment_parameters_table)
+
+_orm.mapper(ExperimentParameter, _experiment_parameter_join, properties={
+    'name_id':  _experiment_parameter_join.c.parameter_names_id,
+    'value_id': _experiment_parameter_join.c.experiment_parameters_id})
+
+class RunParameter(Parameter): pass
+
+_run_parameter_join = _sql.join(_tables.parameter_name_table,
+                                _tables.run_parameters_table)
+
+_orm.mapper(RunParameter, _run_parameter_join, properties={
+    'name_id':  _run_parameter_join.c.parameter_names_id,
+    'value_id': _run_parameter_join.c.run_parameters_id})
+
 
 class FixedBindParameter(Parameter): pass
 

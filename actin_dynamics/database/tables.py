@@ -113,6 +113,20 @@ experiment_bind_table = schema.Table('experiment_binds', global_state.metadata,
         schema.Column('experiment_id', schema.types.Integer,
                       schema.ForeignKey('experiments.id')))
 
+experiment_parameters_table = schema.Table('experiment_parameters',
+                                    global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('experiment_id', schema.types.Integer,
+                      schema.ForeignKey('experiments.id')),
+        schema.Column('parameter_name_id', schema.types.Integer,
+                      schema.ForeignKey('parameter_names.id')),
+        schema.Column('value', schema.types.Float, index=True))
+
+schema.Index('experiment_parameters_unique_columns',
+             experiment_parameters_table.c.experiment_id,
+             experiment_parameters_table.c.parameter_name_id,
+             unique=True)
+
 
 # Model definitions
 model_table = schema.Table('models', global_state.metadata,
@@ -142,7 +156,7 @@ run_parameters_table = schema.Table('run_parameters',
                                     global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('run_id', schema.types.Integer,
-                      schema.ForeignKey('run.id')),
+                      schema.ForeignKey('runs.id')),
         schema.Column('parameter_name_id', schema.types.Integer,
                       schema.ForeignKey('parameter_names.id')),
         schema.Column('value', schema.types.Float, index=True))
@@ -159,7 +173,7 @@ schema.Index('run_parameters_unique_columns',
 analysis_table = schema.Table('analyses', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('run_id', schema.types.Integer,
-                      schema.ForeignKey('run.id')),
+                      schema.ForeignKey('runs.id')),
         schema.Column('analysis_name_id', schema.types.Integer,
                       schema.ForeignKey('analysis_names.id')))
 

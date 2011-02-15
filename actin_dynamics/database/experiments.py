@@ -15,12 +15,16 @@
 
 
 from sqlalchemy import orm as _orm
+from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables as _tables
 from . import binds as _binds
+from . import parameters as _parameters
 
 
-class Experiment(object): pass
+class Experiment(object):
+    parameters = _ap('_parameters', 'value',
+                     creator=_parameters.ExperimentParameter)
 
 _orm.mapper(Experiment, _tables.experiment_table, properties={
     'binds': _orm.relationship(_binds.Bind,
@@ -34,4 +38,6 @@ _orm.mapper(Experiment, _tables.experiment_table, properties={
     'concentrations': _orm.relationship(_binds.ConcentrationBind,
         secondary=_tables.experiment_bind_table),
     'transitions': _orm.relationship(_binds.TransitionBind,
-        secondary=_tables.experiment_bind_table)})
+        secondary=_tables.experiment_bind_table),
+    '_parameters': _orm.relationship(_parameters.ExperimentParameter,
+        collection_class=_orm.collections.attribute_mapped_collection('name'))})

@@ -15,18 +15,9 @@
 
 
 from sqlalchemy import orm as _orm
-from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables as _tables
-from . import parameters as _parameters
-from . import analyses as _analyses
 
+class Analysis(object): pass
 
-class Run(object):
-    parameters = _ap('_parameters', 'value',
-                     creator=_parameters.RunParameter)
-
-_orm.mapper(Run, _tables.run_table, properties={
-    '_parameters': _orm.relationship(_parameters.RunParameter,
-        collection_class=_orm.collections.attribute_mapped_collection('name')),
-    'analyses': _orm.relationship(_analyses.Analysis, backref='run')})
+_orm.mapper(Analysis, _tables.analysis_table)
