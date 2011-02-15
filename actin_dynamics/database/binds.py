@@ -27,10 +27,40 @@ class Bind(object):
 
 _bind_join = _sql.join(_tables.bind_table, _tables.bind_module_name_table)
 
-_orm.mapper(Bind, _bind_join, properties={
+_orm.mapper(Bind, _bind_join,
+            polymorphic_on=_bind_join.c.bind_module_names_name, properties={
     'module_name': _bind_join.c.bind_module_names_name,
     'module_name_id': _bind_join.c.bind_module_names_id,
     '_fixed_parameters': _orm.relationship(_parameters.FixedBindParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
     '_parameters': _orm.relationship(_parameters.BindParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name'))})
+
+# XXX Does this inheritance schema work?
+        # Is there a better way? - it must be totally optional I think.
+# XXX Need to enforce/validate module_name
+        # This can probably be done by having an intermediate class.
+class ConcentrationBind(Bind): pass
+
+_orm.mapper(ConcentrationBind, _bind_join, inherits=Bind,
+            polymorphic_identity='concentrations')
+
+class TransitionBind(Bind): pass
+
+_orm.mapper(TransitionBind, _bind_join, inherits=Bind,
+            polymorphic_identity='transitions')
+
+class EndConditionBind(Bind): pass
+
+_orm.mapper(EndConditionBind, _bind_join, inherits=Bind,
+            polymorphic_identity='end_conditions')
+
+class MeasurementBind(Bind): pass
+
+_orm.mapper(MeasurementBind, _bind_join, inherits=Bind,
+            polymorphic_identity='measurements')
+
+class FilamentBind(Bind): pass
+
+_orm.mapper(FilamentBind, _bind_join, inherits=Bind,
+            polymorphic_identity='filaments')

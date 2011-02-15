@@ -17,9 +17,21 @@
 from sqlalchemy import orm as _orm
 
 from . import tables as _tables
+from . import binds as _binds
 
 
-class Experiment(object):
-    pass
+class Experiment(object): pass
 
-_orm.mapper(Experiment, _tables.experiment_table)
+_orm.mapper(Experiment, _tables.experiment_table, properties={
+    'binds': _orm.relationship(_binds.Bind,
+        secondary=_tables.experiment_bind_table),
+    'filaments': _orm.relationship(_binds.FilamentBind,
+        secondary=_tables.experiment_bind_table),
+    'measurements': _orm.relationship(_binds.MeasurementBind,
+        secondary=_tables.experiment_bind_table),
+    'end_conditions': _orm.relationship(_binds.EndConditionBind,
+        secondary=_tables.experiment_bind_table),
+    'concentrations': _orm.relationship(_binds.ConcentrationBind,
+        secondary=_tables.experiment_bind_table),
+    'transitions': _orm.relationship(_binds.TransitionBind,
+        secondary=_tables.experiment_bind_table)})

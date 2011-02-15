@@ -109,9 +109,9 @@ experiment_table = schema.Table('experiments', global_state.metadata,
 experiment_bind_table = schema.Table('experiment_binds', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('bind_id', schema.types.Integer,
-                      schema.ForeignKey('bind.id')),
+                      schema.ForeignKey('binds.id')),
         schema.Column('experiment_id', schema.types.Integer,
-                      schema.ForeignKey('experiment.id')))
+                      schema.ForeignKey('experiments.id')))
 
 
 # Model definitions
@@ -124,9 +124,9 @@ model_table = schema.Table('models', global_state.metadata,
 model_bind_table = schema.Table('model_binds', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('bind_id', schema.types.Integer,
-                      schema.ForeignKey('bind.id')),
+                      schema.ForeignKey('binds.id')),
         schema.Column('model_id', schema.types.Integer,
-                      schema.ForeignKey('model.id')))
+                      schema.ForeignKey('models.id')))
 
 
 # ---------------------------------------------------------------------
