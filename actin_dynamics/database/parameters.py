@@ -54,6 +54,15 @@ _orm.mapper(RunParameter, _run_parameter_join, properties={
     'name_id':  _run_parameter_join.c.parameter_names_id,
     'value_id': _run_parameter_join.c.run_parameters_id})
 
+class AnalysisParameter(Parameter): pass
+
+_analysis_parameter_join = _sql.join(_tables.parameter_name_table,
+                                _tables.analysis_parameters_table)
+
+_orm.mapper(AnalysisParameter, _analysis_parameter_join, properties={
+    'name_id':  _analysis_parameter_join.c.parameter_names_id,
+    'value_id': _analysis_parameter_join.c.analysis_parameters_id})
+
 
 class FixedBindParameter(Parameter): pass
 

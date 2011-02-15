@@ -167,6 +167,14 @@ schema.Index('run_parameters_unique_columns',
              unique=True)
 
 
+job_table = schema.Table('jobs', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('run_id', schema.types.Integer,
+                      schema.ForeignKey('runs.id'))
+        schema.Column('worker_uuid', schema.types.String(36), index=True),
+        schema.Column('complete', schema.types.Boolean, index=True,
+                      default=False))
+
 # ---------------------------------------------------------------------
 # - Level 3: analysis                                                 -
 # ---------------------------------------------------------------------
@@ -180,6 +188,21 @@ analysis_table = schema.Table('analyses', global_state.metadata,
 schema.Index('analysis_unique_columns',
              analysis_table.c.run_id,
              analysis_table.c.analysis_name_id,
+             unique=True)
+
+
+analysis_parameters_table = schema.Table('analysis_parameters',
+                                    global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('analysis_id', schema.types.Integer,
+                      schema.ForeignKey('analysiss.id')),
+        schema.Column('parameter_name_id', schema.types.Integer,
+                      schema.ForeignKey('parameter_names.id')),
+        schema.Column('value', schema.types.Float, index=True))
+
+schema.Index('analysis_parameters_unique_columns',
+             analysis_parameters_table.c.analysis_id,
+             analysis_parameters_table.c.parameter_name_id,
              unique=True)
 
 

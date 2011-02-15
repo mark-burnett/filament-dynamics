@@ -15,15 +15,11 @@
 
 
 from sqlalchemy import orm as _orm
-from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables as _tables
+from . import runs as _runs
 
-class Analysis(object):
-    parameters = _ap('_parameters', 'value',
-                     creator=_parameters.AnalysisParameter)
+class Job(object): pass
 
-_orm.mapper(Analysis, _tables.analysis_table, properties={
-    '_parameters': _orm.relationship(_parameters.AnalysisParameter,
-        collection_class=_orm.collections.attribute_mapped_collection('name')),
-    'results': _orm.relationship(_results.AnalysisResult, backref='analysis')})
+_orm.mapper(Job, _tables.job_table, properties={
+    'run': _orm.relationship(_runs.Run)})
