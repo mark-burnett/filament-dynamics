@@ -33,7 +33,24 @@ _session_parameter_join = _sql.join(_tables.parameter_name_table,
                                     _tables.session_parameters_table)
 
 _orm.mapper(SessionParameter, _session_parameter_join, properties={
-    'name':     _session_parameter_join.c.parameter_names_name,
-    'value':    _session_parameter_join.c.session_parameters_value,
     'name_id':  _session_parameter_join.c.parameter_names_id,
     'value_id': _session_parameter_join.c.session_parameters_id})
+
+
+class FixedBindParameter(Parameter): pass
+
+_fixed_parameter_join = _sql.join(_tables.bind_fixed_parameters_table,
+                                  _tables.bind_argument_name_table)
+
+_orm.mapper(FixedBindParameter, _fixed_parameter_join, properties={
+    'argument_name_id': _fixed_parameter_join.c.bind_argument_names_id})
+
+class BindParameter(Parameter): pass
+
+# XXX working here
+_bind_parameter_join = _sql.join(_tables.bind_parameters_table,
+                                 _tables.bind_argument_name_table)
+
+_orm.mapper(BindParameter, _bind_parameter_join, properties={
+            'name_id':  _bind_parameter_join.c.bind_argument_names_id,
+            'value_id': _bind_parameter_join.c.bind_parameters_id})

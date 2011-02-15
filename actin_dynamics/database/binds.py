@@ -15,26 +15,22 @@
 
 from sqlalchemy import orm as _orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
+from sqlalchemy import sql as _sql
 
 from . import tables as _tables
-from . import experiments as _experiments
 from . import parameters as _parameters
-from . import models as _models
-from . import runs as _runs
 
-class Session(object):
-    def __repr__(self):
-        return 'Session(id=%s, name="%s")' % (self.id, self.name)
+class Bind(object):
+    fixed_parameters = _ap('_fixed_parameters', 'value',
+                           creator=_parameters.FixedBindParameter)
+    parameters = _ap('_parameters', 'value', creator=_parameters.BindParameter)
 
-    parameters = _ap('_parameters', 'value',
-                     creator=_parameters.SessionParameter)
+_bind_join = _sql.join(_tables.bind_table, _tables.bind_module_name_table)
 
-
-_orm.mapper(Session, _tables.session_table,
-            properties={
-    '_parameters': _orm.relationship(_parameters.SessionParameter,
+_orm.mapper(Bind, _bind_join, properties={
+    'module_name': _bind_join.c.bind_module_names_name,
+    'module_name_id': _bind_join.c.bind_module_names_id,
+    '_fixed_parameters': _orm.relationship(_parameters.FixedBindParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
-    'experiments': _orm.relationship(_experiments.Experiment,
-                                     backref='session'),
-    'models': _orm.relationship(_models.Model, backref='session'),
-    'runs': _orm.relationship(_runs.Run, backref='session')})
+    '_parameters': _orm.relationship(_parameters.BindParameter,
+        collection_class=_orm.collections.attribute_mapped_collection('name'))})
