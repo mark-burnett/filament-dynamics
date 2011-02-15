@@ -25,38 +25,38 @@ MAX_NAME_LENGTH = 128
 # - Level 1 (top level): session                                      -
 # ---------------------------------------------------------------------
 session_table = schema.Table('sessions', global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('name', schema.String(MAX_NAME_LENGTH)))
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)))
 
 # Names
 parameter_name_table = schema.Table('parameter_names', global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('session_id', schema.Integer,
-                      schema.ForeignKey('sessions.id')),
-        schema.Column('name', schema.String(MAX_NAME_LENGTH),
+        schema.Column('id', schema.types.Integer, primary_key=True),
+#        schema.Column('session_id', schema.Integer,
+#                      schema.ForeignKey('sessions.id')),
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH),
                           index=True))
 
 analysis_name_table = schema.Table('analysis_names', global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('session_id', schema.Integer,
-                      schema.ForeignKey('sessions.id')),
-        schema.Column('name', schema.String(MAX_NAME_LENGTH)))
+        schema.Column('id', schema.types.Integer, primary_key=True),
+#        schema.Column('session_id', schema.Integer,
+#                      schema.ForeignKey('sessions.id')),
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)))
 
 objective_name_table = schema.Table('objective_names', global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('session_id', schema.Integer,
-                      schema.ForeignKey('sessions.id')),
-        schema.Column('name', schema.String(MAX_NAME_LENGTH)))
+        schema.Column('id', schema.types.Integer, primary_key=True),
+#        schema.Column('session_id', schema.Integer,
+#                      schema.ForeignKey('sessions.id')),
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)))
 
 # Parameters
 session_parameters_table = schema.Table('session_parameters',
                                         global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('session_id', schema.Integer,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('session_id', schema.types.Integer,
                       schema.ForeignKey('sessions.id')),
-        schema.Column('parameter_name_id', schema.Integer,
+        schema.Column('parameter_name_id', schema.types.Integer,
                       schema.ForeignKey('parameter_names.id')),
-        schema.Column('value', schema.Float, index=True))
+        schema.Column('value', schema.types.Float, index=True))
 
 schema.Index('session_parameters_unique_columns',
              session_parameters_table.c.session_id,
@@ -67,28 +67,28 @@ schema.Index('session_parameters_unique_columns',
 # Bindings (map strings/yaml repr to object factories)
 bind_module_name_table = schema.Table('bind_module_names',
                                       global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('name',  schema.String(MAX_NAME_LENGTH)))
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)))
 
 bind_table = schema.Table('binds', global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('bind_module_name_id', schema.Integer
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('bind_module_name_id', schema.types.Integer,
                       schema.ForeignKey('bind_module_name.id')),
-        schema.Column('class_name', schema.String(MAX_NAME_LENGTH)))
+        schema.Column('class_name', schema.types.String(MAX_NAME_LENGTH)))
 
 bind_fixed_parameters_table = schema.Table('bind_fixed_parameters',
                                            global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('bind_id', schema.Integer
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('bind_id', schema.types.Integer,
                       schema.ForeignKey('binds.id')),
-        schema.Column('name',  schema.String(MAX_NAME_LENGTH)),
-        schema.Column('value', schema.String(MAX_NAME_LENGTH)))
+        schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('value', schema.types.String(MAX_NAME_LENGTH)))
 
 bind_parameters_table = schema.Table('bind_parameters', global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('bind_id', schema.Integer
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('bind_id', schema.types.Integer,
                       schema.ForeignKey('binds.id')),
-        schema.Column('parameter_name_id', schema.Integer
+        schema.Column('parameter_name_id', schema.types.Integer,
                       schema.ForeignKey('parameter_names.id')))
 
 schema.Index('bind_parameters_unique_columns',
@@ -98,32 +98,32 @@ schema.Index('bind_parameters_unique_columns',
 
 
 # Experiment definitions
-experiment_table = schema.Table('objective_names', global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('session_id', schema.Integer,
+experiment_table = schema.Table('experiments', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('session_id', schema.types.Integer,
                       schema.ForeignKey('sessions.id')),
-        schema.Column('name', schema.String(MAX_NAME_LENGTH)))
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)))
 
-experiment_bind_table = schema.Table('experiment_binds' global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('bind_id', schema.Integer,
+experiment_bind_table = schema.Table('experiment_binds', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('bind_id', schema.types.Integer,
                       schema.ForeignKey('bind.id')),
-        schema.Column('experiment_id', schema.Integer,
+        schema.Column('experiment_id', schema.types.Integer,
                       schema.ForeignKey('experiment.id')))
 
 
 # Model definitions
-model_table = schema.Table('objective_names', global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('session_id', schema.Integer,
+model_table = schema.Table('models', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('session_id', schema.types.Integer,
                       schema.ForeignKey('sessions.id')),
-        schema.Column('name', schema.String(MAX_NAME_LENGTH)))
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)))
 
-model_bind_table = schema.Table('model_binds' global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('bind_id', schema.Integer,
+model_bind_table = schema.Table('model_binds', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('bind_id', schema.types.Integer,
                       schema.ForeignKey('bind.id')),
-        schema.Column('model_id', schema.Integer,
+        schema.Column('model_id', schema.types.Integer,
                       schema.ForeignKey('model.id')))
 
 
@@ -131,19 +131,19 @@ model_bind_table = schema.Table('model_binds' global_state.metadata,
 # - Level 2: run                                                      -
 # ---------------------------------------------------------------------
 run_table = schema.Table('runs', global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('session_id', schema.Integer,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('session_id', schema.types.Integer,
                       schema.ForeignKey('sessions.id')))
 
 
 run_parameters_table = schema.Table('run_parameters',
                                     global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('run_id', schema.Integer,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('run_id', schema.types.Integer,
                       schema.ForeignKey('run.id')),
-        schema.Column('parameter_name_id', schema.Integer,
-                      schema.ForeignKey('parameter_names.id'))),
-        schema.Column('value', schema.Float, index=True))
+        schema.Column('parameter_name_id', schema.types.Integer,
+                      schema.ForeignKey('parameter_names.id')),
+        schema.Column('value', schema.types.Float, index=True))
 
 schema.Index('run_parameters_unique_columns',
              run_parameters_table.c.run_id,
@@ -155,10 +155,10 @@ schema.Index('run_parameters_unique_columns',
 # - Level 3: analysis                                                 -
 # ---------------------------------------------------------------------
 analysis_table = schema.Table('analyses', global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('run_id', schema.Integer,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('run_id', schema.types.Integer,
                       schema.ForeignKey('run.id')),
-        schema.Column('analysis_name_id', schema.Integer,
+        schema.Column('analysis_name_id', schema.types.Integer,
                       schema.ForeignKey('analysis_names.id')))
 
 schema.Index('analysis_unique_columns',
@@ -169,13 +169,13 @@ schema.Index('analysis_unique_columns',
 
 analysis_results_table = schema.Table('analysis_results',
                                       global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('analysis_id', schema.Integer,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('analysis_id', schema.types.Integer,
                       schema.ForeignKey('analyses.id')),
-        schema.Column('analysis_name_id', schema.Integer,
-                      schema.ForeignKey('analysis_names.id'))),
-        schema.Column('abscissa', schema.Float),
-        schema.Column('ordinate', schema.Float))
+        schema.Column('analysis_name_id', schema.types.Integer,
+                      schema.ForeignKey('analysis_names.id')),
+        schema.Column('abscissa', schema.types.Float),
+        schema.Column('ordinate', schema.types.Float))
 
 schema.Index('analysis_results_unique_columns',
              analysis_results_table.c.analysis_id,
@@ -187,10 +187,10 @@ schema.Index('analysis_results_unique_columns',
 # - Level 4: objective                                                -
 # ---------------------------------------------------------------------
 objective_table = schema.Table('objectives', global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('analysis_id', schema.Integer,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('analysis_id', schema.types.Integer,
                       schema.ForeignKey('analyses.id')),
-        schema.Column('objective_name_id', schema.Integer,
+        schema.Column('objective_name_id', schema.types.Integer,
                       schema.ForeignKey('objective_names.id')))
 
 schema.Index('objectives_unique_columns',
@@ -201,12 +201,12 @@ schema.Index('objectives_unique_columns',
 
 objective_parameters_table = schema.Table('objective_parameters',
                                           global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('objective_id', schema.Integer,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('objective_id', schema.types.Integer,
                       schema.ForeignKey('objective.id')),
-        schema.Column('parameter_name_id', schema.Integer,
-                      schema.ForeignKey('parameter_names.id'))),
-        schema.Column('value', schema.Float, index=True))
+        schema.Column('parameter_name_id', schema.types.Integer,
+                      schema.ForeignKey('parameter_names.id')),
+        schema.Column('value', schema.types.Float, index=True))
 
 schema.Index('objective_parameters_unique_columns',
              objective_parameters_table.c.objective_id,
@@ -216,12 +216,12 @@ schema.Index('objective_parameters_unique_columns',
 
 objective_results_table = schema.Table('objective_results',
                                        global_state.metadata,
-        schema.Column('id', schema.Integer, primary_key=True),
-        schema.Column('objective_id', schema.Integer,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('objective_id', schema.types.Integer,
                       schema.ForeignKey('objective.id')),
-        schema.Column('objective_name_id', schema.Integer,
-                      schema.ForeignKey('objective_names.id'))),
-        schema.Column('value', schema.Float, index=True))
+        schema.Column('objective_name_id', schema.types.Integer,
+                      schema.ForeignKey('objective_names.id')),
+        schema.Column('value', schema.types.Float, index=True))
 
 schema.Index('objective_results_unique_columns',
              objective_results_table.c.objective_id,
