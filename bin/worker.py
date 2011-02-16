@@ -15,28 +15,24 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import argparse
 import time
+
+from actin_dynamics.configuration import command_line_parsers
+from actin_dynamics.configuration import database
 
 from actin_dynamics import io, job_control, run_support
 
-def parse_args(argv):
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--delay', type=float, default=0,
-                        help='Sleep before running.')
-
-    return parser.parse_args(argv)
-
-def main(delay):
-    time.sleep(delay)
-    for job in job_control.job_iterator():
-        run_support.run_simulation_job(job)
-        job_control.complete_job(job)
+def main(idle_timeout, collision_delay, retry_delay):
+    pass
+#    time.sleep(delay)
+#    for job in job_control.job_iterator():
+#        run_support.run_simulation_job(job)
+#        job_control.complete_job(job)
 
 
 if '__main__' == __name__:
-    ns = io.db_config.setup_database()
-    args = parse_args(ns)
+    namespace = command_line_parsers.worker_process()
+    database.setup_database(namespace.db_config)
 
-    main(args.delay)
+    main(namespace.idle_timeout, namespace.collision_delay,
+         namespace.retry_delay)

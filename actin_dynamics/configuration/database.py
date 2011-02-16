@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,10 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import argparse
 import configobj
 
-import elixir
+from sqlalchemy import orm, create_engine
+
+from actin_dynamics import database
 
 class DatabaseConfiguration(object):
     def __init__(self, server_type=None, username=None, password=None,
@@ -26,10 +27,6 @@ class DatabaseConfiguration(object):
         self.password = password
         self.host = host
         self.database_name = database_name
-
-    @classmethod
-    def from_configobj(cls, config):
-        return cls(**config.get('database', {}))
 
     @property
     def bind(self):
@@ -44,19 +41,16 @@ class DatabaseConfiguration(object):
         result += '/' + self.database_name
         return result
 
-def setup_database():
-    ns, remaining_argv = parse_database_command_line()
-    db_co = DatabaseConfiguration.from_configobj(
-            configobj.ConfigObj(ns.config))
-    elixir.metadata.bind = db_co.bind
-    elixir.setup_all()
+def setup_database(config_filename):
+    '''Sets up singletons needed to access the database.
+    '''
+    co = configobj.ConfigObj(config_filename)
+    dbc = DatabaseConfiguration(**co['database'])
 
-    return remaining_argv
+    engine = create_engine(dbc.bind)
+    database.metadata.create_all(engine)
+    db_session_class = orm.sessionmaker()
 
-def parse_database_command_line():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--config', default='config.ini',
-                        help='Configuration file name')
-
-    return parser.parse_known_args()
+    # Assign singletons
+    database.DBSession = db_session_class
+    database.engine = engine

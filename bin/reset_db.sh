@@ -17,11 +17,6 @@
 
 echo 'Dropping old database.'
 mysqladmin -u aduser -p'filamentous' -f drop actin_dynamics
-#sudo -u postgres dropdb actin_dynamics
 
 echo 'Creating new database.'
 mysqladmin -u aduser -p'filamentous' create actin_dynamics
-#sudo -u postgres createdb -O aduser actin_dynamics
-
-echo 'Creating tables.'
-bin/create_tables.py
