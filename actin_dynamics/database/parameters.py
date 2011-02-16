@@ -25,7 +25,7 @@ class Parameter(object):
 
     def __repr__(self):
         return '%s(name=%s, value=%s, type=%s)' % (
-                self.name, self.value, self.type)
+                self.__class__.__name__, self.name, self.value, self.type)
 
 _orm.mapper(Parameter, _tables.parameters_table,
             polymorphic_on=_tables.parameters_table.c.type)

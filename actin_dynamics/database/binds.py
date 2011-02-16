@@ -21,12 +21,19 @@ from . import tables as _tables
 from . import arguments as _arguments
 
 class Bind(object):
+    def __repr__(self):
+        return '%s(class_name="%s", fixed_parameters=%s, parameters=%s)' % (
+                self.__class__.__name__, self.class_name,
+                self.fixed_parameters, self.parameters)
+
     fixed_parameters = _ap('_fixed_parameters', 'value',
                            creator=_arguments.FixedArgument)
     parameters = _ap('_parameters', 'value', creator=_arguments.VariableArgument)
 
 _orm.mapper(Bind, _tables.bind_table,
-            polymorphic_on=_tables.bind_table.c.module_name, properties={
+            polymorphic_on=_tables.bind_table.c.module_name,
+            polymorphic_identity='bind',
+            properties={
     '_fixed_parameters': _orm.relationship(_arguments.FixedArgument,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
     '_parameters': _orm.relationship(_arguments.Argument,
