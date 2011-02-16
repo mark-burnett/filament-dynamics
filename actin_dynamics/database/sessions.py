@@ -23,8 +23,19 @@ from . import models as _models
 from . import runs as _runs
 
 class Session(object):
+    def __init__(self, name=None, experiments=None, models=None, runs=None):
+        if name:
+            self.name = name
+        if experiments:
+            self.experiments = experiments
+        if models:
+            self.models = models
+        if runs:
+            self.runs = runs
+
     def __repr__(self):
-        return 'Session(id=%s, name="%s")' % (self.id, self.name)
+        return ('Session(name="%s", parameters=%s)'
+                % (self.name, self.parameters))
 
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.SessionParameter)

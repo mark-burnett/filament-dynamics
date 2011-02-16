@@ -18,32 +18,78 @@ import unittest
 from sqlalchemy import create_engine, orm
 from actin_dynamics import database
 
-engine = create_engine('sqlite:///:memory:')#, echo=True)
+engine = create_engine('sqlite:///:memory:')
 db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
 
 class TestBind(unittest.TestCase):
     def setUp(self):
         database.metadata.create_all(engine)
 
-#    def tearDown(self):
-#        database.metadata.drop_all(engine)
+    def tearDown(self):
+        database.metadata.drop_all(engine)
 
-    def test_alive(self):
-        self.assertEqual(0, db_session.query(database.Bind).count())
+    def test_inheritance_for_cross_talk(self):
+        c = database.ConcentrationBind('test_class')
 
-        b = database.Bind()
-#        b.parameters['test arg a'] = 'test par 1'
-#        b.fixed_parameters['fixed arg b'] = 'literal 1'
-        b.module_name = 'filaments'
-        b.class_name = 'test_class'
-
-        db_session.add(b)
+        db_session.add(c)
         db_session.commit()
 
         self.assertEqual(1, db_session.query(database.Bind).count())
 
-#    def test_alive2(self):
-#        self.assertEqual(0, db_session.query(database.Bind).count())
+        self.assertEqual(1, db_session.query(database.ConcentrationBind).count())
+        self.assertEqual(0, db_session.query(database.TransitionBind).count())
+        self.assertEqual(0, db_session.query(database.EndConditionBind).count())
+        self.assertEqual(0, db_session.query(database.MeasurementBind).count())
+        self.assertEqual(0, db_session.query(database.FilamentBind).count())
+        self.assertEqual(0, db_session.query(database.AnalysisBind).count())
+        self.assertEqual(0, db_session.query(database.ObjectiveBind).count())
+
+        f = database.FilamentBind('test_class_2')
+        db_session.add(f)
+        db_session.commit()
+
+        self.assertEqual(2, db_session.query(database.Bind).count())
+
+        self.assertEqual(1, db_session.query(database.ConcentrationBind).count())
+        self.assertEqual(0, db_session.query(database.TransitionBind).count())
+        self.assertEqual(0, db_session.query(database.EndConditionBind).count())
+        self.assertEqual(0, db_session.query(database.MeasurementBind).count())
+        self.assertEqual(1, db_session.query(database.FilamentBind).count())
+        self.assertEqual(0, db_session.query(database.AnalysisBind).count())
+        self.assertEqual(0, db_session.query(database.ObjectiveBind).count())
+
+    def test_fixed_arguments(self):
+        test_data = {'test_arg_a': 'literal 1',
+                     'test_arg_b': 3.2}
+
+        t = database.TransitionBind('trans_class')
+        t.fixed_arguments = test_data
+
+        db_session.add(t)
+        db_session.commit()
+
+        del t
+
+        t2 = db_session.query(database.TransitionBind).first()
+        for arg, literal in test_data.iteritems():
+            self.assertEqual(str(literal), t2.fixed_arguments[arg])
+
+    def test_variable_arguments(self):
+        test_data = {'test_arg_a': 'par_name_1',
+                     'test_arg_b': 'par_name_2'}
+
+        t = database.TransitionBind('trans_class')
+        t.variable_arguments = test_data
+
+        db_session.add(t)
+        db_session.commit()
+
+        del t
+
+        t2 = db_session.query(database.TransitionBind).first()
+        for arg, par_name in test_data.iteritems():
+            self.assertEqual(par_name, t2.variable_arguments[arg])
+
 
 if '__main__' == __name__:
     unittest.main()

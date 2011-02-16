@@ -18,11 +18,12 @@ from sqlalchemy import schema
 from . import global_state
 
 MAX_NAME_LENGTH = 128
+MAX_POLY_LENGTH = 16
 
 # The database is mostly hierarchical, so this file is organized by level.
 
 # ---------------------------------------------------------------------
-# - Level 0: misc                                                     -
+# - Level 0: misc/non-hierarchical                                    -
 # ---------------------------------------------------------------------
 
 # Parameters
@@ -30,7 +31,7 @@ parameters_table = schema.Table('parameters', global_state.metadata,
         schema.Column('id',    schema.types.Integer, primary_key=True),
         schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
         schema.Column('value', schema.types.Float, index=True),
-        schema.Column('type',  schema.types.String(MAX_NAME_LENGTH),
+        schema.Column('type',  schema.types.String(MAX_POLY_LENGTH),
                       nullable=False, index=True))
 
 session_parameters_table = schema.Table('session_parameters',
@@ -111,7 +112,7 @@ argument_table = schema.Table('arguments', global_state.metadata,
         schema.Column('bind_id', schema.types.Integer,
                       schema.ForeignKey('binds.id')),
         schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
-        schema.Column('type',  schema.types.String(MAX_NAME_LENGTH),
+        schema.Column('type',  schema.types.String(MAX_POLY_LENGTH),
                       nullable=False, index=True))
 
 schema.Index('argument_unique_columns',
@@ -132,8 +133,19 @@ variable_argument_table = schema.Table('variable_arguments',
             # from here, so there's no need to include the index.
         schema.Column('parameter_name', schema.types.String(MAX_NAME_LENGTH)))
 
+
+# Job control
+job_table = schema.Table('jobs', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('run_id', schema.types.Integer,
+                      schema.ForeignKey('runs.id')),
+        schema.Column('worker_uuid', schema.types.String(36), index=True),
+        schema.Column('complete', schema.types.Boolean, index=True,
+                      default=False))
+
+
 # ---------------------------------------------------------------------
-# - Level 1 (top level): session                                      -
+# - Level 1 (top level): session, experiments, & models               -
 # ---------------------------------------------------------------------
 session_table = schema.Table('sessions', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
@@ -143,13 +155,10 @@ session_table = schema.Table('sessions', global_state.metadata,
 # Bindings (map strings/yaml repr to object factories)
 bind_table = schema.Table('binds', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('module_name',  schema.types.String(MAX_NAME_LENGTH),
+        schema.Column('module_name',  schema.types.String(MAX_POLY_LENGTH),
                       nullable=False),
         schema.Column('class_name', schema.types.String(MAX_NAME_LENGTH),
                       nullable=False))
-
-# XXX add validation index to check for duplicate argument names between
-    # fixed and normal parameters?
 
 
 # Experiment definitions
@@ -195,14 +204,6 @@ run_table = schema.Table('runs', global_state.metadata,
         schema.Column('session_id', schema.types.Integer,
                       schema.ForeignKey('sessions.id')))
 
-
-job_table = schema.Table('jobs', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('run_id', schema.types.Integer,
-                      schema.ForeignKey('runs.id')),
-        schema.Column('worker_uuid', schema.types.String(36), index=True),
-        schema.Column('complete', schema.types.Boolean, index=True,
-                      default=False))
 
 # ---------------------------------------------------------------------
 # - Level 3: analysis                                                 -

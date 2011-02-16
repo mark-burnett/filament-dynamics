@@ -22,7 +22,7 @@ from .binds import *
 #from .models import *
 #from .objectives import *
 #from .runs import *
-#from .sessions import *
+from .sessions import *
 
 del global_state
 
@@ -33,7 +33,7 @@ del binds
 #del models
 #del objectives
 #del runs
-#del sessions
+del sessions
 
 del arguments
 #del parameters

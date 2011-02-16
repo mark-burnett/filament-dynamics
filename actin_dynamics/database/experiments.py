@@ -30,6 +30,7 @@ _orm.mapper(Experiment, _tables.experiment_table, properties={
 # XXX It doesn't seem useful to have this in the api
 #    'binds': _orm.relationship(_binds.Bind,
 #        secondary=_tables.experiment_bind_table),
+# XXX Do I still need the secondary argument?
     'analyses': _orm.relationship(_binds.AnalysisBind,
         secondary=_tables.experiment_bind_table),
     'objectives': _orm.relationship(_binds.ObjectiveBind,

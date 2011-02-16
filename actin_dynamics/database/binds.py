@@ -21,57 +21,62 @@ from . import tables as _tables
 from . import arguments as _arguments
 
 class Bind(object):
-    def __repr__(self):
-        return '%s(class_name="%s", fixed_parameters=%s, parameters=%s)' % (
-                self.__class__.__name__, self.class_name,
-                self.fixed_parameters, self.parameters)
+    def __init__(self, class_name=None,
+                 fixed_arguments=None, variable_arguments=None):
+        if class_name:
+            self.class_name = class_name
+        if fixed_arguments:
+            self.fixed_arguments = fixed_arguments
+        if variable_arguments:
+            self.variable_arguments = variable_arguments
 
-    fixed_parameters = _ap('_fixed_parameters', 'value',
-                           creator=_arguments.FixedArgument)
-    parameters = _ap('_parameters', 'value', creator=_arguments.VariableArgument)
+    def __repr__(self):
+        return (
+"%s(class_name='%s', module_name='%s', fixed_arguments=%s, variable_arguments=%s)"
+                % (self.__class__.__name__, self.class_name, self.module_name,
+                   self.fixed_arguments, self.variable_arguments))
+
+    fixed_arguments = _ap('_fixed_arguments', 'value',
+                          creator=_arguments.FixedArgument)
+    variable_arguments = _ap('_variable_arguments', 'parameter_name',
+                    creator=_arguments.VariableArgument)
 
 _orm.mapper(Bind, _tables.bind_table,
             polymorphic_on=_tables.bind_table.c.module_name,
-            polymorphic_identity='bind',
             properties={
-    '_fixed_parameters': _orm.relationship(_arguments.FixedArgument,
+    '_fixed_arguments': _orm.relationship(_arguments.FixedArgument,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
-    '_parameters': _orm.relationship(_arguments.Argument,
+    '_variable_arguments': _orm.relationship(_arguments.VariableArgument,
         collection_class=_orm.collections.attribute_mapped_collection('name'))})
 
 # XXX Need to enforce/validate module_name
         # This can probably be done by having an intermediate class.
 class ConcentrationBind(Bind): pass
 
-_orm.mapper(ConcentrationBind, _tables.bind_table, inherits=Bind,
+_orm.mapper(ConcentrationBind, inherits=Bind,
             polymorphic_identity='concentrations')
 
 class TransitionBind(Bind): pass
 
-_orm.mapper(TransitionBind, _tables.bind_table, inherits=Bind,
-            polymorphic_identity='transitions')
+_orm.mapper(TransitionBind, inherits=Bind, polymorphic_identity='transitions')
 
 class EndConditionBind(Bind): pass
 
-_orm.mapper(EndConditionBind, _tables.bind_table, inherits=Bind,
+_orm.mapper(EndConditionBind, inherits=Bind,
             polymorphic_identity='end_conditions')
 
 class MeasurementBind(Bind): pass
 
-_orm.mapper(MeasurementBind, _tables.bind_table, inherits=Bind,
-            polymorphic_identity='measurements')
+_orm.mapper(MeasurementBind, inherits=Bind, polymorphic_identity='measurements')
 
 class FilamentBind(Bind): pass
 
-_orm.mapper(FilamentBind, _tables.bind_table, inherits=Bind,
-            polymorphic_identity='filaments')
+_orm.mapper(FilamentBind, inherits=Bind, polymorphic_identity='filaments')
 
 class AnalysisBind(Bind): pass
 
-_orm.mapper(AnalysisBind, _tables.bind_table, inherits=Bind,
-            polymorphic_identity='analyses')
+_orm.mapper(AnalysisBind, inherits=Bind, polymorphic_identity='analyses')
 
 class ObjectiveBind(Bind): pass
 
-_orm.mapper(ObjectiveBind, _tables.bind_table, inherits=Bind,
-            polymorphic_identity='objectives')
+_orm.mapper(ObjectiveBind, inherits=Bind, polymorphic_identity='objectives')

@@ -20,6 +20,7 @@ from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables as _tables
 from . import binds as _binds
+from . import experiments as _experiments
 from . import parameters as _parameters
 from . import results as _results
 
@@ -27,15 +28,16 @@ class Analysis(object):
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.AnalysisParameter)
 
-# XXX broken
-_analysis_join = _sql.join(_tables.analysis_table, _tables.analysis_name_table)
-
 # Analysis should have binds
-_orm.mapper(Analysis, _analysis_join, properties={
-    'name_id': _analysis_join.c.analysis_names_id,
+_orm.mapper(Analysis, _tables.analysis_table, properties={
     '_parameters': _orm.relationship(_parameters.AnalysisParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
-    'bind': _orm.relationship(_binds.Bind),
-    'results': _orm.relationship(_results.AnalysisResult, backref='analysis',
-        primaryjoin=_analysis_join.c.analyses_id ==
-                    _tables.analysis_results_table.c.analysis_id)})
+    'results': _orm.relationship(_results.AnalysisResult, backref='analysis')})
+
+class ExperimentAnalysis(object):
+    pass
+
+_orm.mapper(ExperimentAnalysis, _tables.experiment_analysis_table, properties={
+    'experiment': _orm.relationship(_experiments.Experiment),
+    'bind': _orm.relationship(_binds.AnalysisBind),
+    'analyses': _orm.relationship(Analysis, backref='experiment_analysis')})
