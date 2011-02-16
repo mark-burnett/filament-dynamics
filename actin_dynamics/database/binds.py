@@ -18,49 +18,53 @@ from sqlalchemy.ext.associationproxy import association_proxy as _ap
 from sqlalchemy import sql as _sql
 
 from . import tables as _tables
-from . import parameters as _parameters
+from . import arguments as _arguments
 
 class Bind(object):
     fixed_parameters = _ap('_fixed_parameters', 'value',
-                           creator=_parameters.FixedBindParameter)
-    parameters = _ap('_parameters', 'value', creator=_parameters.BindParameter)
+                           creator=_arguments.FixedArgument)
+    parameters = _ap('_parameters', 'value', creator=_arguments.VariableArgument)
 
-_bind_join = _sql.join(_tables.bind_table, _tables.bind_module_name_table)
-
-_orm.mapper(Bind, _bind_join,
-            polymorphic_on=_bind_join.c.bind_module_names_name, properties={
-    'module_name': _bind_join.c.bind_module_names_name,
-    'module_name_id': _bind_join.c.bind_module_names_id,
-    '_fixed_parameters': _orm.relationship(_parameters.FixedBindParameter,
+_orm.mapper(Bind, _tables.bind_table,
+            polymorphic_on=_tables.bind_table.c.module_name, properties={
+    '_fixed_parameters': _orm.relationship(_arguments.FixedArgument,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
-    '_parameters': _orm.relationship(_parameters.BindParameter,
+    '_parameters': _orm.relationship(_arguments.Argument,
         collection_class=_orm.collections.attribute_mapped_collection('name'))})
 
-# XXX Does this inheritance schema work?
-        # Is there a better way? - it must be totally optional I think.
 # XXX Need to enforce/validate module_name
         # This can probably be done by having an intermediate class.
 class ConcentrationBind(Bind): pass
 
-_orm.mapper(ConcentrationBind, _bind_join, inherits=Bind,
+_orm.mapper(ConcentrationBind, _tables.bind_table, inherits=Bind,
             polymorphic_identity='concentrations')
 
 class TransitionBind(Bind): pass
 
-_orm.mapper(TransitionBind, _bind_join, inherits=Bind,
+_orm.mapper(TransitionBind, _tables.bind_table, inherits=Bind,
             polymorphic_identity='transitions')
 
 class EndConditionBind(Bind): pass
 
-_orm.mapper(EndConditionBind, _bind_join, inherits=Bind,
+_orm.mapper(EndConditionBind, _tables.bind_table, inherits=Bind,
             polymorphic_identity='end_conditions')
 
 class MeasurementBind(Bind): pass
 
-_orm.mapper(MeasurementBind, _bind_join, inherits=Bind,
+_orm.mapper(MeasurementBind, _tables.bind_table, inherits=Bind,
             polymorphic_identity='measurements')
 
 class FilamentBind(Bind): pass
 
-_orm.mapper(FilamentBind, _bind_join, inherits=Bind,
+_orm.mapper(FilamentBind, _tables.bind_table, inherits=Bind,
             polymorphic_identity='filaments')
+
+class AnalysisBind(Bind): pass
+
+_orm.mapper(AnalysisBind, _tables.bind_table, inherits=Bind,
+            polymorphic_identity='analyses')
+
+class ObjectiveBind(Bind): pass
+
+_orm.mapper(ObjectiveBind, _tables.bind_table, inherits=Bind,
+            polymorphic_identity='objectives')

@@ -16,7 +16,6 @@
 from . import compressed
 from . import db_config
 from . import data
-from . import database
 from . import pollard
 from .results import load_directory
 

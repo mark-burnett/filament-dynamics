@@ -1,22 +1,50 @@
-Session management
-Parameters management
-Sensible input format
-Job control
-Database internals
-Analysis registration
-Slicing/summary table
+analysis
+    registration
+    total refactor
 
-###
-Definitions
-    session = single mechanism used on a set of models + experiments + parameters
-        e.g. a big mesh run on a model/expt for visualization
-    * parameter set = collection of parameters needed to run a stage
-        e.g. simulation parameter set, or analysis parameter set
-    run = multiple simulations of a model + experiment with a single parameter set
+controller process
+    read yaml files
+    parameter value determination is dealt with here
+    mesh mechanism
+        interleave:
+            populate session/experiment/run hierarchy
+            create jobs
+    global fit mechanism
+        do some kind of coarse mesh/random to start
+        then start generating children
 
-###
-Goals
-    run on a mesh -> visualize slices
-    global fit to loads of data
-        wtf visualization can i do?
-            run 1d slice meshes afterwards for visualization?
+worker processes
+    generate uuid on startup
+    no contact with any files except database.ini
+    command line arguments for:
+        sleep time for job table empty
+        sleep time for collision on getting job
+        idle time before exit
+        db config file name
+
+configuration management
+    database session/etc
+
+database structure
+    i can do testing in ram with sqlite (this is a big deal)
+    validation rules (e.g. for bind module_names)
+    figure out result storage
+    figure out analysis/objective configuration vs results
+    cascading deletes/orphans
+
+visualization
+    holy balls this will be better with better internal structure
+    still going to need to create temporary/summary tables
+
+Do some vocab/docs
+    session
+    run
+    job
+    primitive
+    bind
+    analysis
+    objective
+    simulation
+    stage - just slang?
+    ? slice
+    ? projection

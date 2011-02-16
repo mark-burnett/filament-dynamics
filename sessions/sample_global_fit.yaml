@@ -6,7 +6,7 @@ mechanism:
     type: global_fit
     ranking_algorithm: dominance
 
-parameters:
+objective_parameters:
     pyrene_atp_weight:
         type:  fixed
         value: 0.37

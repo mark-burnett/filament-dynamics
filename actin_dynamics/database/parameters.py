@@ -14,70 +14,49 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from sqlalchemy import orm as _orm
-from sqlalchemy import sql as _sql
 
 from . import tables as _tables
 
 class Parameter(object):
-    def __init__(self, name, value):
+    def __init__(self, name, value, type):
         self.name  = name
         self.value = value
+        self.type  = type
 
     def __repr__(self):
-        return '%s(name=%s, value=%s, name_id=%i, value_id=%i)' % (
-                self.name, self.value, self.name_id, self.value_id)
+        return '%s(name=%s, value=%s, type=%s)' % (
+                self.name, self.value, self.type)
+
+_orm.mapper(Parameter, _tables.parameters_table,
+            polymorphic_on=_tables.parameters_table.c.type)
+
 
 class SessionParameter(Parameter): pass
 
-_session_parameter_join = _sql.join(_tables.parameter_name_table,
-                                    _tables.session_parameters_table)
-
-_orm.mapper(SessionParameter, _session_parameter_join, properties={
-    'name_id':  _session_parameter_join.c.parameter_names_id,
-    'value_id': _session_parameter_join.c.session_parameters_id})
+_orm.mapper(SessionParameter, _tables.session_parameters_table,
+            inherits=Parameter, polymorphic_identity='session')
 
 class ExperimentParameter(Parameter): pass
 
-_experiment_parameter_join = _sql.join(_tables.parameter_name_table,
-                                _tables.experiment_parameters_table)
+_orm.mapper(ExperimentParameter, _tables.session_parameters_table,
+            inherits=Parameter, polymorphic_identity='experiment')
 
-_orm.mapper(ExperimentParameter, _experiment_parameter_join, properties={
-    'name_id':  _experiment_parameter_join.c.parameter_names_id,
-    'value_id': _experiment_parameter_join.c.experiment_parameters_id})
+class ModelParameter(Parameter): pass
+
+_orm.mapper(ModelParameter, _tables.session_parameters_table,
+            inherits=Parameter, polymorphic_identity='model')
 
 class RunParameter(Parameter): pass
 
-_run_parameter_join = _sql.join(_tables.parameter_name_table,
-                                _tables.run_parameters_table)
-
-_orm.mapper(RunParameter, _run_parameter_join, properties={
-    'name_id':  _run_parameter_join.c.parameter_names_id,
-    'value_id': _run_parameter_join.c.run_parameters_id})
+_orm.mapper(RunParameter, _tables.session_parameters_table,
+            inherits=Parameter, polymorphic_identity='run')
 
 class AnalysisParameter(Parameter): pass
 
-_analysis_parameter_join = _sql.join(_tables.parameter_name_table,
-                                _tables.analysis_parameters_table)
+_orm.mapper(AnalysisParameter, _tables.session_parameters_table,
+            inherits=Parameter, polymorphic_identity='analysis')
 
-_orm.mapper(AnalysisParameter, _analysis_parameter_join, properties={
-    'name_id':  _analysis_parameter_join.c.parameter_names_id,
-    'value_id': _analysis_parameter_join.c.analysis_parameters_id})
+class ObjectiveParameter(Parameter): pass
 
-
-class FixedBindParameter(Parameter): pass
-
-_fixed_parameter_join = _sql.join(_tables.bind_fixed_parameters_table,
-                                  _tables.bind_argument_name_table)
-
-_orm.mapper(FixedBindParameter, _fixed_parameter_join, properties={
-    'argument_name_id': _fixed_parameter_join.c.bind_argument_names_id})
-
-class BindParameter(Parameter): pass
-
-# XXX working here
-_bind_parameter_join = _sql.join(_tables.bind_parameters_table,
-                                 _tables.bind_argument_name_table)
-
-_orm.mapper(BindParameter, _bind_parameter_join, properties={
-            'name_id':  _bind_parameter_join.c.bind_argument_names_id,
-            'value_id': _bind_parameter_join.c.bind_parameters_id})
+_orm.mapper(ObjectiveParameter, _tables.session_parameters_table,
+            inherits=Parameter, polymorphic_identity='objective')

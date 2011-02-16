@@ -27,9 +27,12 @@ class Experiment(object):
                      creator=_parameters.ExperimentParameter)
 
 _orm.mapper(Experiment, _tables.experiment_table, properties={
-    'binds': _orm.relationship(_binds.Bind,
+# XXX It doesn't seem useful to have this in the api
+#    'binds': _orm.relationship(_binds.Bind,
+#        secondary=_tables.experiment_bind_table),
+    'analyses': _orm.relationship(_binds.AnalysisBind,
         secondary=_tables.experiment_bind_table),
-    'filaments': _orm.relationship(_binds.FilamentBind,
+    'objectives': _orm.relationship(_binds.ObjectiveBind,
         secondary=_tables.experiment_bind_table),
     'measurements': _orm.relationship(_binds.MeasurementBind,
         secondary=_tables.experiment_bind_table),

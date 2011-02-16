@@ -12,29 +12,3 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-from .global_state import metadata
-
-#from .analyses import *
-from .binds import *
-#from .experiments import *
-#from .jobs import *
-#from .models import *
-#from .objectives import *
-#from .runs import *
-#from .sessions import *
-
-del global_state
-
-#del analyses
-del binds
-#del experiments
-#del jobs
-#del models
-#del objectives
-#del runs
-#del sessions
-
-del arguments
-#del parameters
-del tables
