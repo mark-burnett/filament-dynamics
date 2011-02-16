@@ -27,14 +27,14 @@ class Experiment(object):
                      creator=_parameters.ExperimentParameter)
 
 _orm.mapper(Experiment, _tables.experiment_table, properties={
-# XXX It doesn't seem useful to have this in the api
-#    'binds': _orm.relationship(_binds.Bind,
-#        secondary=_tables.experiment_bind_table),
-# XXX Do I still need the secondary argument?
+    # XXX shouldn't I be linking to the analysis_configuration?
     'analyses': _orm.relationship(_binds.AnalysisBind,
         secondary=_tables.experiment_bind_table),
+
+    # XXX likewise for objective configuration here?
     'objectives': _orm.relationship(_binds.ObjectiveBind,
         secondary=_tables.experiment_bind_table),
+
     'measurements': _orm.relationship(_binds.MeasurementBind,
         secondary=_tables.experiment_bind_table),
     'end_conditions': _orm.relationship(_binds.EndConditionBind,

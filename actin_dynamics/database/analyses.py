@@ -34,10 +34,10 @@ _orm.mapper(Analysis, _tables.analysis_table, properties={
         collection_class=_orm.collections.attribute_mapped_collection('name')),
     'results': _orm.relationship(_results.AnalysisResult, backref='analysis')})
 
-class ExperimentAnalysis(object):
+class AnalysisConfiguration(object):
     pass
 
-_orm.mapper(ExperimentAnalysis, _tables.experiment_analysis_table, properties={
+_orm.mapper(AnalysisConfiguration, _tables.analysis_configuration_table, properties={
     'experiment': _orm.relationship(_experiments.Experiment),
     'bind': _orm.relationship(_binds.AnalysisBind),
-    'analyses': _orm.relationship(Analysis, backref='experiment_analysis')})
+    'analyses': _orm.relationship(Analysis, backref='configuration')})

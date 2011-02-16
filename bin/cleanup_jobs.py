@@ -15,13 +15,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from actin_dynamics import io, job_control
+from actin_dynamics.configuration import command_line_parsers
+from actin_dynamics.configuration import database
+
+from actin_dynamics import job_control
 
 def cleanup_jobs():
     job_control.cleanup_jobs()
 
 
 if '__main__' == __name__:
-    io.db_config.setup_database()
-    cleanup_jobs()
+    namespace = command_line_parsers.worker_process()
+    database.setup_database(namespace.db_config)
 
+    cleanup_jobs()
