@@ -21,31 +21,29 @@ from actin_dynamics import database
 engine = create_engine('sqlite:///:memory:')
 db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
 
-class TestBind(unittest.TestCase):
+class TestSession(unittest.TestCase):
     def setUp(self):
         database.metadata.create_all(engine)
 
     def tearDown(self):
         database.metadata.drop_all(engine)
 
-    def test_inheritance_for_cross_talk(self):
+    def test_parameters(self):
+        test_data = {'par_name_1': 7.2,
+                     'par_name_2': 61.3}
+
         s = database.Session('ses 1')
 
-#    def test_variable_arguments(self):
-#        test_data = {'test_arg_a': 'par_name_1',
-#                     'test_arg_b': 'par_name_2'}
-#
-#        t = database.TransitionBind('trans_class')
-#        t.variable_arguments = test_data
-#
-#        db_session.add(t)
-#        db_session.commit()
-#
-#        del t
-#
-#        t2 = db_session.query(database.TransitionBind).first()
-#        for arg, par_name in test_data.iteritems():
-#            self.assertEqual(par_name, t2.variable_arguments[arg])
+        s.parameters = test_data
+
+        db_session.add(s)
+        db_session.commit()
+
+        del s
+
+        s2 = db_session.query(database.Session).first()
+        for par_name, value in test_data.iteritems():
+            self.assertEqual(value, s2.parameters[par_name])
 
 
 if '__main__' == __name__:

@@ -248,9 +248,6 @@ analysis_results_table = schema.Table('analysis_results',
 # ---------------------------------------------------------------------
 # - Level 4: objective                                                -
 # ---------------------------------------------------------------------
-# XXX objectives must be in a given order per session!
-        # This means experiments must also be in a given order per session.
-    # I think we can just use the ordering the database gives us.
 experiment_objective_table = schema.Table('experiment_objectives',
                                          global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),

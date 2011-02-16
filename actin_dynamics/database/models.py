@@ -20,11 +20,25 @@ from . import tables as _tables
 from . import binds as _binds
 
 
-class Model(object): pass
+class Model(object):
+    def __init__(self, name=None, session=None, concentrations=None,
+                 transitions=None):
+        if name:
+            self.name = name
+        if session:
+            self.session = session
+        if concentrations:
+            self.concentrations = concentrations
+        if transitions:
+            self.transitions = transitions
+
+    def __repr__(self):
+        return (
+"%s(name='%s', session=%s, concentrations=%s, transitions=%s)" % (
+            self.__class__.__name__, self.name, self.session,
+            self.concentrations, self.transitions))
 
 _orm.mapper(Model, _tables.model_table, properties={
-    'binds': _orm.relationship(_binds.Bind,
-        secondary=_tables.model_bind_table),
     'concentrations': _orm.relationship(_binds.ConcentrationBind,
         secondary=_tables.model_bind_table),
     'transitions': _orm.relationship(_binds.TransitionBind,

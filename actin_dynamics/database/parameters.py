@@ -18,10 +18,9 @@ from sqlalchemy import orm as _orm
 from . import tables as _tables
 
 class Parameter(object):
-    def __init__(self, name, value, type):
+    def __init__(self, name, value):
         self.name  = name
         self.value = value
-        self.type  = type
 
     def __repr__(self):
         return '%s(name=%s, value=%s, type=%s)' % (

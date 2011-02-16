@@ -19,7 +19,7 @@ from .global_state import metadata
 from .binds import *
 #from .experiments import *
 #from .jobs import *
-#from .models import *
+from .models import *
 #from .objectives import *
 #from .runs import *
 from .sessions import *
@@ -30,7 +30,7 @@ del global_state
 del binds
 #del experiments
 #del jobs
-#del models
+del models
 #del objectives
 #del runs
 del sessions
