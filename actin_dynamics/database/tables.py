@@ -20,10 +20,33 @@ from . import global_state
 MAX_NAME_LENGTH = 128
 MAX_POLY_LENGTH = 16
 
-# The database is mostly hierarchical, so this file is organized by level.
+
+# The database has 3 major branches:  job control, configuration, and data
+# with session at the top of the whole hierarchy.
+
 
 # ---------------------------------------------------------------------
-# - Level 0: misc/non-hierarchical                                    -
+# - Top of the hierarchy                                              -
+# ---------------------------------------------------------------------
+session_table = schema.Table('session', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)))
+
+
+# ---------------------------------------------------------------------
+# - Job control branch                                                -
+# ---------------------------------------------------------------------
+job_table = schema.Table('job', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('run_id', schema.types.Integer,
+                      schema.ForeignKey('run.id')),
+        schema.Column('worker_uuid', schema.types.String(36), index=True),
+        schema.Column('complete', schema.types.Boolean, index=True,
+                      default=False))
+
+
+# ---------------------------------------------------------------------
+# - Configuration branch                                              -
 # ---------------------------------------------------------------------
 
 # Parameters
@@ -134,24 +157,6 @@ variable_argument_table = schema.Table('variable_argument',
         schema.Column('parameter_name', schema.types.String(MAX_NAME_LENGTH)))
 
 
-# Job control
-job_table = schema.Table('job', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('run_id', schema.types.Integer,
-                      schema.ForeignKey('run.id')),
-        schema.Column('worker_uuid', schema.types.String(36), index=True),
-        schema.Column('complete', schema.types.Boolean, index=True,
-                      default=False))
-
-
-# ---------------------------------------------------------------------
-# - Level 1 (top level): session, experiments, & models               -
-# ---------------------------------------------------------------------
-session_table = schema.Table('session', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)))
-
-
 # Bindings (map strings/yaml repr to object factories)
 bind_table = schema.Table('bind', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
@@ -197,7 +202,7 @@ model_bind_table = schema.Table('model_bind', global_state.metadata,
 
 
 # ---------------------------------------------------------------------
-# - Level 2: run                                                      -
+# - Data branch                                                       -
 # ---------------------------------------------------------------------
 run_table = schema.Table('run', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
@@ -205,9 +210,6 @@ run_table = schema.Table('run', global_state.metadata,
                       schema.ForeignKey('session.id')))
 
 
-# ---------------------------------------------------------------------
-# - Level 3: analysis                                                 -
-# ---------------------------------------------------------------------
 analysis_configuration_table = schema.Table('analysis_configuration',
                                             global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
@@ -245,9 +247,6 @@ analysis_results_table = schema.Table('analysis_result',
         schema.Column('ordinate', schema.types.Float))
 
 
-# ---------------------------------------------------------------------
-# - Level 4: objective                                                -
-# ---------------------------------------------------------------------
 objective_configuration_table = schema.Table('objective_configuration',
                                          global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
