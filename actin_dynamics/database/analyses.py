@@ -25,6 +25,22 @@ from . import parameters as _parameters
 from . import results as _results
 
 class Analysis(object):
+    def __init__(self, run=None, results=None, parameters=None,
+                 configuration=None):
+        if run:
+            self.run = run
+        if results:
+            self.results = results
+        if parameters:
+            self.parameters = parameters
+        if configuration:
+            self.configuration = configuration
+
+    def __repr__(self):
+        return "%s(run=%s, analyses=%s, parameters=%s, configuration=%s)" % (
+            self.__class__.__name__, self.run,
+            self.analyses, self.parameters, self.configuration)
+
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.AnalysisParameter)
 
@@ -35,9 +51,22 @@ _orm.mapper(Analysis, _tables.analysis_table, properties={
     'results': _orm.relationship(_results.AnalysisResult, backref='analysis')})
 
 class AnalysisConfiguration(object):
-    pass
+    def __init__(self, experiment=None, bind=None, analyses=None):
+        if experiment:
+            self.experiment = experiment
+        if bind:
+            self.bind = bind
+        if analyses:
+            self.analyses = analyses
 
-_orm.mapper(AnalysisConfiguration, _tables.analysis_configuration_table, properties={
+    def __repr__(self):
+        return "%s(experiment=%s, analyses=%s, analyses=%s)" % (
+            self.__class__.__name__, self.experiment,
+            self.analyses, self.analyses)
+
+
+_orm.mapper(AnalysisConfiguration, _tables.analysis_configuration_table,
+            properties={
     'experiment': _orm.relationship(_experiments.Experiment),
     'bind': _orm.relationship(_binds.AnalysisBind),
     'analyses': _orm.relationship(Analysis, backref='configuration')})

@@ -23,6 +23,19 @@ from . import analyses as _analyses
 
 
 class Run(object):
+    def __init__(self, session=None, analyses=None, parameters=None):
+        if session:
+            self.session = session
+        if analyses:
+            self.analyses = analyses
+        if parameters:
+            self.parameters = parameters
+
+    def __repr__(self):
+        return "%s(session=%s, analyses=%s, parameters=%s)" % (
+            self.__class__.__name__, self.session,
+            self.analyses, self.parameters)
+
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.RunParameter)
 
