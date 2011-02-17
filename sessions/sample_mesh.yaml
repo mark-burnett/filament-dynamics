@@ -1,4 +1,6 @@
-import: ['three_state_random_sample.yaml']
+import:
+    - 'models/three_state_random_random.yaml'
+    - 'experiments/blanchoin_pollard_2002.yaml'
 
 session_name: 'Sample Mesh Session'
 

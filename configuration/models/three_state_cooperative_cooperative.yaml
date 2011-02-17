@@ -1,135 +1,51 @@
-transitions:
-    # Polymerization
-    barbed_pyrene_atp_polymerization:
-        class_name: BarbedPolymerization
-        fixed_parameters:
-            state: pyrene_ATP
-        parameters:
-            rate: barbed_pyrene_atp_polymerization_rate
+import: ['models/basic_polymerization.yaml']
 
-    atp_polymerization:
-        class_name: BarbedPolymerization
-        fixed_parameters:
-            state: ATP
-        parameters:
-            rate: barbed_atp_polymerization_rate
+models:
+    transitions:
+        # Hydrolysis
+        pyrene_cleavage:
+            class_name: CooperativeHydrolysis
+            fixed_parameters:
+                old_state: pyrene_ATP
+                new_state: pyrene_ADPPi
+            parameters:
+                rate: cleavage_rate
+                pyrene_ADPPi: cleavage_cooperativity
+                ADPPi:        cleavage_cooperativity
+                pyrene_ADP:   cleavage_cooperativity
+                ADP:          cleavage_cooperativity
 
-    barbed_pyrene_adppi_polymerization:
-        class_name: BarbedPolymerization
-        fixed_parameters:
-            state: pyrene_ADPPi
-        parameters:
-            rate: barbed_pyrene_adppi_polymerization_rate
-
-    barbed_adppi_polymerization:
-        class_name: BarbedPolymerization
-        fixed_parameters:
-            state: ADPPi
-        parameters:
-            rate: barbed_adppi_polymerization_rate
-
-    barbed_pyrene_adp_polymerization:
-        class_name: BarbedPolymerization
-        fixed_parameters:
-            state: pyrene_ADP
-        parameters:
-            rate: barbed_pyrene_adp_polymerization_rate
-
-    barbed_adp_polymerization:
-        class_name: BarbedPolymerization
-        fixed_parameters:
-            state: ADP
-        parameters:
-            rate: barbed_adp_polymerization_rate
+        cleavage:
+            class_name: CooperativeHydrolysis
+            fixed_parameters:
+                old_state: ATP
+                new_state: ADPPi
+            parameters:
+                rate: cleavage_rate
+                pyrene_ADPPi: cleavage_cooperativity
+                ADPPi:        cleavage_cooperativity
+                pyrene_ADP:   cleavage_cooperativity
+                ADP:          cleavage_cooperativity
 
 
-    # Depolymerization
-    barbed_pyrene_atp_depolymerization:
-        class_name: BarbedDepolymerization
-        fixed_parameters:
-            state: pyrene_ATP
-        parameters:
-            rate: barbed_pyrene_atp_depolymerization_rate
+        pyrene_release:
+            class_name: CooperativeHydrolysisWithByproduct
+            fixed_parameters:
+                old_state: pyrene_ADPPi
+                new_state: pyrene_ADP
+                byproduct: Pi
+            parameters:
+                rate: release_rate
+                pyrene_ADP: release_cooperativity
+                ADP:        release_cooperativity
 
-    atp_depolymerization:
-        class_name: BarbedDepolymerization
-        fixed_parameters:
-            state: ATP
-        parameters:
-            rate: barbed_atp_depolymerization_rate
-
-    barbed_pyrene_adppi_depolymerization:
-        class_name: BarbedDepolymerization
-        fixed_parameters:
-            state: pyrene_ADPPi
-        parameters:
-            rate: barbed_pyrene_adppi_depolymerization_rate
-
-    barbed_adppi_depolymerization:
-        class_name: BarbedDepolymerization
-        fixed_parameters:
-            state: ADPPi
-        parameters:
-            rate: barbed_adppi_depolymerization_rate
-
-    barbed_pyrene_adp_depolymerization:
-        class_name: BarbedDepolymerization
-        fixed_parameters:
-            state: pyrene_ADP
-        parameters:
-            rate: barbed_pyrene_adp_depolymerization_rate
-
-    barbed_adp_depolymerization:
-        class_name: BarbedDepolymerization
-        fixed_parameters:
-            state: ADP
-        parameters:
-            rate: barbed_adp_depolymerization_rate
-
-    # Hydrolysis
-    pyrene_cleavage:
-        class_name: CooperativeHydrolysis
-        fixed_parameters:
-            old_state: pyrene_ATP
-            new_state: pyrene_ADPPi
-        parameters:
-            rate: cleavage_rate
-            pyrene_ADPPi: cleavage_cooperativity
-            ADPPi:        cleavage_cooperativity
-            pyrene_ADP:   cleavage_cooperativity
-            ADP:          cleavage_cooperativity
-
-    cleavage:
-        class_name: CooperativeHydrolysis
-        fixed_parameters:
-            old_state: ATP
-            new_state: ADPPi
-        parameters:
-            rate: cleavage_rate
-            pyrene_ADPPi: cleavage_cooperativity
-            ADPPi:        cleavage_cooperativity
-            pyrene_ADP:   cleavage_cooperativity
-            ADP:          cleavage_cooperativity
-
-
-    pyrene_release:
-        class_name: CooperativeHydrolysisWithByproduct
-        fixed_parameters:
-            old_state: pyrene_ADPPi
-            new_state: pyrene_ADP
-            byproduct: Pi
-        parameters:
-            rate: release_rate
-            pyrene_ADP: release_cooperativity
-            ADP:        release_cooperativity
-
-    release:
-        class_name: CooperativeHydrolysisWithByproduct
-        fixed_parameters:
-            old_state: ADPPi
-            new_state: ADP
-            byproduct: Pi
-        parameters:
-            rate: release_rate
-            pyrene_ADP: release_cooperativity
-            ADP:        release_cooperativity
+        release:
+            class_name: CooperativeHydrolysisWithByproduct
+            fixed_parameters:
+                old_state: ADPPi
+                new_state: ADP
+                byproduct: Pi
+            parameters:
+                rate: release_rate
+                pyrene_ADP: release_cooperativity
+                ADP:        release_cooperativity
