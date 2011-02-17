@@ -45,18 +45,18 @@ class TestAnalysis(unittest.TestCase):
         test_data = {'par_name_1': 7.2,
                      'par_name_2': 61.3}
 
-        r = database.Session()
+        a = database.Analysis()
 
-        r.parameters = test_data
+        a.parameters = test_data
 
-        db_session.add(r)
+        db_session.add(a)
         db_session.commit()
 
-        del r
+        del a
 
-        r2 = db_session.query(database.Session).first()
+        a2 = db_session.query(database.Analysis).first()
         for par_name, value in test_data.iteritems():
-            self.assertEqual(value, r2.parameters[par_name])
+            self.assertEqual(value, a2.parameters[par_name])
 
     def test_configuration_relationship(self):
         c = database.AnalysisConfiguration()

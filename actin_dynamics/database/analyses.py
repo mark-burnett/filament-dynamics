@@ -15,7 +15,6 @@
 
 
 from sqlalchemy import orm as _orm
-from sqlalchemy import sql as _sql
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables as _tables
@@ -67,6 +66,7 @@ class AnalysisConfiguration(object):
 
 _orm.mapper(AnalysisConfiguration, _tables.analysis_configuration_table,
             properties={
-    'experiment': _orm.relationship(_experiments.Experiment),
+    'experiment': _orm.relationship(_experiments.Experiment,
+        backref='analysis_configurations'),
     'bind': _orm.relationship(_binds.AnalysisBind),
     'analyses': _orm.relationship(Analysis, backref='configuration')})

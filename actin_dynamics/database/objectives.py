@@ -15,9 +15,56 @@
 
 
 from sqlalchemy import orm as _orm
+from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables as _tables
+from . import analyses as _analyses
+from . import binds as _binds
+from . import experiments as _experiments
+from . import parameters as _parameters
 
-class Objective(object): pass
+class Objective(object):
+    def __init__(self, analysis=None, configuration=None, value=None,
+                 parameters=None):
+        if analysis:
+            self.analysis = analysis
+        if configuration:
+            self.configuration = configuration
+        if value:
+            self.value = value
+        if parameters:
+            self.parameters = parameters
 
-_orm.mapper(Objective, _tables.objective_table)
+    def __repr__(self):
+        return "%s(analysis=%s, value=%s, value=%s)" % (
+            self.__class__.__name__, self.analysis,
+            self.value, self.value)
+
+    parameters = _ap('_parameters', 'value',
+                     creator=_parameters.ObjectiveParameter)
+
+_orm.mapper(Objective, _tables.objective_table, properties={
+    '_parameters': _orm.relationship(_parameters.ObjectiveParameter,
+        collection_class=_orm.collections.attribute_mapped_collection('name')),
+    'analysis': _orm.relationship(_analyses.Analysis)})
+
+class ObjectiveConfiguration(object):
+    def __init__(self, experiment=None, objectives=None, bind=None):
+        if experiment:
+            self.experiment = experiment
+        if objectives:
+            self.objectives = objectives
+        if bind:
+            self.bind = bind
+
+    def __repr__(self):
+        return "%s(objectives=%s, configuration=%s, bind=%s)" % (
+            self.__class__.__name__, self.objectives,
+            self.configuration, self.bind)
+
+_orm.mapper(ObjectiveConfiguration, _tables.objective_configuration_table,
+            properties={
+    'objectives': _orm.relationship(Objective, backref='configuration'),
+    'experiment': _orm.relationship(_experiments.Experiment,
+        backref='objective_configurations'),
+    'bind': _orm.relationship(_binds.ObjectiveBind)})
