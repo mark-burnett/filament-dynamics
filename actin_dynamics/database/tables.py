@@ -236,7 +236,9 @@ model_bind_table = schema.Table('model_bind', global_state.metadata,
 run_table = schema.Table('run', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('session_id', schema.types.Integer,
-                      schema.ForeignKey('session.id')))
+                      schema.ForeignKey('session.id')),
+        schema.Column('experiment_id', schema.types.Integer,
+                      schema.ForeignKey('experiment.id')))
 
 
 analysis_table = schema.Table('analysis', global_state.metadata,
