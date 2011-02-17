@@ -19,7 +19,19 @@ from sqlalchemy import orm as _orm
 from . import tables as _tables
 from . import runs as _runs
 
-class Job(object): pass
+class Job(object):
+    def __init__(self, run=None, worker_uuid=None, complete=None):
+        if run:
+            self.run = run
+        if worker_uuid:
+            self.worker_uuid = worker_uuid
+        if complete is not None:
+            self.complete = complete
+
+    def __repr__(self):
+        return "%s(run=%s, worker_uuid=%s, complete=%s)" % (
+                self.__class__.__name__, self.run,
+                self.worker_uuid, self.complete)
 
 _orm.mapper(Job, _tables.job_table, properties={
     'run': _orm.relationship(_runs.Run)})

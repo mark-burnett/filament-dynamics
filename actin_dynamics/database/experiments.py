@@ -23,10 +23,13 @@ from . import parameters as _parameters
 
 
 class Experiment(object):
-    def __init__(self,  name=None, parameters=None, measurements=None,
-                 end_conditions=None, concentrations=None, transitions=None):
+    def __init__(self,  name=None, session=None, parameters=None,
+                 measurements=None, end_conditions=None, concentrations=None,
+                 transitions=None):
         if name:
             self.name = name
+        if session:
+            self.session = session
         if parameters:
             self.parameters = parameters
         if measurements:

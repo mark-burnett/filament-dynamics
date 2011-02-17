@@ -21,32 +21,25 @@ from actin_dynamics import database
 engine = create_engine('sqlite:///:memory:')
 db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
 
-class TestSession(unittest.TestCase):
+class TestJob(unittest.TestCase):
     def setUp(self):
         database.metadata.create_all(engine)
 
     def tearDown(self):
         database.metadata.drop_all(engine)
 
-    def test_parameters(self):
-        test_data = {'par_name_1': 7.2,
-                     'par_name_2': 61.3}
+    def test_run_relationship(self):
+        r = database.Run()
 
-        s = database.Session('ses 1')
+        j = database.Job(run=r)
 
-        s.parameters = test_data
-
-        db_session.add(s)
+        db_session.add(j)
         db_session.commit()
 
-        del s
-
-        s2 = db_session.query(database.Session).first()
-        for par_name, value in test_data.iteritems():
-            self.assertEqual(value, s2.parameters[par_name])
-
-    def test_run_relationship(self):
-        pass
+        j2 = db_session.query(database.Job).first()
+        self.assertEqual(j, j2)
+        self.assertEqual(r, j2.run)
+        self.assertTrue(j2.run.id >= 1)
 
 
 if '__main__' == __name__:
