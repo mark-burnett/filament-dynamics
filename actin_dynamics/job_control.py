@@ -13,17 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import time
+import uuid
 
-import elixir
-
-#from .io import database
-
+from . import database
 from . import utils
 
 
-PID = os.getpid()
+# This is how we will identify this process to everyone.
+UUID = uuid.uuid4()
 
 
 def job_iterator():

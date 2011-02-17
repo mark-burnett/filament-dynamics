@@ -129,6 +129,7 @@ schema.Index('objective_parameters_unique_columns',
              objective_parameters_table.c.objective_id,
              unique=True)
 
+
 # Bind arguments
 argument_table = schema.Table('argument', global_state.metadata,
         schema.Column('id',    schema.types.Integer, primary_key=True),
@@ -185,6 +186,34 @@ experiment_bind_table = schema.Table('experiment_bind', global_state.metadata,
         schema.Column('experiment_id', schema.types.Integer,
                       schema.ForeignKey('experiment.id')))
 
+analysis_configuration_table = schema.Table('analysis_configuration',
+                                            global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('experiment_id', schema.types.Integer,
+                      schema.ForeignKey('experiment.id')),
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('bind_id', schema.types.Integer,
+                      schema.ForeignKey('bind.id')))
+
+schema.Index('analysis_configuration_unique_columns',
+             analysis_configuration_table.c.experiment_id,
+             analysis_configuration_table.c.name,
+             unique=True)
+
+objective_configuration_table = schema.Table('objective_configuration',
+                                         global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('experiment_id', schema.types.Integer,
+                      schema.ForeignKey('experiment.id')),
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('bind_id', schema.types.Integer,
+                      schema.ForeignKey('bind.id')))
+
+schema.Index('objectives_configuration_unique_columns',
+             objective_configuration_table.c.experiment_id,
+             objective_configuration_table.c.name,
+             unique=True)
+
 
 # Model definitions
 model_table = schema.Table('model', global_state.metadata,
@@ -210,21 +239,6 @@ run_table = schema.Table('run', global_state.metadata,
                       schema.ForeignKey('session.id')))
 
 
-analysis_configuration_table = schema.Table('analysis_configuration',
-                                            global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('experiment_id', schema.types.Integer,
-                      schema.ForeignKey('experiment.id')),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
-        schema.Column('bind_id', schema.types.Integer,
-                      schema.ForeignKey('bind.id')))
-
-schema.Index('analysis_configuration_unique_columns',
-             analysis_configuration_table.c.experiment_id,
-             analysis_configuration_table.c.name,
-             unique=True)
-
-
 analysis_table = schema.Table('analysis', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('run_id', schema.types.Integer,
@@ -245,21 +259,6 @@ analysis_results_table = schema.Table('analysis_result',
                       schema.ForeignKey('analysis.id')),
         schema.Column('abscissa', schema.types.Float),
         schema.Column('ordinate', schema.types.Float))
-
-
-objective_configuration_table = schema.Table('objective_configuration',
-                                         global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('experiment_id', schema.types.Integer,
-                      schema.ForeignKey('experiment.id')),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
-        schema.Column('bind_id', schema.types.Integer,
-                      schema.ForeignKey('bind.id')))
-
-schema.Index('objectives_configuration_unique_columns',
-             objective_configuration_table.c.experiment_id,
-             objective_configuration_table.c.name,
-             unique=True)
 
 
 objective_table = schema.Table('objective', global_state.metadata,

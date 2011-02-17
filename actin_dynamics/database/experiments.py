@@ -23,6 +23,27 @@ from . import parameters as _parameters
 
 
 class Experiment(object):
+    def __init__(self,  name=None, parameters=None, measurements=None,
+                 end_conditions=None, concentrations=None, transitions=None):
+        if name:
+            self.name = name
+        if parameters:
+            self.parameters = parameters
+        if measurements:
+            self.measurements = measurements
+        if end_conditions:
+            self.end_conditions = end_conditions
+        if concentrations:
+            self.concentrations = concentrations
+        if transitions:
+            self.transitions = transitions
+
+    def __repr__(self):
+        return ("%s(name='%s', parameters=%s, measurements=%s," +
+                " end_conditions=%s, concentrations=%s, transitions=%s)"
+            % (self.name, self.parameters, self.measurements,
+               self.end_conditions, self.concentrations, self.transitions))
+
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.ExperimentParameter)
 

@@ -49,7 +49,9 @@ _orm.mapper(Objective, _tables.objective_table, properties={
     'analysis': _orm.relationship(_analyses.Analysis)})
 
 class ObjectiveConfiguration(object):
-    def __init__(self, experiment=None, objectives=None, bind=None):
+    def __init__(self, name=None, experiment=None, objectives=None, bind=None):
+        if name:
+            self.name = name
         if experiment:
             self.experiment = experiment
         if objectives:
