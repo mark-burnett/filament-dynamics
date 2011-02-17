@@ -42,14 +42,19 @@ class DatabaseConfiguration(object):
         return result
 
 def setup_database(config_filename):
-    '''Sets up singletons needed to access the database.
+    '''Uses config file to create database access singletons.
     '''
     co = configobj.ConfigObj(config_filename)
-    dbc = DatabaseConfiguration(**co['database'])
+    setup_database_from_dict(co['database'])
+
+def setup_database_from_dict(db_dict):
+    '''Sets up singletons needed to access the database.
+    '''
+    dbc = DatabaseConfiguration(**db_dict)
 
     engine = create_engine(dbc.bind)
+    db_session_class = orm.sessionmaker(bind=engine)
     database.metadata.create_all(engine)
-    db_session_class = orm.sessionmaker()
 
     # Assign singletons
     database.DBSession = db_session_class

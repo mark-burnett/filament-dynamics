@@ -15,6 +15,8 @@
 
 from .global_state import metadata
 
+from . import tables
+
 from .analyses import *
 from .arguments import *
 from .binds import *
@@ -38,5 +40,3 @@ del objectives
 del parameters
 del runs
 del sessions
-
-del tables

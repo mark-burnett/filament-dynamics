@@ -16,6 +16,8 @@
 import time
 import uuid
 
+from sqlalchemy import sql
+
 from . import database
 from . import utils
 
@@ -29,41 +31,31 @@ def job_iterator():
     while job:
         job = get_job()
         if job:
+            # XXX just making sure we're clean!
+            assert job.worker_uuid == UUID
             yield job
 
 def get_job():
-    try:
-        return _get_job_mysql()
-    except elixir.sqlalchemy.exc.OperationalError:
-        elixir.session.rollback()
-        global get_job
-        get_job = _get_job_fallback
-        return _get_job_fallback()
-
-def _get_job_mysql():
-    update_sql = 'UPDATE job SET pid = %s WHERE pid = 0 LIMIT 1;' % PID
-    if elixir.metadata.bind.execute(update_sql):
-        # There should be exactly one of these.
-        return database.Job.query.filter_by(pid=PID, complete=False).first()
-
-def _get_job_fallback():
-    job_query = database.Job.query.filter_by(pid=0, complete=False)
-    job = job_query.with_lockmode('update').first()
+    db_session = database.DBSession()
+    job = db_session.query(database.Job).filter_by(complete=False,
+            worker_uuid=None).with_lockmode('update_nowait').first()
     if job:
-        job.pid = PID
-        elixir.session.commit()
+        job.worker_uuid = UUID
+        db_session.commit()
 
     return job
 
 
 def cleanup_jobs():
-    job_query = database.Job.query
+    db_session = database.DBSession()
+    job_query = db_session.query(database.Job).filter_by(complete=False
+            ).filter(database.Job.worker_uuid != None)
 
-    job_query.filter_by(complete=True).delete()
-    job_query.update({'pid': 0})
-    elixir.session.commit()
+    job_query.update({'worker_uuid': None})
+    db_session.commit()
 
 
+# XXX This probably just goes away now.  There are multiple mechanisms for controlers
 def create_jobs(parameter_iterator, object_graph_yaml, group_name):
     group = database.Group.get_or_create(name=group_name)
     group.revision = utils.get_mercurial_revision()
@@ -72,27 +64,3 @@ def create_jobs(parameter_iterator, object_graph_yaml, group_name):
     for pars in parameter_iterator:
         job = database.Job.from_parameters_dict(pars, group)
         elixir.session.commit()
-
-
-def complete_job(job):
-    job.complete = True
-    elixir.session.commit()
-
-
-def delete_all_jobs():
-    database.Job.query.delete()
-    elixir.session.commit()
-
-
-def duplicate_jobs_exist():
-    for i1, j1 in enumerate(database.Job.query):
-        j1p = j1.parameters_dict
-        for i2, j2 in enumerate(database.Job.query):
-            if i1 != i2 and j1p == j2.parameters_dict:
-                return j1, j2
-
-def duplicate_results_exist(group):
-    for i1, r1 in enumerate(database.Run.query.filter_by(group=group)):
-        for i2, r2 in enumerate(database.Run.query.filter_by(group=group)):
-            if i1 != i2 and r1.job_id == r2.job_id:
-                return r1, r2

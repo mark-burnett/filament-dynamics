@@ -30,7 +30,8 @@ MAX_POLY_LENGTH = 16
 # ---------------------------------------------------------------------
 session_table = schema.Table('session', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)))
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
 
 
 # ---------------------------------------------------------------------
@@ -42,7 +43,8 @@ job_table = schema.Table('job', global_state.metadata,
                       schema.ForeignKey('run.id')),
         schema.Column('worker_uuid', schema.types.String(36), index=True),
         schema.Column('complete', schema.types.Boolean, index=True,
-                      default=False))
+                      default=False),
+        mysql_engine='InnoDB')
 
 
 # ---------------------------------------------------------------------
@@ -55,14 +57,16 @@ parameters_table = schema.Table('parameter', global_state.metadata,
         schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
         schema.Column('value', schema.types.Float, index=True),
         schema.Column('type',  schema.types.String(MAX_POLY_LENGTH),
-                      nullable=False, index=True))
+                      nullable=False, index=True),
+        mysql_engine='InnoDB')
 
 session_parameters_table = schema.Table('session_parameter',
                                         global_state.metadata,
         schema.Column('parameter_id', schema.types.Integer,
                       schema.ForeignKey('parameter.id'), primary_key=True),
         schema.Column('session_id', schema.types.Integer,
-                      schema.ForeignKey('session.id')))
+                      schema.ForeignKey('session.id')),
+        mysql_engine='InnoDB')
 
 schema.Index('session_parameters_unique_columns',
              session_parameters_table.c.parameter_id,
@@ -74,7 +78,8 @@ experiment_parameters_table = schema.Table('experiment_parameter',
         schema.Column('parameter_id', schema.types.Integer,
                       schema.ForeignKey('parameter.id'), primary_key=True),
         schema.Column('experiment_id', schema.types.Integer,
-                      schema.ForeignKey('experiment.id')))
+                      schema.ForeignKey('experiment.id')),
+        mysql_engine='InnoDB')
 
 schema.Index('experiment_parameters_unique_columns',
              experiment_parameters_table.c.parameter_id,
@@ -86,7 +91,8 @@ model_parameters_table = schema.Table('model_parameter',
         schema.Column('parameter_id', schema.types.Integer,
                       schema.ForeignKey('parameter.id'), primary_key=True),
         schema.Column('model_id', schema.types.Integer,
-                      schema.ForeignKey('model.id')))
+                      schema.ForeignKey('model.id')),
+        mysql_engine='InnoDB')
 
 schema.Index('model_parameters_unique_columns',
              model_parameters_table.c.parameter_id,
@@ -98,7 +104,8 @@ run_parameters_table = schema.Table('run_parameter',
         schema.Column('parameter_id', schema.types.Integer,
                       schema.ForeignKey('parameter.id'), primary_key=True),
         schema.Column('run_id', schema.types.Integer,
-                      schema.ForeignKey('run.id')))
+                      schema.ForeignKey('run.id')),
+        mysql_engine='InnoDB')
 
 schema.Index('run_parameters_unique_columns',
              run_parameters_table.c.parameter_id,
@@ -110,7 +117,8 @@ analysis_parameters_table = schema.Table('analysis_parameter',
         schema.Column('parameter_id', schema.types.Integer,
                       schema.ForeignKey('parameter.id'), primary_key=True),
         schema.Column('analysis_id', schema.types.Integer,
-                      schema.ForeignKey('analysis.id')))
+                      schema.ForeignKey('analysis.id')),
+        mysql_engine='InnoDB')
 
 schema.Index('analysis_parameters_unique_columns',
              analysis_parameters_table.c.parameter_id,
@@ -122,7 +130,8 @@ objective_parameters_table = schema.Table('objective_parameter',
         schema.Column('parameter_id', schema.types.Integer,
                       schema.ForeignKey('parameter.id'), primary_key=True),
         schema.Column('objective_id', schema.types.Integer,
-                      schema.ForeignKey('objective.id')))
+                      schema.ForeignKey('objective.id')),
+        mysql_engine='InnoDB')
 
 schema.Index('objective_parameters_unique_columns',
              objective_parameters_table.c.parameter_id,
@@ -137,7 +146,8 @@ argument_table = schema.Table('argument', global_state.metadata,
                       schema.ForeignKey('bind.id')),
         schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
         schema.Column('type',  schema.types.String(MAX_POLY_LENGTH),
-                      nullable=False, index=True))
+                      nullable=False, index=True),
+        mysql_engine='InnoDB')
 
 schema.Index('argument_unique_columns',
              argument_table.c.bind_id,
@@ -147,7 +157,8 @@ schema.Index('argument_unique_columns',
 fixed_argument_table = schema.Table('fixed_argument', global_state.metadata,
         schema.Column('argument_id', schema.types.Integer,
                       schema.ForeignKey('argument.id'), primary_key=True),
-        schema.Column('value', schema.types.String(MAX_NAME_LENGTH)))
+        schema.Column('value', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
 
 variable_argument_table = schema.Table('variable_argument',
                                        global_state.metadata,
@@ -155,18 +166,19 @@ variable_argument_table = schema.Table('variable_argument',
                       schema.ForeignKey('argument.id'), primary_key=True),
         # NOTE Technically this is a foreign key, but I never do any lookups
             # from here, so there's no need to include the index.
-        schema.Column('parameter_name', schema.types.String(MAX_NAME_LENGTH)))
+        schema.Column('parameter_name', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
 
 
 # Bindings (map strings/yaml repr to object factories)
-# XXX probably need to add a 'name' field here...
-    # then I will need to remove the name field from analysis & objectives
 bind_table = schema.Table('bind', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('module_name',  schema.types.String(MAX_POLY_LENGTH),
                       nullable=False),
         schema.Column('class_name', schema.types.String(MAX_NAME_LENGTH),
-                      nullable=False))
+                      nullable=False),
+        schema.Column('label', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
 
 
 # Experiment definitions
@@ -174,7 +186,8 @@ experiment_table = schema.Table('experiment', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('session_id', schema.types.Integer,
                       schema.ForeignKey('session.id')),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)))
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
 
 schema.Index('experiment_unique_columns',
              experiment_table.c.session_id,
@@ -186,20 +199,21 @@ experiment_bind_table = schema.Table('experiment_bind', global_state.metadata,
         schema.Column('bind_id', schema.types.Integer,
                       schema.ForeignKey('bind.id')),
         schema.Column('experiment_id', schema.types.Integer,
-                      schema.ForeignKey('experiment.id')))
+                      schema.ForeignKey('experiment.id')),
+        mysql_engine='InnoDB')
 
 analysis_configuration_table = schema.Table('analysis_configuration',
                                             global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('experiment_id', schema.types.Integer,
                       schema.ForeignKey('experiment.id')),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
         schema.Column('bind_id', schema.types.Integer,
-                      schema.ForeignKey('bind.id')))
+                      schema.ForeignKey('bind.id')),
+        mysql_engine='InnoDB')
 
 schema.Index('analysis_configuration_unique_columns',
              analysis_configuration_table.c.experiment_id,
-             analysis_configuration_table.c.name,
+             analysis_configuration_table.c.bind_id,
              unique=True)
 
 objective_configuration_table = schema.Table('objective_configuration',
@@ -207,13 +221,13 @@ objective_configuration_table = schema.Table('objective_configuration',
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('experiment_id', schema.types.Integer,
                       schema.ForeignKey('experiment.id')),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
         schema.Column('bind_id', schema.types.Integer,
-                      schema.ForeignKey('bind.id')))
+                      schema.ForeignKey('bind.id')),
+        mysql_engine='InnoDB')
 
 schema.Index('objectives_configuration_unique_columns',
              objective_configuration_table.c.experiment_id,
-             objective_configuration_table.c.name,
+             objective_configuration_table.c.bind_id,
              unique=True)
 
 
@@ -222,14 +236,16 @@ model_table = schema.Table('model', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('session_id', schema.types.Integer,
                       schema.ForeignKey('session.id')),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)))
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
 
 model_bind_table = schema.Table('model_bind', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('bind_id', schema.types.Integer,
                       schema.ForeignKey('bind.id')),
         schema.Column('model_id', schema.types.Integer,
-                      schema.ForeignKey('model.id')))
+                      schema.ForeignKey('model.id')),
+        mysql_engine='InnoDB')
 
 
 # ---------------------------------------------------------------------
@@ -237,10 +253,9 @@ model_bind_table = schema.Table('model_bind', global_state.metadata,
 # ---------------------------------------------------------------------
 run_table = schema.Table('run', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('session_id', schema.types.Integer,
-                      schema.ForeignKey('session.id')),
         schema.Column('experiment_id', schema.types.Integer,
-                      schema.ForeignKey('experiment.id')))
+                      schema.ForeignKey('experiment.id')),
+        mysql_engine='InnoDB')
 
 
 analysis_table = schema.Table('analysis', global_state.metadata,
@@ -248,7 +263,8 @@ analysis_table = schema.Table('analysis', global_state.metadata,
         schema.Column('run_id', schema.types.Integer,
                       schema.ForeignKey('run.id')),
         schema.Column('analysis_configuration_id', schema.types.Integer,
-                      schema.ForeignKey('analysis_configuration.id')))
+                      schema.ForeignKey('analysis_configuration.id')),
+        mysql_engine='InnoDB')
 
 schema.Index('analysis_unique_columns',
              analysis_table.c.run_id,
@@ -262,7 +278,8 @@ analysis_results_table = schema.Table('analysis_result',
         schema.Column('analysis_id', schema.types.Integer,
                       schema.ForeignKey('analysis.id')),
         schema.Column('abscissa', schema.types.Float),
-        schema.Column('ordinate', schema.types.Float))
+        schema.Column('ordinate', schema.types.Float),
+        mysql_engine='InnoDB')
 
 
 objective_table = schema.Table('objective', global_state.metadata,
@@ -271,7 +288,8 @@ objective_table = schema.Table('objective', global_state.metadata,
                       schema.ForeignKey('analysis.id')),
         schema.Column('objective_configuration_id', schema.types.Integer,
                       schema.ForeignKey('objective_configuration.id')),
-        schema.Column('value', schema.types.Float, index=True))
+        schema.Column('value', schema.types.Float, index=True),
+        mysql_engine='InnoDB')
 
 schema.Index('objectives_unique_columns',
              objective_table.c.analysis_id,

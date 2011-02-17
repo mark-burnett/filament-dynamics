@@ -20,22 +20,22 @@ from . import tables as _tables
 from . import experiments as _experiments
 from . import parameters as _parameters
 from . import models as _models
-from . import runs as _runs
 
 class Session(object):
-    def __init__(self, name=None, experiments=None, models=None, runs=None):
+    def __init__(self, name=None, experiments=None, models=None, parameters=None):
         if name:
             self.name = name
         if experiments:
             self.experiments = experiments
         if models:
             self.models = models
-        if runs:
-            self.runs = runs
+        if parameters:
+            self.parameters = parameters
 
     def __repr__(self):
-        return ('Session(name="%s", parameters=%s)'
-                % (self.name, self.parameters))
+        return ('%s(name="%s", parameters=%s, experiments=%s, models=%s)'
+                % (self.__class__.__name__, self.name, self.parameters,
+                   self.experiments, self.models))
 
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.SessionParameter)
@@ -47,5 +47,4 @@ _orm.mapper(Session, _tables.session_table,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
     'experiments': _orm.relationship(_experiments.Experiment,
                                      backref='session'),
-    'models': _orm.relationship(_models.Model, backref='session'),
-    'runs': _orm.relationship(_runs.Run, backref='session')})
+    'models': _orm.relationship(_models.Model, backref='session')})

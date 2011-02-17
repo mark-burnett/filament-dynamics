@@ -25,10 +25,7 @@ from . import experiments as _experiments
 
 
 class Run(object):
-    def __init__(self, session=None, experiment=None, analyses=None,
-                 parameters=None):
-        if session:
-            self.session = session
+    def __init__(self, experiment=None, analyses=None, parameters=None):
         if experiment:
             self.experiment = experiment
         if analyses:
@@ -37,8 +34,8 @@ class Run(object):
             self.parameters = parameters
 
     def __repr__(self):
-        return "%s(session=%s, experiment=%s, analyses=%s, parameters=%s)" % (
-            self.__class__.__name__, self.session, self.experiment,
+        return "%s(experiment=%s, analyses=%s, parameters=%s)" % (
+            self.__class__.__name__, self.experiment,
             self.analyses, self.parameters)
 
     parameters = _ap('_parameters', 'value',
@@ -54,6 +51,5 @@ _orm.mapper(Run, _tables.run_table, properties={
     '_parameters': _orm.relationship(_parameters.RunParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
     'analyses':   _orm.relationship(_analyses.Analysis, backref='run'),
-    'experiment': _orm.relationship(_experiments.Experiment, backref='runs'),
-    'model': _orm.relationship(_models.Model,
-                               secondary=_tables.session_table)})
+    'experiment': _orm.relationship(_experiments.Experiment, backref='runs')})
+# XXX it would be nice to include the model?

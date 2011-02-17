@@ -14,22 +14,16 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import copy
-
-import elixir
-
 import numpy
-import pylab
 
 from IPython.Shell import IPShellEmbed
 
-from actin_dynamics import analysis
-from actin_dynamics import visualization
 from actin_dynamics import io
 
-import actin_dynamics.analysis.pollard
+from actin_dynamics import database
 
-from actin_dynamics.io import database
+from actin_dynamics.configuration import command_line_parsers
+from actin_dynamics.configuration import database as database_config
 
 
 banner = '''
@@ -38,27 +32,17 @@ banner = '''
     This is free software, and you are welcome to redistribute it
     under certain conditions; for details read the LICENSE file.'''
 
-def get_database_dict():
-    result = copy.copy(database.__dict__)
-    for name in result.keys():
-        if '_' == name[0]:
-            del result[name]
-    return result
-
 def console_main():
-    io.db_config.setup_database()
-
-    pylab.ion()
-
-    namespace = get_database_dict()
-    namespace['elixir'] = elixir
-    namespace['visualization'] = visualization
-    namespace['analysis'] = analysis
-    namespace['numpy'] = numpy
-    namespace['pylab'] = pylab
+    namespace = {'database': database,
+                 'db_session': database.DBSession(),
+                 'numpy': numpy,
+                 'io': io}
 
     shell = IPShellEmbed(argv=[], banner=banner)
     shell(local_ns=namespace)
 
 if '__main__' == __name__:
+    namespace = command_line_parsers.worker_process()
+    database_config.setup_database(namespace.db_config)
+
     console_main()

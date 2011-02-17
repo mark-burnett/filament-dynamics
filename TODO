@@ -29,10 +29,9 @@ configuration management
     database session/etc
 
 database structure
-    i can do testing in ram with sqlite (this is a big deal)
+    add revision # for session controller
+        for full provinance we need to know the worker-uuid + revision to
     validation rules (e.g. for bind module_names)
-    figure out result storage
-    figure out analysis/objective configuration vs results
     cascading deletes/orphans
 
 visualization

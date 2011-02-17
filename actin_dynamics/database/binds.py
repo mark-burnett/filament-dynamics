@@ -31,10 +31,11 @@ class Bind(object):
             self.variable_arguments = variable_arguments
 
     def __repr__(self):
-        return (
-"%s(class_name='%s', module_name='%s', fixed_arguments=%s, variable_arguments=%s)"
-                % (self.__class__.__name__, self.class_name, self.module_name,
-                   self.fixed_arguments, self.variable_arguments))
+        return  ("%s(label=%s, class_name='%s', module_name='%s'," +
+                 " fixed_arguments=%s, variable_arguments=%s)" %
+                 (self.__class__.__name__, self.label, self.class_name,
+                  self.module_name, self.fixed_arguments,
+                  self.variable_arguments))
 
     fixed_arguments = _ap('_fixed_arguments', 'value',
                           creator=_arguments.FixedArgument)

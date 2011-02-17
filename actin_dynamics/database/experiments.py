@@ -24,14 +24,16 @@ from . import parameters as _parameters
 
 class Experiment(object):
     def __init__(self,  name=None, session=None, parameters=None,
-                 measurements=None, end_conditions=None, concentrations=None,
-                 transitions=None):
+                 filaments=None, measurements=None, end_conditions=None,
+                 concentrations=None, transitions=None):
         if name:
             self.name = name
         if session:
             self.session = session
         if parameters:
             self.parameters = parameters
+        if filaments:
+            self.filaments = filaments
         if measurements:
             self.measurements = measurements
         if end_conditions:
@@ -42,10 +44,13 @@ class Experiment(object):
             self.transitions = transitions
 
     def __repr__(self):
-        return ("%s(name='%s', parameters=%s, filaments=%s, measurements=%s," +
-                " end_conditions=%s, concentrations=%s, transitions=%s)"
-            % (self.name, self.parameters, self.filaments, self.measurements,
-               self.end_conditions, self.concentrations, self.transitions))
+        return "%s(name=%s)" % (self.__class__.__name__, self.name)
+        return ("%s(name='%s', parameters=%s, session=%s, filaments=%s," +
+                " measurements=%s, end_conditions=%s, concentrations=%s," +
+                " transitions=%s)"
+            % (self.__class__.__name__, self.name, self.parameters, self.sesion,
+               self.filaments, self.measurements, self.end_conditions,
+               self.concentrations, self.transitions))
 
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.ExperimentParameter)
