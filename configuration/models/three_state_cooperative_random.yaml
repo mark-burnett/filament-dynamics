@@ -88,20 +88,28 @@ transitions:
 
     # Hydrolysis
     pyrene_cleavage:
-        class_name: RandomHydrolysis
+        class_name: CooperativeHydrolysis
         fixed_parameters:
             old_state: pyrene_ATP
             new_state: pyrene_ADPPi
         parameters:
             rate: cleavage_rate
+            pyrene_ADPPi: cleavage_cooperativity
+            ADPPi:        cleavage_cooperativity
+            pyrene_ADP:   cleavage_cooperativity
+            ADP:          cleavage_cooperativity
 
     cleavage:
-        class_name: RandomHydrolysis
+        class_name: CooperativeHydrolysis
         fixed_parameters:
             old_state: ATP
             new_state: ADPPi
         parameters:
             rate: cleavage_rate
+            pyrene_ADPPi: cleavage_cooperativity
+            ADPPi:        cleavage_cooperativity
+            pyrene_ADP:   cleavage_cooperativity
+            ADP:          cleavage_cooperativity
 
 
     pyrene_release:

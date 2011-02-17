@@ -159,6 +159,8 @@ variable_argument_table = schema.Table('variable_argument',
 
 
 # Bindings (map strings/yaml repr to object factories)
+# XXX probably need to add a 'name' field here...
+    # then I will need to remove the name field from analysis & objectives
 bind_table = schema.Table('bind', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('module_name',  schema.types.String(MAX_POLY_LENGTH),

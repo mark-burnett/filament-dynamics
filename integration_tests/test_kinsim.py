@@ -62,7 +62,6 @@ class TestKinsim(unittest.TestCase):
                  'integration_tests/kinsim/pollard_pars.yaml',
                  'integration_tests/kinsim/pollard_kinsim.dat')]
 
-        self.num_sims = 10
         self.percent_error = 0.01
         self.epsilon = 0.02
 
@@ -72,8 +71,7 @@ class TestKinsim(unittest.TestCase):
             og   = io.parse_object_graph_file(open(og_file))
             pars = io.parse_parameters_file(open(par_file)).next()
 
-            sg = factories.simulations.single_simulation_generator(og, pars,
-                                                                   self.num_sims)
+            sg = factories.simulations.simulation_generator(og, pars)
 
             analyzed_set = run_support.typical_run(pars, sg)
 

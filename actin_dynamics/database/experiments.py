@@ -42,15 +42,17 @@ class Experiment(object):
             self.transitions = transitions
 
     def __repr__(self):
-        return ("%s(name='%s', parameters=%s, measurements=%s," +
+        return ("%s(name='%s', parameters=%s, filaments=%s, measurements=%s," +
                 " end_conditions=%s, concentrations=%s, transitions=%s)"
-            % (self.name, self.parameters, self.measurements,
+            % (self.name, self.parameters, self.filaments, self.measurements,
                self.end_conditions, self.concentrations, self.transitions))
 
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.ExperimentParameter)
 
 _orm.mapper(Experiment, _tables.experiment_table, properties={
+    'filaments': _orm.relationship(_binds.FilamentBind,
+        secondary=_tables.experiment_bind_table),
     'measurements': _orm.relationship(_binds.MeasurementBind,
         secondary=_tables.experiment_bind_table),
     'end_conditions': _orm.relationship(_binds.EndConditionBind,

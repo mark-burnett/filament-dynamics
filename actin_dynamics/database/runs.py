@@ -20,6 +20,7 @@ from sqlalchemy.ext.associationproxy import association_proxy as _ap
 from . import tables as _tables
 from . import parameters as _parameters
 from . import analyses as _analyses
+from . import models as _models
 from . import experiments as _experiments
 
 
@@ -43,8 +44,16 @@ class Run(object):
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.RunParameter)
 
+    @property
+    def all_parameters(self):
+        result = dict(self.session.parameters)
+        result.update(self.parameters)
+        return result
+
 _orm.mapper(Run, _tables.run_table, properties={
     '_parameters': _orm.relationship(_parameters.RunParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
     'analyses':   _orm.relationship(_analyses.Analysis, backref='run'),
-    'experiment': _orm.relationship(_experiments.Experiment, backref='runs')})
+    'experiment': _orm.relationship(_experiments.Experiment, backref='runs'),
+    'model': _orm.relationship(_models.Model,
+                               secondary=_tables.session_table)})

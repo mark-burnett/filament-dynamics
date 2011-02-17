@@ -17,6 +17,10 @@ from . import shortcuts
 
 from ..simulations import Simulation
 
+def make_run(run):
+    parameters = run.all_parameters
+    filaments = shortcuts.make_filaments()
+
 def make_simulation(object_graph, parameters):
     filaments = shortcuts.make_filaments(object_graph['filaments'],
                                          parameters)

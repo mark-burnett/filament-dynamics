@@ -28,6 +28,24 @@ class TestExperiment(unittest.TestCase):
     def tearDown(self):
         database.metadata.drop_all(engine)
 
+    def test_filament_binds(self):
+        e = database.Experiment('test expt name')
+
+        class_name = 'test_class_name'
+        fixed_arguments = {'fixed a': 'literal 1'}
+        variable_arguments = {'variable a': 'par name 1'}
+
+        fb = database.FilamentBind(class_name=class_name,
+                fixed_arguments=fixed_arguments,
+                variable_arguments=variable_arguments)
+        e.filaments.append(fb)
+
+        db_session.add(e)
+        db_session.commit()
+
+        e2 = db_session.query(database.Experiment).first()
+        self.assertEqual(fb, e2.filaments[0])
+
     def test_measurement_binds(self):
         e = database.Experiment('test expt name')
 

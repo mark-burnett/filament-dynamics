@@ -13,6 +13,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+def instantiate_bind(bind, parameters, registry):
+    cls = registry[bind.class_name]
+
+    kwargs = dict((local_name, parameters[global_name])
+          for local_name, global_name in bind.variable_arguments.iteritems())
+    kwargs.update(dict_map)
+
+    try:
+        fixed_pars = object_dict['fixed_parameters']
+        kwargs.update(fixed_pars)
+    except:
+        pass
+
+    return cls(**kwargs)
+
 def instantiate_binding(object_dict, parameters, registry):
     cls = registry[object_dict['class_name']]
 

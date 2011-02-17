@@ -42,6 +42,19 @@ class TestRun(unittest.TestCase):
         self.assertTrue(r2.session.id >= 1)
 
     def test_experiment_relationship(self):
+        m = database.Model(name='test expt name')
+
+        r = database.Run(experiment=m)
+
+        db_session.add(r)
+        db_session.commit()
+
+        r2 = db_session.query(database.Run).first()
+        self.assertEqual(r, r2)
+        self.assertEqual(m, r2.model)
+        self.assertTrue(r2.experiment.id >= 1)
+
+    def test_experiment_relationship(self):
         e = database.Experiment(name='test expt name')
 
         r = database.Run(experiment=e)

@@ -43,6 +43,18 @@ class Analysis(object):
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.AnalysisParameter)
 
+    @property
+    def measurement(self):
+        times = []
+        values = []
+        for result in self.results:
+            times.append(result.abscissa)
+            values.append(result.ordinate)
+
+        return times, values
+
+    # XXX add measurement setter?
+
 # Analysis should have binds
 _orm.mapper(Analysis, _tables.analysis_table, properties={
     '_parameters': _orm.relationship(_parameters.AnalysisParameter,
