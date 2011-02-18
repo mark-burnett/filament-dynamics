@@ -1,7 +1,7 @@
 name: 'Sample session name'
 
 
-parameter_generator:
+controllers:
     simulation:
         class_name: bind_class
         variable_arguments:
@@ -24,10 +24,8 @@ parameter_generator:
             argument_name: literal
 
 
-parameter_constraints:
-    sample_session_parameter:
-        type:  fixed
-        value: 11.6
+global_parameters:
+    sample_session_parameter: 11.6
 
 
 model:

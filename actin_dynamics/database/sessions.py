@@ -22,7 +22,8 @@ from . import parameters as _parameters
 from . import models as _models
 
 class Session(object):
-    def __init__(self, name=None, experiments=None, models=None, parameters=None):
+    def __init__(self, name=None, experiments=None, models=None,
+                 parameters=None):
         if name:
             self.name = name
         if experiments:

@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,11 +13,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import compressed
-from . import data
-from . import definitions
-#from . import pollard
-#from .results import load_directory
-#
-#from parameters import *
-#from object_graph import *
+from actin_dynamics import database, io
+
+def load_complete_session(filename, source_directory):
+    session_dict = io.definitions.load_definition(filename, source_directory)
+
+    experiments_dict = session_dict.get('experiments', {})
+    model_dict = session_dict.get('model', {})
+
+    parameter_generators_dict = session_dict.get('parameter_generators', {})
+
+    name = session_dict.get('name', None)
+    global_parameters = session_dict.get('global_parameters', {})
+
+    session = database.Session(name=name, parameters=global_parameters)

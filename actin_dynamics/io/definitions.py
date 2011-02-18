@@ -21,7 +21,7 @@ def load_definition(filename, source_directory='configuration'):
     with open(os.path.join(source_directory, filename)) as f:
         results = yaml.load(f)
 
-    imports = result.get('import', [])
+    imports = results.get('import', [])
     for import_filename in imports:
         results = merge_dicts(results,
                 load_session_definition(import_filename, source_directory))
