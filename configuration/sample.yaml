@@ -1,0 +1,92 @@
+name: 'Sample session name'
+
+
+parameter_generator:
+    bind_label:
+        class_name: bind_class
+        parameters:
+            argument_name: parameter_name
+        fixed_parameters:
+            argument_name: literal
+
+
+parameter_constraints:
+    sample_session_parameter:
+        type:  fixed
+        value: 11.6
+
+
+model:
+    transitions:
+        bind_label:
+            class_name: bind_class
+            parameters:
+                argument_name: parameter_name
+            fixed_parameters:
+                argument_name: literal
+
+
+experiments:
+    experiment_a:
+        parameters:
+            sample_experimental_parameter:
+                type:  fixed
+                value: 72.1
+
+        simulation:
+            filaments:
+                bind_label:
+                    class_name: bind_class
+                    parameters:
+                        argument_name: parameter_name
+                    fixed_parameters:
+                        argument_name: literal
+
+
+            concentrations:
+                bind_label:
+                    class_name: bind_class
+                    parameters:
+                        argument_name: parameter_name
+                    fixed_parameters:
+                        argument_name: literal
+
+            transitions:
+                bind_label:
+                    class_name: bind_class
+                    parameters:
+                        argument_name: parameter_name
+                    fixed_parameters:
+                        argument_name: literal
+
+            end_conditions:
+                bind_label:
+                    class_name: bind_class
+                    parameters:
+                        argument_name: parameter_name
+                    fixed_parameters:
+                        argument_name: literal
+
+            measurements:
+                bind_label:
+                    class_name: bind_class
+                    parameters:
+                        argument_name: parameter_name
+                    fixed_parameters:
+                        argument_name: literal
+
+        analyses:
+            bind_label:
+                class_name: bind_class
+                parameters:
+                    argument_name: parameter_name
+                fixed_parameters:
+                    argument_name: literal
+
+        objectives:
+            bind_label:
+                class_name: bind_class
+                parameters:
+                    argument_name: parameter_name
+                fixed_parameters:
+                    argument_name: literal

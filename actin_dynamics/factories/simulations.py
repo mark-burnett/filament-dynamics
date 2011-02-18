@@ -19,8 +19,19 @@ from ..simulations import Simulation
 
 def make_run(run):
     parameters = run.all_parameters
-    filaments = shortcuts.make_filaments()
 
+    filaments      = binds.instantiate_binds(run.filaments, parameters)
+    transitions    = binds.instantiate_binds(run.transitions, parameters)
+    measurements   = binds.instantiate_binds(run.measurements, parameters)
+    end_conditions = binds.instantiate_binds(run.end_conditions, parameters)
+    concentrations = binds.instantiate_binds(run.concentrations, parameters)
+
+    return Simulation(transitions=transitions, concentrations=concentrations,
+                      measurements=measurements, end_conditions=end_conditions,
+                      filaments=filaments)
+
+
+# XXX Depracated
 def make_simulation(object_graph, parameters):
     filaments = shortcuts.make_filaments(object_graph['filaments'],
                                          parameters)
@@ -44,6 +55,7 @@ def make_simulation(object_graph, parameters):
 
 def simulation_generator(object_graph, parameters):
     try:
+        # XXX Is this still where # of sims lives?
         number_simulations = parameters['number_of_simulations']
     except:
         print parameters

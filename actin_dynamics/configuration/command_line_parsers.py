@@ -32,9 +32,6 @@ def _delays_and_timeouts(args, namespace):
     parser.add_argument('--idle_timeout', type=float, default=120,
                         help='Time to wait for a job to appear before quitting.')
 
-    parser.add_argument('--collision_delay', type=float, default=0.020,
-                        help='Time to wait after a job collision before retry.')
-
     parser.add_argument('--retry_delay', type=float, default=5,
                         help='Time to wait on an empty queue before retry.')
 

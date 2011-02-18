@@ -44,11 +44,10 @@ class Experiment(object):
             self.transitions = transitions
 
     def __repr__(self):
-        return "%s(name=%s)" % (self.__class__.__name__, self.name)
-        return ("%s(name='%s', parameters=%s, session=%s, filaments=%s," +
+        return (("%s(name='%s', parameters=%s, session=%s, filaments=%s," +
                 " measurements=%s, end_conditions=%s, concentrations=%s," +
-                " transitions=%s)"
-            % (self.__class__.__name__, self.name, self.parameters, self.sesion,
+                " transitions=%s)")
+            % (self.__class__.__name__, self.name, self.parameters, self.session,
                self.filaments, self.measurements, self.end_conditions,
                self.concentrations, self.transitions))
 

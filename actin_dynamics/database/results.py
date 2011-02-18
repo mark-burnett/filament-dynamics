@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 #    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -15,23 +13,20 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import time
 
-from actin_dynamics.configuration import command_line_parsers
-from actin_dynamics.configuration import database
+from sqlalchemy import orm as _orm
 
-from actin_dynamics import job_control, run_support
+from . import tables as _tables
 
-def main(idle_timeout, retry_delay):
-    pass
-#    time.sleep(delay)
-#    for job in job_control.job_iterator():
-#        run_support.run_simulation_job(job)
-#        job_control.complete_job(job)
+class AnalysisResult(object):
+    def __init__(self, abscissa=None, ordinate=None):
+        if abscissa:
+            self.abscissa = abscissa
+        if ordinate:
+            self.ordinate = ordinate
 
+    def __repr__(self):
+        return '%s(abscissa=%s, ordinate=%s)' % (
+                self.__class__.__name__, self.abscissa, self.ordinate)
 
-if '__main__' == __name__:
-    namespace = command_line_parsers.worker_process()
-    database.setup_database(namespace.db_config)
-
-    main(namespace.idle_timeout, namespace.retry_delay)
+_orm.mapper(AnalysisResult, _tables.analysis_results_table)

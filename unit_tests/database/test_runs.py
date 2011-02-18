@@ -28,19 +28,6 @@ class TestRun(unittest.TestCase):
     def tearDown(self):
         database.metadata.drop_all(engine)
 
-    def test_session_relationship(self):
-        s = database.Session('test session name')
-
-        r = database.Run(session=s)
-
-        db_session.add(r)
-        db_session.commit()
-
-        r2 = db_session.query(database.Run).first()
-        self.assertEqual(r, r2)
-        self.assertEqual(s, r2.session)
-        self.assertTrue(r2.session.id >= 1)
-
     def test_experiment_relationship(self):
         m = database.Model(name='test expt name')
 
