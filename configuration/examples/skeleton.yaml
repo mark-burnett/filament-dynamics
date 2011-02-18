@@ -4,23 +4,23 @@ name: 'Sample session name'
 parameter_generator:
     simulation:
         class_name: bind_class
-        parameters:
+        variable_arguments:
             argument_name: parameter_name
-        fixed_parameters:
+        fixed_arguments:
             argument_name: literal
 
     analysis:
         class_name: bind_class
-        parameters:
+        variable_arguments:
             argument_name: parameter_name
-        fixed_parameters:
+        fixed_arguments:
             argument_name: literal
 
     objective:
         class_name: bind_class
-        parameters:
+        variable_arguments:
             argument_name: parameter_name
-        fixed_parameters:
+        fixed_arguments:
             argument_name: literal
 
 
@@ -34,9 +34,9 @@ model:
     transitions:
         bind_label:
             class_name: bind_class
-            parameters:
+            variable_arguments:
                 argument_name: parameter_name
-            fixed_parameters:
+            fixed_arguments:
                 argument_name: literal
 
 
@@ -56,9 +56,9 @@ experiments:
             strategy_element_a:
                 bind_label:
                     class_name: bind_class
-                    parameters:
+                    variable_arguments:
                         argument_name: parameter_name
-                    fixed_parameters:
+                    fixed_arguments:
                         argument_name: literal
 
 
@@ -73,9 +73,9 @@ experiments:
                 strategy:
                     - bind_label:
                         class_name: bind_class
-                        parameters:
+                        variable_arguments:
                             argument_name: parameter_name
-                        fixed_parameters:
+                        fixed_arguments:
                             argument_name: literal
 
 
@@ -86,10 +86,10 @@ experiments:
                         type:  fixed
                         value: 11.6
 
-                strategy_element:
-                    bind_label:
+                strategy:
+                    - bind_label:
                         class_name: bind_class
-                        parameters:
+                        variable_arguments:
                             argument_name: parameter_name
-                        fixed_parameters:
+                        fixed_arguments:
                             argument_name: literal

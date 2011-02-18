@@ -1,0 +1,15 @@
+parameter_generator:
+    simulation:
+        class_name: MeshGenerator
+        fixed_arguments:
+            cleavage_rate: [linear, 10]
+            release_rate:  [linear, 10]
+
+    analysis:
+        class_name: FixedParameters # The default mechanism
+
+    objective:
+        class_name: SequentialFit
+        fixed_arguments:
+            - pollard_pyrene_fit: [filament_tip_concentration, pyrene_atp_weight]
+            - pollard_adppi_fit:  [cleavage_rate]

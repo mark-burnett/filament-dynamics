@@ -16,8 +16,6 @@
 import time
 import uuid
 
-from sqlalchemy import sql
-
 from . import database
 from . import utils
 
@@ -46,7 +44,7 @@ def get_job():
     return job
 
 
-def cleanup_jobs():
+def cleanup_incomplete_jobs():
     db_session = database.DBSession()
     job_query = db_session.query(database.Job).filter_by(complete=False
             ).filter(database.Job.worker_uuid != None)

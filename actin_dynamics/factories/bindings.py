@@ -41,7 +41,7 @@ def dict_single(object_dict, parameters, label, registry):
     par_map = {}
     dict_map = {}
     try: # NOTE getattr doesn't appear to work on yaml 'dicts' for some reason.
-        for local_name, value in object_dict['parameters'].iteritems():
+        for local_name, value in object_dict['variable_arguments'].iteritems():
             try:
                 temp_map = {}
                 for internal_key, internal_value in value.iteritems():
@@ -59,7 +59,7 @@ def dict_single(object_dict, parameters, label, registry):
     kwargs['label'] = label
 
     try:
-        fixed_pars = object_dict['fixed_parameters']
+        fixed_pars = object_dict['fixed_arguments']
         kwargs.update(fixed_pars)
     except:
         pass
