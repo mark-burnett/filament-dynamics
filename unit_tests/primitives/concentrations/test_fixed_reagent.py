@@ -15,7 +15,7 @@
 
 import unittest
 
-from actin_dynamics import concentrations
+from actin_dynamics.primitives import concentrations
 
 class FixedReagentTest(unittest.TestCase):
     def test_typical_FixedReagent(self):

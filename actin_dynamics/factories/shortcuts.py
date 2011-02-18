@@ -15,13 +15,13 @@
 
 import collections
 
-from bindings import instantiate_binding
+#from bindings import instantiate_binding
 
-from .. import concentrations
-from .. import end_conditions
-from .. import measurements
-from .. import filaments
-from .. import transitions
+#from .. import concentrations
+#from .. import end_conditions
+#from .. import measurements
+#from .. import filaments
+#from .. import transitions
 
 def make_filaments(filaments_dict, parameters):
     factory = instantiate_binding(filaments_dict, parameters, filaments.registry)

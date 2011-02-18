@@ -15,7 +15,7 @@
 
 import unittest
 
-from actin_dynamics.transitions.base_classes import SolutionTransition
+from actin_dynamics.primitives.transitions.base_classes import SolutionTransition
 
 class SolutionTransitionCountTest(unittest.TestCase):
     def test_initialization(self):

@@ -15,7 +15,7 @@
 
 import unittest
 
-from actin_dynamics.filaments.base_classes import FilamentFactory
+from actin_dynamics.primitives.filaments.base_classes import FilamentFactory
 
 class FilamentFactoryBase(unittest.TestCase):
     def test_exists(self):

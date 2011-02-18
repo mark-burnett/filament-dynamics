@@ -17,7 +17,7 @@ import StringIO
 import yaml
 
 from . import io as _io
-from . import simulations as _simulations
+from . import simulation_strategy as _simulations
 
 from . import factories
 

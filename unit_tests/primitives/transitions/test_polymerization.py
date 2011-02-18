@@ -17,9 +17,9 @@ import unittest
 
 from collections import defaultdict
 
-from actin_dynamics.transitions import BarbedPolymerization
+from actin_dynamics.primitives.transitions import BarbedPolymerization
 
-from actin_dynamics.filaments.single_strand_filaments import Filament
+from actin_dynamics.primitives.filaments.single_strand_filaments import Filament
 
 from unit_tests.mocks.concentrations import MockConcentration
 

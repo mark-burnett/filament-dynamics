@@ -17,9 +17,9 @@ import unittest
 from collections import defaultdict
 
 from unit_tests.mocks.concentrations import MockConcentration
-from actin_dynamics.filaments.single_strand_filaments import Filament
+from actin_dynamics.primitives.filaments.single_strand_filaments import Filament
 
-from actin_dynamics.transitions import BarbedDepolymerization
+from actin_dynamics.primitives.transitions import BarbedDepolymerization
 
 class BarbedDepolymerizationSingleFilament(unittest.TestCase):
     def setUp(self):
