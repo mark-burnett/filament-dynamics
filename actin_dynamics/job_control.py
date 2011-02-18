@@ -23,7 +23,7 @@ from . import utils
 
 
 # This is how we will identify this process to everyone.
-UUID = uuid.uuid4()
+UUID = str(uuid.uuid4())
 
 
 def job_iterator():
@@ -31,7 +31,7 @@ def job_iterator():
     while job:
         job = get_job()
         if job:
-            # XXX just making sure we're clean!
+            # Just making sure we're clean!
             assert job.worker_uuid == UUID
             yield job
 
@@ -53,14 +53,3 @@ def cleanup_jobs():
 
     job_query.update({'worker_uuid': None})
     db_session.commit()
-
-
-# XXX This probably just goes away now.  There are multiple mechanisms for controlers
-def create_jobs(parameter_iterator, object_graph_yaml, group_name):
-    group = database.Group.get_or_create(name=group_name)
-    group.revision = utils.get_mercurial_revision()
-    group.object_graph = object_graph_yaml
-
-    for pars in parameter_iterator:
-        job = database.Job.from_parameters_dict(pars, group)
-        elixir.session.commit()

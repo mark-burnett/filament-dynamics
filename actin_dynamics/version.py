@@ -13,11 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def running_total(values):
-    """
-    Generator that calculates a running total of a sequence.
-    """
-    total = 0
-    for v in values:
-        total += v
-        yield total
+import mercurial.hg
+import mercurial.ui
+
+def source_revision():
+    repo = mercurial.hg.repository(mercurial.ui.ui(), '.')
+    parent = repo.parents()[0]
+    return '%s:%s' % (parent.rev(), parent.hex())

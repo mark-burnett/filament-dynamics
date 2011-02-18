@@ -13,9 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import actin_dynamics
+from actin_dynamics import primitives
 
-def instantiate_bind(bind, parameters, registry):
+def db_single(bind, parameters, registry):
     cls = registry[bind.class_name]
 
     kwargs = dict((local_name, parameters[global_name])
@@ -27,16 +27,15 @@ def instantiate_bind(bind, parameters, registry):
 
     return cls(**kwargs)
 
-def instantiate_binds(binds, parameters):
+def db_multiple(binds, parameters):
     results = []
     for b in binds:
         results.append(instantiate_bind(b, parameters,
-            getattr(actin_dynamics, b.module_name).registry))
+            getattr(primitives, b.module_name).registry))
     return results
 
 
-# XXX Depracated
-def instantiate_binding(object_dict, parameters, registry):
+def dict_single(object_dict, parameters, label, registry):
     cls = registry[object_dict['class_name']]
 
     par_map = {}
@@ -57,6 +56,8 @@ def instantiate_binding(object_dict, parameters, registry):
                   for local_name, global_name in par_map.iteritems())
     kwargs.update(dict_map)
 
+    kwargs['label'] = label
+
     try:
         fixed_pars = object_dict['fixed_parameters']
         kwargs.update(fixed_pars)
@@ -64,3 +65,10 @@ def instantiate_binding(object_dict, parameters, registry):
         pass
 
     return cls(**kwargs)
+
+def dict_multiple(binds, parameters, registry):
+    results = []
+    for label, object_dict in binds.iteritems():
+        results.append(dict_single(object_dict, parameters, label, registry))
+
+    return results

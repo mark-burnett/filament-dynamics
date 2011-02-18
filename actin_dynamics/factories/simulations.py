@@ -14,17 +14,18 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import shortcuts
+from . import bindings
 
-from ..simulations import Simulation
+from ..simulation_strategy import Simulation
 
 def make_run(run):
     parameters = run.all_parameters
 
-    filaments      = binds.instantiate_binds(run.filaments, parameters)
-    transitions    = binds.instantiate_binds(run.transitions, parameters)
-    measurements   = binds.instantiate_binds(run.measurements, parameters)
-    end_conditions = binds.instantiate_binds(run.end_conditions, parameters)
-    concentrations = binds.instantiate_binds(run.concentrations, parameters)
+    filaments      = bindings.db_multiple(run.filaments,      parameters)
+    transitions    = bindings.db_multiple(run.transitions,    parameters)
+    measurements   = bindings.db_multiple(run.measurements,   parameters)
+    end_conditions = bindings.db_multiple(run.end_conditions, parameters)
+    concentrations = bindings.db_multiple(run.concentrations, parameters)
 
     return Simulation(transitions=transitions, concentrations=concentrations,
                       measurements=measurements, end_conditions=end_conditions,
