@@ -16,7 +16,11 @@ experiments:
                           stop_time:     simulation_duration
                       fixed_arguments:
                           method: previous_value
+                          measurement_type: filament
+
                     - class_name: StandardErrorMean
+                      fixed_arguments:
+                          measurement_type: filament
 
             pyrene_adppi_count:
                 strategy:
