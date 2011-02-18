@@ -65,18 +65,18 @@ experiments:
         analyses:
             analysis_a:
                 # XXX should there be parameter constraints?
+                #      Yes, it doesn't really cost me anything to include
                 parameter_constraints:
                     sample_analysis_parameter:
                         type:  fixed
                         value: 11.6
 
                 strategy:
-                    - bind_label:
-                        class_name: bind_class
-                        variable_arguments:
-                            argument_name: parameter_name
-                        fixed_arguments:
-                            argument_name: literal
+                    - class_name: bind_class
+                      variable_arguments:
+                          argument_name: parameter_name
+                      fixed_arguments:
+                          argument_name: literal
 
 
         objectives:

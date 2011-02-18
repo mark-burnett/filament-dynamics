@@ -38,31 +38,15 @@ def db_multiple(binds, parameters):
 def dict_single(object_dict, parameters, label, registry):
     cls = registry[object_dict['class_name']]
 
-    par_map = {}
-    dict_map = {}
-    try: # NOTE getattr doesn't appear to work on yaml 'dicts' for some reason.
-        for local_name, value in object_dict['variable_arguments'].iteritems():
-            try:
-                temp_map = {}
-                for internal_key, internal_value in value.iteritems():
-                    temp_map[internal_key] = parameters[internal_value]
-                dict_map[local_name] = temp_map
-            except:
-                par_map[local_name] = value
-    except:
-        pass
-
-    kwargs = dict((local_name, parameters[global_name])
-                  for local_name, global_name in par_map.iteritems())
-    kwargs.update(dict_map)
+    kwargs = {}
+    for argument_name, parameter_name in object_dict.get('variable_arguments',
+                                             {}).iteritems():
+        kwargs[argument_name] = parameters[parameter_name]
 
     kwargs['label'] = label
 
-    try:
-        fixed_pars = object_dict['fixed_arguments']
-        kwargs.update(fixed_pars)
-    except:
-        pass
+    fixed_pars = object_dict.get('fixed_arguments', {})
+    kwargs.update(fixed_pars)
 
     return cls(**kwargs)
 
