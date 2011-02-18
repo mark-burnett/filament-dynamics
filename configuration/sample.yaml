@@ -2,7 +2,21 @@ name: 'Sample session name'
 
 
 parameter_generator:
-    bind_label:
+    simulation:
+        class_name: bind_class
+        parameters:
+            argument_name: parameter_name
+        fixed_parameters:
+            argument_name: literal
+
+    analysis:
+        class_name: bind_class
+        parameters:
+            argument_name: parameter_name
+        fixed_parameters:
+            argument_name: literal
+
+    objective:
         class_name: bind_class
         parameters:
             argument_name: parameter_name
@@ -28,13 +42,18 @@ model:
 
 experiments:
     experiment_a:
-        parameters:
+        parameter_constraints:
             sample_experimental_parameter:
                 type:  fixed
                 value: 72.1
 
         simulation:
-            filaments:
+            parameter_constraints:
+                sample_simulation_parameter:
+                    type:  fixed
+                    value: 72.1
+
+            strategy_element_a:
                 bind_label:
                     class_name: bind_class
                     parameters:
@@ -42,51 +61,35 @@ experiments:
                     fixed_parameters:
                         argument_name: literal
 
-
-            concentrations:
-                bind_label:
-                    class_name: bind_class
-                    parameters:
-                        argument_name: parameter_name
-                    fixed_parameters:
-                        argument_name: literal
-
-            transitions:
-                bind_label:
-                    class_name: bind_class
-                    parameters:
-                        argument_name: parameter_name
-                    fixed_parameters:
-                        argument_name: literal
-
-            end_conditions:
-                bind_label:
-                    class_name: bind_class
-                    parameters:
-                        argument_name: parameter_name
-                    fixed_parameters:
-                        argument_name: literal
-
-            measurements:
-                bind_label:
-                    class_name: bind_class
-                    parameters:
-                        argument_name: parameter_name
-                    fixed_parameters:
-                        argument_name: literal
 
         analyses:
-            bind_label:
-                class_name: bind_class
-                parameters:
-                    argument_name: parameter_name
-                fixed_parameters:
-                    argument_name: literal
+            analysis_a:
+                # XXX should there be parameter constraints?
+                parameter_constraints:
+                    sample_analysis_parameter:
+                        type:  fixed
+                        value: 11.6
+
+                strategy:
+                    - bind_label:
+                        class_name: bind_class
+                        parameters:
+                            argument_name: parameter_name
+                        fixed_parameters:
+                            argument_name: literal
+
 
         objectives:
-            bind_label:
-                class_name: bind_class
-                parameters:
-                    argument_name: parameter_name
-                fixed_parameters:
-                    argument_name: literal
+            objective_a:
+                parameter_constraints:
+                    sample_objective_parameter:
+                        type:  fixed
+                        value: 11.6
+
+                strategy_element:
+                    bind_label:
+                        class_name: bind_class
+                        parameters:
+                            argument_name: parameter_name
+                        fixed_parameters:
+                            argument_name: literal
