@@ -356,30 +356,39 @@ experiments:
                     - class_name: StandardErrorMean
 
         objectives:
-            pollard_adppi_fit:
-                data_file: 'pollard_2002/adppi_concentration.dat'
+            loaders:
+                pollard_adppi_fit:
+                    class_name: DatFile
+                    fixed_arguments:
+                        data_file: 'pollard_2002/adppi_concentration.dat'
 
-                class_name: SimpleDataFit
-                fixed_arguments:
-                    measurements: total_adppi_count
-                    residual_function: naked_chi_squared
-                    interpolate_simulations: True
+                pollard_pyrene_fit:
+                    class_name: DatFile
+                    fixed_arguments:
+                        data_file: 'pollard_2002/pyrene_fluorescence.dat'
+                        interpolate_data: True
 
-            pollard_pyrene_fit:
-                data_file: 'pollard_2002/pyrene_fluorescence.dat'
 
-                class_name: PyreneFit
-                variable_arguments:
-                    sample_period: sample_period
-                    duration:      simulation_duration
+            executors:
+                pollard_adppi_fit:
+                    class_name: SimpleDataFit
+                    fixed_arguments:
+                        measurements: total_adppi_count
+                        residual_function: naked_chi_squared
+                        interpolate_simulations: True
 
-                    atp_weight:   pyrene_atp_weight
-                    adppi_weight: pyrene_adppi_weight
-                    adp_weight:   pyrene_adp_weight
+                pollard_pyrene_fit:
+                    class_name: PyreneFit
+                    variable_arguments:
+                        sample_period: sample_period
+                        duration:      simulation_duration
 
-                fixed_arguments:
-                    residual_function: naked_chi_squared
-                    interpolate_data: True
-                    atp_state:   pyrene_ATP
-                    adppi_state: pyrene_ADPPi
-                    adp_state:   pyrene_ADP
+                        atp_weight:   pyrene_atp_weight
+                        adppi_weight: pyrene_adppi_weight
+                        adp_weight:   pyrene_adp_weight
+
+                    fixed_arguments:
+                        residual_function: naked_chi_squared
+                        atp_state:   pyrene_ATP
+                        adppi_state: pyrene_ADPPi
+                        adp_state:   pyrene_ADP

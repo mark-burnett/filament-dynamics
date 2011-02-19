@@ -19,14 +19,43 @@ from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables as _tables
 from . import binds as _binds
-from . import experiments as _experiments
 from . import parameters as _parameters
 
+
+class ObjectiveDataEntry(object):
+    def __init__(self, abscissa=None, ordinate=None):
+        if abscissa:
+            self.abscissa = abscissa
+        if ordinate:
+            self.ordinate = ordinate
+
+    def __repr__(self):
+        return "%s(abscissa=%s, ordinate=%s)" % (
+            self.__class__.__name__, self.abscissa, self.ordinate)
+
+_orm.mapper(ObjectiveDataEntry, _tables.objective_data_entry_table)
+
+
+class ObjectiveData(object):
+    def __init__(self, name=None, experiment=None):
+        if name:
+            self.name = name
+        if experiment:
+            self.experiment = experiment
+
+    def __repr__(self):
+        return "%s(name=%s, experiment=%s)" % (
+            self.__class__.__name__, self.name, self.experiment)
+
+_orm.mapper(ObjectiveData, _tables.objective_data_table, properties={
+    'pairs': _orm.relationship(ObjectiveDataEntry)})
+
+
 class Objective(object):
-    def __init__(self, analysis=None, configuration=None, value=None,
+    def __init__(self, run=None, configuration=None, value=None,
                  parameters=None):
-        if analysis:
-            self.analysis = analysis
+        if run:
+            self.run = run
         if configuration:
             self.configuration = configuration
         if value:
@@ -45,26 +74,3 @@ class Objective(object):
 _orm.mapper(Objective, _tables.objective_table, properties={
     '_parameters': _orm.relationship(_parameters.ObjectiveParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name'))})
-
-class ObjectiveConfiguration(object):
-    def __init__(self, name=None, experiment=None, objectives=None, bind=None):
-        if name:
-            self.name = name
-        if experiment:
-            self.experiment = experiment
-        if objectives:
-            self.objectives = objectives
-        if bind:
-            self.bind = bind
-
-    def __repr__(self):
-        return "%s(objectives=%s, configuration=%s, bind=%s)" % (
-            self.__class__.__name__, self.objectives,
-            self.configuration, self.bind)
-
-_orm.mapper(ObjectiveConfiguration, _tables.objective_configuration_table,
-            properties={
-    'objectives': _orm.relationship(Objective, backref='configuration'),
-    'experiment': _orm.relationship(_experiments.Experiment,
-        backref='objective_configurations'),
-    'bind': _orm.relationship(_binds.ObjectiveBind)})

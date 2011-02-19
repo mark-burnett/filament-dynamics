@@ -20,6 +20,7 @@ from sqlalchemy.ext.associationproxy import association_proxy as _ap
 from . import tables as _tables
 from . import binds as _binds
 from . import parameters as _parameters
+from . import objectives as _objectives
 
 
 class Experiment(object):
@@ -66,5 +67,12 @@ _orm.mapper(Experiment, _tables.experiment_table, properties={
         secondary=_tables.experiment_bind_table),
     'transitions': _orm.relationship(_binds.TransitionBind,
         secondary=_tables.experiment_bind_table),
+
+    'analyses': _orm.relationship(_binds.AnalysisBind,
+        secondary=_tables.experiment_bind_table),
+    'objectives': _orm.relationship(_binds.ObjectiveBind,
+        secondary=_tables.experiment_bind_table),
+
     '_parameters': _orm.relationship(_parameters.ExperimentParameter,
-        collection_class=_orm.collections.attribute_mapped_collection('name'))})
+        collection_class=_orm.collections.attribute_mapped_collection('name')),
+    'data': _orm.relationship(_objectives.ObjectiveData)})

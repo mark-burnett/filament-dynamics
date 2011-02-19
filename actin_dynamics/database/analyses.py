@@ -24,21 +24,20 @@ from . import parameters as _parameters
 from . import results as _results
 
 class Analysis(object):
-    def __init__(self, run=None, results=None, parameters=None,
-                 configuration=None):
+    def __init__(self, run=None, name=None, results=None, parameters=None):
         if run:
             self.run = run
+        if name:
+            self.name = name
         if results:
             self.results = results
         if parameters:
             self.parameters = parameters
-        if configuration:
-            self.configuration = configuration
 
     def __repr__(self):
-        return "%s(run=%s, analyses=%s, parameters=%s, configuration=%s)" % (
-            self.__class__.__name__, self.run,
-            self.analyses, self.parameters, self.configuration)
+        return "%s(run=%s, name='%s', analyses=%s, parameters=%s)" % (
+            self.__class__.__name__, self.run, self.name,
+            self.analyses, self.parameters)
 
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.AnalysisParameter)
@@ -53,32 +52,9 @@ class Analysis(object):
 
         return times, values
 
-    # XXX add measurement setter?
 
 # Analysis should have binds
 _orm.mapper(Analysis, _tables.analysis_table, properties={
     '_parameters': _orm.relationship(_parameters.AnalysisParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
     'results': _orm.relationship(_results.AnalysisResult, backref='analysis')})
-
-class AnalysisConfiguration(object):
-    def __init__(self, experiment=None, bind=None, analyses=None):
-        if experiment:
-            self.experiment = experiment
-        if bind:
-            self.bind = bind
-        if analyses:
-            self.analyses = analyses
-
-    def __repr__(self):
-        return "%s(experiment=%s, analyses=%s, analyses=%s)" % (
-            self.__class__.__name__, self.experiment,
-            self.analyses, self.analyses)
-
-
-_orm.mapper(AnalysisConfiguration, _tables.analysis_configuration_table,
-            properties={
-    'experiment': _orm.relationship(_experiments.Experiment,
-        backref='analysis_configurations'),
-    'bind': _orm.relationship(_binds.AnalysisBind),
-    'analyses': _orm.relationship(Analysis, backref='configuration')})

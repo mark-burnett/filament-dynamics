@@ -45,9 +45,27 @@ def static_experiments(experiment_definitions):
                                       database.TransitionBind)
         e.concentrations = make_binds(expt.get('concentrations', {}),
                                       database.ConcentrationBind)
+
+        # analysis configuration
+        e.analysis = make_binds(expt.get('analyses', {}), database.AnalysisBind)
+
+        # objective configuration
+        obj_defs = expt.get('objectives', {})
+        e.objective = make_binds(obj_defs.get('executors', {}),
+                                 database.ObjectiveBind)
+        e.data = load_data(expt.get(obj_defs.get('loaders', {})))
+
+
         results.append(e)
 
     return results
+
+
+def load_data(definition):
+    loader_binds = make_binds(definition, database.FileReaders)
+    loaders = factories.bindings.db_multiple(loader_binds, {})
+    return [l.run() for l in loaders]
+
 
 def create_static_session(name=None, parameters={}, model={}, experiments={},
                           **kwargs):

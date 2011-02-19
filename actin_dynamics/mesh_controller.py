@@ -20,21 +20,22 @@ class Controller(object):
         self.session = session
         self.parameter_specifications = parameter_specifications
 
-#    def resume_session(self):
-#        db_session = database.DBSession()
-#        query = db_session.query(database.Session).filter_by(name=self.name)
-#
-#        # XXX Should be done with logging...
-#        if query.count() > 1:
-#            print 'WARNING:  More than one matching session found to resume.'
-#
-#        self.session = query.first()
-
     def create_jobs(self):
+        db_session = database.DBSession()
         for experiment in self.session.experiments:
             expt_par_specs = self.parameter_specifications[experiment.name]
             # loop over run pars
-                # create run
+            for run_pars in _par_mesh(expt_par_specs['simulation']):
+                r = database.Run(parameters=run_pars, experiment=experiment)
                 # loop over objective pars
-                    # create objective
+                for oc in experiment.objective_configurations:
+                    obj_def = expt_par_specs['objective'][oc.name]
+                    for obj_pars in _par_mesh(obj_def):
+                        # create objective
+                        o = database.Objective(parameters=obj_pars,
+                                               configuration=oc,
+                                               run=r)
                 # queue job
+                j = databse.Job(run=r)
+                db_session.add(j)
+                db_session.commit()

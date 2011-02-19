@@ -84,3 +84,7 @@ _orm.mapper(AnalysisBind, inherits=Bind, polymorphic_identity='analyses')
 class ObjectiveBind(Bind): pass
 
 _orm.mapper(ObjectiveBind, inherits=Bind, polymorphic_identity='objectives')
+
+class FileReaderBind(Bind): pass
+
+_orm.mapper(FileReaderBind, inherits=Bind, polymorphic_identity='file_readers')
