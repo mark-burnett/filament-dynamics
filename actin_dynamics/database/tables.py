@@ -284,14 +284,9 @@ analysis_results_table = schema.Table('analysis_result',
 
 objective_table = schema.Table('objective', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('analysis_id', schema.types.Integer,
-                      schema.ForeignKey('analysis.id')),
+        schema.Column('run_id', schema.types.Integer,
+                      schema.ForeignKey('run.id')),
         schema.Column('objective_configuration_id', schema.types.Integer,
                       schema.ForeignKey('objective_configuration.id')),
         schema.Column('value', schema.types.Float, index=True),
         mysql_engine='InnoDB')
-
-schema.Index('objectives_unique_columns',
-             objective_table.c.analysis_id,
-             objective_table.c.objective_configuration_id,
-             unique=True)

@@ -1,6 +1,6 @@
 name: 'test session name'
 
-parameter_generators:
+parameter_specifications:
     blanchoin_pollard_2002:
         simulation:
             cleavage_rate:
@@ -22,9 +22,6 @@ parameter_generators:
                     upper_bound: 0.7
                     mesh_type:   linear
                     num_points:  10
-
-parameters:
-    sample_period: 0.5
 
 model:
     transitions:
@@ -154,6 +151,8 @@ model:
 experiments:
     blanchoin_pollard_2002:
         parameters:
+            sample_period: 0.5
+
             number_of_simulations: 10
             number_of_filaments:    6
 

@@ -20,6 +20,7 @@ from sqlalchemy.ext.associationproxy import association_proxy as _ap
 from . import tables as _tables
 from . import parameters as _parameters
 from . import analyses as _analyses
+from . import objectives as _objectives
 from . import models as _models
 from . import experiments as _experiments
 
@@ -30,26 +31,27 @@ class Run(object):
             self.experiment = experiment
         if analyses:
             self.analyses = analyses
+        if objectives:
+            self.objectives = objectives
         if parameters:
             self.parameters = parameters
 
     def __repr__(self):
-        return "%s(experiment=%s, analyses=%s, parameters=%s)" % (
+        return "%s(experiment=%s, analyses=%s, objectives=%s, parameters=%s)" % (
             self.__class__.__name__, self.experiment,
-            self.analyses, self.parameters)
+            self.analyses, self.objectives, self.parameters)
 
-    parameters = _ap('_parameters', 'value',
-                     creator=_parameters.RunParameter)
+    parameters = _ap('_parameters', 'value', creator=_parameters.RunParameter)
 
-    @property
-    def all_parameters(self):
-        result = dict(self.session.parameters)
-        result.update(self.parameters)
-        return result
+#    @property
+#    def all_parameters(self):
+#        result = dict(self.session.parameters)
+#        result.update(self.parameters)
+#        return result
 
 _orm.mapper(Run, _tables.run_table, properties={
     '_parameters': _orm.relationship(_parameters.RunParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
     'analyses':   _orm.relationship(_analyses.Analysis, backref='run'),
+    'objectives': _orm.relationship(_objectives.Objective, backref='run'),
     'experiment': _orm.relationship(_experiments.Experiment, backref='runs')})
-# XXX it would be nice to include the model?

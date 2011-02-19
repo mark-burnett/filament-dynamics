@@ -1,14 +1,8 @@
-session
-    ability to restart/continue
-        this is basically automatic...
-
 analysis & objective
     registration
     total refactor
 
 controller process
-    read yaml files
-    parameter value determination is dealt with here
     mesh mechanism
         interleave:
             populate session/experiment/run hierarchy
@@ -18,16 +12,7 @@ controller process
         then start generating children
 
 worker processes
-    generate uuid on startup
-    no contact with any files except database.ini
-    command line arguments for:
-        sleep time for job table empty
-        sleep time for collision on getting job
-        idle time before exit
-        db config file name
-
-configuration management
-    database session/etc
+    write the loop with timeout support
 
 database structure
     add revision # for session controller

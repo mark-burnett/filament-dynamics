@@ -18,7 +18,7 @@ from actin_dynamics import database
 def make_binds(binds, cls):
     return [cls(label=label, **bind) for label, bind in binds.iteritems()]
 
-def model(model_definition):
+def static_model(model_definition):
     m      = database.Model()
     m.name = model_definition.get('name')
 
@@ -48,3 +48,14 @@ def static_experiments(experiment_definitions):
         results.append(e)
 
     return results
+
+def create_static_session(name=None, parameters={}, model={}, experiments={},
+                          **kwargs):
+    session = database.Session(name=name)
+    session.parameters = parameters
+
+    session.models.append(static_model(model))
+    session.experiments = static_experiments(experiments)
+
+    return session
+
