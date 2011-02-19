@@ -21,8 +21,10 @@ from . import tables as _tables
 from . import arguments as _arguments
 
 class Bind(object):
-    def __init__(self, class_name=None,
+    def __init__(self, label=None, class_name=None,
                  fixed_arguments=None, variable_arguments=None):
+        if label:
+            self.label = label
         if class_name:
             self.class_name = class_name
         if fixed_arguments:
@@ -31,11 +33,12 @@ class Bind(object):
             self.variable_arguments = variable_arguments
 
     def __repr__(self):
-        return  ("%s(label=%s, class_name='%s', module_name='%s'," +
-                 " fixed_arguments=%s, variable_arguments=%s)" %
-                 (self.__class__.__name__, self.label, self.class_name,
-                  self.module_name, self.fixed_arguments,
-                  self.variable_arguments))
+        return ("%s(label='%s', class_name='%s'," +
+                " module_name='%s',  fixed_arguments=%s," +
+                " variable_arguments=%s)") % (
+                self.__class__.__name__, self.label, self.class_name,
+                self.module_name, dict(self.fixed_arguments),
+                dict(self.variable_arguments))
 
     fixed_arguments = _ap('_fixed_arguments', 'value',
                           creator=_arguments.FixedArgument)

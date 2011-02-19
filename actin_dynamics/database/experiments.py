@@ -32,6 +32,7 @@ class Experiment(object):
             self.session = session
         if parameters:
             self.parameters = parameters
+
         if filaments:
             self.filaments = filaments
         if measurements:

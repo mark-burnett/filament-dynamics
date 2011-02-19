@@ -24,7 +24,7 @@ controllers:
             argument_name: literal
 
 
-global_parameters:
+parameters:
     sample_session_parameter: 11.6
 
 
@@ -40,17 +40,10 @@ model:
 
 experiments:
     experiment_a:
-        parameter_constraints:
-            sample_experimental_parameter:
-                type:  fixed
-                value: 72.1
+        parameters:
+            sample_experimental_parameter: 72.1
 
         simulation:
-            parameter_constraints:
-                sample_simulation_parameter:
-                    type:  fixed
-                    value: 72.1
-
             strategy_element_a:
                 bind_label:
                     class_name: bind_class
@@ -62,12 +55,9 @@ experiments:
 
         analyses:
             analysis_a:
-                # XXX should there be parameter constraints?
-                #      Yes, it doesn't really cost me anything to include
-                parameter_constraints:
-                    sample_analysis_parameter:
-                        type:  fixed
-                        value: 11.6
+                # XXX should there be analysis parameters?
+                parameters:
+                    sample_analysis_parameter: 11.6
 
                 strategy:
                     - class_name: bind_class
@@ -79,10 +69,8 @@ experiments:
 
         objectives:
             objective_a:
-                parameter_constraints:
-                    sample_objective_parameter:
-                        type:  fixed
-                        value: 11.6
+                parameters:
+                    sample_objective_parameter: 11.6
 
                 strategy:
                     - bind_label:

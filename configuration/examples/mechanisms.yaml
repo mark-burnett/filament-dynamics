@@ -1,15 +1,22 @@
-parameter_generator:
-    simulation:
-        class_name: MeshGenerator
-        fixed_arguments:
-            cleavage_rate: [linear, 10]
-            release_rate:  [linear, 10]
+parameter_generators:
+    blanchoin_pollard_2002:
+        simulation:
+            cleavage_rate:
+                lower_bound: 0.01
+                upper_bound: 0.50
+                mesh_type:   linear
+                num_points:  10
 
-    analysis:
-        class_name: FixedParameters # The default mechanism
+            release_rate:
+                lower_bound: 0.0001
+                upper_bound: 0.0100
+                mesh_type:   log
+                num_points:  10
 
-    objective:
-        class_name: SequentialFit
-        fixed_arguments:
-            - pollard_pyrene_fit: [filament_tip_concentration, pyrene_atp_weight]
-            - pollard_adppi_fit:  [cleavage_rate]
+        objective:
+            pollard_pyrene_fit:
+                pyrene_atp_weight:
+                    lower_bound: 0.1
+                    upper_bound: 0.7
+                    mesh_type:   linear
+                    num_points:  10
