@@ -16,27 +16,14 @@
 import itertools
 import math
 
-import yaml
-
-# XXX This is an itertools work-alike.  It is needed because it was
-#     introduced in python 2.6, but pypy is stuck at 2.5 as of now.
-def _product(*args, **kwds):
-    # product('ABCD', 'xy') --> Ax Ay Bx By Cx Cy Dx Dy
-    # product(range(2), repeat=3) --> 000 001 010 011 100 101 110 111
-    pools = map(tuple, args)
-    result = [[]]
-    for pool in pools:
-        result = [x+[y] for x in result for y in pool]
-    for prod in result:
-        yield tuple(prod)
-
-
+# XXX numpy workalike...
 def _linspace(min_value, max_value, num_points):
     if num_points > 1:
         dx = float(max_value - min_value) / (num_points - 1)
         return [min_value + i * dx for i in xrange(num_points)]
     else:
         return [min_value]
+
 
 class ParameterMeshIterator(object):
     def __init__(self, names, parameter_sets):
@@ -52,28 +39,23 @@ class ParameterMeshIterator(object):
                                                       next_parameter_sets))
 
 
-def _make_mesh(min_value, max_value, mesh_size, mesh_type):
+def make_mesh(lower_bound, upper_bound, num_points, mesh_type):
     if 'linear' == mesh_type.lower():
-        return _linspace(min_value, max_value, mesh_size)
+        return _linspace(lower_bound, upper_bound, num_points)
     elif 'log' == mesh_type.lower():
-        umin_value = math.log(min_value)
-        umax_value = math.log(max_value)
-        transformed_range = _linspace(umin_value, umax_value, mesh_size)
+        ulower_bound = math.log(lower_bound)
+        uupper_bound = math.log(upper_bound)
+        transformed_range = _linspace(ulower_bound, uupper_bound, num_points)
         return [math.exp(tr) for tr in transformed_range]
     else:
         raise RuntimeError('Unsupported mesh type specified for make_mesh.')
 
 
-def _make_parameter_mesh_iterator(parameter_ranges):
+def parameters_from_spec(par_specs):
     names = []
-    meshes = []
-    for name, range_info in parameter_ranges.iteritems():
+    values = []
+    for name, kwargs in par_specs.iteritems():
         names.append(name)
-        meshes.append(_make_mesh(*range_info))
-    
-    return ParameterMeshIterator(names, _product(*meshes))
+        values.append(_make_mesh(**kwargs))
 
-
-def parse_parameters_file(par_file):
-    parameter_ranges = yaml.load(par_file)
-    return _make_parameter_mesh_iterator(parameter_ranges)
+    return ParameterMeshIterator(names, values)

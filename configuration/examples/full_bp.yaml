@@ -297,9 +297,10 @@ experiments:
                         prefix: pyrene_
             
         analyses:
+            # XXX add entry for total f-actin
             length:
                 strategy:
-                    - class_name: Resample
+                    - class_name: Sample
                       variable_arguments:
                           sampel_period: sample_period
                           stop_time:     simulation_duration
@@ -313,7 +314,7 @@ experiments:
 
             pyrene_atp_count:
                 strategy:
-                    - class_name: Resample
+                    - class_name: Sample
                       variable_arguments:
                           sampel_period: sample_period
                           stop_time:     simulation_duration
@@ -327,7 +328,7 @@ experiments:
 
             pyrene_adppi_count:
                 strategy:
-                    - class_name: Resample
+                    - class_name: Sample
                       variable_arguments:
                           sampel_period: sample_period
                           stop_time:     simulation_duration
@@ -337,7 +338,7 @@ experiments:
 
             total_adppi_count:
                 strategy:
-                    - class_name: Resample
+                    - class_name: Sample
                       variable_arguments:
                           sampel_period: sample_period
                           stop_time:     simulation_duration
@@ -347,7 +348,7 @@ experiments:
 
             pyrene_adp_count:
                 strategy:
-                    - class_name: Resample
+                    - class_name: Sample
                       variable_arguments:
                           sampel_period: sample_period
                           stop_time:     simulation_duration

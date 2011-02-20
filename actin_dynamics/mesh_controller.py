@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import database
+from . import meshes
 
 class Controller(object):
     def __init__(self, session, parameter_specifications={}):
@@ -25,12 +26,13 @@ class Controller(object):
         for experiment in self.session.experiments:
             expt_par_specs = self.parameter_specifications[experiment.name]
             # loop over run pars
-            for run_pars in _par_mesh(expt_par_specs['simulation']):
+            for run_pars in meshes.parameters_from_spec(
+                    expt_par_specs['simulation']):
                 r = database.Run(parameters=run_pars, experiment=experiment)
                 # loop over objective pars
                 for oc in experiment.objective_configurations:
                     obj_def = expt_par_specs['objective'][oc.name]
-                    for obj_pars in _par_mesh(obj_def):
+                    for obj_pars in meshes.parameters_from_spec(obj_def):
                         # create objective
                         o = database.Objective(parameters=obj_pars,
                                                configuration=oc,
