@@ -49,6 +49,7 @@ def get_unnormalized_fluorescence(run, atp_weight=0.37, adppi_weight=0.56,
 
 def _pyrene_normalization(fluorescence_sim=None, fluorescence_data=None,
                           residual_function=residuals.naked_chi_squared):
+#                          residual_function=residuals.abs_diff):
     '''
     Returns chi squared of fit and normalization parameter.
     '''
@@ -61,7 +62,7 @@ def _pyrene_normalization(fluorescence_sim=None, fluorescence_data=None,
         return residual_function(fluorescence_data, scaled_sim)
 
     # Use scipy to generate the results.
-    normalization_guess = 1
+    normalization_guess = 0.5
 
     fit_results = _optimize.fmin(model_function, normalization_guess,
                                  disp=False, full_output=True)

@@ -23,6 +23,11 @@ from . import residuals as _residuals
 
 from actin_dynamics import io
 
+def normal_analysis(group): #, atp_weights):
+    adppi_analysis(group)
+    flat_pyrene_analysis(group)
+#    pyrene_analysis(group, atp_weights=atp_weights)
+
 def pyrene_analysis(group, atp_weights=[0.37],
                     adppi_weights=[0.56],
                     adp_weights=[0.75]):
@@ -52,6 +57,7 @@ def flat_pyrene_analysis(group):
     sample_times = run.get_measurement('length')[0]
     pyrene_data = io.pollard.get_interpolated_pyrene_data(sample_times)
     for run in group.runs:
+        # Flat weights
         fit, norm = _fluorescence.get_pyrene_fit(run,
                                                  pyrene_data=pyrene_data,
                                                  atp_weight=1,
@@ -59,9 +65,29 @@ def flat_pyrene_analysis(group):
                                                  adp_weight=1)
 
         run.values.append(io.database.SimulationValue(
-            name='pollard_length_chi_squared', value=fit))
+            name='pollard_flat_pyrene_chi_squared', value=fit))
         run.values.append(io.database.SimulationValue(
-            name='pollard_length_normalization', value=norm))
+            name='pollard_flat_pyrene_normalization', value=norm))
+
+        # Brooks's values
+        fit, norm = _fluorescence.get_pyrene_fit(run,
+                                                 pyrene_data=pyrene_data,
+                                                 atp_weight=0.37)
+
+        run.values.append(io.database.SimulationValue(
+            name='pollard_brooks_pyrene_chi_squared', value=fit))
+        run.values.append(io.database.SimulationValue(
+            name='pollard_brooks_pyrene_normalization', value=norm))
+
+        # Setings atp_weight to Brooks's adppi_weight
+        fit, norm = _fluorescence.get_pyrene_fit(run,
+                                                 pyrene_data=pyrene_data,
+                                                 atp_weight=0.56)
+
+        run.values.append(io.database.SimulationValue(
+            name='pollard_adjusted_pyrene_chi_squared', value=fit))
+        run.values.append(io.database.SimulationValue(
+            name='pollard_adjusted_pyrene_normalization', value=norm))
 
         elixir.session.commit()
 

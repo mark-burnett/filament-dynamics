@@ -115,7 +115,7 @@ transitions:
     - class_name: BarbedPolymerization
       fixed_parameters:
           state: ATP
-          label: atp_polymerization
+          label: barbed_atp_polymerization
       parameters:
           rate: barbed_atp_polymerization_rate
 
@@ -159,7 +159,7 @@ transitions:
     - class_name: BarbedDepolymerization
       fixed_parameters:
           state: ATP
-          label: atp_depolymerization
+          label: barbed_atp_depolymerization
       parameters:
           rate: barbed_atp_depolymerization_rate
 
@@ -194,7 +194,7 @@ transitions:
     # Hydrolysis
     - class_name: RandomHydrolysis
       fixed_parameters:
-          label: hydrolysis
+          label: pyrene_hydrolysis
           old_state: pyrene_ATP
           new_state: pyrene_ADPPi
       parameters:
@@ -211,7 +211,7 @@ transitions:
 
     - class_name: RandomHydrolysisWithByproduct
       fixed_parameters:
-          label: release
+          label: pyrene_release
           old_state: pyrene_ADPPi
           new_state: pyrene_ADP
           byproduct: Pi

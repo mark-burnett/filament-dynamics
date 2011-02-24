@@ -14,44 +14,45 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from actin_dynamics import io
-from actin_dynamics.analysis import accessors
-from actin_dynamics.analysis import utils
+from actin_dynamics.analysis import accessors, utils, fluorescence
 
 from .. import measurements
 from .. import themes
 
-def plot_run(run, final_pyrene_value=3, theme=None, with_data=True):
-    # Get color and style settings.
-    if not theme:
-        theme = themes.Polymerization(duration=40)
-
-    theme.initialize()
+def plot_run(run, final_pyrene_value=3, with_data=True,
+             pyrene_color=None, adppi_color=None, length_color=None,
+             pyrene_normalization_name='pollard_flat_pyrene_normalization',
+             pyrene_only=False,
+             **kwargs):
 
     # Stochastic simulation results.
-    factin = accessors.get_factin(run)
-    measurements.plot_smooth(factin, label='Stochastic F-actin',
-                             **theme('F-actin', 'sim_line'))
-
-    pyrene, pyrene_parameters = accessors.get_pyrene(run)
+    pyrene = accessors.get_run_pyrene(run, pyrene_normalization_name)
     pyrene_scale_factor = final_pyrene_value / float(pyrene[1][-1])
     scaled_pyrene = utils.scale_measurement(pyrene, pyrene_scale_factor)
     measurements.plot_smooth(scaled_pyrene, label='Stochastic Pyrene',
-                             **theme('pyrene', 'sim_line'))
+                             color=pyrene_color, **kwargs)
 
-    adppi = accessors.get_multiple_scaled(run, ['pyrene_adppi_count',
-                                                'adppi_count'])
-    measurements.plot_smooth(adppi, label='Stochastic F-ADP-Pi-actin',
-                             **theme('F-ADP-Pi-actin', 'sim_line'))
+    if not pyrene_only:
+        factin = accessors.get_factin(run)
+        measurements.plot_smooth(factin, label='Stochastic F-actin',
+                                 color=length_color, **kwargs)
+
+        adppi = accessors.get_multiple_scaled(run, ['pyrene_adppi_count',
+                                                    'adppi_count'])
+        measurements.plot_smooth(adppi, label='Stochastic F-ADP-Pi-actin',
+                                 color=adppi_color, **kwargs)
 
     # Pollard data
     if with_data:
-        pyrene_data, adppi_data = io.pollard.get_data()
+        pyrene_data = io.pollard.get_interpolated_pyrene_data(pyrene[0])
+        adppi_data  = io.pollard.get_adppi_data()
+#        pyrene_data, adppi_data = io.pollard.get_data()
 
-        scaled_pyrene_data = utils.scale_measurement(pyrene_data,
-                                                     pyrene_scale_factor)
-        measurements.plot_smooth(scaled_pyrene_data, label='Pyrene Data',
-                                 **theme('pyrene', 'data_line'))
-        measurements.plot_scatter(adppi_data, label='F-ADP-Pi Data',
-                                  **theme('F-ADP-Pi-actin', 'data_points'))
-
-    theme.finalize()
+        fit, norm = fluorescence._pyrene_normalization(pyrene_data,
+                                                       scaled_pyrene)
+        scaled_pyrene_data = utils.scale_measurement(pyrene_data, norm)
+        measurements.plot_smooth(scaled_pyrene_data, #label='Pyrene Data',
+                                 color=pyrene_color, **kwargs)
+        if not pyrene_only:
+            measurements.plot_scatter(adppi_data, label='F-ADP-Pi Data',
+                                      color=adppi_color)

@@ -52,6 +52,13 @@ def get_pyrene(run):
 
     return get_analysis_pyrene(best), best.parameters_dict
 
+def get_run_pyrene(run, normalization_name):
+    straight_fluorescnece =\
+            fluorescence.get_unnormalized_fluorescence(run)
+    norm = run.get_value(normalization_name)
+    return utils.scale_measurement(straight_fluorescnece, norm)
+
+
 def get_analysis_pyrene(analysis):
     straight_fluorescnece =\
             fluorescence.get_unnormalized_fluorescence(analysis.run)

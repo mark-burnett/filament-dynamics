@@ -87,12 +87,19 @@ class Slicer(object):
         column_names = [c for c in self.summary_class.column_names
                         if c not in fixed_values]
         columns = self._get_columns(column_names)
-        query = elixir.session.query(self.summary_class.value, *columns
-                ).filter_by(**fixed_values)
+#        query = elixir.session.query(self.summary_class.value, *columns
+#                ).filter_by(**fixed_values)
+        query = self._slice_query(columns, fixed_values)
         meshes = self._get_meshes(columns)
 
         values = _convert_results_to_array(query, meshes)
         return values, column_names, meshes
+
+    def _slice_query(self, columns, values):
+        query = elixir.session.query(self.summary_class.value, *columns)
+        for name, value in values.iteritems():
+            query = query.filter(getattr(self.summary_class, name).like(value))
+        return query
 
 
     def minimum_values(self, *abscissae_names):
@@ -107,10 +114,17 @@ class Slicer(object):
 
         for indexes, mesh_point in _iterate_meshes(abscissae_names, meshes,
                                                    enum=True):
-            best = elixir.session.query(self.summary_class.value
-                    ).filter_by(**mesh_point).order_by('value').first()
+            best = self._minimium_best(mesh_point)
+#            best = elixir.session.query(self.summary_class.value
+#                    ).filter_by(**mesh_point).order_by('value').first()
             result[tuple(indexes)] = best[0]
         return result, abscissae_names, meshes
+
+    def _minimium_best(self, mesh_point):
+        query = elixir.session.query(self.summary_class.value)
+        for col_name, value in mesh_point.iteritems():
+            query = query.filter(getattr(self.summary_class, col_name).like(value))
+        return query.order_by('value').first()
 
 
 def _convert_results_to_array(query, meshes):
@@ -138,12 +152,13 @@ def _create_table(run_parameters, analysis_parameters, table_name):
 
     table = schema.Table(table_name, elixir.metadata,
                          schema.Column('id', types.Integer, primary_key=True),
-                         schema.Column('run_id', types.Integer,
-                                       schema.ForeignKey('run.id')),
+#                         schema.Column('run_id', types.Integer,
+#                                       schema.ForeignKey('run.id')),
                          schema.Column('value', types.Float),
-                         prefixes=['TEMPORARY'],
+#                         prefixes=['TEMPORARY'],
                          *columns)
-    elixir.metadata.create_all()
+    table.create()
+#    elixir.metadata.create_all()
 
     return table
 
@@ -195,7 +210,7 @@ def _fill_analysis_table(summary_class, group, value_name=None,
             properties['value'] = best_value
 
             new_object = summary_class(**properties)
-            new_object.run_id = run.id
+#            new_object.run_id = run.id
             elixir.session.add(new_object)
 
     # XXX Be wary of burning through too much memory by not committing sooner.
@@ -239,7 +254,7 @@ def _fill_run_table(summary_class, group, value_name, run_parameters):
     for run in database.Run.query.filter_by(group=group):
         run_properties = _extract_properties(run, run_parameters, value_name=value_name)
         new_object = summary_class(**run_properties)
-        new_object.run_id = run.id
+#        new_object.run_id = run.id
         elixir.session.add(new_object)
 
     # XXX Be wary of burning through too much memory by not committing sooner.
@@ -255,6 +270,8 @@ def _extract_properties(obj, parameter_names, value_name=None):
     return results
 
 def _format_result(obj, table):
-    names  = table.c.keys()[3:]
+    names  = table.c.keys()[2:]
     values = [getattr(obj, name) for name in names]
+    print 'fr', names, values
+    print 'fr full', table.c.keys()
     return [obj.value], names, values

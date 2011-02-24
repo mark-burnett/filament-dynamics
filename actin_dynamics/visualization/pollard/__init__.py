@@ -16,7 +16,7 @@
 #from fit_1d import adppi
 from kinsim import kinsim_comparison
 from single_run import plot_run
-import talk
+import real
 
 #del fit_1d
 del kinsim

@@ -16,12 +16,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 echo 'Dropping old database.'
-mysqladmin -u aduser -p'filamentous' -f drop actin_dynamics
+mysqladmin -u aduser -p'filamentous' -f drop actin_dynamics3
 #sudo -u postgres dropdb actin_dynamics
 
 echo 'Creating new database.'
-mysqladmin -u aduser -p'filamentous' create actin_dynamics
+mysqladmin -u aduser -p'filamentous' create actin_dynamics3
 #sudo -u postgres createdb -O aduser actin_dynamics
 
 echo 'Creating tables.'
-bin/create_tables.py
+bin/create_tables.py --config c3.ini
