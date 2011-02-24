@@ -22,10 +22,10 @@ from actin_dynamics import database
 class DatabaseConfiguration(object):
     def __init__(self, server_type=None, username=None, password=None,
                  host=None, database_name=None):
-        self.server_type = server_type
-        self.username = username
-        self.password = password
-        self.host = host
+        self.server_type   = server_type
+        self.username      = username
+        self.password      = password
+        self.host          = host
         self.database_name = database_name
 
     @property
@@ -41,11 +41,13 @@ class DatabaseConfiguration(object):
         result += '/' + self.database_name
         return result
 
+
 def setup_database(config_filename):
     '''Uses config file to create database access singletons.
     '''
     co = configobj.ConfigObj(config_filename)
     setup_database_from_dict(co['database'])
+
 
 def setup_database_from_dict(db_dict):
     '''Sets up singletons needed to access the database.

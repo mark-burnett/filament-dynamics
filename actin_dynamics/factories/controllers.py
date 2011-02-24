@@ -27,3 +27,5 @@ def load_complete_session(filename, source_directory):
     global_parameters = session_dict.get('global_parameters', {})
 
     session = database.Session(name=name, parameters=global_parameters)
+
+    return session

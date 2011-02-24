@@ -1,27 +1,21 @@
 immediate stuff
-    write run_job
     make analysis & objective primitives/code
     remove excessive imports
 
 analysis & objective
-    registration
     total refactor
 
 controller process
-    mesh mechanism
-        interleave:
-            populate session/experiment/run hierarchy
-            create jobs
     global fit mechanism
         do some kind of coarse mesh/random to start
         then start generating children
 
-worker processes
-    write the loop with timeout support
-
 database structure
     add revision # for session controller
         for full provinance we need to know the worker-uuid + revision to
+        * should I also save the hostname or something?
+    make sure results/measurements have an error column
+    delete analysis parameters
     validation rules (e.g. for bind module_names)
     cascading deletes/orphans
 

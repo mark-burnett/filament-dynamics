@@ -15,4 +15,6 @@
 
 from registry import analysis_registry as registry
 
+from standard_error_of_mean import *
+
 del base_classes

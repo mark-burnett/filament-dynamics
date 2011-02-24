@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,6 +13,20 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import bindings
-from . import database
-from . import simulations
+def get_measurement(simulation_results, name, measurement_type):
+    if 'filament' == measurement_type:
+        iterator = iter_filaments(results)
+    else:
+        iterator = simulation_results
+
+    results = []
+    for item in iterator:
+        results.append(item[name])
+    return results
+
+
+def iter_filaments(simulation_results):
+    for simulation in simulation_results:
+        for filament in simulation['filaments']:
+            yield filament
+

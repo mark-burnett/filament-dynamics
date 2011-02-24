@@ -16,6 +16,7 @@
 # This file contains some pure python functional replacements for e.g. numpy.
 
 import itertools
+import math
 
 def add(a, b):
     result = []
@@ -23,6 +24,7 @@ def add(a, b):
         result.append(ax + bx)
 
     return result
+
 
 def arange(min_value, max_value, dx):
     result = []
@@ -38,3 +40,7 @@ def linspace(min_value, max_value, num_points):
         return [min_value + i * dx for i in xrange(num_points)]
     else:
         return [min_value]
+
+
+def std(values, mean):
+    return math.sqrt(sum((v - mean)**2 for v in values) / len(values))

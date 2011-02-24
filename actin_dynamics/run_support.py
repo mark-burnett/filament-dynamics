@@ -26,15 +26,13 @@ def run_job(job):
 
     db_session = database.DBSession()
     for analysis in run.experiment.analyses:
-        a = factories.shortcuts.make_analysis(analysis)
-        analysis_result_object = a.perform(results,
-                                           factories.analysis.make_result)
-        db_session.add(analysis_result_object)
+        a = factories.bindings.db_single(analysis)
+        analysis_result = a.perform(results, factories.analysis.make_result)
+        db_session.add(analysis_result)
     db_session.commit()
 
     for objective in run.experiment.objectives:
-        o = factories.shortcuts.make_objective(objective)
-        objective_result_object = o.perform(job.run,
-                                            factories.objectives.make_result)
-        db_session.add(objective_result_object)
+        o = factories.bindings.db_single(objective)
+        objective_result = o.perform(job.run, factories.objectives.make_result)
+        db_session.add(objective_result)
     db_session.commit()

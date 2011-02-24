@@ -30,37 +30,3 @@ def make_run(run):
     return Simulation(transitions=transitions, concentrations=concentrations,
                       measurements=measurements, end_conditions=end_conditions,
                       filaments=filaments)
-
-
-# XXX Depracated
-def make_simulation(object_graph, parameters):
-    filaments = shortcuts.make_filaments(object_graph['filaments'],
-                                         parameters)
-
-    transitions = shortcuts.make_transitions(object_graph['transitions'],
-                                             parameters)
-
-    measurements = shortcuts.make_measurements(
-            object_graph['measurements'], parameters)
-
-    end_conditions = shortcuts.make_end_conditions(
-            object_graph['end_conditions'], parameters)
-
-    concentrations = shortcuts.make_concentrations(
-            object_graph['concentrations'], parameters)
-
-    return Simulation(transitions=transitions, concentrations=concentrations,
-                      measurements=measurements, end_conditions=end_conditions,
-                      filaments=filaments)
-
-
-def simulation_generator(object_graph, parameters):
-    try:
-        # XXX Is this still where # of sims lives?
-        number_simulations = parameters['number_of_simulations']
-    except:
-        print parameters
-        raise
-
-    for i in xrange(int(number_simulations)):
-        yield make_simulation(object_graph, parameters)
