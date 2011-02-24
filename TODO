@@ -1,6 +1,7 @@
 immediate stuff
-    write worker loop
+    write run_job
     make analysis & objective primitives/code
+    remove excessive imports
 
 analysis & objective
     registration

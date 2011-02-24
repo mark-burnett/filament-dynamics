@@ -23,6 +23,9 @@ from . import factories
 
 from .analysis.standard_error_of_mean import analyze_parameter_set
 
+def run_job(job):
+    print 'running job #', job.id
+
 def run_simulation_job(job):
     parameters   = job.parameters_dict
     object_graph = yaml.load(StringIO.StringIO(job.group.object_graph))
