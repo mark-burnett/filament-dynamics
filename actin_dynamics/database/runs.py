@@ -26,7 +26,7 @@ from . import experiments as _experiments
 
 
 class Run(object):
-    def __init__(self, experiment=None, analyses=None, parameters=None):
+    def __init__(self, experiment=None, analyses=None, objectives=None, parameters=None):
         if experiment:
             self.experiment = experiment
         if analyses:

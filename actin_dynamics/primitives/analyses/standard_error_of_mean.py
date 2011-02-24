@@ -13,11 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import analyses
-import concentrations
-import end_conditions
-import measurements
-import filaments
-import transitions
+from . import base_classes as _base_classes
 
-del meta_classes
+class StandardErrorMean(_base_classes.Analysis):
+    def perform(self, simulation_results, result_factory):
+        pass

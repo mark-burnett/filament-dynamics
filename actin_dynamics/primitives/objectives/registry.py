@@ -1,4 +1,4 @@
-#    Copyright (C) 2011 Mark Burnett
+#    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,13 +13,4 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class Analysis(object):
-    def __init__(self, label, elements):
-        self.label = label
-        self.elements = elements
-
-    def perform(self, run_results):
-        previous_result = run_results
-        for element in elements:
-            previous_result = element.process(previous_result)
-        return previous_result
+objective_registry = {}

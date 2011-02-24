@@ -13,11 +13,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import analyses
-import concentrations
-import end_conditions
-import measurements
-import filaments
-import transitions
+from registry import analysis_registry as registry
 
-del meta_classes
+del base_classes

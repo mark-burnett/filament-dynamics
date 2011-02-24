@@ -13,63 +13,25 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import StringIO
-import yaml
-
-from . import io as _io
-from . import simulation_strategy as _simulations
-
 from . import factories
 
-from .analysis.standard_error_of_mean import analyze_parameter_set
-
 def run_job(job):
+    # XXX Job starts/completions should be logged.
     print 'running job #', job.id
+    simulation = factories.simulations.make_run(job.run)
+    full_results = simulation.run()
 
-def run_simulation_job(job):
-    parameters   = job.parameters_dict
-    object_graph = yaml.load(StringIO.StringIO(job.group.object_graph))
+    db_session = database.DBSession()
+    for analysis in run.experiment.analyses:
+        a = factories.shortcuts.make_analysis(analysis)
+        analysis_result_object = a.perform(full_results,
+                                           factories.analysis.make_result)
+        db_session.add(analysis_result_object)
+    db_session.commit()
 
-    sim_generator = factories.simulation_generator(object_graph, parameters)
-    analyzed_set  = typical_run(parameters, sim_generator)
-
-    run = _io.database.Run.from_analyzed_set(analyzed_set)
-    run.group  = job.group
-    run.job_id = job.id
-
-
-def typical_run(parameters, simulation_iterator):
-    sim_results = map(run_and_report, simulation_iterator)
-    full_set = {'parameters': parameters, 'simulations': sim_results}
-
-    return analyze_parameter_set(full_set)
-
-
-def run_simulations(simulation_factory, group):
-    for parameters, simulation_iterator in simulation_factory:
-        analyzed_set = typical_run(parameters, simulation_iterator)
-
-        run = _io.database.Run.from_analyzed_set(analyzed_set)
-        run.group = group
-
-
-def run_and_report(sim):
-    _simulations.run_simulation(sim)
-    return report_measurements(sim)
-
-
-def report_measurements(sim):
-    concentration_results = {}
-    for state, c in sim.concentrations.iteritems():
-        concentration_results[state] = zip(*c.data)
-
-    filament_results = []
-    for filament in sim.filaments:
-        fr = {}
-        fr['final_state']  = filament.states
-        fr['measurements'] = dict((name, zip(*values))
-                for name, values in filament.measurements.iteritems())
-        filament_results.append(fr)
-
-    return {'concentrations': concentration_results,
-            'filaments':      filament_results}
+    for objective in run.experiment.objectives:
+        o = factories.shortcuts.make_objective(objective)
+        objective_result_object = o.perform(job.run,
+                                            factories.objectives.make_result)
+        db_session.add(objective_result_object)
+    db_session.commit()

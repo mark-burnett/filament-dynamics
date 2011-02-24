@@ -34,10 +34,13 @@ class Simulation(object):
     def __init__(self, transitions=None, concentrations=None, measurements=None,
                  end_conditions=None, filaments=None, rng=None):
         """
-        'transitions' list of transition objects.  Each object represents
+        'transitions' is a list of transition objects.  Each object represents
             a set of possible state changes.
-        'end_conditions' is either a single end condition or an iterable of end
-            conditions (see 'end_conditions' module).
+        'measurements' is a list of measurements to perform at each step.
+        'end_conditions' is an iterable of end conditions
+            (see 'end_conditions' module).
+        'filaments' is the list of filaments being simulated.
+        'rng' is the random number generator used for the process.
         """
         self.transitions    = transitions
         self.concentrations = concentrations
@@ -46,40 +49,57 @@ class Simulation(object):
         self.filaments      = filaments
         self.rng            = rng
 
-def run_simulation(sim):
-    """
-    Perform the actual simulation, starting with initial_state.
-    """
-    # XXX Aliases for a small speedup.
-    ml  = math.log
-    bbl = bisect.bisect_left
-    if sim.rng is not None:
-        rng = sim.rng
-    else:
-        rng = random.uniform
 
-    # Initialize end conditions.
-    [e.reset() for e in sim.end_conditions]
-    time = 0
+    def report(self):
+        concentration_results = {}
+        for state, c in self.concentrations.iteritems():
+            concentration_results[state] = zip(*c.data)
 
-    # Initialize transition measurements.
-    for t in sim.transitions:
-        t.initialize_measurement(sim.filaments)
+        filament_results = []
+        for filament in self.filaments:
+            fr = {}
+            fr['final_state']  = filament.states
+            fr['measurements'] = dict((name, zip(*values))
+                    for name, values in filament.measurements.iteritems())
+            filament_results.append(fr)
 
-    # Perform initial filament measurements
-    for measurement in sim.measurements:
-        measurement.perform(time, sim.filaments)
+        return {'concentrations': concentration_results,
+                'filaments':      filament_results}
 
-    try:
-        while not any(e(time, sim.filaments, sim.concentrations)
-                      for e in sim.end_conditions):
+
+    def run(self):
+        '''
+        Perform the actual simulation, starting with initial_state.
+        '''
+        # XXX Aliases for a small speedup in cpython.
+        ml  = math.log
+        bbl = bisect.bisect_left
+        if self.rng is not None:
+            rng = self.rng
+        else:
+            rng = random.uniform
+
+        # Initialize end conditions.
+        [e.reset() for e in self.end_conditions]
+        time = 0
+
+        # Initialize transition measurements.
+        for t in self.transitions:
+            t.initialize_measurement(self.filaments)
+
+        # Perform initial filament measurements
+        for measurement in self.measurements:
+            measurement.perform(time, self.filaments)
+
+        while not any(e(time, self.filaments, self.concentrations)
+                      for e in self.end_conditions):
             # Calculate partial sums of transition probabilities
             # NOTE we are keeping the small_Rs here so they don't need to be
             #   recalculated to determine which filament undergoes transition.
             small_Rs = []
             transition_Rs = []
-            for t in sim.transitions:
-                local_Rs = t.R(sim.filaments, sim.concentrations)
+            for t in self.transitions:
+                local_Rs = t.R(self.filaments, self.concentrations)
                 transition_Rs.append(sum(local_Rs))
                 small_Rs.append(local_Rs)
 
@@ -88,6 +108,7 @@ def run_simulation(sim):
 
             # Update simulation time
             if total_R <= 0:
+                # XXX This should be done via logging.
                 print 'ENDING SIMULATION:  no possible events.'
                 break;
             time += ml(1/rng(0, 1)) / total_R
@@ -104,12 +125,11 @@ def run_simulation(sim):
 
             # Perform transition
             state_r = running_filament_R[filament_index] - filament_r
-            sim.transitions[transition_index].perform(time, sim.filaments,
-                    sim.concentrations, filament_index, state_r)
+            self.transitions[transition_index].perform(time, self.filaments,
+                    self.concentrations, filament_index, state_r)
 
             # Perform filament measurements
-            for measurement in sim.measurements:
-                measurement.perform(time, sim.filaments)
-    except Exception:
-        traceback.print_exc()
-        raise
+            for measurement in self.measurements:
+                measurement.perform(time, self.filaments)
+
+        return self.report()

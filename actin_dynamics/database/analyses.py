@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
 
 from sqlalchemy import orm as _orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
@@ -22,6 +23,7 @@ from . import binds as _binds
 from . import experiments as _experiments
 from . import parameters as _parameters
 from . import results as _results
+
 
 class Analysis(object):
     def __init__(self, run=None, name=None, results=None, parameters=None):
@@ -52,6 +54,12 @@ class Analysis(object):
 
         return times, values
 
+    @measurement.setter
+    def measurement(self, new_values):
+        self.results.clear()
+        for t, v in itertools.izip(new_values):
+            self.results.append(_results.AnalysisResult(abscissa=t,
+                                                        ordinate=v))
 
 # Analysis should have binds
 _orm.mapper(Analysis, _tables.analysis_table, properties={

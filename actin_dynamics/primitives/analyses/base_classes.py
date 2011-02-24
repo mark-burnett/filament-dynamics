@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,11 +13,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import analyses
-import concentrations
-import end_conditions
-import measurements
-import filaments
-import transitions
+from ..meta_classes import Registration
 
-del meta_classes
+from registry import analysis_registry
+
+class Analysis(object):
+    __metaclass__ = Registration
+    registry = analysis_registry
+    skip_registration = True
+
+    __slots__ = ['label']
+    def __init__(self, label=None):
+        self.label = label
+
+    def perform(self, simulation_results, result_factory):
+        pass

@@ -299,62 +299,54 @@ experiments:
         analyses:
             # XXX add entry for total f-actin
             length:
-                strategy:
-                    - class_name: Sample
-                      variable_arguments:
-                          sampel_period: sample_period
-                          stop_time:     simulation_duration
-                      fixed_arguments:
-                          method: previous_value
-                          measurement_type: filament
-
-                    - class_name: StandardErrorMean
-                      fixed_arguments:
-                          measurement_type: filament
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sampel_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: length
+                    measurement_type: filament
 
             pyrene_atp_count:
-                strategy:
-                    - class_name: Sample
-                      variable_arguments:
-                          sampel_period: sample_period
-                          stop_time:     simulation_duration
-                      fixed_arguments:
-                          method: previous_value
-                          measurement_type: filament
-
-                    - class_name: StandardErrorMean
-                      fixed_arguments:
-                          measurement_type: filament
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sampel_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: pyrene_atp_count
+                    measurement_type: filament
 
             pyrene_adppi_count:
-                strategy:
-                    - class_name: Sample
-                      variable_arguments:
-                          sampel_period: sample_period
-                          stop_time:     simulation_duration
-                      fixed_arguments:
-                          method: previous_value
-                    - class_name: StandardErrorMean
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sampel_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: pyrene_adppi_count
+                    measurement_type: filament
 
             total_adppi_count:
-                strategy:
-                    - class_name: Sample
-                      variable_arguments:
-                          sampel_period: sample_period
-                          stop_time:     simulation_duration
-                      fixed_arguments:
-                          method: previous_value
-                    - class_name: StandardErrorMean
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sampel_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: total_adppi_count
+                    measurement_type: filament
 
             pyrene_adp_count:
-                strategy:
-                    - class_name: Sample
-                      variable_arguments:
-                          sampel_period: sample_period
-                          stop_time:     simulation_duration
-                      fixed_arguments:
-                          method: previous_value
-                    - class_name: StandardErrorMean
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sampel_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: pyrene_adp_count
+                    measurement_type: filament
 
         objectives:
             loaders:

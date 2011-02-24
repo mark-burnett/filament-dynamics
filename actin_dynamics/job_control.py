@@ -24,15 +24,6 @@ from . import utils
 UUID = str(uuid.uuid4())
 
 
-def job_iterator():
-    job = True
-    while job:
-        job = get_job()
-        if job:
-            # Just making sure we're clean!
-            assert job.worker_uuid == UUID
-            yield job
-
 def get_job():
     db_session = database.DBSession()
     job = db_session.query(database.Job).filter_by(complete=False,
