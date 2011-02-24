@@ -16,7 +16,7 @@
 import itertools
 import math
 
-from actin_dynamics import vectorize
+from . import workalike
 
 def chi_squared(a, b, minimum_error=0.001):
     at, av = a[:2]
@@ -25,17 +25,17 @@ def chi_squared(a, b, minimum_error=0.001):
     errors = [0 for x in av]
     if 3 == len(a):
         ae = a[2]
-        errors = vectorize.add(errors, [ax**2 for ax in ae])
+        errors = workalike.add(errors, [ax**2 for ax in ae])
     elif 4 == len(a):
         al, au = a[2:]
-        errors = vectorize.add(errors, [(aui - ali)**2
+        errors = workalike.add(errors, [(aui - ali)**2
                                         for ali, aui in itertools.izip(al, au)])
     if 3 == len(b):
         be = b[2]
-        errors = vectorize.add(errors, [bx**2 for bx in be])
+        errors = workalike.add(errors, [bx**2 for bx in be])
     elif 4 == len(b):
         bl, bu = b[2:]
-        errors = vectorize.add(errors, [(bui - bli)**2
+        errors = workalike.add(errors, [(bui - bli)**2
                                         for bli, bui in itertools.izip(bl, bu)])
 
     for i, e in enumerate(errors):
@@ -52,17 +52,17 @@ def average_divided(a, b, minimum_error=0.0001):
     errors = [0 for x in av]
     if 3 == len(a):
         ae = a[2]
-        errors = vectorize.add(errors, [ax**2 for ax in ae])
+        errors = workalike.add(errors, [ax**2 for ax in ae])
     elif 4 == len(a):
         al, au = a[2:]
-        errors = vectorize.add(errors, [(aui - ali)**2
+        errors = workalike.add(errors, [(aui - ali)**2
                                         for ali, aui in itertools.izip(al, au)])
     if 3 == len(b):
         be = b[2]
-        errors = vectorize.add(errors, [bx**2 for bx in be])
+        errors = workalike.add(errors, [bx**2 for bx in be])
     elif 4 == len(b):
         bl, bu = b[2:]
-        errors = vectorize.add(errors, [(bui - bli)**2
+        errors = workalike.add(errors, [(bui - bli)**2
                                         for bli, bui in itertools.izip(bl, bu)])
 
     for i, e in enumerate(errors):

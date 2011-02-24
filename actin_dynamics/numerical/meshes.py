@@ -16,14 +16,7 @@
 import itertools
 import math
 
-# XXX numpy workalike...
-def _linspace(min_value, max_value, num_points):
-    if num_points > 1:
-        dx = float(max_value - min_value) / (num_points - 1)
-        return [min_value + i * dx for i in xrange(num_points)]
-    else:
-        return [min_value]
-
+from . import workalike
 
 class ParameterMeshIterator(object):
     def __init__(self, names, parameter_sets):
@@ -41,11 +34,12 @@ class ParameterMeshIterator(object):
 
 def make_mesh(lower_bound, upper_bound, num_points, mesh_type):
     if 'linear' == mesh_type.lower():
-        return _linspace(lower_bound, upper_bound, num_points)
+        return workalike.linspace(lower_bound, upper_bound, num_points)
     elif 'log' == mesh_type.lower():
         ulower_bound = math.log(lower_bound)
         uupper_bound = math.log(upper_bound)
-        transformed_range = _linspace(ulower_bound, uupper_bound, num_points)
+        transformed_range = workalike.linspace(ulower_bound, uupper_bound,
+                                               num_points)
         return [math.exp(tr) for tr in transformed_range]
     else:
         raise RuntimeError('Unsupported mesh type specified for make_mesh.')

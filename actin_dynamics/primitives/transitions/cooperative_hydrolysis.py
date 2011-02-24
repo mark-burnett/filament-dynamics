@@ -15,7 +15,7 @@
 
 import bisect
 
-from ... import utils
+from ...numerical import utils
 
 from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins

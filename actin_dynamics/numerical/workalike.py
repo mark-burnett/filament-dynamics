@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# This file contains some pure python functional replacements for e.g. numpy.
+
 import itertools
 
 def add(a, b):
@@ -22,3 +24,17 @@ def add(a, b):
 
     return result
 
+def arange(min_value, max_value, dx):
+    result = []
+    value = min_value
+    while value < max_value:
+        result.append(value)
+        value += dx
+    return result
+
+def linspace(min_value, max_value, num_points):
+    if num_points > 1:
+        dx = float(max_value - min_value) / (num_points - 1)
+        return [min_value + i * dx for i in xrange(num_points)]
+    else:
+        return [min_value]

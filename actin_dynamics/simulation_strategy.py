@@ -22,7 +22,7 @@ import math
 import random
 import traceback
 
-from . import utils
+from .numerical import utils
 from . import analysis as _analysis
 
 class Simulation(object):

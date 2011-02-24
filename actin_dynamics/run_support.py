@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,13 +18,16 @@ from . import factories
 def run_job(job):
     # XXX Job starts/completions should be logged.
     print 'running job #', job.id
-    simulation = factories.simulations.make_run(job.run)
-    full_results = simulation.run()
+    run = job.run
+    results = []
+    for i in xrange(run.parameters['number_of_simulations']):
+        simulation = factories.simulations.make_run(run)
+        results.append(simulation.run())
 
     db_session = database.DBSession()
     for analysis in run.experiment.analyses:
         a = factories.shortcuts.make_analysis(analysis)
-        analysis_result_object = a.perform(full_results,
+        analysis_result_object = a.perform(results,
                                            factories.analysis.make_result)
         db_session.add(analysis_result_object)
     db_session.commit()
