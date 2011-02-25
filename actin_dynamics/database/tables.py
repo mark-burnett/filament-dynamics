@@ -42,10 +42,13 @@ session_table = schema.Table('session', global_state.metadata,
 # The purpose of the process table is purely provenance.
 process_table = schema.Table('process', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
+        # XXX Add something to identify what code path we're using?
+        schema.Column('type', schema.types.String(MAX_POLY_LENGTH),
+                      index=True),
 
         # These identify the code.
         schema.Column('code_revision', schema.types.Integer),
-        schema.Column('code_changeset', schema.types.String(32)),
+        schema.Column('code_changeset', schema.types.String(40)),
 
         # These identify the machine.
         # First, the hostname (not always identical to the below nodename).
@@ -67,7 +70,9 @@ job_table = schema.Table('job', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('run_id', schema.types.Integer,
                       schema.ForeignKey('run.id')),
-        schema.Column('process_id', schema.types.Integer,
+        schema.Column('creator_id', schema.types.Integer,
+                      schema.ForeignKey('process.id')),
+        schema.Column('worker_id', schema.types.Integer,
                       schema.ForeignKey('process.id')),
         schema.Column('complete', schema.types.Boolean, index=True,
                       default=False),

@@ -15,10 +15,23 @@
 
 from .base_classes import Objective as _Objective
 
+from actin_dynamics.numerical import residuals as _residuals
+from actin_dynamics.numerical import interpolation as _interpolation
+
 class SimpleDataFit(_Objective):
-    def __init__(self, label=None):
+    def __init__(self, measurement=None, residual_type=None,
+                 interpolate_simulation=True, label=None):
+        self.residual_function      = getattr(_residuals, residual_type)
+        self.measurement_name       = measurement
+        self.interpolate_simulation = interpolate_simulation
+
         _Objective.__init__(self, label=label)
 
     def perform(self, run, result_factory):
-        pass
-
+        sim_result = run.analyses[self.measurement_name]
+        data = run.experiments.objectives[self.label].measurement
+        if self.interpolate_simulation:
+            interp = _interpolation.resample_measurement(sim_result, data[0])
+            return self.residual_function(interp, data)
+        else:
+            return self.residual_function(sim_result, data)

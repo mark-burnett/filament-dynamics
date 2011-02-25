@@ -1,13 +1,28 @@
+goals for wednesday:
+    logging - this shouldn't be too hard and could be really valuable.
+    reproduce a simple pollard sim with the new backend
+    visible progress on p & w
+        at least random model with fluorescence weights against all 3 results
+
+
+
 factories - these are important, they decouple the primitives from the DB
     analysis result
     objective result
+
+logging
+    is it time to add logging support?
+    will need to be able to dump the db log to stdout for easy viewing.
+        perhaps a `tail -f` log dumper?
 
 controller process
     make sure the mesh process/run_job is running on a nice big mesh for the
             objectives
         * is it time to just separate objective and run jobs?
             each objective job could prance across all runs for a given par set
-        
+
+    register conteroller process & attach to each job as creator
+
     global fit mechanism
         do some kind of coarse mesh/random to start
         then start generating children

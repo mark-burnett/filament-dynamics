@@ -20,8 +20,10 @@ from . import tables as _tables
 from . import runs as _runs
 
 class Process(object):
-    def __init__(self, code_revision=None, code_changeset=None, hostname=None,
-                 uname=None):
+    def __init__(self, type=None, code_revision=None, code_changeset=None,
+                 hostname=None, uname=None):
+        if type:
+            self.type = type
         if code_revision:
             self.code_revision = code_revision
         if code_changeset:
@@ -32,9 +34,10 @@ class Process(object):
             self.uname = uname
 
     def __repr__(self):
-        return ("%s(code_revision=%s, code_changeset=%s, hostname=%s, "
-                + "uname=%s, start_time=%s, stop_time=%s)") % (
-                self.__class__.__name__, self.code_revision, self.code_changeset,
+        return ("%s(type='%s', code_revision=%s, code_changeset='%s', "
+                + "hostname='%s', uname=%s, start_time=%s, stop_time=%s)") % (
+                self.__class__.__name__, self.type,
+                self.code_revision, self.code_changeset,
                 self.hostname, self.uname, self.start_time, self.stop_time)
 
     @property
@@ -51,19 +54,24 @@ _orm.mapper(Process, _tables.process_table)
 
 
 class Job(object):
-    def __init__(self, run=None, process=None, complete=None):
+    def __init__(self, run=None, worker=None, creator=None, complete=None):
         if run:
             self.run = run
-        if process:
-            self.process = process
+        if worker:
+            self.worker = worker
+        if creator:
+            self.creator = creator
         if complete is not None:
             self.complete = complete
 
     def __repr__(self):
-        return "%s(run=%s, process=%s, complete=%s)" % (
+        return "%s(run=%s, worker=%s, creator=%s, complete=%s)" % (
                 self.__class__.__name__, self.run,
-                self.process, self.complete)
+                self.worker, self.creator, self.complete)
 
 _orm.mapper(Job, _tables.job_table, properties={
     'run': _orm.relationship(_runs.Run),
-    'process': _orm.relationship(Process)})
+    'worker': _orm.relationship(Process,
+        primaryjoin=_tables.job_table.c.worker_id==_tables.process_table.c.id),
+    'creator': _orm.relationship(Process,
+        primaryjoin=_tables.job_table.c.creator_id==_tables.process_table.c.id)})

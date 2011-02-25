@@ -19,4 +19,4 @@ import mercurial.ui
 def source_revision():
     repo = mercurial.hg.repository(mercurial.ui.ui(), '.')
     parent = repo.parents()[0]
-    return '%s:%s' % (parent.rev(), parent.hex())
+    return parent.rev(), parent.hex()

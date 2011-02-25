@@ -370,8 +370,8 @@ experiments:
                 pollard_adppi_fit:
                     class_name: SimpleDataFit
                     fixed_arguments:
-                        measurements: total_adppi_count
-                        residual_function: naked_chi_squared
+                        measurement:   total_adppi_count
+                        residual_type: naked_chi_squared
                         interpolate_simulations: True
 
                 pollard_pyrene_fit:

@@ -18,42 +18,38 @@ import datetime
 import socket
 import os
 
+import contextlib
+
 from . import database
 from . import version
 
 
-# This is how we will identify this process to everyone.
-PROCESS = None
+@contextlib.contextmanager
+def process(process_type):
+    '''
+    Yields a process to be used for identifying work done.
+    '''
+    rev, ctx = version.source_revision()
+    p = database.Process(code_revision=rev, code_changeset=ctx,
+                         hostname=socket.gethostname(),
+                         uname=os.uname(), type=process_type)
+
+    db_session = database.DBSession()
+    db_session.add(p)
+    db_session.commit()
+
+    yield p
+
+    p.stop_time = datetime.datetime.now()
+    db_session.commit()
 
 
-def register_process():
-    global PROCESS
-    if not PROCESS:
-        rev, ctx = version.source_revision()
-        PROCESS = database.Process(code_revision=rev, code_changeset=ctx,
-                                   hostname=socket.gethostname(),
-                                   uname=os.uname())
-        db_session = database.DBSession()
-        db_session.add(PROCESS)
-        db_session.commit()
-
-def unregister_process():
-    global PROCESS
-    if PROCESS:
-        db_session = database.DBSession()
-        db_session.add(PROCESS)
-        PROCESS.stop_time = datetime.datetime.now()
-        db_session.commit()
-
-        PROCESS = None
-
-
-def get_job():
+def get_job(process):
     db_session = database.DBSession()
     job = db_session.query(database.Job).filter_by(complete=False,
-            process_id=None).with_lockmode('update_nowait').first()
+            worker_id=None).with_lockmode('update_nowait').first()
     if job:
-        job.process = PROCESS
+        job.worker = process
         db_session.commit()
 
     return job
@@ -63,7 +59,7 @@ def get_job():
 def cleanup_incomplete_jobs():
     db_session = database.DBSession()
     job_query = db_session.query(database.Job).filter_by(complete=False
-            ).filter(database.Job.process != None)
+            ).filter(database.Job.worker != None)
 
-    job_query.update({'process': None})
+    job_query.update({'worker': None})
     db_session.commit()

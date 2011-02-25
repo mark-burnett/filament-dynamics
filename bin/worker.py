@@ -22,24 +22,22 @@ from actin_dynamics.configuration import database
 
 from actin_dynamics import job_control, run_support
 
+
 def main(idle_timeout, retry_delay):
-    job_control.register_process()
+    with job_control.process('worker') as process:
+        stop_time = time.time() + idle_timeout
+        while time.time() < stop_time:
+            job = job_control.get_job(process)
+            if job:
+                run_support.run_job(job)
+                job.complete = True
 
-    stop_time = time.time() + idle_timeout
-    while time.time() < stop_time:
-        job = job_control.get_job()
-        if job:
-            run_support.run_job(job)
-            job.complete = True
-
-            db_session = DBSession()
-            db_session.add(job)
-            db_session.commit()
-            stop_time = time.time() + idle_timeout
-        else:
-            time.sleep(retry_delay)
-
-    job_control.unregister_process()
+                db_session = DBSession()
+                db_session.add(job)
+                db_session.commit()
+                stop_time = time.time() + idle_timeout
+            else:
+                time.sleep(retry_delay)
 
 
 if '__main__' == __name__:
