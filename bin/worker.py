@@ -23,6 +23,8 @@ from actin_dynamics.configuration import database
 from actin_dynamics import job_control, run_support
 
 def main(idle_timeout, retry_delay):
+    job_control.register_process()
+
     stop_time = time.time() + idle_timeout
     while time.time() < stop_time:
         job = job_control.get_job()
@@ -36,6 +38,8 @@ def main(idle_timeout, retry_delay):
             stop_time = time.time() + idle_timeout
         else:
             time.sleep(retry_delay)
+
+    job_control.unregister_process()
 
 
 if '__main__' == __name__:

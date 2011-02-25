@@ -14,31 +14,56 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
-import uuid
+import datetime
+import socket
+import os
 
 from . import database
-from . import utils
+from . import version
 
 
 # This is how we will identify this process to everyone.
-UUID = str(uuid.uuid4())
+PROCESS = None
+
+
+def register_process():
+    global PROCESS
+    if not PROCESS:
+        rev, ctx = version.source_revision()
+        PROCESS = database.Process(code_revision=rev, code_changeset=ctx,
+                                   hostname=socket.gethostname(),
+                                   uname=os.uname())
+        db_session = database.DBSession()
+        db_session.add(PROCESS)
+        db_session.commit()
+
+def unregister_process():
+    global PROCESS
+    if PROCESS:
+        db_session = database.DBSession()
+        db_session.add(PROCESS)
+        PROCESS.stop_time = datetime.datetime.now()
+        db_session.commit()
+
+        PROCESS = None
 
 
 def get_job():
     db_session = database.DBSession()
     job = db_session.query(database.Job).filter_by(complete=False,
-            worker_uuid=None).with_lockmode('update_nowait').first()
+            process_id=None).with_lockmode('update_nowait').first()
     if job:
-        job.worker_uuid = UUID
+        job.process = PROCESS
         db_session.commit()
 
     return job
 
 
+# XXX This may need to delete partial data, like analyses or something.
 def cleanup_incomplete_jobs():
     db_session = database.DBSession()
     job_query = db_session.query(database.Job).filter_by(complete=False
-            ).filter(database.Job.worker_uuid != None)
+            ).filter(database.Job.process != None)
 
-    job_query.update({'worker_uuid': None})
+    job_query.update({'process': None})
     db_session.commit()

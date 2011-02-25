@@ -19,19 +19,51 @@ from sqlalchemy import orm as _orm
 from . import tables as _tables
 from . import runs as _runs
 
+class Process(object):
+    def __init__(self, code_revision=None, code_changeset=None, hostname=None,
+                 uname=None):
+        if code_revision:
+            self.code_revision = code_revision
+        if code_changeset:
+            self.code_changeset = code_changeset
+        if hostname:
+            self.hostname = hostname
+        if uname:
+            self.uname = uname
+
+    def __repr__(self):
+        return ("%s(code_revision=%s, code_changeset=%s, hostname=%s, "
+                + "uname=%s, start_time=%s, stop_time=%s)") % (
+                self.__class__.__name__, self.code_revision, self.code_changeset,
+                self.hostname, self.uname, self.start_time, self.stop_time)
+
+    @property
+    def uname(self):
+        return '%s %s %s %s %s' % (self.sysname, self.nodename, self.release,
+                                   self.version, self.machine)
+
+    @uname.setter
+    def uname(self, new_value):
+        (self.sysname, self.nodename, self.release, self.version,
+                self.machine) = new_value
+
+_orm.mapper(Process, _tables.process_table)
+
+
 class Job(object):
-    def __init__(self, run=None, worker_uuid=None, complete=None):
+    def __init__(self, run=None, process=None, complete=None):
         if run:
             self.run = run
-        if worker_uuid:
-            self.worker_uuid = worker_uuid
+        if process:
+            self.process = process
         if complete is not None:
             self.complete = complete
 
     def __repr__(self):
-        return "%s(run=%s, worker_uuid=%s, complete=%s)" % (
+        return "%s(run=%s, process=%s, complete=%s)" % (
                 self.__class__.__name__, self.run,
-                self.worker_uuid, self.complete)
+                self.process, self.complete)
 
 _orm.mapper(Job, _tables.job_table, properties={
-    'run': _orm.relationship(_runs.Run)})
+    'run': _orm.relationship(_runs.Run),
+    'process': _orm.relationship(Process)})

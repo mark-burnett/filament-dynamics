@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
+
 from sqlalchemy import schema
 
 from . import global_state
@@ -37,11 +39,35 @@ session_table = schema.Table('session', global_state.metadata,
 # ---------------------------------------------------------------------
 # - Job control branch                                                -
 # ---------------------------------------------------------------------
+# The purpose of the process table is purely provenance.
+process_table = schema.Table('process', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+
+        # These identify the code.
+        schema.Column('code_revision', schema.types.Integer),
+        schema.Column('code_changeset', schema.types.String(32)),
+
+        # These identify the machine.
+        # First, the hostname (not always identical to the below nodename).
+        schema.Column('hostname', schema.types.String(MAX_NAME_LENGTH)),
+        # These 5 columns come from `uname -a`.
+        schema.Column('sysname',  schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('nodename', schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('release',  schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('version',  schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('machine',  schema.types.String(MAX_NAME_LENGTH)),
+
+        # These identify the time.
+        schema.Column('start_time', schema.types.DateTime,
+            default=datetime.datetime.now),
+        schema.Column('stop_time', schema.types.DateTime))
+
 job_table = schema.Table('job', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('run_id', schema.types.Integer,
                       schema.ForeignKey('run.id')),
-        schema.Column('worker_uuid', schema.types.String(36), index=True),
+        schema.Column('process_id', schema.types.Integer,
+                      schema.ForeignKey('process.id')),
         schema.Column('complete', schema.types.Boolean, index=True,
                       default=False),
         mysql_engine='InnoDB')
