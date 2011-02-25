@@ -1,4 +1,4 @@
-#    Copyright (C) 2011 Mark Burnett
+#    Copyright (C) 2010 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,23 +13,20 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import unittest
 
-from sqlalchemy import orm as _orm
+from actin_dynamics.numerical import utils
 
-from . import tables as _tables
+class RunningTotalTest(unittest.TestCase):
+    def test_running_total(self):
+        test_data = [[0, 1, 2, 3, 4, 5],
+                     [7, 1, 2, 8],
+                     [-5, 0, -2, 3]]
+        answers   = [[0, 1, 3, 6, 10, 15],
+                     [7, 8, 10, 18],
+                     [-5, -5, -7, -4]]
+        for a, d in zip(answers, test_data):
+            self.assertEqual(a, list(utils.running_total(d)))
 
-class AnalysisResult(object):
-    def __init__(self, abscissa=None, ordinate=None, error=None):
-        if abscissa is not None:
-            self.abscissa = abscissa
-        if ordinate is not None:
-            self.ordinate = ordinate
-        if error is not None:
-            self.error = error
-
-    def __repr__(self):
-        return '%s(abscissa=%s, ordinate=%s, error=%s)' % (
-                self.__class__.__name__, self.abscissa, self.ordinate,
-                self.error)
-
-_orm.mapper(AnalysisResult, _tables.analysis_results_table)
+if '__main__' == __name__:
+    unittest.main()

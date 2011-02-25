@@ -18,47 +18,16 @@ from sqlalchemy import orm as _orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables as _tables
-from . import binds as _binds
 from . import parameters as _parameters
 
 
-class ObjectiveDataEntry(object):
-    def __init__(self, abscissa=None, ordinate=None):
-        if abscissa:
-            self.abscissa = abscissa
-        if ordinate:
-            self.ordinate = ordinate
-
-    def __repr__(self):
-        return "%s(abscissa=%s, ordinate=%s)" % (
-            self.__class__.__name__, self.abscissa, self.ordinate)
-
-_orm.mapper(ObjectiveDataEntry, _tables.objective_data_entry_table)
-
-
-class ObjectiveData(object):
-    def __init__(self, name=None, experiment=None):
-        if name:
-            self.name = name
-        if experiment:
-            self.experiment = experiment
-
-    def __repr__(self):
-        return "%s(name=%s, experiment=%s)" % (
-            self.__class__.__name__, self.name, self.experiment)
-
-_orm.mapper(ObjectiveData, _tables.objective_data_table, properties={
-    'pairs': _orm.relationship(ObjectiveDataEntry)})
-
-
 class Objective(object):
-    def __init__(self, run=None, configuration=None, value=None,
-                 parameters=None):
+    def __init__(self, run=None, bind=None, value=None, parameters=None):
         if run:
             self.run = run
-        if configuration:
-            self.configuration = configuration
-        if value:
+        if bind:
+            self.bind = bind
+        if value is not None:
             self.value = value
         if parameters:
             self.parameters = parameters

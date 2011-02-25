@@ -28,17 +28,17 @@ class TestObjective(unittest.TestCase):
     def tearDown(self):
         database.metadata.drop_all(engine)
 
-    def test_analysis_relationship(self):
-        a = database.Analysis()
-        o = database.Objective(analysis=a)
+    def test_run_relationship(self):
+        r = database.Run()
+        o = database.Objective(run=r)
 
         db_session.add(o)
         db_session.commit()
 
         o2 = db_session.query(database.Objective).first()
         self.assertEqual(o, o2)
-        self.assertEqual(a, o2.analysis)
-        self.assertTrue(o2.analysis.id >= 1)
+        self.assertEqual(e, o2.run)
+        self.assertTrue(o2.run.id >= 1)
 
     def test_parameters(self):
         test_data = {'par_name_1': 7.2,
@@ -56,62 +56,6 @@ class TestObjective(unittest.TestCase):
         o2 = db_session.query(database.Objective).first()
         for par_name, value in test_data.iteritems():
             self.assertEqual(value, o2.parameters[par_name])
-
-#    def test_configuration_relationship(self):
-#        c = database.ObjectiveConfiguration()
-#        o = database.Objective(configuration=c)
-#
-#        db_session.add(o)
-#        db_session.commit()
-#
-#        o2 = db_session.query(database.Objective).first()
-#        self.assertEqual(o, o2)
-#        self.assertEqual(c, o2.configuration)
-#        self.assertTrue(o2.configuration.id >= 1)
-
-#class TestObjectiveConfiguration(unittest.TestCase):
-#    def setUp(self):
-#        database.metadata.create_all(engine)
-#
-#    def tearDown(self):
-#        database.metadata.drop_all(engine)
-#
-#    def test_objective_relationship(self):
-#        o = database.Objective()
-#        c = database.ObjectiveConfiguration(name='test name', objectives=[o])
-#
-#        db_session.add(c)
-#        db_session.commit()
-#
-#        c2 = db_session.query(database.ObjectiveConfiguration).first()
-#        self.assertEqual(c, c2)
-#        self.assertEqual('test name', c2.name)
-#        self.assertEqual(o, c2.objectives[0])
-#        self.assertTrue(c2.objectives[0].id >= 1)
-#
-#    def test_experiment_relationship(self):
-#        e = database.Experiment(name='test expt name')
-#        c = database.ObjectiveConfiguration(experiment=e)
-#
-#        db_session.add(c)
-#        db_session.commit()
-#
-#        c2 = db_session.query(database.ObjectiveConfiguration).first()
-#        self.assertEqual(c, c2)
-#        self.assertEqual(e, c2.experiment)
-#        self.assertTrue(c2.experiment.id >= 1)
-#
-#    def test_bind(self):
-#        b = database.ObjectiveBind(class_name='test obj bind')
-#        c = database.ObjectiveConfiguration(bind=b)
-#
-#        db_session.add(c)
-#        db_session.commit()
-#
-#        c2 = db_session.query(database.ObjectiveConfiguration).first()
-#        self.assertEqual(c, c2)
-#        self.assertEqual(b, c2.bind)
-#        self.assertTrue(c2.bind.id >= 1)
 
 
 if '__main__' == __name__:

@@ -21,7 +21,7 @@ from . import tables as _tables
 from . import arguments as _arguments
 
 class Bind(object):
-    def __init__(self, label=None, class_name=None,
+    def __init__(self, class_name=None, label=None,
                  fixed_arguments=None, variable_arguments=None):
         if label:
             self.label = label

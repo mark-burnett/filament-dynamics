@@ -21,48 +21,42 @@ from sqlalchemy.ext.associationproxy import association_proxy as _ap
 from . import tables as _tables
 from . import binds as _binds
 from . import experiments as _experiments
-from . import parameters as _parameters
 from . import results as _results
 
 
 class Analysis(object):
-    def __init__(self, run=None, name=None, results=None, parameters=None):
+    def __init__(self, run=None, name=None, results=None):
         if run:
             self.run = run
         if name:
             self.name = name
         if results:
             self.results = results
-        if parameters:
-            self.parameters = parameters
 
     def __repr__(self):
-        return "%s(run=%s, name='%s', analyses=%s, parameters=%s)" % (
-            self.__class__.__name__, self.run, self.name,
-            self.analyses, self.parameters)
-
-    parameters = _ap('_parameters', 'value',
-                     creator=_parameters.AnalysisParameter)
+        return "%s(run=%s, name='%s', results=%s)" % (
+            self.__class__.__name__, self.run, self.name, self.results)
 
     @property
     def measurement(self):
-        times = []
+        times  = []
         values = []
+        errors = []
         for result in self.results:
             times.append(result.abscissa)
             values.append(result.ordinate)
+            errors.append(result.error)
 
-        return times, values
+        return times, values, errors
 
     @measurement.setter
     def measurement(self, new_values):
-        self.results.clear()
-        for t, v in itertools.izip(new_values):
+        self.results = []
+        for t, v, e in itertools.izip(*new_values):
             self.results.append(_results.AnalysisResult(abscissa=t,
-                                                        ordinate=v))
+                                                        ordinate=v,
+                                                        error=e))
 
 # Analysis should have binds
 _orm.mapper(Analysis, _tables.analysis_table, properties={
-    '_parameters': _orm.relationship(_parameters.AnalysisParameter,
-        collection_class=_orm.collections.attribute_mapped_collection('name')),
     'results': _orm.relationship(_results.AnalysisResult, backref='analysis')})

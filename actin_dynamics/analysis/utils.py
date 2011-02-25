@@ -16,7 +16,7 @@
 import copy
 import math
 
-from actin_dynamics import vectorize
+from actin_dynamics.numerical import workalike
 
 
 def iter_filaments(simulations):
@@ -56,8 +56,8 @@ def add_measurements(measurements):
     for mtimes, mvalues, merrors in measurements[1:]:
         merrors = [e**2 for e in merrors]
 
-        values = vectorize.add(values, mvalues)
-        errors = vectorize.add(errors, merrors)
+        values = workalike.add(values, mvalues)
+        errors = workalike.add(errors, merrors)
 
     errors = map(math.sqrt, errors)
 

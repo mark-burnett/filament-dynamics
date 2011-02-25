@@ -40,20 +40,10 @@ class ExperimentParameter(Parameter): pass
 _orm.mapper(ExperimentParameter, _tables.experiment_parameters_table,
             inherits=Parameter, polymorphic_identity='experiment')
 
-class ModelParameter(Parameter): pass
-
-_orm.mapper(ModelParameter, _tables.model_parameters_table,
-            inherits=Parameter, polymorphic_identity='model')
-
 class RunParameter(Parameter): pass
 
 _orm.mapper(RunParameter, _tables.run_parameters_table,
             inherits=Parameter, polymorphic_identity='run')
-
-class AnalysisParameter(Parameter): pass
-
-_orm.mapper(AnalysisParameter, _tables.analysis_parameters_table,
-            inherits=Parameter, polymorphic_identity='analysis')
 
 class ObjectiveParameter(Parameter): pass
 

@@ -26,7 +26,8 @@ from . import experiments as _experiments
 
 
 class Run(object):
-    def __init__(self, experiment=None, analyses=None, objectives=None, parameters=None):
+    def __init__(self, experiment=None, analyses=None, objectives=None,
+                 parameters=None, analysis_list=None):
         if experiment:
             self.experiment = experiment
         if analyses:
@@ -35,6 +36,8 @@ class Run(object):
             self.objectives = objectives
         if parameters:
             self.parameters = parameters
+        if analysis_list:
+            self.analysis_list = analysis_list
 
     def __repr__(self):
         return "%s(experiment=%s, analyses=%s, objectives=%s, parameters=%s)" % (
@@ -42,10 +45,14 @@ class Run(object):
             self.analyses, self.objectives, self.parameters)
 
     parameters = _ap('_parameters', 'value', creator=_parameters.RunParameter)
+    analyses   = _ap('_analyses', 'measurement', creator=_analyses.Analysis)
 
 _orm.mapper(Run, _tables.run_table, properties={
     '_parameters': _orm.relationship(_parameters.RunParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
-    'analyses':   _orm.relationship(_analyses.Analysis, backref='run'),
+    '_analyses':   _orm.relationship(_analyses.Analysis,
+        collection_class=_orm.collections.attribute_mapped_collection(
+            'name')),
+    'analysis_list': _orm.relationship(_analyses.Analysis, backref='run'),
     'objectives': _orm.relationship(_objectives.Objective, backref='run'),
     'experiment': _orm.relationship(_experiments.Experiment, backref='runs')})

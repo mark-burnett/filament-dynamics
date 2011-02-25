@@ -86,19 +86,6 @@ schema.Index('experiment_parameters_unique_columns',
              experiment_parameters_table.c.experiment_id,
              unique=True)
 
-model_parameters_table = schema.Table('model_parameter',
-                                      global_state.metadata,
-        schema.Column('parameter_id', schema.types.Integer,
-                      schema.ForeignKey('parameter.id'), primary_key=True),
-        schema.Column('model_id', schema.types.Integer,
-                      schema.ForeignKey('model.id')),
-        mysql_engine='InnoDB')
-
-schema.Index('model_parameters_unique_columns',
-             model_parameters_table.c.parameter_id,
-             model_parameters_table.c.model_id,
-             unique=True)
-
 run_parameters_table = schema.Table('run_parameter',
                                     global_state.metadata,
         schema.Column('parameter_id', schema.types.Integer,
@@ -110,19 +97,6 @@ run_parameters_table = schema.Table('run_parameter',
 schema.Index('run_parameters_unique_columns',
              run_parameters_table.c.parameter_id,
              run_parameters_table.c.run_id,
-             unique=True)
-
-analysis_parameters_table = schema.Table('analysis_parameter',
-                                         global_state.metadata,
-        schema.Column('parameter_id', schema.types.Integer,
-                      schema.ForeignKey('parameter.id'), primary_key=True),
-        schema.Column('analysis_id', schema.types.Integer,
-                      schema.ForeignKey('analysis.id')),
-        mysql_engine='InnoDB')
-
-schema.Index('analysis_parameters_unique_columns',
-             analysis_parameters_table.c.parameter_id,
-             analysis_parameters_table.c.analysis_id,
              unique=True)
 
 objective_parameters_table = schema.Table('objective_parameter',
@@ -280,6 +254,7 @@ analysis_results_table = schema.Table('analysis_result',
                       schema.ForeignKey('analysis.id')),
         schema.Column('abscissa', schema.types.Float),
         schema.Column('ordinate', schema.types.Float),
+        schema.Column('error',    schema.types.Float),
         mysql_engine='InnoDB')
 
 

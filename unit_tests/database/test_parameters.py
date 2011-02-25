@@ -38,9 +38,7 @@ class TestParameter(unittest.TestCase):
 
         self.assertEqual(1, db_session.query(database.SessionParameter).count())
         self.assertEqual(0, db_session.query(database.ExperimentParameter).count())
-        self.assertEqual(0, db_session.query(database.ModelParameter).count())
         self.assertEqual(0, db_session.query(database.RunParameter).count())
-        self.assertEqual(0, db_session.query(database.AnalysisBind).count())
         self.assertEqual(0, db_session.query(database.ObjectiveParameter).count())
 
         o = database.ObjectiveParameter(name='bye', value=7.6)
@@ -51,9 +49,7 @@ class TestParameter(unittest.TestCase):
 
         self.assertEqual(1, db_session.query(database.SessionParameter).count())
         self.assertEqual(0, db_session.query(database.ExperimentParameter).count())
-        self.assertEqual(0, db_session.query(database.ModelParameter).count())
         self.assertEqual(0, db_session.query(database.RunParameter).count())
-        self.assertEqual(0, db_session.query(database.AnalysisBind).count())
         self.assertEqual(1, db_session.query(database.ObjectiveParameter).count())
 
 
