@@ -21,10 +21,10 @@ from actin_dynamics import database
 
 class DBTestCase(unittest.TestCase):
     engine     = create_engine('sqlite:///:memory:')
-    db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
 
     def setUp(self):
         database.metadata.create_all(self.engine)
+        self.db_session = orm.scoped_session(orm.sessionmaker(bind=self.engine))
 
     def tearDown(self):
         database.metadata.drop_all(self.engine)

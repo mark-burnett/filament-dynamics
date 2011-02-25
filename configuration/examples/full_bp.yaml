@@ -351,14 +351,18 @@ experiments:
         objectives:
             loaders:
                 pollard_adppi_fit:
-                    class_name: DatFile
+                    class_name: DatReader
                     fixed_arguments:
-                        data_file: 'pollard_2002/adppi_concentration.dat'
+                        filename: 'pollard_2002/adppi_concentration.dat'
 
                 pollard_pyrene_fit:
-                    class_name: DatFile
+                    class_name: DatReader
+                    variable_arguments:
+                        sample_period: sample_period
+                        xmax: simulation_duration
                     fixed_arguments:
-                        data_file: 'pollard_2002/pyrene_fluorescence.dat'
+                        xmin: 0
+                        filename: 'pollard_2002/pyrene_fluorescence.dat'
                         interpolate_data: True
 
 

@@ -13,13 +13,4 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import analyses
-import concentrations
-import end_conditions
-import measurements
-import filaments
-import file_readers
-import objectives
-import transitions
-
-del meta_classes
+file_reader_registry = {}

@@ -15,4 +15,4 @@
 
 from registry import objective_registry as registry
 
-del base_classes
+#del base_classes

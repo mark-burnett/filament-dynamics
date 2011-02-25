@@ -13,15 +13,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import fnmatch
+from registry import file_reader_registry as registry
 
-from . import compressed
-
-def get_sim_filenames(directory):
-    return [os.path.join(directory, f)
-            for f in os.listdir(directory) if fnmatch.fnmatch(f, '*.sim')]
-
-def load_directory(directory):
-    files = get_sim_filenames(directory)
-    return compressed.combine_files(files)
+#del base_classes

@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,13 +13,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import analyses
-import concentrations
-import end_conditions
-import measurements
-import filaments
-import file_readers
-import objectives
-import transitions
+from .base_classes import Objective as _Objective
 
-del meta_classes
+class SimpleDataFit(_Objective):
+    def __init__(self, label=None):
+        _Objective.__init__(self, label=label)
+
+    def perform(self, run, result_factory):
+        pass
+
