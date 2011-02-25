@@ -17,7 +17,7 @@ import unittest
 
 from actin_dynamics import database
 
-from .base_test_cases import DBTestCase
+from unit_tests.database.base_test_cases import DBTestCase
 
 class TestObjective(DBTestCase):
     def test_run_relationship(self):

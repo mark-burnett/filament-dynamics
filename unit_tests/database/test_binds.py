@@ -17,7 +17,7 @@ import unittest
 
 from actin_dynamics import database
 
-from .base_test_cases import DBTestCase
+from unit_tests.database.base_test_cases import DBTestCase
 
 class TestBind(DBTestCase):
     def test_inheritance_for_cross_talk(self):
@@ -97,8 +97,20 @@ class TestBind(DBTestCase):
             self.assertEqual(par_name, t2.variable_arguments[arg])
 
 def TestObjectiveBind(DBTestCase):
-    def test_stuff(self):
-        pass
+    def test_data(self):
+        times = range(5)
+        values = [t**2 for t in times]
+        errors = [0.1 * v for v in values]
+
+        ob = database.ObjectiveBind()
+        a.measurement = times, values, errors
+
+        for i, result in enumerate(a.results):
+            self.assertEqual(times[i], result.abscissa)
+            self.assertEqual(values[i], result.ordinate)
+            self.assertEqual(errors[i], result.error)
+
+        self.assertEqual((times, values, errors), a.measurement)
 
 
 if '__main__' == __name__:

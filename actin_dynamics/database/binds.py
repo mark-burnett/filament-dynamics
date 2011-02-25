@@ -89,10 +89,28 @@ class ObjectiveBind(Bind):
                 self.module_name, dict(self.fixed_arguments),
                 dict(self.variable_arguments), self.data)
 
+    @property
+    def measurement(self):
+        times  = []
+        values = []
+        errors = []
+        for result in self.data:
+            times.append(result.abscissa)
+            values.append(result.ordinate)
+            errors.append(result.error)
+
+        return times, values, errors
+
+    @measurement.setter
+    def measurement(self, new_values):
+        self.data = []
+        for t, v, e in itertools.izip(*new_values):
+            self.data.append(_results.ObjectiveData(abscissa=t,
+                                                    ordinate=v,
+                                                    error=e))
+
+
 _orm.mapper(ObjectiveBind, inherits=Bind, polymorphic_identity='objectives',
         properties={
             'data': _orm.relationship(_results.ObjectiveData,
                 backref='objective_bind')})
-
-class FileReaderBind(Bind): pass
-_orm.mapper(FileReaderBind, inherits=Bind, polymorphic_identity='file_readers')
