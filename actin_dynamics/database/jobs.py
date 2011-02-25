@@ -39,8 +39,8 @@ class Process(object):
 
     @property
     def uname(self):
-        return '%s %s %s %s %s' % (self.sysname, self.nodename, self.release,
-                                   self.version, self.machine)
+        return (self.sysname, self.nodename, self.release, self.version,
+                self.machine)
 
     @uname.setter
     def uname(self, new_value):

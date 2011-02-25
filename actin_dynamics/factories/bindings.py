@@ -16,8 +16,8 @@
 from actin_dynamics import primitives
 
 def db_single(bind, parameters):
+    registry = getattr(primitives, bind.module_name).registry
     cls = registry[bind.class_name]
-    registry = getattr(primitives, b.module_name).registry
 
     kwargs = dict((local_name, parameters[global_name])
           for local_name, global_name in bind.variable_arguments.iteritems())
@@ -31,7 +31,7 @@ def db_single(bind, parameters):
 def db_multiple(binds, parameters):
     results = []
     for b in binds:
-        results.append(instantiate_bind(b, parameters))
+        results.append(db_single(b, parameters))
     return results
 
 

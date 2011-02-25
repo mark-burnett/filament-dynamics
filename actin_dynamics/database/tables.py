@@ -60,7 +60,8 @@ process_table = schema.Table('process', global_state.metadata,
         # These identify the time.
         schema.Column('start_time', schema.types.DateTime,
             default=datetime.datetime.now),
-        schema.Column('stop_time', schema.types.DateTime))
+        schema.Column('stop_time', schema.types.DateTime),
+        mysql_engine='InnoDB')
 
 job_table = schema.Table('job', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),

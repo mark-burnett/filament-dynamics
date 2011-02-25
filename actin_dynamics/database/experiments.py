@@ -26,7 +26,8 @@ from . import objectives as _objectives
 class Experiment(object):
     def __init__(self,  name=None, session=None, parameters=None,
                  filaments=None, measurements=None, end_conditions=None,
-                 concentrations=None, transitions=None):
+                 concentrations=None, transitions=None,
+                 analysis_list=None, objective_list=None):
         if name:
             self.name = name
         if session:
@@ -45,6 +46,11 @@ class Experiment(object):
         if transitions:
             self.transitions = transitions
 
+        if analysis_list:
+            self.analysis_list = analysis_list
+        if objective_list:
+            self.objective_list = objective_list
+
     def __repr__(self):
         return (("%s(name='%s', parameters=%s, session=%s, filaments=%s," +
                 " measurements=%s, end_conditions=%s, concentrations=%s," +
@@ -55,6 +61,10 @@ class Experiment(object):
 
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.ExperimentParameter)
+    analyses   = _ap('_analyses', 'identity',
+                     creator=_binds._create_bind)
+    objectives = _ap('_objectives', 'identity',
+                     creator=_binds._create_bind)
 
 _orm.mapper(Experiment, _tables.experiment_table, properties={
     'filaments': _orm.relationship(_binds.FilamentBind,
@@ -68,9 +78,16 @@ _orm.mapper(Experiment, _tables.experiment_table, properties={
     'transitions': _orm.relationship(_binds.TransitionBind,
         secondary=_tables.experiment_bind_table),
 
-    'analyses': _orm.relationship(_binds.AnalysisBind,
+    'analysis_list': _orm.relationship(_binds.AnalysisBind,
         secondary=_tables.experiment_bind_table),
-    'objectives': _orm.relationship(_binds.ObjectiveBind,
+    'objective_list': _orm.relationship(_binds.ObjectiveBind,
+        secondary=_tables.experiment_bind_table),
+
+    '_analyses': _orm.relationship(_binds.AnalysisBind,
+        collection_class=_orm.collections.attribute_mapped_collection('label'),
+        secondary=_tables.experiment_bind_table),
+    '_objectives': _orm.relationship(_binds.ObjectiveBind,
+        collection_class=_orm.collections.attribute_mapped_collection('label'),
         secondary=_tables.experiment_bind_table),
 
     '_parameters': _orm.relationship(_parameters.ExperimentParameter,

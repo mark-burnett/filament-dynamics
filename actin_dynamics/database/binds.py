@@ -20,8 +20,12 @@ from . import tables as _tables
 from . import arguments as _arguments
 from . import results as _results
 
+def _create_bind(key, value):
+    value.label = key
+    return value
+
 class Bind(object):
-    def __init__(self, class_name=None, label=None,
+    def __init__(self, label=None, class_name=None,
                  fixed_arguments=None, variable_arguments=None):
         if label:
             self.label = label
@@ -44,6 +48,20 @@ class Bind(object):
                           creator=_arguments.FixedArgument)
     variable_arguments = _ap('_variable_arguments', 'parameter_name',
                     creator=_arguments.VariableArgument)
+
+    @property
+    def identity(self):
+        return self
+
+    # This is crazy.
+    @identity.setter
+    def identity(self, source):
+        self.class_name         = source.class_name
+        self.fixed_arguments    = source.fixed_arguments
+        self.variable_arguments = source.variable_arguments
+        source_data = getattr(source, 'data')
+        if source_data:
+            self.data = source_data
 
 _orm.mapper(Bind, _tables.bind_table,
             polymorphic_on=_tables.bind_table.c.module_name,
@@ -108,7 +126,6 @@ class ObjectiveBind(Bind):
             self.data.append(_results.ObjectiveData(abscissa=t,
                                                     ordinate=v,
                                                     error=e))
-
 
 _orm.mapper(ObjectiveBind, inherits=Bind, polymorphic_identity='objectives',
         properties={
