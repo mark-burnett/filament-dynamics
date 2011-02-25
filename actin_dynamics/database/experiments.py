@@ -61,10 +61,14 @@ class Experiment(object):
 
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.ExperimentParameter)
-    analyses   = _ap('_analyses', 'identity',
-                     creator=_binds._create_bind)
-    objectives = _ap('_objectives', 'identity',
-                     creator=_binds._create_bind)
+
+    @property
+    def analyses(self):
+        return dict((b.label, b) for b in self.analysis_list)
+
+    @property
+    def objectives(self):
+        return dict((b.label, b) for b in self.objective_list)
 
 _orm.mapper(Experiment, _tables.experiment_table, properties={
     'filaments': _orm.relationship(_binds.FilamentBind,
@@ -81,13 +85,6 @@ _orm.mapper(Experiment, _tables.experiment_table, properties={
     'analysis_list': _orm.relationship(_binds.AnalysisBind,
         secondary=_tables.experiment_bind_table),
     'objective_list': _orm.relationship(_binds.ObjectiveBind,
-        secondary=_tables.experiment_bind_table),
-
-    '_analyses': _orm.relationship(_binds.AnalysisBind,
-        collection_class=_orm.collections.attribute_mapped_collection('label'),
-        secondary=_tables.experiment_bind_table),
-    '_objectives': _orm.relationship(_binds.ObjectiveBind,
-        collection_class=_orm.collections.attribute_mapped_collection('label'),
         secondary=_tables.experiment_bind_table),
 
     '_parameters': _orm.relationship(_parameters.ExperimentParameter,

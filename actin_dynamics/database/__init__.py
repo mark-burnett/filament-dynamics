@@ -25,6 +25,7 @@ from .jobs import *
 from .models import *
 from .objectives import *
 from .parameters import *
+from .results import *
 from .runs import *
 from .sessions import *
 
@@ -38,5 +39,6 @@ del jobs
 del models
 del objectives
 del parameters
+del results
 del runs
 del sessions
