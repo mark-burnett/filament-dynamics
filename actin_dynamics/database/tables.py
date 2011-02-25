@@ -195,6 +195,7 @@ schema.Index('experiment_unique_columns',
              unique=True)
 
 
+# Connects simulation, analysis, & objective primitives to experiment.
 experiment_bind_table = schema.Table('experiment_bind', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('bind_id', schema.types.Integer,
@@ -209,27 +210,14 @@ schema.Index('experiment_bind_unique_columns',
              unique=True)
 
 
-objective_data_table = schema.Table('objective_data',
+objective_data_table = schema.Table('objective_data_entry',
                                     global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('experiment_id', schema.types.Integer,
-                      schema.ForeignKey('experiment.id')),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
-        mysql_engine='InnoDB')
-
-schema.Index('objective_data_unique_columns',
-             objective_data_table.c.experiment_id,
-             objective_data_table.c.name,
-             unique=True)
-
-
-objective_data_entry_table = schema.Table('objective_data_entry',
-                                          global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('objective_data_id', schema.types.Integer,
-                      schema.ForeignKey('objective_data.id')),
+        schema.Column('objective_bind_id', schema.types.Integer,
+                      schema.ForeignKey('bind.id')),
         schema.Column('abscissa', schema.types.Float),
         schema.Column('ordinate', schema.types.Float),
+        schema.Column('error',    schema.types.Float),
         mysql_engine='InnoDB')
 
 
@@ -241,6 +229,7 @@ model_table = schema.Table('model', global_state.metadata,
         schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
         mysql_engine='InnoDB')
 
+# Connects simulation primitives to model.
 model_bind_table = schema.Table('model_bind', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('bind_id', schema.types.Integer,
@@ -288,7 +277,12 @@ objective_table = schema.Table('objective', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('run_id', schema.types.Integer,
                       schema.ForeignKey('run.id')),
-        schema.Column('objective_configuration_id', schema.types.Integer,
+        schema.Column('objective_bind_id', schema.types.Integer,
                       schema.ForeignKey('bind.id')),
         schema.Column('value', schema.types.Float, index=True),
         mysql_engine='InnoDB')
+
+schema.Index('objective_unique_columns',
+             objective_table.c.run_id,
+             objective_table.c.objective_bind_id,
+             unique=True)

@@ -22,49 +22,20 @@ from . import binds as _binds
 from . import parameters as _parameters
 
 
-class ObjectiveDataEntry(object):
-    def __init__(self, abscissa=None, ordinate=None):
-        if abscissa:
-            self.abscissa = abscissa
-        if ordinate:
-            self.ordinate = ordinate
-
-    def __repr__(self):
-        return "%s(abscissa=%s, ordinate=%s)" % (
-            self.__class__.__name__, self.abscissa, self.ordinate)
-
-_orm.mapper(ObjectiveDataEntry, _tables.objective_data_entry_table)
-
-
-class ObjectiveData(object):
-    def __init__(self, name=None, experiment=None):
-        if name:
-            self.name = name
-        if experiment:
-            self.experiment = experiment
-
-    def __repr__(self):
-        return "%s(name=%s, experiment=%s)" % (
-            self.__class__.__name__, self.name, self.experiment)
-
-_orm.mapper(ObjectiveData, _tables.objective_data_table, properties={
-    'pairs': _orm.relationship(ObjectiveDataEntry)})
-
-
 class Objective(object):
-    def __init__(self, run=None, name=None, value=None, parameters=None):
+    def __init__(self, run=None, bind=None, value=None, parameters=None):
         if run:
             self.run = run
-        if name:
-            self.name = name
+        if bind:
+            self.bind = bind
         if value is not None:
             self.value = value
         if parameters:
             self.parameters = parameters
 
     def __repr__(self):
-        return "%s(run=%s, name=%s, value=%s, parameters=%s)" % (
-            self.__class__.__name__, self.run, self.name, self.value,
+        return "%s(run=%s, bind=%s, value=%s, parameters=%s)" % (
+            self.__class__.__name__, self.run, self.bind, self.value,
             self.parameters)
 
     parameters = _ap('_parameters', 'value',
@@ -72,4 +43,5 @@ class Objective(object):
 
 _orm.mapper(Objective, _tables.objective_table, properties={
     '_parameters': _orm.relationship(_parameters.ObjectiveParameter,
-        collection_class=_orm.collections.attribute_mapped_collection('name'))})
+        collection_class=_orm.collections.attribute_mapped_collection('name')),
+    'bind': _orm.relationship(_binds.ObjectiveBind)})

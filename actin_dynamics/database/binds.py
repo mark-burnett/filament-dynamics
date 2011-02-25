@@ -15,10 +15,10 @@
 
 from sqlalchemy import orm as _orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
-from sqlalchemy import sql as _sql
 
 from . import tables as _tables
 from . import arguments as _arguments
+from . import results as _results
 
 class Bind(object):
     def __init__(self, class_name=None, label=None,
@@ -53,38 +53,46 @@ _orm.mapper(Bind, _tables.bind_table,
     '_variable_arguments': _orm.relationship(_arguments.VariableArgument,
         collection_class=_orm.collections.attribute_mapped_collection('name'))})
 
-# XXX Need to enforce/validate module_name
-        # This can probably be done by having an intermediate class.
 class ConcentrationBind(Bind): pass
-
 _orm.mapper(ConcentrationBind, inherits=Bind,
             polymorphic_identity='concentrations')
 
 class TransitionBind(Bind): pass
-
 _orm.mapper(TransitionBind, inherits=Bind, polymorphic_identity='transitions')
 
 class EndConditionBind(Bind): pass
-
 _orm.mapper(EndConditionBind, inherits=Bind,
             polymorphic_identity='end_conditions')
 
 class MeasurementBind(Bind): pass
-
 _orm.mapper(MeasurementBind, inherits=Bind, polymorphic_identity='measurements')
 
 class FilamentBind(Bind): pass
-
 _orm.mapper(FilamentBind, inherits=Bind, polymorphic_identity='filaments')
 
-class AnalysisBind(Bind): pass
 
+class AnalysisBind(Bind): pass
 _orm.mapper(AnalysisBind, inherits=Bind, polymorphic_identity='analyses')
 
-class ObjectiveBind(Bind): pass
 
-_orm.mapper(ObjectiveBind, inherits=Bind, polymorphic_identity='objectives')
+class ObjectiveBind(Bind):
+    def __init__(self, data=None, *args, **kwargs):
+        if data:
+            self.data
+        Bind.__init__(self, *args, **kwargs)
+
+    def __repr__(self):
+        return ("%s(label='%s', class_name='%s'," +
+                " module_name='%s',  fixed_arguments=%s," +
+                " variable_arguments=%s, data=%s)") % (
+                self.__class__.__name__, self.label, self.class_name,
+                self.module_name, dict(self.fixed_arguments),
+                dict(self.variable_arguments), self.data)
+
+_orm.mapper(ObjectiveBind, inherits=Bind, polymorphic_identity='objectives',
+        properties={
+            'data': _orm.relationship(_results.ObjectiveData,
+                backref='objective_bind')})
 
 class FileReaderBind(Bind): pass
-
 _orm.mapper(FileReaderBind, inherits=Bind, polymorphic_identity='file_readers')

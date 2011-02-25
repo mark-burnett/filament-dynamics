@@ -37,7 +37,7 @@ class TestObjective(unittest.TestCase):
 
         o2 = db_session.query(database.Objective).first()
         self.assertEqual(o, o2)
-        self.assertEqual(e, o2.run)
+        self.assertEqual(r, o2.run)
         self.assertTrue(o2.run.id >= 1)
 
     def test_parameters(self):

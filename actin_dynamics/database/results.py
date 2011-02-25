@@ -18,7 +18,7 @@ from sqlalchemy import orm as _orm
 
 from . import tables as _tables
 
-class AnalysisResult(object):
+class _Data(object):
     def __init__(self, abscissa=None, ordinate=None, error=None):
         if abscissa is not None:
             self.abscissa = abscissa
@@ -32,4 +32,10 @@ class AnalysisResult(object):
                 self.__class__.__name__, self.abscissa, self.ordinate,
                 self.error)
 
+class AnalysisResult(_Data): pass
+
 _orm.mapper(AnalysisResult, _tables.analysis_results_table)
+
+class ObjectiveData(_Data): pass
+
+_orm.mapper(ObjectiveData, _tables.objective_data_table)

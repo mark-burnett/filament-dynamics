@@ -74,5 +74,4 @@ _orm.mapper(Experiment, _tables.experiment_table, properties={
         secondary=_tables.experiment_bind_table),
 
     '_parameters': _orm.relationship(_parameters.ExperimentParameter,
-        collection_class=_orm.collections.attribute_mapped_collection('name')),
-    'data': _orm.relationship(_objectives.ObjectiveData)})
+        collection_class=_orm.collections.attribute_mapped_collection('name'))})
