@@ -15,27 +15,19 @@
 
 import unittest
 
-from sqlalchemy import create_engine, orm
 from actin_dynamics import database
 
-engine = create_engine('sqlite:///:memory:')
-db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
+from .base_test_cases import DBTestCase
 
-class TestObjective(unittest.TestCase):
-    def setUp(self):
-        database.metadata.create_all(engine)
-
-    def tearDown(self):
-        database.metadata.drop_all(engine)
-
+class TestObjective(DBTestCase):
     def test_run_relationship(self):
         r = database.Run()
         o = database.Objective(run=r)
 
-        db_session.add(o)
-        db_session.commit()
+        self.db_session.add(o)
+        self.db_session.commit()
 
-        o2 = db_session.query(database.Objective).first()
+        o2 = self.db_session.query(database.Objective).first()
         self.assertEqual(o, o2)
         self.assertEqual(r, o2.run)
         self.assertTrue(o2.run.id >= 1)
@@ -48,12 +40,12 @@ class TestObjective(unittest.TestCase):
 
         o.parameters = test_data
 
-        db_session.add(o)
-        db_session.commit()
+        self.db_session.add(o)
+        self.db_session.commit()
 
         del o
 
-        o2 = db_session.query(database.Objective).first()
+        o2 = self.db_session.query(database.Objective).first()
         for par_name, value in test_data.iteritems():
             self.assertEqual(value, o2.parameters[par_name])
 

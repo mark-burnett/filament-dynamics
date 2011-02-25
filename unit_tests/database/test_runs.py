@@ -15,28 +15,20 @@
 
 import unittest
 
-from sqlalchemy import create_engine, orm
 from actin_dynamics import database
 
-engine = create_engine('sqlite:///:memory:')
-db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
+from .base_test_cases import DBTestCase
 
-class TestRun(unittest.TestCase):
-    def setUp(self):
-        database.metadata.create_all(engine)
-
-    def tearDown(self):
-        database.metadata.drop_all(engine)
-
+class TestRun(DBTestCase):
     def test_experiment_relationship(self):
         m = database.Model(name='test expt name')
 
         r = database.Run(experiment=m)
 
-        db_session.add(r)
-        db_session.commit()
+        self.db_session.add(r)
+        self.db_session.commit()
 
-        r2 = db_session.query(database.Run).first()
+        r2 = self.db_session.query(database.Run).first()
         self.assertEqual(r, r2)
         self.assertEqual(m, r2.model)
         self.assertTrue(r2.experiment.id >= 1)
@@ -46,10 +38,10 @@ class TestRun(unittest.TestCase):
 
         r = database.Run(experiment=e)
 
-        db_session.add(r)
-        db_session.commit()
+        self.db_session.add(r)
+        self.db_session.commit()
 
-        r2 = db_session.query(database.Run).first()
+        r2 = self.db_session.query(database.Run).first()
         self.assertEqual(r, r2)
         self.assertEqual(e, r2.experiment)
         self.assertTrue(r2.experiment.id >= 1)
@@ -62,12 +54,12 @@ class TestRun(unittest.TestCase):
 
         r.parameters = test_data
 
-        db_session.add(r)
-        db_session.commit()
+        self.db_session.add(r)
+        self.db_session.commit()
 
         del r
 
-        r2 = db_session.query(database.Run).first()
+        r2 = self.db_session.query(database.Run).first()
         for par_name, value in test_data.iteritems():
             self.assertEqual(value, r2.parameters[par_name])
 
@@ -77,10 +69,10 @@ class TestRun(unittest.TestCase):
         a2 = database.Analysis(name='test_name2', run=r)
         a2.measurement = range(3), [2,1,3], [0.1, 1.2, 0.3]
 
-        db_session.add(r)
-        db_session.commit()
+        self.db_session.add(r)
+        self.db_session.commit()
 
-        r2 = db_session.query(database.Run).first()
+        r2 = self.db_session.query(database.Run).first()
         self.assertEqual(r, r2)
 
         self.assertEqual(a2.measurement, r2.analyses['test_name2'])

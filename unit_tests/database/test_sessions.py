@@ -15,19 +15,11 @@
 
 import unittest
 
-from sqlalchemy import create_engine, orm
 from actin_dynamics import database
 
-engine = create_engine('sqlite:///:memory:')
-db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
+from .base_test_cases import DBTestCase
 
-class TestSession(unittest.TestCase):
-    def setUp(self):
-        database.metadata.create_all(engine)
-
-    def tearDown(self):
-        database.metadata.drop_all(engine)
-
+class TestSession(DBTestCase):
     def test_parameters(self):
         test_data = {'par_name_1': 7.2,
                      'par_name_2': 61.3}
@@ -36,12 +28,12 @@ class TestSession(unittest.TestCase):
 
         s.parameters = test_data
 
-        db_session.add(s)
-        db_session.commit()
+        self.db_session.add(s)
+        self.db_session.commit()
 
         del s
 
-        s2 = db_session.query(database.Session).first()
+        s2 = self.db_session.query(database.Session).first()
         for par_name, value in test_data.iteritems():
             self.assertEqual(value, s2.parameters[par_name])
 

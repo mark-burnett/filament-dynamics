@@ -15,42 +15,44 @@
 
 import unittest
 
-from sqlalchemy import create_engine, orm
 from actin_dynamics import database
 
-engine = create_engine('sqlite:///:memory:')
-db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
+from .base_test_cases import DBTestCase
 
-class TestParameter(unittest.TestCase):
-    def setUp(self):
-        database.metadata.create_all(engine)
-
-    def tearDown(self):
-        database.metadata.drop_all(engine)
-
+class TestParameter(DBTestCase):
     def test_inheritance_for_cross_talk(self):
         s = database.SessionParameter(name='hi', value=0.3)
 
-        db_session.add(s)
-        db_session.commit()
+        self.db_session.add(s)
+        self.db_session.commit()
 
-        self.assertEqual(1, db_session.query(database.Parameter).count())
+        self.assertEqual(1, self.db_session.query(database.Parameter
+            ).count())
 
-        self.assertEqual(1, db_session.query(database.SessionParameter).count())
-        self.assertEqual(0, db_session.query(database.ExperimentParameter).count())
-        self.assertEqual(0, db_session.query(database.RunParameter).count())
-        self.assertEqual(0, db_session.query(database.ObjectiveParameter).count())
+        self.assertEqual(1, self.db_session.query(database.SessionParameter
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.ExperimentParameter
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.RunParameter
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.ObjectiveParameter
+            ).count())
 
         o = database.ObjectiveParameter(name='bye', value=7.6)
-        db_session.add(o)
-        db_session.commit()
+        self.db_session.add(o)
+        self.db_session.commit()
 
-        self.assertEqual(2, db_session.query(database.Parameter).count())
+        self.assertEqual(2, self.db_session.query(database.Parameter
+            ).count())
 
-        self.assertEqual(1, db_session.query(database.SessionParameter).count())
-        self.assertEqual(0, db_session.query(database.ExperimentParameter).count())
-        self.assertEqual(0, db_session.query(database.RunParameter).count())
-        self.assertEqual(1, db_session.query(database.ObjectiveParameter).count())
+        self.assertEqual(1, self.db_session.query(database.SessionParameter
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.ExperimentParameter
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.RunParameter
+            ).count())
+        self.assertEqual(1, self.db_session.query(database.ObjectiveParameter
+            ).count())
 
 
 if '__main__' == __name__:

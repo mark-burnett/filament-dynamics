@@ -15,28 +15,20 @@
 
 import unittest
 
-from sqlalchemy import create_engine, orm
 from actin_dynamics import database
 
-engine = create_engine('sqlite:///:memory:')
-db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
+from .base_test_cases import DBTestCase
 
-class TestAnalysis(unittest.TestCase):
-    def setUp(self):
-        database.metadata.create_all(engine)
-
-    def tearDown(self):
-        database.metadata.drop_all(engine)
-
+class TestAnalysis(DBTestCase):
     def test_run_relationship(self):
         r = database.Run()
 
         a = database.Analysis(run=r)
 
-        db_session.add(a)
-        db_session.commit()
+        self.db_session.add(a)
+        self.db_session.commit()
 
-        a2 = db_session.query(database.Analysis).first()
+        a2 = self.db_session.query(database.Analysis).first()
         self.assertEqual(a, a2)
         self.assertEqual(r, a2.run)
         self.assertTrue(a2.run.id >= 1)

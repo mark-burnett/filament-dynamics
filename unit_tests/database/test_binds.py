@@ -15,48 +15,54 @@
 
 import unittest
 
-from sqlalchemy import create_engine, orm
 from actin_dynamics import database
 
-engine = create_engine('sqlite:///:memory:')
-db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
+from .base_test_cases import DBTestCase
 
-class TestBind(unittest.TestCase):
-    def setUp(self):
-        database.metadata.create_all(engine)
-
-    def tearDown(self):
-        database.metadata.drop_all(engine)
-
+class TestBind(DBTestCase):
     def test_inheritance_for_cross_talk(self):
         c = database.ConcentrationBind('test_class')
 
-        db_session.add(c)
-        db_session.commit()
+        self.db_session.add(c)
+        self.db_session.commit()
 
-        self.assertEqual(1, db_session.query(database.Bind).count())
+        self.assertEqual(1, self.db_session.query(database.Bind).count())
 
-        self.assertEqual(1, db_session.query(database.ConcentrationBind).count())
-        self.assertEqual(0, db_session.query(database.TransitionBind).count())
-        self.assertEqual(0, db_session.query(database.EndConditionBind).count())
-        self.assertEqual(0, db_session.query(database.MeasurementBind).count())
-        self.assertEqual(0, db_session.query(database.FilamentBind).count())
-        self.assertEqual(0, db_session.query(database.AnalysisBind).count())
-        self.assertEqual(0, db_session.query(database.ObjectiveBind).count())
+        self.assertEqual(1, self.db_session.query(database.ConcentrationBind
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.TransitionBind
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.EndConditionBind
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.MeasurementBind
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.FilamentBind
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.AnalysisBind
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.ObjectiveBind
+            ).count())
 
         f = database.FilamentBind('test_class_2')
-        db_session.add(f)
-        db_session.commit()
+        self.db_session.add(f)
+        self.db_session.commit()
 
-        self.assertEqual(2, db_session.query(database.Bind).count())
+        self.assertEqual(2, self.db_session.query(database.Bind).count())
 
-        self.assertEqual(1, db_session.query(database.ConcentrationBind).count())
-        self.assertEqual(0, db_session.query(database.TransitionBind).count())
-        self.assertEqual(0, db_session.query(database.EndConditionBind).count())
-        self.assertEqual(0, db_session.query(database.MeasurementBind).count())
-        self.assertEqual(1, db_session.query(database.FilamentBind).count())
-        self.assertEqual(0, db_session.query(database.AnalysisBind).count())
-        self.assertEqual(0, db_session.query(database.ObjectiveBind).count())
+        self.assertEqual(1, self.db_session.query(database.ConcentrationBind
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.TransitionBind
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.EndConditionBind
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.MeasurementBind
+            ).count())
+        self.assertEqual(1, self.db_session.query(database.FilamentBind
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.AnalysisBind
+            ).count())
+        self.assertEqual(0, self.db_session.query(database.ObjectiveBind
+            ).count())
 
     def test_fixed_arguments(self):
         test_data = {'test_arg_a': 'literal 1',
@@ -65,12 +71,12 @@ class TestBind(unittest.TestCase):
         t = database.TransitionBind('trans_class')
         t.fixed_arguments = test_data
 
-        db_session.add(t)
-        db_session.commit()
+        self.db_session.add(t)
+        self.db_session.commit()
 
         del t
 
-        t2 = db_session.query(database.TransitionBind).first()
+        t2 = self.db_session.query(database.TransitionBind).first()
         for arg, literal in test_data.iteritems():
             self.assertEqual(str(literal), t2.fixed_arguments[arg])
 
@@ -81,14 +87,18 @@ class TestBind(unittest.TestCase):
         t = database.TransitionBind('trans_class')
         t.variable_arguments = test_data
 
-        db_session.add(t)
-        db_session.commit()
+        self.db_session.add(t)
+        self.db_session.commit()
 
         del t
 
-        t2 = db_session.query(database.TransitionBind).first()
+        t2 = self.db_session.query(database.TransitionBind).first()
         for arg, par_name in test_data.iteritems():
             self.assertEqual(par_name, t2.variable_arguments[arg])
+
+def TestObjectiveBind(DBTestCase):
+    def test_stuff(self):
+        pass
 
 
 if '__main__' == __name__:

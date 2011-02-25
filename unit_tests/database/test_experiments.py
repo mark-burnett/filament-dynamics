@@ -15,19 +15,11 @@
 
 import unittest
 
-from sqlalchemy import create_engine, orm
 from actin_dynamics import database
 
-engine = create_engine('sqlite:///:memory:')
-db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
+from .base_test_cases import DBTestCase
 
-class TestExperiment(unittest.TestCase):
-    def setUp(self):
-        database.metadata.create_all(engine)
-
-    def tearDown(self):
-        database.metadata.drop_all(engine)
-
+class TestExperiment(DBTestCase):
     def test_filament_binds(self):
         e = database.Experiment('test expt name')
 
@@ -40,10 +32,10 @@ class TestExperiment(unittest.TestCase):
                 variable_arguments=variable_arguments)
         e.filaments.append(fb)
 
-        db_session.add(e)
-        db_session.commit()
+        self.db_session.add(e)
+        self.db_session.commit()
 
-        e2 = db_session.query(database.Experiment).first()
+        e2 = self.db_session.query(database.Experiment).first()
         self.assertEqual(fb, e2.filaments[0])
 
     def test_measurement_binds(self):
@@ -58,10 +50,10 @@ class TestExperiment(unittest.TestCase):
                 variable_arguments=variable_arguments)
         e.measurements.append(cb)
 
-        db_session.add(e)
-        db_session.commit()
+        self.db_session.add(e)
+        self.db_session.commit()
 
-        e2 = db_session.query(database.Experiment).first()
+        e2 = self.db_session.query(database.Experiment).first()
         self.assertEqual(cb, e2.measurements[0])
 
     def test_end_condition_binds(self):
@@ -76,10 +68,10 @@ class TestExperiment(unittest.TestCase):
                 variable_arguments=variable_arguments)
         e.end_conditions.append(cb)
 
-        db_session.add(e)
-        db_session.commit()
+        self.db_session.add(e)
+        self.db_session.commit()
 
-        e2 = db_session.query(database.Experiment).first()
+        e2 = self.db_session.query(database.Experiment).first()
         self.assertEqual(cb, e2.end_conditions[0])
 
     def test_concentration_binds(self):
@@ -94,10 +86,10 @@ class TestExperiment(unittest.TestCase):
                 variable_arguments=variable_arguments)
         e.concentrations.append(cb)
 
-        db_session.add(e)
-        db_session.commit()
+        self.db_session.add(e)
+        self.db_session.commit()
 
-        e2 = db_session.query(database.Experiment).first()
+        e2 = self.db_session.query(database.Experiment).first()
         self.assertEqual(cb, e2.concentrations[0])
 
     def test_transition_binds(self):
@@ -112,10 +104,10 @@ class TestExperiment(unittest.TestCase):
                 variable_arguments=variable_arguments)
         e.transitions.append(cb)
 
-        db_session.add(e)
-        db_session.commit()
+        self.db_session.add(e)
+        self.db_session.commit()
 
-        e2 = db_session.query(database.Experiment).first()
+        e2 = self.db_session.query(database.Experiment).first()
         self.assertEqual(cb, e2.transitions[0])
 
     def test_session_relationship(self):
@@ -123,10 +115,10 @@ class TestExperiment(unittest.TestCase):
 
         e = database.Experiment('test expt name', session=s)
 
-        db_session.add(e)
-        db_session.commit()
+        self.db_session.add(e)
+        self.db_session.commit()
 
-        e2 = db_session.query(database.Experiment).first()
+        e2 = self.db_session.query(database.Experiment).first()
         self.assertEqual(e, e2)
         self.assertEqual(s, e2.session)
         self.assertTrue(e2.session.id >= 1)
@@ -139,12 +131,12 @@ class TestExperiment(unittest.TestCase):
 
         e.parameters = test_data
 
-        db_session.add(e)
-        db_session.commit()
+        self.db_session.add(e)
+        self.db_session.commit()
 
         del e
 
-        e2 = db_session.query(database.Experiment).first()
+        e2 = self.db_session.query(database.Experiment).first()
         for par_name, value in test_data.iteritems():
             self.assertEqual(value, e2.parameters[par_name])
 

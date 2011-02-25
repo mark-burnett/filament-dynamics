@@ -15,19 +15,11 @@
 
 import unittest
 
-from sqlalchemy import create_engine, orm
 from actin_dynamics import database
 
-engine = create_engine('sqlite:///:memory:')
-db_session = orm.scoped_session(orm.sessionmaker(bind=engine))
+from .base_test_cases import DBTestCase
 
-class TestModel(unittest.TestCase):
-    def setUp(self):
-        database.metadata.create_all(engine)
-
-    def tearDown(self):
-        database.metadata.drop_all(engine)
-
+class TestModel(DBTestCase):
     def test_concentration_binds(self):
         m = database.Model('test model name')
 
@@ -40,10 +32,10 @@ class TestModel(unittest.TestCase):
                 variable_arguments=variable_arguments)
         m.concentrations.append(cb)
 
-        db_session.add(m)
-        db_session.commit()
+        self.db_session.add(m)
+        self.db_session.commit()
 
-        m2 = db_session.query(database.Model).first()
+        m2 = self.db_session.query(database.Model).first()
         self.assertEqual(cb, m2.concentrations[0])
 
     def test_transition_binds(self):
@@ -58,10 +50,10 @@ class TestModel(unittest.TestCase):
                 variable_arguments=variable_arguments)
         m.transitions.append(cb)
 
-        db_session.add(m)
-        db_session.commit()
+        self.db_session.add(m)
+        self.db_session.commit()
 
-        m2 = db_session.query(database.Model).first()
+        m2 = self.db_session.query(database.Model).first()
         self.assertEqual(cb, m2.transitions[0])
 
     def test_session_relationship(self):
@@ -69,10 +61,10 @@ class TestModel(unittest.TestCase):
 
         m = database.Model('test model name', session=s)
 
-        db_session.add(m)
-        db_session.commit()
+        self.db_session.add(m)
+        self.db_session.commit()
 
-        m2 = db_session.query(database.Model).first()
+        m2 = self.db_session.query(database.Model).first()
         self.assertEqual(m, m2)
         self.assertEqual(s, m2.session)
         self.assertTrue(m2.session.id >= 1)

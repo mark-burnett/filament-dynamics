@@ -11,11 +11,6 @@ controller process
         then start generating children
 
 database structure
-    add revision # for session controller
-        for full provinance we need to know the worker-uuid + revision to
-        * should I also save the hostname or something?
-    make sure results/measurements have an error column
-    delete analysis parameters
     validation rules (e.g. for bind module_names)
     cascading deletes/orphans
 
