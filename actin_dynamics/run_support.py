@@ -28,11 +28,14 @@ def run_job(job):
     for analysis in run.experiment.analyses:
         a = factories.bindings.db_single(analysis)
         analysis_result = a.perform(results, factories.analysis.make_result)
+        analysis_result.run = run
         db_session.add(analysis_result)
     db_session.commit()
 
+    # XXX there should be objective parameters that show up here.
     for objective in run.experiment.objectives:
         o = factories.bindings.db_single(objective)
         objective_result = o.perform(job.run, factories.objectives.make_result)
+        objective_result.bind = objective
         db_session.add(objective_result)
     db_session.commit()
