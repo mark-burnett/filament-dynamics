@@ -15,12 +15,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 import time
 
 from actin_dynamics.configuration import command_line_parsers
-from actin_dynamics.configuration import database
+from actin_dynamics.configuration import ini_parsers
 
 from actin_dynamics import job_control, run_support
+
+logger = logging.getLogger()
 
 
 def main(idle_timeout, retry_delay):
@@ -42,6 +45,9 @@ def main(idle_timeout, retry_delay):
 
 if '__main__' == __name__:
     namespace = command_line_parsers.worker_process()
-    database.setup_database(namespace.db_config)
+    ini_parsers.full_config(namespace.config)
 
-    main(namespace.idle_timeout, namespace.retry_delay)
+    try:
+        main(namespace.idle_timeout, namespace.retry_delay)
+    except:
+        logger.exception('Exception in worker main.')

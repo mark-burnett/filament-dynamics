@@ -18,11 +18,11 @@ import sys
 
 # XXX This could be improved so that we give the correct help message.
 
-def _database_config(args, namespace):
+def _config(args, namespace):
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--db_config', default='configuration/database.ini',
-                        help='Databsae configuration file name')
+    parser.add_argument('--config', default='configuration/config.ini',
+                        help='Configuration file name')
 
     return parser.parse_known_args(args=args, namespace=namespace)
 
@@ -51,11 +51,11 @@ def execute_parser_list(functions):
     return namespace
 
 
-_worker_args = [_database_config,
+_worker_args = [_config,
                 _delays_and_timeouts]
 #                _catch_extra_arguments]
 
-_db_util_args = [_database_config]
+_db_util_args = [_config]
 #                 _catch_extra_arguments]
 
 

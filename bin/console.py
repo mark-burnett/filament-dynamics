@@ -23,7 +23,7 @@ from actin_dynamics import io
 from actin_dynamics import database
 
 from actin_dynamics.configuration import command_line_parsers
-from actin_dynamics.configuration import database as database_config
+from actin_dynamics.configuration import ini_parsers
 
 
 banner = '''
@@ -43,6 +43,6 @@ def console_main():
 
 if '__main__' == __name__:
     namespace = command_line_parsers.worker_process()
-    database_config.setup_database(namespace.db_config)
+    ini_parsers.setup_database(namespace.config)
 
     console_main()

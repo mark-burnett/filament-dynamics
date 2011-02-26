@@ -13,15 +13,16 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-[database]
-# Simple sqlite test database.
-# SQLite is not suitable for multiple process access.
-#server_type=sqlite
-#database_name=test.sqlite
+import logging
 
-# Mysql for the real work
-server_type=mysql
-host=localhost
-username=aduser
-password=filamentous
-database_name=actin_dynamics
+from actin_dynamics import database
+
+class SQLAlachemyHandler(logging.Handler):
+    def __init__(self, *args, **kwargs):
+        self.db_session = database.DBSession()
+        logging.Handler.__init__(self, *args, **kwargs)
+
+    def emit(self, record):
+        lr = database.DBLogRecord.from_LogRecord(record)
+        self.db_session.add(lr)
+        self.db_session.commit()

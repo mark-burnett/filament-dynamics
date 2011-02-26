@@ -82,16 +82,17 @@ class DBLogRecord(object):
             self.exception = exception
 
     def __repr__(self):
-        return ("%s(pathname='%s', func='%s', lineno=%s, lvl=%s, message='%s')"
-                % (self.__class__.__name__, self.name, self.pathname,
-                   self.funcName, self.lineno, self.levelname, self.message))
+        return ("%s(name'%s', pathname='%s', funcName='%s', lineno=%s, "
+                + "levelname=%s, message='%s')") % (
+                    self.__class__.__name__, self.name, self.pathname,
+                    self.funcName, self.lineno, self.levelname, self.message)
 
     @classmethod
     def from_LogRecord(cls, log_record):
         dblr = cls()
         dblr.name      = log_record.name
         dblr.pathname  = log_record.pathname
-        dblr.funcName  = log_record.funcName.__name__
+        dblr.funcName  = log_record.funcName
         dblr.lineno    = log_record.lineno
         dblr.levelname = log_record.levelname
         dblr.message   = log_record.getMessage()

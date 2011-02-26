@@ -16,7 +16,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from actin_dynamics.configuration import command_line_parsers
-from actin_dynamics.configuration import database
+from actin_dynamics.configuration import ini_parsers
 
 from actin_dynamics import job_control
 
@@ -26,6 +26,6 @@ def cleanup_jobs():
 
 if '__main__' == __name__:
     namespace = command_line_parsers.worker_process()
-    database.setup_database(namespace.db_config)
+    ini_parsers.setup_database(namespace.config)
 
     cleanup_jobs()

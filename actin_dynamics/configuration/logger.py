@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 - 2011 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -14,17 +14,13 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import logging.handlers
+from actin_dynamics.logger import handlers
 
-import primitives
+def setup_logging_from_dict(log_dict):
+    root_logger = logging.getLogger()
 
-try:
-    nh = logging.handlers.NullHandler()
-except AttributeError:
-    class NullHandler(logging.Handler):
-        def emit(self, record):
-            pass
+    levelname = log_dict.get('level', 'WARN')
+    level = getattr(logging, levelname)
+    root_logger.setLevel(level)
 
-    nh = NullHandler()
-
-logging.getLogger().addHandler(nh)
+    root_logger.addHandler(handlers.SQLAlachemyHandler())

@@ -42,13 +42,6 @@ class DatabaseConfiguration(object):
         return result
 
 
-def setup_database(config_filename):
-    '''Uses config file to create database access singletons.
-    '''
-    co = configobj.ConfigObj(config_filename)
-    setup_database_from_dict(co['database'])
-
-
 def setup_database_from_dict(db_dict):
     '''Sets up singletons needed to access the database.
     '''
