@@ -22,6 +22,7 @@ from .arguments import *
 from .binds import *
 from .experiments import *
 from .jobs import *
+from .logs import *
 from .models import *
 from .objectives import *
 from .parameters import *
@@ -36,6 +37,7 @@ del arguments
 del binds
 del experiments
 del jobs
+del logs
 del models
 del objectives
 del parameters

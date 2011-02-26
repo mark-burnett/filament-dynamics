@@ -20,7 +20,9 @@ from sqlalchemy import create_engine, orm
 from actin_dynamics import database
 
 class DBTestCase(unittest.TestCase):
-    engine     = create_engine('sqlite:///:memory:')
+    def __init__(self, *args, **kwargs):
+        self.engine = create_engine('sqlite:///:memory:')
+        unittest.TestCase.__init__(self, *args, **kwargs)
 
     def setUp(self):
         database.metadata.create_all(self.engine)

@@ -25,6 +25,50 @@ MAX_POLY_LENGTH = 16
 
 # The database has 3 major branches:  job control, configuration, and data
 # with session at the top of the whole hierarchy.
+# There are also a few tables dedicated to logging the application.
+
+
+# ---------------------------------------------------------------------
+# - Logging tables                                                    -
+# ---------------------------------------------------------------------
+logging_table = schema.Table('logging', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('process_id', schema.types.Integer,
+                      schema.ForeignKey('process.id')),
+        # Time stamp
+        schema.Column('time', schema.types.DateTime,
+                      default=datetime.datetime.now),
+        # Logger name
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
+        # Full path to file
+        schema.Column('pathname', schema.types.String(MAX_NAME_LENGTH)),
+        # Name of originating function.
+        schema.Column('funcName', schema.types.String(MAX_NAME_LENGTH)),
+        # Line number of logging event.
+        schema.Column('lineno', schema.types.Integer),
+        # Logging level.
+        schema.Column('levelname', schema.types.String(MAX_POLY_LENGTH),
+                      index=True),
+        # User specified logging message.
+        schema.Column('message', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
+
+exception_table = schema.Table('exception', global_state.metadata,
+        schema.Column('logging_id', schema.types.Integer,
+                      schema.ForeignKey('logging.id'), primary_key=True),
+        schema.Column('type_name',  schema.types.String(MAX_POLY_LENGTH)),
+        schema.Column('message', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
+
+traceback_table = schema.Table('traceback', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('exception_id', schema.types.Integer,
+                      schema.ForeignKey('exception.logging_id')),
+        schema.Column('filename', schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('lineno', schema.types.Integer),
+        schema.Column('module', schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('line', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
 
 
 # ---------------------------------------------------------------------
@@ -62,7 +106,7 @@ process_table = schema.Table('process', global_state.metadata,
 
         # These identify the time.
         schema.Column('start_time', schema.types.DateTime,
-            default=datetime.datetime.now),
+                      default=datetime.datetime.now),
         schema.Column('stop_time', schema.types.DateTime),
         mysql_engine='InnoDB')
 
