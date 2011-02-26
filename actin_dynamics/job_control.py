@@ -23,6 +23,7 @@ import contextlib
 from . import database
 from . import version
 
+PROCESS = None
 
 @contextlib.contextmanager
 def process(process_type):
@@ -37,6 +38,10 @@ def process(process_type):
     db_session = database.DBSession()
     db_session.add(p)
     db_session.commit()
+
+    # NOTE This just makes it easy to properly log the process.
+    global PROCESS
+    PROCESS = p
 
     yield p
 

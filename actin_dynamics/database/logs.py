@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime as _datetime
 import traceback as _traceback
 
 from sqlalchemy import orm as _orm
@@ -63,9 +64,9 @@ _orm.mapper(DBException, _tables.exception_table, properties={
     'traceback': _orm.relationship(DBTraceback)})
 
 class DBLogRecord(object):
-    # XXX add exception to init
     def __init__(self, name=None, pathname=None, funcName=None, lineno=None,
-                 levelname=None, message=None, exception=None):
+                 levelno=None, levelname=None, message=None, exception=None,
+                 time=None):
         if name:
             self.name = name
         if pathname:
@@ -74,18 +75,26 @@ class DBLogRecord(object):
             self.funcName = funcName
         if lineno is not None:
             self.lineno = lineno
+
+        if levelno is not None:
+            self.levelno = levelno
         if levelname:
             self.levelname = levelname
+
         if message:
             self.message = message
         if exception:
             self.exception = exception
 
+        if time:
+            self.time = time
+
     def __repr__(self):
         return ("%s(name'%s', pathname='%s', funcName='%s', lineno=%s, "
-                + "levelname=%s, message='%s')") % (
+                + "levelno=%s, levelname='%s', message='%s', time='%s')") % (
                     self.__class__.__name__, self.name, self.pathname,
-                    self.funcName, self.lineno, self.levelname, self.message)
+                    self.funcName, self.lineno, self.levelno, self.levelname,
+                    self.message, self.time)
 
     @classmethod
     def from_LogRecord(cls, log_record):
@@ -94,9 +103,14 @@ class DBLogRecord(object):
         dblr.pathname  = log_record.pathname
         dblr.funcName  = log_record.funcName
         dblr.lineno    = log_record.lineno
+
+        dblr.levelno   = log_record.levelno
         dblr.levelname = log_record.levelname
+
         dblr.message   = log_record.getMessage()
         dblr.exception = log_record.exc_info
+
+        dblr.time      = _datetime.datetime.fromtimestamp(log_record.created)
 
         return dblr
 
@@ -106,7 +120,8 @@ class DBLogRecord(object):
 
     @exception.setter
     def exception(self, value):
-        self._exception = DBException(*value)
+        if value:
+            self._exception = DBException(*value)
 
 _orm.mapper(DBLogRecord, _tables.logging_table, properties={
     '_exception': _orm.relationship(DBException, uselist=False),

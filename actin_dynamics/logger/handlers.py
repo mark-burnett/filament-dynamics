@@ -16,6 +16,7 @@
 import logging
 
 from actin_dynamics import database
+from actin_dynamics import job_control
 
 class SQLAlachemyHandler(logging.Handler):
     def __init__(self, *args, **kwargs):
@@ -24,5 +25,6 @@ class SQLAlachemyHandler(logging.Handler):
 
     def emit(self, record):
         lr = database.DBLogRecord.from_LogRecord(record)
+        lr.process_id = job_control.PROCESS.id
         self.db_session.add(lr)
         self.db_session.commit()

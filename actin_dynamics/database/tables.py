@@ -37,7 +37,7 @@ logging_table = schema.Table('logging', global_state.metadata,
                       schema.ForeignKey('process.id')),
         # Time stamp
         schema.Column('time', schema.types.DateTime,
-                      default=datetime.datetime.now),
+                      default=datetime.datetime.now, index=True),
         # Logger name
         schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
         # Full path to file
@@ -47,6 +47,7 @@ logging_table = schema.Table('logging', global_state.metadata,
         # Line number of logging event.
         schema.Column('lineno', schema.types.Integer),
         # Logging level.
+        schema.Column('levelno', schema.types.Integer, index=True),
         schema.Column('levelname', schema.types.String(MAX_POLY_LENGTH),
                       index=True),
         # User specified logging message.

@@ -37,6 +37,36 @@ def _delays_and_timeouts(args, namespace):
 
     return parser.parse_known_args(args=args, namespace=namespace)
 
+def _log_discriminators(args, namespace):
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--start', default=None,
+                        help='Show log events later than this.')
+
+
+    parser.add_argument('--min_level', default=None,
+                        help='Show only log events of this level and higher.')
+
+    parser.add_argument('--levelname', default=None,
+                        help='Show only log events of this level.')
+
+
+    parser.add_argument('--process_type', default=None,
+                        help='Only report events from processes of this type.')
+
+    parser.add_argument('--process_id', type=int, default=None,
+                        help='Only report events from this process.')
+
+
+    parser.add_argument('--follow', type=bool, default=False,
+                        help='Show only log events of this level.')
+
+    parser.add_argument('--polling_period', type=float, default=1,
+                        help='Delay between database checks.')
+
+    return parser.parse_known_args(args=args, namespace=namespace)
+
+
 def _catch_extra_arguments(args, namespace):
     parser = argparse.ArgumentParser()
     return parser.parse_args(args=args, namespace=namespace)
@@ -58,9 +88,14 @@ _worker_args = [_config,
 _db_util_args = [_config]
 #                 _catch_extra_arguments]
 
+_log_view_args = [_config,
+                  _log_discriminators]
 
 def worker_process():
     return execute_parser_list(_worker_args)
 
 def db_util():
     return execute_parser_list(_db_util_args)
+
+def view_log():
+    return execute_parser_list(_log_view_args)
