@@ -26,8 +26,10 @@ from . import experiments as _experiments
 
 
 class Run(object):
-    def __init__(self, experiment=None, analyses=None, objectives=None,
-                 parameters=None, analysis_list=None):
+    def __init__(self, model=None, experiment=None, analyses=None,
+                 objectives=None, parameters=None, analysis_list=None):
+        if model:
+            self.model = model
         if experiment:
             self.experiment = experiment
         if analyses:
@@ -47,6 +49,38 @@ class Run(object):
     parameters = _ap('_parameters', 'value', creator=_parameters.RunParameter)
     analyses   = _ap('_analyses', 'measurement', creator=_analyses.Analysis)
 
+
+    @property
+    def all_parameters(self):
+        result = dict(self.parameters)
+        result.update(self.experiment.all_parameters)
+        return result
+
+    def _combine_binds(self, name):
+        return (getattr(self.experiment, name, []) +
+                getattr(self.model, name, []))
+
+    @property
+    def filaments(self):
+        return self._combine_binds('filaments')
+
+    @property
+    def transitions(self):
+        return self._combine_binds('transitions')
+
+    @property
+    def concentrations(self):
+        return self._combine_binds('concentrations')
+
+    @property
+    def end_conditions(self):
+        return self._combine_binds('end_conditions')
+
+    @property
+    def measurements(self):
+        return self._combine_binds('measurements')
+
+
 _orm.mapper(Run, _tables.run_table, properties={
     '_parameters': _orm.relationship(_parameters.RunParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
@@ -55,4 +89,5 @@ _orm.mapper(Run, _tables.run_table, properties={
             'name')),
     'analysis_list': _orm.relationship(_analyses.Analysis, backref='run'),
     'objectives': _orm.relationship(_objectives.Objective, backref='run'),
+    'model': _orm.relationship(_models.Model, backref='runs'),
     'experiment': _orm.relationship(_experiments.Experiment, backref='runs')})

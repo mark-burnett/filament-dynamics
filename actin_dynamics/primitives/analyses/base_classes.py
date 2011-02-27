@@ -23,7 +23,7 @@ class Analysis(object):
     skip_registration = True
 
     __slots__ = ['label']
-    def __init__(self, label=None):
+    def __init__(self, label=None, **kwargs):
         self.label = label
 
     def perform(self, simulation_results, result_factory):

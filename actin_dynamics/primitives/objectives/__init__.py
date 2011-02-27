@@ -15,4 +15,6 @@
 
 from registry import objective_registry as registry
 
+from pyrene_fit import *
+
 #del base_classes

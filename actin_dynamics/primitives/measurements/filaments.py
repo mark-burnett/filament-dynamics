@@ -34,3 +34,16 @@ class StateCount(_Measurement):
         for filament in filaments:
             state_count = filament.state_count(self.state)
             self.store(time, state_count, filament)
+
+class StateCountSum(_Measurement):
+    __slots__ = ['base_state', 'prefix']
+    def __init__(self, base_state=None, prefix=None, label=None):
+        self.base_state = base_state
+        self.prefix     = prefix
+        _Measurement.__init__(self, label=label)
+
+    def perform(self, time, filaments):
+        for filament in filaments:
+            state_count = filament.state_count(self.base_state)
+            state_count += filament.state_count(self.prefix + self.base_state)
+            self.store(time, state_count, filament)

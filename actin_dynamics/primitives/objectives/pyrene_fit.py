@@ -25,22 +25,22 @@ class PyreneFit(_Objective):
 
         _Objective.__init__(self, label=label)
 
-    def perform(self, run, result_factory):
-        data = run.experiments.objectives[self.label].measurement
+    def perform(self, run, target):
+        data = run.experiment.objectives[self.label].measurement
         analyses = run.analyses
         measurements = []
-        for name, weight in self.weights:
-            measurements.append(_measurements.scale(analyses[name].measurement,
-                                                    weight))
+        for name, weight in self.weights.iteritems():
+            measurements.append(_measurements.scale(analyses[name], weight))
         unnormalized_measurement = _measurements.add(measurements)
 
-        fit, norm = _pyrene_fit(unnormalized_measurement, data,
-                                self.residual_function)
+        fit, norm = _pyrene_normalization(unnormalized_measurement, data,
+                                          self.residual_function)
 
-        return result_factory(run, self.label, fit)
+        target.value = fit
+
 
 def _pyrene_normalization(fluorescence_sim=None, fluorescence_data=None,
-                          residual_function=residuals.naked_chi_squared):
+                          residual_function=_residuals.naked_chi_squared):
     '''
     Returns chi squared of fit and normalization parameter.
     '''
@@ -48,7 +48,7 @@ def _pyrene_normalization(fluorescence_sim=None, fluorescence_data=None,
 
     # Create residual function
     def model_function(normalization):
-        scaled_sim = utils.scale_measurement(fluorescence_sim, normalization[0])
+        scaled_sim = _measurements.scale(fluorescence_sim, normalization[0])
 
         return residual_function(fluorescence_data, scaled_sim)
 

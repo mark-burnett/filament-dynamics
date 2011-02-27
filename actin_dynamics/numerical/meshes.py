@@ -21,16 +21,18 @@ from . import workalike
 class ParameterMeshIterator(object):
     def __init__(self, names, parameter_sets):
         self.names = names
-        self.parameter_sets = parameter_sets
+        self.parameter_sets = itertools.product(*parameter_sets)
     
     def __iter__(self):
         return self
 
     def next(self):
         next_parameter_sets = self.parameter_sets.next()
-        return dict((n, v) for n, v in itertools.izip(self.names,
-                                                      next_parameter_sets))
-
+        if next_parameter_sets:
+            return dict((n, v) for n, v in itertools.izip(self.names,
+                                                          next_parameter_sets))
+        else:
+            raise StopIteration()
 
 def make_mesh(lower_bound, upper_bound, num_points, mesh_type):
     if 'linear' == mesh_type.lower():
@@ -50,6 +52,6 @@ def parameters_from_spec(par_specs):
     values = []
     for name, kwargs in par_specs.iteritems():
         names.append(name)
-        values.append(_make_mesh(**kwargs))
+        values.append(make_mesh(**kwargs))
 
     return ParameterMeshIterator(names, values)

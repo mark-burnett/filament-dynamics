@@ -15,4 +15,6 @@
 
 from registry import file_reader_registry as registry
 
+from dat_files import *
+
 #del base_classes

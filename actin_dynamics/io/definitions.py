@@ -16,10 +16,12 @@
 import yaml
 import os.path
 
-def load_definition(filename, source_directory='configuration'):
+def load_definition(filename):
     results = None
-    with open(os.path.join(source_directory, filename)) as f:
+    with open(filename) as f:
         results = yaml.load(f)
+
+    source_directory, junk = os.path.split(filename)
 
     imports = results.get('import', [])
     for import_filename in imports:

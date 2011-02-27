@@ -7,13 +7,19 @@ parameter_specifications:
                 lower_bound: 0.01
                 upper_bound: 0.50
                 mesh_type:   linear
-                num_points:  10
+                num_points:  2
 
             release_rate:
                 lower_bound: 0.0001
                 upper_bound: 0.0100
                 mesh_type:   log
-                num_points:  10
+                num_points:  2
+
+            filament_tip_concentration:
+                lower_bound: 0.005
+                upper_bound: 0.040
+                mesh_type:   log
+                num_points:  2
 
         objective:
             pollard_pyrene_fit:
@@ -21,7 +27,19 @@ parameter_specifications:
                     lower_bound: 0.1
                     upper_bound: 0.7
                     mesh_type:   linear
-                    num_points:  10
+                    num_points:  2
+
+                pyrene_adppi_weight:
+                    lower_bound: 0.56
+                    upper_bound: 0.56
+                    mesh_type:   linear
+                    num_points:  1
+
+                pyrene_adp_weight:
+                    lower_bound: 0.75
+                    upper_bound: 0.75
+                    mesh_type:   linear
+                    num_points:  1
 
 model:
     transitions:
@@ -152,35 +170,58 @@ experiments:
     blanchoin_pollard_2002:
         parameters:
             sample_period: 0.5
+            simulation_duration: 40
 
-            number_of_simulations: 10
-            number_of_filaments:    6
+            seed_concentration: 6
+
+            initial_atp_concentration: 5.7
+            initial_pyrene_atp_concentration: 0.3
+
+            number_of_simulations: 3
+            number_of_filaments:   3
 
             barbed_atp_polymerization_rate:    11.6
             barbed_adppi_polymerization_rate:   3.4
             barbed_adp_polymerization_rate:     2.9
 
+            barbed_pyrene_atp_polymerization_rate:    11.6
+            barbed_pyrene_adppi_polymerization_rate:   3.4
+            barbed_pyrene_adp_polymerization_rate:     2.9
+
             barbed_atp_depolymerization_rate:   1.4
             barbed_adppi_depolymerization_rate: 0.2
             barbed_adp_depolymerization_rate:   5.4
+
+            barbed_pyrene_atp_depolymerization_rate:   1.4
+            barbed_pyrene_adppi_depolymerization_rate: 0.2
+            barbed_pyrene_adp_depolymerization_rate:   5.4
 
             pointed_atp_polymerization_rate:     0
             pointed_adppi_polymerization_rate:   0
             pointed_adp_polymerization_rate:     0
 
+            pointed_pyreneatp_polymerization_rate:     0
+            pointed_pyreneadppi_polymerization_rate:   0
+            pointed_pyreneadp_polymerization_rate:     0
+
             pointed_atp_depolymerization_rate:   0
             pointed_adppi_depolymerization_rate: 0
             pointed_adp_depolymerization_rate:   0
 
+            pointed_pyrene_atp_depolymerization_rate:   0
+            pointed_pyrene_adppi_depolymerization_rate: 0
+            pointed_pyrene_adp_depolymerization_rate:   0
+
         simulation:
             filaments:
-                class_name: SingleStateFixedLengthFromConcentrations
-                variable_arguments:
-                    number: number_of_filaments
-                    concentration: seed_concentration
-                    filament_tip_concentration: filament_tip_concentration
-                fixed_arguments:
-                    state: ADP
+                filament_factory:
+                    class_name: SingleStateFixedLengthFromConcentrations
+                    variable_arguments:
+                        number: number_of_filaments
+                        concentration: seed_concentration
+                        filament_tip_concentration: filament_tip_concentration
+                    fixed_arguments:
+                        state: ADP
 
             concentrations:
                 pyrene_ATP:
@@ -248,49 +289,49 @@ experiments:
                 length:
                     class_name: Length
 
-                pyrene_atp_count:
+                pyrene_ATP:
                     class_name: StateCount
                     fixed_arguments:
                         state: pyrene_ATP
 
-                atp_count:
+                ATP:
                     class_name: StateCount
                     fixed_arguments:
                         state: ATP
 
-                total_atp_count:
+                total_ATP:
                     class_name: StateCountSum
                     fixed_arguments:
                         base_state: ATP
                         prefix: pyrene_
 
-                pyrene_adppi_count:
+                pyrene_ADPPi:
                     class_name: StateCount
                     fixed_arguments:
                         state: pyrene_ADPPi
 
-                adppi_count:
+                ADPPi:
                     class_name: StateCount
                     fixed_arguments:
                         state: ADPPi
 
-                total_adppi_count:
+                total_ADPPi:
                     class_name: StateCountSum
                     fixed_arguments:
                         base_state: ADPPi
                         prefix: pyrene_
 
-                pyrene_adp_count:
+                pyrene_ADP:
                     class_name: StateCount
                     fixed_arguments:
                         state: pyrene_ADP
 
-                adp_count:
+                ADP:
                     class_name: StateCount
                     fixed_arguments:
                         state: ADP
 
-                total_adp_count:
+                total_ADP:
                     class_name: StateCountSum
                     fixed_arguments:
                         base_state: ADP
@@ -308,44 +349,44 @@ experiments:
                     measurement_name: length
                     measurement_type: filament
 
-            pyrene_atp_count:
+            pyrene_ATP:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sampel_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_atp_count
+                    measurement_name: pyrene_ATP
                     measurement_type: filament
 
-            pyrene_adppi_count:
+            pyrene_ADPPi:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sampel_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_adppi_count
+                    measurement_name: pyrene_ADPPi
                     measurement_type: filament
 
-            total_adppi_count:
+            total_ADPPi:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sampel_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: total_adppi_count
+                    measurement_name: total_ADPPi
                     measurement_type: filament
 
-            pyrene_adp_count:
+            pyrene_ADP:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sampel_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_adp_count
+                    measurement_name: pyrene_ADP
                     measurement_type: filament
 
         objectives:
@@ -377,9 +418,6 @@ experiments:
                 pollard_pyrene_fit:
                     class_name: PyreneFit
                     variable_arguments:
-                        sample_period: sample_period
-                        duration:      simulation_duration
-
                         pyrene_ATP:   pyrene_atp_weight
                         pyrene_ADPPi: pyrene_adppi_weight
                         pyrene_ADP:   pyrene_adp_weight

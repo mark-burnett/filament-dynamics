@@ -14,32 +14,25 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-import sys
 
-# XXX This could be improved so that we give the correct help message.
-
-def _config(args, namespace):
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--config', default='configuration/config.ini',
+def _config(parser):
+    parser.add_argument('-c', '--config', default='configuration/config.ini',
                         help='Configuration file name')
+    return parser
 
-    return parser.parse_known_args(args=args, namespace=namespace)
+def _session_file(parser):
+    parser.add_argument('session', help='Session file name')
+    return parser
 
-def _delays_and_timeouts(args, namespace):
-    parser = argparse.ArgumentParser()
-
+def _delays_and_timeouts(parser):
     parser.add_argument('--idle_timeout', type=float, default=120,
                         help='Time to wait for a job to appear before quitting.')
 
     parser.add_argument('--retry_delay', type=float, default=5,
                         help='Time to wait on an empty queue before retry.')
+    return parser
 
-    return parser.parse_known_args(args=args, namespace=namespace)
-
-def _log_discriminators(args, namespace):
-    parser = argparse.ArgumentParser()
-
+def _log_discriminators(parser):
     parser.add_argument('--start', default=None,
                         help='Show log events later than this.')
 
@@ -58,44 +51,42 @@ def _log_discriminators(args, namespace):
                         help='Only report events from this process.')
 
 
-    parser.add_argument('--follow', type=bool, default=False,
-                        help='Show only log events of this level.')
+    parser.add_argument('-f', '--follow', action='store_true',
+                        help='Remain alive and continue to report new events.')
 
     parser.add_argument('--polling_period', type=float, default=1,
                         help='Delay between database checks.')
 
-    return parser.parse_known_args(args=args, namespace=namespace)
+    return parser
 
 
-def _catch_extra_arguments(args, namespace):
+def _build_and_execute_parser(functions):
     parser = argparse.ArgumentParser()
-    return parser.parse_args(args=args, namespace=namespace)
-
-
-def execute_parser_list(functions):
-    namespace = argparse.Namespace()
-    remaining_args = sys.argv
     for f in functions:
-        junk_namespace, remaining_args = f(remaining_args, namespace)
+        parser = f(parser)
+    return parser.parse_args()
 
-    return namespace
+
+_controller_args = [_config,
+                    _session_file]
+
+_worker_args     = [_config,
+                    _delays_and_timeouts]
+
+_db_util_args    = [_config]
+
+_log_view_args   = [_config,
+                    _log_discriminators]
 
 
-_worker_args = [_config,
-                _delays_and_timeouts]
-#                _catch_extra_arguments]
-
-_db_util_args = [_config]
-#                 _catch_extra_arguments]
-
-_log_view_args = [_config,
-                  _log_discriminators]
+def controller_process():
+    return _build_and_execute_parser(_controller_args)
 
 def worker_process():
-    return execute_parser_list(_worker_args)
+    return _build_and_execute_parser(_worker_args)
 
 def db_util():
-    return execute_parser_list(_db_util_args)
+    return _build_and_execute_parser(_db_util_args)
 
 def view_log():
-    return execute_parser_list(_log_view_args)
+    return _build_and_execute_parser(_log_view_args)

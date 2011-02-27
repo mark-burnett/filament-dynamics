@@ -18,30 +18,27 @@ from . import logger
 
 log = logger.getLogger(__file__)
 
-def run_job(job):
+def run_job(job, db_session):
     log.info('Staring job %s.' % job.id)
     run = job.run
     results = []
-    for i in xrange(run.parameters['number_of_simulations']):
+    for i in xrange(int(run.all_parameters['number_of_simulations'])):
         log.debug('Starting job %s simulation %s.' % (job.id, i))
         simulation = factories.simulations.make_run(run)
         results.append(simulation.run())
 
-    db_session = database.DBSession()
-    for analysis in run.experiment.analyses:
-        log.debug('Starting job %s analysis %s.' % (job.id, analysis.name))
-        a = factories.bindings.db_single(analysis)
+    for analysis in run.experiment.analysis_list:
+        log.debug('Analysing job %s: %s.' % (job.id, analysis.label))
+        a = factories.bindings.db_single(analysis, run.all_parameters)
         analysis_result = a.perform(results, factories.analysis.make_result)
         analysis_result.run = run
         db_session.add(analysis_result)
     db_session.commit()
 
-    # XXX there should be objective parameters that show up here.
-    for objective in run.experiment.objectives:
-        o = factories.bindings.db_single(objective)
-        objective_result = o.perform(job.run, factories.objectives.make_result)
-        objective_result.bind = objective
-        db_session.add(objective_result)
+    for objective in run.objectives:
+        o = factories.bindings.db_single(objective.bind,
+                                         objective.all_parameters)
+        o.perform(job.run, objective)
     db_session.commit()
 
     log.info('Finished job %s.' % job.id)

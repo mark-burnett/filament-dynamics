@@ -27,14 +27,12 @@ class SimpleDataFit(_Objective):
 
         _Objective.__init__(self, label=label)
 
-    def perform(self, run, result_factory):
+    def perform(self, run, target):
         sim_result = run.analyses[self.measurement_name]
         data = run.experiments.objectives[self.label].measurement
 
         if self.interpolate_simulation:
             interp = _interpolation.resample_measurement(sim_result, data[0])
-            residual = self.residual_function(interp, data)
+            target.value = self.residual_function(interp, data)
         else:
-            residual = self.residual_function(sim_result, data)
-
-        return result_factory(run, residual)
+            target.value = self.residual_function(sim_result, data)

@@ -57,7 +57,7 @@ logging_table = schema.Table('logging', global_state.metadata,
 exception_table = schema.Table('exception', global_state.metadata,
         schema.Column('logging_id', schema.types.Integer,
                       schema.ForeignKey('logging.id'), primary_key=True),
-        schema.Column('type_name',  schema.types.String(MAX_POLY_LENGTH)),
+        schema.Column('type_name',  schema.types.String(MAX_NAME_LENGTH)),
         schema.Column('message', schema.types.String(MAX_NAME_LENGTH)),
         mysql_engine='InnoDB')
 
@@ -294,6 +294,8 @@ model_bind_table = schema.Table('model_bind', global_state.metadata,
 # ---------------------------------------------------------------------
 run_table = schema.Table('run', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('model_id', schema.types.Integer,
+                      schema.ForeignKey('model.id')),
         schema.Column('experiment_id', schema.types.Integer,
                       schema.ForeignKey('experiment.id')),
         mysql_engine='InnoDB')
@@ -331,8 +333,3 @@ objective_table = schema.Table('objective', global_state.metadata,
                       schema.ForeignKey('bind.id')),
         schema.Column('value', schema.types.Float, index=True),
         mysql_engine='InnoDB')
-
-schema.Index('objective_unique_columns',
-             objective_table.c.run_id,
-             objective_table.c.objective_bind_id,
-             unique=True)

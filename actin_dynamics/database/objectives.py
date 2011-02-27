@@ -41,6 +41,13 @@ class Objective(object):
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.ObjectiveParameter)
 
+    @property
+    def all_parameters(self):
+        result = dict(self.parameters)
+        result.update(self.run.all_parameters)
+        return result
+
+
 _orm.mapper(Objective, _tables.objective_table, properties={
     '_parameters': _orm.relationship(_parameters.ObjectiveParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name')),

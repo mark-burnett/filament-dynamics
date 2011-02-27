@@ -26,7 +26,7 @@ class _DatDialect(_csv.Dialect):
     doublequote = True
     skipinitialspace = True
     lineterminator = '\r\n'
-    quoting = csv.QUOTE_NONNUMERIC
+    quoting = _csv.QUOTE_NONNUMERIC
 
 
 class DatReader(_FileReader):
@@ -44,11 +44,13 @@ class DatReader(_FileReader):
         _FileReader.__init__(self, label=label)
 
     def run(self):
-        full_filename = os.path.join(self.base_directory, self.filename)
+        full_filename = _ospath.join(self.base_directory, self.filename)
         f = _comments.CommentFilter.from_filename(full_filename)
         reader = _csv.reader(f, dialect=_DatDialect)
 
-    for row in reader:
-        new_row = map(float, row)
-        results.append(new_row)
-    return zip(*results)
+        results = []
+        for row in reader:
+            new_row = map(float, row)
+            results.append(new_row)
+
+        return zip(*results)

@@ -16,37 +16,35 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import time
 
 from actin_dynamics.configuration import command_line_parsers
 from actin_dynamics.configuration import ini_parsers
 
-from actin_dynamics import job_control, run_support, database
+from actin_dynamics import job_control, mesh_controller
+from actin_dynamics import factories, database
 
 logger = logging.getLogger()
 
 
-def main(idle_timeout, retry_delay):
+def main(session_filename):
     db_session = database.DBSession()
-    with job_control.process('worker', db_session) as process:
-        stop_time = time.time() + idle_timeout
-        while time.time() < stop_time:
-            job = job_control.get_job(process, db_session)
-            if job:
-                run_support.run_job(job, db_session)
-                job.complete = True
-                db_session.commit()
-                stop_time = time.time() + idle_timeout
-            else:
-                time.sleep(retry_delay)
+    with job_control.process('controller', db_session) as process:
+
+        session, par_spec = factories.controllers.load_complete_session(
+            session_filename)
+#        db_session.add(session)
+#        db_session.commit()
+
+        c = mesh_controller.Controller(session, par_spec)
+        c.create_jobs()
 
 
 if '__main__' == __name__:
-    namespace = command_line_parsers.worker_process()
+    namespace = command_line_parsers.controller_process()
     ini_parsers.full_config(namespace.config)
 
     try:
-        main(namespace.idle_timeout, namespace.retry_delay)
+        main(namespace.session)
     except:
-        logger.exception('Exception in worker main.')
+        logger.exception('Exception in controller main.')
         raise

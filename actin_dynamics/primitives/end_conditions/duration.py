@@ -25,10 +25,11 @@ class Duration(_EndCondition):
     'End simulation after duration seconds.'
 
     __slots__ = ['duration']
-    def __init__(self, duration=None):
+    def __init__(self, duration=None, label=None):
         if duration is None or duration <= 0:
             raise ValueError('Illegal duration.')
         self.duration = duration
+        _EndCondition.__init__(self, label=label)
 
     def reset(self):
         pass

@@ -13,7 +13,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from actin_dynamics import database
+from actin_dynamics import database, primitives
+
+from actin_dynamics import logger
+
+from . import bindings
+
+log = logger.getLogger(__file__)
 
 def make_binds(binds, cls):
     return [cls(label=label, **bind) for label, bind in binds.iteritems()]
@@ -28,34 +34,54 @@ def static_model(model_definition):
                                   database.ConcentrationBind)
     return m
 
-def static_experiments(experiment_definitions):
+def static_experiments(experiment_definitions, session_parameters):
     results = []
+    log.info('Loading %s experiment definitions.' % len(experiment_definitions))
     for name, expt in experiment_definitions.iteritems():
+        log.debug("Loading experiment: '%s'" % name)
         e      = database.Experiment()
         e.name = name
-        e.parameters = expt.get('parameters', {})
 
-        e.filaments      = make_binds(expt.get('filaments', {}),
+        e.parameters = expt.get('parameters', {})
+        log.debug('Found %s parameters.' % len(e.parameters))
+
+        total_parameters = dict(e.parameters)
+        total_parameters.update(session_parameters)
+
+        sim = expt.get('simulation', {})
+
+        e.filaments      = make_binds(sim.get('filaments', {}),
                                       database.FilamentBind)
-        e.end_conditions = make_binds(expt.get('end_conditions', {}),
+        log.debug('Found %s filament bindings.' % len(e.filaments))
+
+        e.end_conditions = make_binds(sim.get('end_conditions', {}),
                                       database.EndConditionBind)
-        e.measurements   = make_binds(expt.get('measurements', {}),
+        log.debug('Found %s end_condition bindings.' % len(e.end_conditions))
+
+        e.measurements   = make_binds(sim.get('measurements', {}),
                                       database.MeasurementBind)
-        e.transitions    = make_binds(expt.get('transitions', {}),
+        log.debug('Found %s measurement bindings.' % len(e.measurements))
+
+        e.transitions    = make_binds(sim.get('transitions', {}),
                                       database.TransitionBind)
-        e.concentrations = make_binds(expt.get('concentrations', {}),
+        log.debug('Found %s transition bindings.' % len(e.transitions))
+
+        e.concentrations = make_binds(sim.get('concentrations', {}),
                                       database.ConcentrationBind)
+        log.debug('Found %s concentration bindings.' % len(e.concentrations))
 
         # analysis configuration
         e.analysis_list = make_binds(expt.get('analyses', {}),
                                      database.AnalysisBind)
+        log.debug('Found %s analysis bindings.' % len(e.analysis_list))
 
         # objective configuration
         obj_defs = expt.get('objectives', {})
-        e.objectives_list = make_binds(obj_defs.get('executors', {}),
-                                       database.ObjectiveBind)
+        e.objective_list = make_binds(obj_defs.get('executors', {}),
+                                      database.ObjectiveBind)
+        log.debug('Found %s objective bindings.' % len(e.objective_list))
 
-        load_data(e.objectives, expt.get(obj_defs.get('loaders', {})))
+        load_data(e.objectives, total_parameters, obj_defs.get('loaders', {}))
 
 
         results.append(e)
@@ -63,16 +89,18 @@ def static_experiments(experiment_definitions):
     return results
 
 
-def load_data(objectives, definitions):
+def load_data(objectives, parameters, definitions):
     '''
     Instantiates file readers.
     Loads data from files.
     Assigns data to objectives.
     '''
-    file_readers = bindings.dict_multiple(definitions, {}, label,
+    log.debug('Loading data for %s objectives.' % len(definitions))
+    file_readers = bindings.dict_multiple(definitions, parameters,
             primitives.file_readers.registry)
 
     for fr in file_readers:
+        log.debug("Loading data for '%s'." % fr.label)
         o = objectives[fr.label]
         o.measurement = fr.run()
 
@@ -83,6 +111,6 @@ def create_static_session(name=None, parameters={}, model={}, experiments={},
     session.parameters = parameters
 
     session.models.append(static_model(model))
-    session.experiments = static_experiments(experiments)
+    session.experiments = static_experiments(experiments, parameters)
 
     return session

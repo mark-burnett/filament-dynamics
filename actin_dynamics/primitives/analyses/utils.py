@@ -15,13 +15,13 @@
 
 def get_measurement(simulation_results, name, measurement_type):
     if 'filament' == measurement_type:
-        iterator = iter_filaments(results)
+        iterator = iter_filaments(simulation_results)
     else:
         iterator = simulation_results
 
     results = []
     for item in iterator:
-        results.append(item[name])
+        results.append(item['measurements'][name])
     return results
 
 

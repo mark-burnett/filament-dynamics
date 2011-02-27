@@ -21,9 +21,8 @@ def db_single(bind, parameters):
 
     kwargs = dict((local_name, parameters[global_name])
           for local_name, global_name in bind.variable_arguments.iteritems())
-    kwargs.update(dict_map)
 
-    kwargs['label'] = bind.name
+    kwargs['label'] = bind.label
     kwargs.update(bind.fixed_arguments)
 
     return cls(**kwargs)

@@ -15,7 +15,7 @@
 
 from ..meta_classes import Registration
 
-from registry import objective_registry
+from registry import file_reader_registry
 
 class FileReader(object):
     __metaclass__ = Registration

@@ -30,7 +30,7 @@ log = logger.getLogger(__file__)
 PROCESS = None
 
 @contextlib.contextmanager
-def process(process_type):
+def process(process_type, db_session):
     '''
     Yields a process to be used for identifying work done.
     '''
@@ -39,7 +39,6 @@ def process(process_type):
                          hostname=socket.gethostname(),
                          uname=os.uname(), type=process_type)
 
-    db_session = database.DBSession()
     db_session.add(p)
     db_session.commit()
 
@@ -49,12 +48,13 @@ def process(process_type):
 
     yield p
 
+    # Rollback, to make sure an exception doesn't block unregistering.
+    db_session.rollback()
     p.stop_time = datetime.datetime.now()
     db_session.commit()
 
 
-def get_job(process):
-    db_session = database.DBSession()
+def get_job(process, db_session):
     job = db_session.query(database.Job).filter_by(complete=False,
             worker_id=None).with_lockmode('update_nowait').first()
     if job:

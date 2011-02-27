@@ -13,19 +13,34 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from actin_dynamics import database, io
+from actin_dynamics.io import definitions
+from . import database
 
-def load_complete_session(filename, source_directory):
-    session_dict = io.definitions.load_definition(filename, source_directory)
+from actin_dynamics import logger
+
+log = logger.getLogger(__file__)
+
+def load_complete_session(filename):
+    session_dict = definitions.load_definition(filename)
+    name = session_dict.get('name', None)
+    log.debug("Loading session: '%s'." % name)
 
     experiments_dict = session_dict.get('experiments', {})
+    log.debug('Found %s experiment definitions.' % len(experiments_dict))
+
     model_dict = session_dict.get('model', {})
+    log.debug('Found %s model definitions.' % len(model_dict))
 
-    parameter_generators_dict = session_dict.get('parameter_generators', {})
-
-    name = session_dict.get('name', None)
     global_parameters = session_dict.get('global_parameters', {})
+    log.debug('Found %s global parameters.' % len(global_parameters))
 
-    session = database.Session(name=name, parameters=global_parameters)
+    session = database.create_static_session(name=name,
+            parameters=global_parameters, model=model_dict,
+            experiments=experiments_dict)
 
-    return session
+    parameter_specifications_dict = session_dict.get(
+            'parameter_specifications', {})
+    log.debug('Found %s parameter specifications.' % len(
+        parameter_specifications_dict))
+
+    return session, parameter_specifications_dict

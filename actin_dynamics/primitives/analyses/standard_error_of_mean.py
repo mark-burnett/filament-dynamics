@@ -20,18 +20,19 @@ from . import base_classes as _base_classes
 
 from . import utils
 
-from actin_dynamics.numerical import interpolation
+from actin_dynamics.numerical import interpolation, workalike
 
 class StandardErrorMean(_base_classes.Analysis):
     def __init__(self, sample_period=None, simulation_duration=None,
                  interpolation_method=None, measurement_name=None,
-                 measurement_type=None, label=None):
+                 measurement_type=None, label=None, **kwargs):
         self.sample_period        = sample_period
         self.simulation_duration  = simulation_duration
         self.interpolation_method = interpolation_method
         self.measurement_name     = measurement_name
         self.measurement_type     = measurement_type
-        self.label                = label
+
+        _base_classes.Analysis.__init__(self, label=label, **kwargs)
 
     def perform(self, simulation_results, result_factory):
         # Grab and resample the chosen measurement.
@@ -41,7 +42,7 @@ class StandardErrorMean(_base_classes.Analysis):
         sample_times = workalike.arange(0, self.simulation_duration,
                                         self.sample_period)
         sampled_measurements = [interpolation.resample_measurement(
-            sample_times, method=self.interpolation_method)
+            raw_measurements, sample_times, method=self.interpolation_method)
                 for rm in raw_measurements]
 
         # Perfom SEM analysis on that measurement

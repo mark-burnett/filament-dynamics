@@ -20,6 +20,7 @@ class FixedReagent(_Concentration):
     def __init__(self, initial_concentration=-1,
                  filament_tip_concentration=-1,
                  number=None, label=None):
+        initial_concentration = float(initial_concentration)
         if initial_concentration < 0:
             raise ValueError('Negative concentrations not allowed.')
         if filament_tip_concentration < 0:

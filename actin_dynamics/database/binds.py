@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools as _itertools
+
 from sqlalchemy import orm as _orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
@@ -108,7 +110,14 @@ class ObjectiveBind(Bind):
     @measurement.setter
     def measurement(self, new_values):
         self.data = []
-        for t, v, e in itertools.izip(*new_values):
+        for row in _itertools.izip(*new_values):
+            t, v = row[:2]
+            if 3 == len(row):
+                e = row[3]
+            elif 4 == len(row):
+                e = abs(row[3] - row[2])
+            elif 2 == len(row):
+                e = 0
             self.data.append(_results.ObjectiveData(abscissa=t,
                                                     ordinate=v,
                                                     error=e))

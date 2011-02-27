@@ -21,10 +21,12 @@ from base_classes import FilamentFactory as _FilamentFactory
 from .single_strand_filaments import Filament
 
 class SingleStateFixedLength(_FilamentFactory):
-    def __init__(self, state=None, length=None, number=None):
+    def __init__(self, state=None, length=None, number=None, label=None):
         self.state = state
         self.length = int(length)
         self.number = int(number)
+
+        _FilamentFactory.__init__(self, label=label)
 
     def create(self):
         return [Filament(itertools.repeat(self.state, self.length))
@@ -32,19 +34,21 @@ class SingleStateFixedLength(_FilamentFactory):
 
 class SingleStateFixedLengthFromConcentrations(SingleStateFixedLength):
     def __init__(self, state=None, concentration=None,
-                 filament_tip_concentration=None, number=None):
+                 filament_tip_concentration=None, number=None, label=None):
         length = int(concentration / filament_tip_concentration)
         SingleStateFixedLength.__init__(self, state=state, length=length,
-                                        number=number)
+                                        number=number, label=label)
 
 
 class NormalDistribution(_FilamentFactory):
     def __init__(self, mean=None, standard_deviation=None,
-                 state=None, number=None):
+                 state=None, number=None, label=None):
         self.mean = mean
         self.standard_deviation = standard_deviation
         self.state = state
         self.number = number
+
+        _FilamentFactory.__init__(self, label=label)
 
     def create(self):
         return [Filament(itertools.repeat(self.state,

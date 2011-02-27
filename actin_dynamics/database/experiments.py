@@ -70,6 +70,12 @@ class Experiment(object):
     def objectives(self):
         return dict((b.label, b) for b in self.objective_list)
 
+    @property
+    def all_parameters(self):
+        result = dict(self.parameters)
+        result.update(self.session.parameters)
+        return result
+
 _orm.mapper(Experiment, _tables.experiment_table, properties={
     'filaments': _orm.relationship(_binds.FilamentBind,
         secondary=_tables.experiment_bind_table),

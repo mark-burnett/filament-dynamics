@@ -21,7 +21,7 @@ def print_all(seq):
 
 log_colors = {
     'DEBUG':    lambda t: colors.wrap(t, foreground=colors.GREY),
-    'INFO':     lambda t: colors.wrap(t, foreground=colors.CYAN),
+    'INFO':     lambda t: colors.wrap(t, foreground=colors.YELLOW),
     'WARNING':  lambda t: colors.wrap(t, foreground=colors.YELLOW, bold=True),
     'ERROR':    lambda t: colors.wrap(t, foreground=colors.RED, bold=True),
     'CRITICAL': lambda t: colors.wrap(t, background=colors.RED, bold=True)}
@@ -31,13 +31,14 @@ def _get_level_text(record):
 
 def print_record(record):
     header =\
-'''%s @ %s
-    Process type: %s, Process id: %s
-    File: '%s', line %s
-    Function: '%s'
-        %s''' % (_get_level_text(record),
-       colors.wrap(record.time, foreground=colors.YELLOW),
+'''%s %s    %s %s, %s %s
+  File: '%s', line %s
+  Function: '%s'
+      %s''' % (_get_level_text(record),
+       colors.wrap(record.time, foreground=colors.GREY),
+       colors.wrap('Process type:', foreground=colors.GREY),
        colors.wrap(record.process.type, foreground=colors.PURPLE),
+       colors.wrap('Process id:', foreground=colors.GREY),
        colors.wrap(record.process.id, foreground=colors.PURPLE),
        colors.wrap(record.pathname, foreground=colors.CYAN),
        colors.wrap(record.lineno, foreground=colors.CYAN),
@@ -62,16 +63,15 @@ def print_exception(exception):
     print_traceback(exception.traceback)
 
 def print_traceback(traceback):
-    print '    %s:' % colors.wrap('Traceback', foreground=colors.BLACK, bold=True)
+#    print '    %s:' % colors.wrap('Traceback', foreground=colors.BLACK, bold=True)
     for tbl in traceback:
         print_tb_level(tbl)
     print ''
 
 def print_tb_level(tbl):
-    text =\
-'''        File: '%s'
-%s: %s''' % (colors.wrap(tbl.filename, foreground=colors.CYAN),
-       colors.wrap(tbl.lineno, foreground=colors.CYAN),
-       colors.wrap(tbl.line, foreground=colors.YELLOW))
-
+    text = "%s '%s'\n  %s: %s" % (
+            colors.wrap('*', foreground=colors.BLACK, bold=True),
+            colors.wrap(tbl.filename, foreground=colors.CYAN),
+            colors.wrap(tbl.lineno, foreground=colors.CYAN),
+            colors.wrap(tbl.line, foreground=colors.YELLOW))
     print text

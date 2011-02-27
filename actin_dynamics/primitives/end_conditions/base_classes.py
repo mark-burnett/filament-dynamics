@@ -21,3 +21,6 @@ class EndCondition(object):
     __metaclass__ = Registration
     registry = end_condition_registry
     skip_registration = True
+    
+    def __init__(self, label=None):
+        self.label = label
