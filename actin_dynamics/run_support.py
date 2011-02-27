@@ -14,18 +14,22 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import factories
+from . import logger
+
+log = logger.getLogger(__file__)
 
 def run_job(job):
-    # XXX Job starts/completions should be logged.
-    print 'running job #', job.id
+    log.info('Staring job %s.' % job.id)
     run = job.run
     results = []
     for i in xrange(run.parameters['number_of_simulations']):
+        log.debug('Starting job %s simulation %s.' % (job.id, i))
         simulation = factories.simulations.make_run(run)
         results.append(simulation.run())
 
     db_session = database.DBSession()
     for analysis in run.experiment.analyses:
+        log.debug('Starting job %s analysis %s.' % (job.id, analysis.name))
         a = factories.bindings.db_single(analysis)
         analysis_result = a.perform(results, factories.analysis.make_result)
         analysis_result.run = run
@@ -39,3 +43,5 @@ def run_job(job):
         objective_result.bind = objective
         db_session.add(objective_result)
     db_session.commit()
+
+    log.info('Finished job %s.' % job.id)

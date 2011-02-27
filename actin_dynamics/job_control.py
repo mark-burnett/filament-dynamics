@@ -23,6 +23,10 @@ import contextlib
 from . import database
 from . import version
 
+from . import logger
+
+log = logger.getLogger(__file__)
+
 PROCESS = None
 
 @contextlib.contextmanager
@@ -56,6 +60,9 @@ def get_job(process):
     if job:
         job.worker = process
         db_session.commit()
+        log.debug('Job acquired, id = %s.' % job.id)
+    else:
+        log.debug('No jobs found.')
 
     return job
 

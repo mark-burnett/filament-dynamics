@@ -87,7 +87,6 @@ session_table = schema.Table('session', global_state.metadata,
 # The purpose of the process table is purely provenance.
 process_table = schema.Table('process', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        # XXX Add something to identify what code path we're using?
         schema.Column('type', schema.types.String(MAX_POLY_LENGTH),
                       index=True),
 

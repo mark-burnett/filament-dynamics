@@ -5,11 +5,6 @@ goals for wednesday:
         at least random model with fluorescence weights against all 3 results
 
 
-logging
-    is it time to add logging support?
-    will need to be able to dump the db log to stdout for easy viewing.
-        perhaps a `tail -f` log dumper?
-
 controller process
     make sure the mesh process/run_job is running on a nice big mesh for the
             objectives

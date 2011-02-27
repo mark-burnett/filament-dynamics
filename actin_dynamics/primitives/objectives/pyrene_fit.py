@@ -13,39 +13,31 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from actin_dynamics import io
+from .base_classes import Objective as _Objective
 
-from . import residuals
-from . import utils
+from actin_dynamics.numerical import residuals as _residuals
+from actin_dynamics.numerical import measurements as _measurements
 
+class PyreneFit(_Objective):
+    def __init__(self, label=None, residual_type=None, **weights):
+        self.residual_function = getattr(_residuals, residual_type)
+        self.weights = weights
 
-def get_pyrene_fit(run, pyrene_data=None, **kwargs):
-    '''
-    Returns fit and normalization of pyrene simulation.
-    '''
-    straight_pyrene = get_unnormalized_fluorescence(run, **kwargs)
+        _Objective.__init__(self, label=label)
 
-    if not pyrene_data:
-        pyrene_data = io.pollard.get_interpolated_pyrene_data(straight_pyrene[0])
+    def perform(self, run, result_factory):
+        data = run.experiments.objectives[self.label].measurement
+        analyses = run.analyses
+        measurements = []
+        for name, weight in self.weights:
+            measurements.append(_measurements.scale(analyses[name].measurement,
+                                                    weight))
+        unnormalized_measurement = _measurements.add(measurements)
 
-    return _pyrene_normalization(straight_pyrene, pyrene_data)
+        fit, norm = _pyrene_fit(unnormalized_measurement, data,
+                                self.residual_function)
 
-
-def get_unnormalized_fluorescence(run, atp_weight=0.37, adppi_weight=0.56,
-                                       adp_weight=0.75, **kwargs):
-    # Grab the simulation data
-    atp_data   = run.get_measurement('pyrene_atp_count')
-    adppi_data = run.get_measurement('pyrene_adppi_count')
-    adp_data   = run.get_measurement('pyrene_adp_count')
-
-    # Scale everything
-    scaled_atp_data   = utils.scale_measurement(atp_data, atp_weight)
-    scaled_adppi_data = utils.scale_measurement(adppi_data, adppi_weight)
-    scaled_adp_data   = utils.scale_measurement(adp_data, adp_weight)
-
-    # Add everything
-    return utils.add_measurements([scaled_atp_data, scaled_adppi_data,
-                                   scaled_adp_data])
+        return result_factory(run, self.label, fit)
 
 def _pyrene_normalization(fluorescence_sim=None, fluorescence_data=None,
                           residual_function=residuals.naked_chi_squared):

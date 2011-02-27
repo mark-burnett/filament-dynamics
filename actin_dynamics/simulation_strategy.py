@@ -25,6 +25,10 @@ import traceback
 from .numerical import utils
 from . import analysis as _analysis
 
+from . import logger
+
+log = logger.getLogger(__file__)
+
 class Simulation(object):
     """
     Kinetic Monte Carlo simulation object.
@@ -108,8 +112,7 @@ class Simulation(object):
 
             # Update simulation time
             if total_R <= 0:
-                # XXX This should be done via logging.
-                print 'ENDING SIMULATION:  no possible events.'
+                log.warn('ENDING SIMULATION:  no possible events.')
                 break;
             time += ml(1/rng(0, 1)) / total_R
 

@@ -19,12 +19,6 @@ import math
 from actin_dynamics.numerical import workalike
 
 
-def iter_filaments(simulations):
-    for simulation in simulations:
-        for filament in simulation['filaments']:
-            yield filament
-
-
 def add_number(measurement, number):
     result = [list(component) for component in measurement]
 
@@ -37,7 +31,7 @@ def add_number(measurement, number):
     return result
 
 
-def scale_measurement(measurement, factor):
+def scale(measurement, factor):
     time = measurement[0]
     rest = measurement[1:]
 
@@ -48,7 +42,7 @@ def scale_measurement(measurement, factor):
     return list([time]) + scaled_rest
 
 
-def add_measurements(measurements):
+def add(measurements):
     times, values, errors = copy.copy(measurements[0])
 
     errors = [e**2 for e in errors]

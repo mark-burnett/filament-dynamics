@@ -15,5 +15,6 @@
 
 from actin_dynamics import database
 
-def make_result(run, value):
-    return database.Objective(run=run, value=value)
+def make_result(run, bind_name, value):
+    bind = run.experiment.objectives[bind_name]
+    return database.Objective(run=run, bind=bind, value=value)

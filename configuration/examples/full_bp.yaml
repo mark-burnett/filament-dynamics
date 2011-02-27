@@ -380,12 +380,9 @@ experiments:
                         sample_period: sample_period
                         duration:      simulation_duration
 
-                        atp_weight:   pyrene_atp_weight
-                        adppi_weight: pyrene_adppi_weight
-                        adp_weight:   pyrene_adp_weight
+                        pyrene_ATP:   pyrene_atp_weight
+                        pyrene_ADPPi: pyrene_adppi_weight
+                        pyrene_ADP:   pyrene_adp_weight
 
                     fixed_arguments:
-                        residual_function: naked_chi_squared
-                        atp_state:   pyrene_ATP
-                        adppi_state: pyrene_ADPPi
-                        adp_state:   pyrene_ADP
+                        residual_type: naked_chi_squared
