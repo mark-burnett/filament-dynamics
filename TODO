@@ -6,12 +6,8 @@ goals for wednesday:
 
 
 controller process
-    make sure the mesh process/run_job is running on a nice big mesh for the
-            objectives
-        * is it time to just separate objective and run jobs?
-            each objective job could prance across all runs for a given par set
-
-    register conteroller process & attach to each job as creator
+    is it time to just separate objective and run jobs?
+        each objective job could prance across all runs for a given par set
 
     global fit mechanism
         do some kind of coarse mesh/random to start

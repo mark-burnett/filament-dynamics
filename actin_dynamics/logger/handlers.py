@@ -25,6 +25,6 @@ class SQLAlachemyHandler(logging.Handler):
 
     def emit(self, record):
         lr = database.DBLogRecord.from_LogRecord(record)
-        lr.process_id = job_control.PROCESS.id
+        lr.process_id = job_control.PID
         self.db_session.add(lr)
         self.db_session.commit()

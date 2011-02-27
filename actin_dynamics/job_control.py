@@ -27,7 +27,7 @@ from . import logger
 
 log = logger.getLogger(__file__)
 
-PROCESS = None
+PID = None
 
 @contextlib.contextmanager
 def process(process_type, db_session):
@@ -43,8 +43,8 @@ def process(process_type, db_session):
     db_session.commit()
 
     # NOTE This just makes it easy to properly log the process.
-    global PROCESS
-    PROCESS = p
+    global PID
+    PID = p.id
 
     yield p
 
