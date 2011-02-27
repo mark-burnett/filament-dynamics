@@ -23,7 +23,6 @@ import random
 import traceback
 
 from .numerical import utils
-from . import analysis as _analysis
 
 from . import logger
 

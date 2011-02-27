@@ -20,7 +20,7 @@ import math
 
 import numpy
 
-from actin_dynamics.analysis import utils
+from actin_dynamics.numerical import measurements
 
 
 def expected_result(measurement, factor):
@@ -68,13 +68,13 @@ class TestScaleMeasurement(unittest.TestCase):
 
     def test_scale_measurement(self):
         self.assert_measurement_equal(self.transformed_small,
-                utils.scale_measurement(self.small_measurement, self.factor))
+                measurements.scale(self.small_measurement, self.factor))
 
         self.assert_measurement_equal(self.transformed_medium,
-                utils.scale_measurement(self.medium_measurement, self.factor))
+                measurements.scale(self.medium_measurement, self.factor))
 
         self.assert_measurement_equal(self.transformed_large,
-                utils.scale_measurement(self.large_measurement, self.factor))
+                measurements.scale(self.large_measurement, self.factor))
 
     def test_scaled_sum(self):
         self.assertEqual(sum(self.small_measurement[1]) * self.factor,
@@ -103,7 +103,7 @@ class TestAddMeasurements(unittest.TestCase):
                       [2*m for m in self.measurement_1[1]],
                       [math.sqrt(2*(m**2)) for m in self.measurement_1[2]]]
 
-        result_1 = utils.add_measurements([self.measurement_1, self.measurement_1])
+        result_1 = measurements.add([self.measurement_1, self.measurement_1])
 
         self.assertEqual(expected_1[0], result_1[0])
         self.assertEqual(expected_1[1], result_1[1])
@@ -114,7 +114,7 @@ class TestAddMeasurements(unittest.TestCase):
                       [2*m for m in self.measurement_2[1]],
                       [math.sqrt(2*(m**2)) for m in self.measurement_2[2]]]
 
-        result_2 = utils.add_measurements([self.measurement_2, self.measurement_2])
+        result_2 = measurements.add([self.measurement_2, self.measurement_2])
 
         self.assertEqual(expected_2[0], result_2[0])
         self.assertEqual(expected_2[1], result_2[1])
@@ -122,7 +122,7 @@ class TestAddMeasurements(unittest.TestCase):
             self.assertAlmostEqual(e, r)
 
     def test_add_measurement(self):
-        result = utils.add_measurements([self.measurement_1, self.measurement_2])
+        result = measurements.add([self.measurement_1, self.measurement_2])
         expected_values = [a + b for a, b in zip(self.measurement_1[1],
                                                  self.measurement_2[1])]
         expected_errors = [math.sqrt(a**2 + b**2)
