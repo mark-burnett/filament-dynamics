@@ -9,6 +9,7 @@ process utils
     list active processes
     close processes
     list # active jobs, awaiting jobs, etc. (general job status)
+    report run times for each job
 
 
 controller process

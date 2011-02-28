@@ -25,7 +25,7 @@ def _session_file(parser):
     return parser
 
 def _delays_and_timeouts(parser):
-    parser.add_argument('--idle_timeout', type=float, default=20,
+    parser.add_argument('--idle_timeout', type=float, default=60,
                         help='Time to wait for a job to appear before quitting.')
 
     parser.add_argument('--retry_delay', type=float, default=5,

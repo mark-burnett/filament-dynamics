@@ -27,8 +27,8 @@ from actin_dynamics.logger import display
 
 
 def make_query(last_id, start_time, min_level, levelname, process_type,
-               process_id):
-    db_session = database.DBSession()
+               process_id, db_session):
+#    db_session = database.DBSession()
     query = db_session.query(database.DBLogRecord)
 
     if last_id:
@@ -62,15 +62,22 @@ def main(start, min_level, levelname, process_type, process_id,
         start_time = dateutil.parser.parse(start)
     else:
         start_time = None
-    last_id = display.print_all(make_query(0, start_time, min_level, levelname,
-                                           process_type, process_id))
+
+    db_session = database.DBSession()
+
+    with db_session.transaction:
+        last_id = display.print_all(make_query(0, start_time, min_level,
+                                               levelname, process_type,
+                                               process_id, db_session))
 
     if follow:
         while True:
             time.sleep(polling_period)
-            this_id = display.print_all(make_query(last_id, start_time,
-                                                   min_level, levelname,
-                                                   process_type, process_id))
+            with db_session.transaction:
+                this_id = display.print_all(make_query(last_id, start_time,
+                                                       min_level, levelname,
+                                                       process_type,
+                                                       process_id, db_session))
             if this_id:
                 last_id = this_id
 

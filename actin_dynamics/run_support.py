@@ -16,29 +16,31 @@
 from . import factories
 from . import logger
 
+from . import database
+
 log = logger.getLogger(__file__)
 
 def run_job(job, db_session):
-    log.info('Staring job %s.' % job.id)
     run = job.run
+    num_sims = int(run.all_parameters['number_of_simulations'])
+    log.info('Staring job %s: %s simulations of run %s.', job.id,
+             num_sims, job.run_id)
     results = []
-    for i in xrange(int(run.all_parameters['number_of_simulations'])):
-        log.debug('Starting job %s simulation %s.' % (job.id, i))
+    for i in xrange(num_sims):
+        log.debug('Starting job %s simulation %s.', job.id, i + 1)
         simulation = factories.simulations.make_run(run)
         results.append(simulation.run())
 
     for analysis in run.experiment.analysis_list:
-        log.debug('Analysing job %s: %s.' % (job.id, analysis.label))
+        log.debug('Analysing job %s: %s.', job.id, analysis.label)
         a = factories.bindings.db_single(analysis, run.all_parameters)
         analysis_result = a.perform(results, factories.analysis.make_result)
         analysis_result.run = run
         db_session.add(analysis_result)
-    db_session.commit()
 
     for objective in run.objectives:
         o = factories.bindings.db_single(objective.bind,
                                          objective.all_parameters)
         o.perform(job.run, objective)
-    db_session.commit()
 
-    log.info('Finished job %s.' % job.id)
+    log.info('Finished job %s.', job.id)

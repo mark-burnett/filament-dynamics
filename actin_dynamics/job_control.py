@@ -34,47 +34,48 @@ def process(process_type, db_session):
     '''
     Yields a process to be used for identifying work done.
     '''
+    print 'entered proc'
     rev, ctx = version.source_revision()
     p = database.Process(code_revision=rev, code_changeset=ctx,
                          hostname=socket.gethostname(),
                          uname=os.uname(), type=process_type)
 
-    db_session.add(p)
-    db_session.commit()
+    with db_session.transaction:
+        print 'inside stupid sub transaction.'
+        db_session.add(p)
+        print 'bottom of stupid sub transaction.'
 
     # NOTE This just makes it easy to properly log the process.
     global PID
     PID = p.id
     log.info('Registered process %s as %s.' % (p.id, p.type))
 
+    print '---------------------'
+    print PID
+    print '---------------------'
+
     yield p
 
     # Rollback, to make sure an exception doesn't block unregistering.
-    db_session.rollback()
-    p.stop_time = datetime.datetime.now()
-    db_session.commit()
+    with db_session.transaction:
+        p.stop_time = datetime.datetime.now()
     log.info('Unegistered process %s.' % p.id)
 
 
-def get_job(process_id, external_session):
-    db_session = database.DBSession()
-    job = db_session.query(database.Job).filter_by(complete=False,
-            worker_id=None).with_lockmode('update_nowait').first()
-    if job:
-        job.worker_id = process_id
-        db_session.commit()
-        log.debug('Job acquired, id = %s.' % job.id)
-
-        # We must transfer ownership of job to the external session
-        db_session.expunge(job)
-        external_session.add(job)
-    else:
-        log.debug('No jobs found.')
-
+def get_job(process_id, db_session):
+    with db_session.transaction:
+        job = db_session.query(database.Job).filter_by(complete=False,
+                worker_id=None).with_lockmode('update_nowait').first()
+        if job:
+            job.worker_id = process_id
+            log.debug('Job acquired, id = %s.' % job.id)
+        else:
+            log.debug('No jobs found.')
     return job
 
 
 # XXX This may need to delete partial data, like analyses or something.
+# XXX Fix session management
 def cleanup_incomplete_jobs():
     db_session = database.DBSession()
     job_query = db_session.query(database.Job).filter_by(complete=False

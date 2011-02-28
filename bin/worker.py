@@ -33,9 +33,9 @@ def main(idle_timeout, retry_delay):
         while time.time() < stop_time:
             job = job_control.get_job(process.id, db_session)
             if job:
-                run_support.run_job(job, db_session)
-                job.complete = True
-                db_session.commit()
+                with db_session.transaction:
+                    run_support.run_job(job, db_session)
+                    job.complete = True
                 stop_time = time.time() + idle_timeout
             else:
                 time.sleep(retry_delay)

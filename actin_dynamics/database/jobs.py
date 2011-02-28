@@ -70,7 +70,7 @@ class Job(object):
                 self.worker, self.creator, self.complete)
 
 _orm.mapper(Job, _tables.job_table, properties={
-    'run': _orm.relationship(_runs.Run),
+    'run': _orm.relationship(_runs.Run, backref='job'),
     'worker': _orm.relationship(Process,
         primaryjoin=_tables.job_table.c.worker_id==_tables.process_table.c.id),
     'creator': _orm.relationship(Process,

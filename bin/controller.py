@@ -33,7 +33,7 @@ def main(session_filename):
             session_filename)
 
         c = mesh_controller.Controller(session, par_spec)
-        c.create_jobs()
+        c.create_jobs(db_session, process)
 
 
 if '__main__' == __name__:

@@ -54,16 +54,20 @@ while getopts "s:n:c:jh" FLAG; do
     esac
 done
 
-echo "Starting job runners..."
-for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
-    bin/worker.py $CONFIG_COMMAND &
-    echo "Started process #$SIMNUM"
-done
-
 if $CREATE_JOBS; then
     echo
     echo "Creating jobs..."
-    bin/controller.py $CONFIG_COMMAND $SESSION_FILENAME &
+    bin/controller.py $CONFIG_COMMAND $SESSION_FILENAME >& /dev/null &
 fi
 
+echo "Starting job runners..."
+for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
+    bin/worker.py $CONFIG_COMMAND >& /dev/null &
+    echo "Started process #$SIMNUM"
+done
+
+echo "Following log."
 bin/view_log.py -f $CONFIG_COMMAND
+
+trap 'exit 0' HUP
+trap 'kill -s HUP 0' EXIT

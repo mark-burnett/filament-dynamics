@@ -27,12 +27,15 @@ class Controller(object):
         self.session = session
         self.parameter_specifications = parameter_specifications
 
-    def create_jobs(self):
-        log.info('Creating jobs for %s experiments.' %
+    def create_jobs(self, db_session, process):
+        log.info('Creating jobs for %s experiments.',
                  len(self.session.experiments))
-        db_session = database.DBSession()
+
         # XXX Assume we're only running one model.
+        if len(self.session.models) > 1:
+            log.warn('Multiple models found for session %s.', self.session.id)
         model = self.session.models[0]
+
         for experiment in self.session.experiments:
             expt_par_specs = self.parameter_specifications[experiment.name]
 
@@ -46,10 +49,10 @@ class Controller(object):
                 for obj_set in expt_par_specs.get('objective',
                                                   {}).itervalues()))
 
-            log.info("Creating %s jobs for experiment: '%s'." %
-                     (num_jobs, experiment.name))
-            log.info("Each '%s' job has %s objective calculations." %
-                     (experiment.name, num_objective_sets))
+            log.info("Creating %s jobs for experiment: '%s'.",
+                     num_jobs, experiment.name)
+            log.info("Each '%s' job has %s objective calculations.",
+                     experiment.name, num_objective_sets)
 
             # loop over run pars
             for run_pars in meshes.parameters_from_spec(
@@ -66,7 +69,8 @@ class Controller(object):
                         o = database.Objective(parameters=obj_pars,
                                                bind=obj_bind,
                                                run=r)
-                # queue job
-                j = database.Job(run=r)
-                db_session.add(j)
-                db_session.commit()
+                # Queue the job.
+                with db_session.transaction:
+                    j = database.Job(run=r, creator=process)
+                    db_session.add(j)
+                log.debug('Job %s for run %s created.', j.id, r.id)
