@@ -1,0 +1,52 @@
+name: 'Pollard Random FTC'
+
+import:
+    - 'models/three_state_random_random.yaml'
+    - 'experiments/blanchoin_pollard_2002.yaml'
+
+experiments:
+    blanchoin_pollard_2002:
+        parameters:
+            number_of_simulations: 10
+            number_of_filaments:   4
+
+parameter_specifications:
+    blanchoin_pollard_2002:
+        simulation:
+            cleavage_rate:
+                lower_bound: 0.3
+                upper_bound: 0.3
+                mesh_type:   linear
+                num_points:  1
+
+            release_rate:
+                lower_bound: 0.003
+                upper_bound: 0.003
+                mesh_type:   log
+                num_points:  1
+
+            filament_tip_concentration:
+                lower_bound: 0.005
+                upper_bound: 0.040
+                mesh_type:   log
+                num_points:  20
+
+        objective:
+            pollard_pyrene_fit:
+                pyrene_atp_weight:
+                    lower_bound: 0.37
+                    upper_bound: 0.37
+                    mesh_type:   linear
+                    num_points:  1
+
+                pyrene_adppi_weight:
+                    lower_bound: 0.56
+                    upper_bound: 0.56
+                    mesh_type:   linear
+                    num_points:  1
+
+                pyrene_adp_weight:
+                    lower_bound: 0.75
+                    upper_bound: 0.75
+                    mesh_type:   linear
+                    num_points:  1
