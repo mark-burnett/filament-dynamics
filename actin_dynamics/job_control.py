@@ -45,7 +45,7 @@ def process(process_type, db_session):
     # NOTE This just makes it easy to properly log the process.
     global PID
     PID = p.id
-    log.info('Registered process %s as %s.' %s (p.id, p.type))
+    log.info('Registered process %s as %s.' % (p.id, p.type))
 
     yield p
 
@@ -53,7 +53,7 @@ def process(process_type, db_session):
     db_session.rollback()
     p.stop_time = datetime.datetime.now()
     db_session.commit()
-    log.info('Unegistered process %s.' %s p.id)
+    log.info('Unegistered process %s.' % p.id)
 
 
 def get_job(process, db_session):
