@@ -22,7 +22,11 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestObjective(DBTestCase):
     def test_run_relationship(self):
         r = database.Run()
+        r.experiment_id = 0
+        r.model_id = 0
+
         o = database.Objective(run=r)
+        o.objective_bind_id = 0
 
         self.db_session.add(o)
         self.db_session.commit()
@@ -32,11 +36,26 @@ class TestObjective(DBTestCase):
         self.assertEqual(r, o2.run)
         self.assertTrue(o2.run.id >= 1)
 
+    def test_objective_bind_relationship(self):
+        ob = database.ObjectiveBind(class_name='test')
+        ob.experiment_id = 0
+
+        o = database.Objective(bind=ob)
+        o.run_id = 0
+
+        self.db_session.add(o)
+        self.db_session.commit()
+
+        o2 = self.db_session.query(database.Objective).first()
+        self.assertEqual(o, o2)
+
     def test_parameters(self):
         test_data = {'par_name_1': 7.2,
                      'par_name_2': 61.3}
 
         o = database.Objective()
+        o.run_id = 0
+        o.objective_bind_id = 0
 
         o.parameters = test_data
 

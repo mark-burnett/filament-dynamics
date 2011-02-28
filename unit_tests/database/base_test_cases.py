@@ -22,11 +22,13 @@ from actin_dynamics import database
 class DBTestCase(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         self.engine = create_engine('sqlite:///:memory:')
+        self.DBSession = orm.sessionmaker(bind=self.engine)
         unittest.TestCase.__init__(self, *args, **kwargs)
 
     def setUp(self):
+        self.db_session = self.DBSession()
         database.metadata.create_all(self.engine)
-        self.db_session = orm.scoped_session(orm.sessionmaker(bind=self.engine))
 
     def tearDown(self):
+        self.db_session.close()
         database.metadata.drop_all(self.engine)

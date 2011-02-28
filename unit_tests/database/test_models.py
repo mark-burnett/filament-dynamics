@@ -22,6 +22,7 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestModel(DBTestCase):
     def test_concentration_binds(self):
         m = database.Model('test model name')
+        m.session_id = 0
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -40,6 +41,7 @@ class TestModel(DBTestCase):
 
     def test_transition_binds(self):
         m = database.Model('test model name')
+        m.session_id = 0
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}

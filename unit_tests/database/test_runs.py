@@ -22,8 +22,10 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestRun(DBTestCase):
     def test_experiment_relationship(self):
         m = database.Model(name='test expt name')
+        m.session_id = 0
 
         r = database.Run(experiment=m)
+        r.experiment_id = 0
 
         self.db_session.add(r)
         self.db_session.commit()
@@ -35,8 +37,10 @@ class TestRun(DBTestCase):
 
     def test_experiment_relationship(self):
         e = database.Experiment(name='test expt name')
+        e.session_id = 0
 
         r = database.Run(experiment=e)
+        r.model_id = 0
 
         self.db_session.add(r)
         self.db_session.commit()
@@ -51,6 +55,8 @@ class TestRun(DBTestCase):
                      'par_name_2': 61.3}
 
         r = database.Run()
+        r.experiment_id = 0
+        r.model_id = 0
 
         r.parameters = test_data
 
@@ -65,8 +71,15 @@ class TestRun(DBTestCase):
 
     def test_analysis_relationship(self):
         a = database.Analysis(name='test_name')
+        a.bind_id = 0
+
         r = database.Run(analysis_list=[a])
+        r.model_id = 0
+        r.experiment_id = 0
+
         a2 = database.Analysis(name='test_name2', run=r)
+        a2.bind_id = 0
+
         a2.measurement = range(3), [2,1,3], [0.1, 1.2, 0.3]
 
         self.db_session.add(r)

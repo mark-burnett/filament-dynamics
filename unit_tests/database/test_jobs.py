@@ -22,8 +22,11 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestJob(DBTestCase):
     def test_run_relationship(self):
         r = database.Run()
+        r.experiment_id = 0
+        r.model_id = 0
 
         j = database.Job(run=r)
+        j.creator_id = 0
 
         self.db_session.add(j)
         self.db_session.commit()

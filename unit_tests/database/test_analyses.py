@@ -22,6 +22,8 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestAnalysis(DBTestCase):
     def test_run_relationship(self):
         r = database.Run()
+        r.experiment_id = 0
+        r.model_id = 0
 
         a = database.Analysis(run=r)
 

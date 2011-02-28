@@ -22,6 +22,7 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestExperiment(DBTestCase):
     def test_filament_binds(self):
         e = database.Experiment('test expt name')
+        e.session_id = 0
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -40,6 +41,7 @@ class TestExperiment(DBTestCase):
 
     def test_measurement_binds(self):
         e = database.Experiment('test expt name')
+        e.session_id = 0
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -58,6 +60,7 @@ class TestExperiment(DBTestCase):
 
     def test_end_condition_binds(self):
         e = database.Experiment('test expt name')
+        e.session_id = 0
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -76,6 +79,7 @@ class TestExperiment(DBTestCase):
 
     def test_concentration_binds(self):
         e = database.Experiment('test expt name')
+        e.session_id = 0
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -94,6 +98,7 @@ class TestExperiment(DBTestCase):
 
     def test_transition_binds(self):
         e = database.Experiment('test expt name')
+        e.session_id = 0
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -128,6 +133,7 @@ class TestExperiment(DBTestCase):
                      'par_name_2': 61.3}
 
         e = database.Experiment('ses 1')
+        e.session_id = 0
 
         e.parameters = test_data
 

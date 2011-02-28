@@ -22,6 +22,7 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestParameter(DBTestCase):
     def test_inheritance_for_cross_talk(self):
         s = database.SessionParameter(name='hi', value=0.3)
+        s.session_id = 0
 
         self.db_session.add(s)
         self.db_session.commit()
@@ -39,6 +40,7 @@ class TestParameter(DBTestCase):
             ).count())
 
         o = database.ObjectiveParameter(name='bye', value=7.6)
+        o.objective_id = 0
         self.db_session.add(o)
         self.db_session.commit()
 
