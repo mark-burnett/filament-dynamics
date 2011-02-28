@@ -25,8 +25,8 @@ def load_definition(filename):
 
     imports = results.get('import', [])
     for import_filename in imports:
-        results = merge_dicts(results,
-                load_session_definition(import_filename, source_directory))
+        results = merge_dicts(results, load_definition(
+            os.path.join(source_directory, import_filename)))
 
     return results
 
@@ -35,11 +35,12 @@ def merge_dicts(a, b):
 
     result = {}
     for key in keys:
-        if key not in a:
-            result[key] = b[key]
-        elif key not in b:
-            result[key] = a[key]
-        else: # key in both
-            result[key] = _merge_dicts(a[key], b[key])
+        if key != 'import':
+            if key not in a:
+                result[key] = b[key]
+            elif key not in b:
+                result[key] = a[key]
+            else: # key in both
+                result[key] = merge_dicts(a[key], b[key])
 
     return result

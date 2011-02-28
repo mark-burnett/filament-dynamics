@@ -56,13 +56,18 @@ def process(process_type, db_session):
     log.info('Unegistered process %s.' % p.id)
 
 
-def get_job(process, db_session):
+def get_job(process_id, external_session):
+    db_session = database.DBSession()
     job = db_session.query(database.Job).filter_by(complete=False,
             worker_id=None).with_lockmode('update_nowait').first()
     if job:
-        job.worker = process
+        job.worker_id = process_id
         db_session.commit()
         log.debug('Job acquired, id = %s.' % job.id)
+
+        # We must transfer ownership of job to the external session
+        db_session.expunge(job)
+        external_session.add(job)
     else:
         log.debug('No jobs found.')
 

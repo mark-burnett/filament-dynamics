@@ -16,8 +16,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
-import datetime
-
 import dateutil.parser
 
 from actin_dynamics.configuration import command_line_parsers
@@ -28,9 +26,13 @@ from actin_dynamics import database
 from actin_dynamics.logger import display
 
 
-def make_query(start_time, min_level, levelname, process_type, process_id):
+def make_query(last_id, start_time, min_level, levelname, process_type,
+               process_id):
     db_session = database.DBSession()
     query = db_session.query(database.DBLogRecord)
+
+    if last_id:
+        query = query.filter(database.DBLogRecord.id > last_id)
 
     # Add in the filters
     if levelname:
@@ -60,17 +62,17 @@ def main(start, min_level, levelname, process_type, process_id,
         start_time = dateutil.parser.parse(start)
     else:
         start_time = None
-    query = make_query(start_time, min_level, levelname, process_type, process_id)
-
-    display.print_all(query)
+    last_id = display.print_all(make_query(0, start_time, min_level, levelname,
+                                           process_type, process_id))
 
     if follow:
         while True:
-            last_time = datetime.datetime.now()
             time.sleep(polling_period)
-            query = make_query(last_time, min_level, levelname,
-                               process_type, process_id)
-            display.print_all(query)
+            this_id = display.print_all(make_query(last_id, start_time,
+                                                   min_level, levelname,
+                                                   process_type, process_id))
+            if this_id:
+                last_id = this_id
 
 
 if '__main__' == __name__:

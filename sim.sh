@@ -23,8 +23,6 @@ CONFIG_COMMAND=""
 
 CREATE_JOBS=true
 
-USE_PATH=.:modules/
-
 display_args() {
     echo "Options:"
     echo
@@ -58,17 +56,14 @@ done
 
 echo "Starting job runners..."
 for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
-    PYTHONPATH=$USE_PATH bin/worker.py $CONFIG_COMMAND &
+    bin/worker.py $CONFIG_COMMAND &
     echo "Started process #$SIMNUM"
 done
 
 if $CREATE_JOBS; then
     echo
     echo "Creating jobs..."
-    PYTHONPATH=$USE_PATH bin/controller.py $CONFIG_COMMAND\
-        $SESSION_FILENAME || exit 1
-    echo "Jobs created."
+    bin/controller.py $CONFIG_COMMAND $SESSION_FILENAME &
 fi
 
-echo "Waiting to complete..."
-wait
+bin/view_log.py -f $CONFIG_COMMAND

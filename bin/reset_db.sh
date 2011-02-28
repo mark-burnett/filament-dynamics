@@ -20,3 +20,6 @@ mysqladmin -u aduser -p'filamentous' -f drop actin_dynamics
 
 echo 'Creating new database.'
 mysqladmin -u aduser -p'filamentous' create actin_dynamics
+
+echo 'Creating tables.'
+bin/create_tables.py

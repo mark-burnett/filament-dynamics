@@ -20,8 +20,11 @@ from . import colors
 g = lambda t: colors.wrap(t, foreground=colors.GREY)
 
 def print_all(seq):
+    last_id = None
     for record in seq:
+        last_id = record.id
         print_record(record)
+    return last_id
 
 _log_colors = {
     'DEBUG':     lambda t: colors.wrap(t, foreground=colors.GREY),
