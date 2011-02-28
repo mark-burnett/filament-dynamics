@@ -75,7 +75,7 @@ def print_record(record):
         print_exception(record.exception)
 
 def print_exception(exception):
-    header = "  %s%s %s" % (
+    header = "    %s%s %s" % (
        colors.wrap(exception.type_name, foreground=colors.RED),
        g(':'), exception.message)
 
@@ -89,10 +89,8 @@ def print_traceback(traceback):
     print ''
 
 def print_tb_level(tbl):
-    text = "%s%s%s\n  %s: %s" % (
-            g("'"),
+    text = "%s\n  %s: %s" % (
             colors.wrap(tbl.filename, foreground=colors.GREEN),
-            g("'"),
             colors.wrap(tbl.lineno, foreground=colors.CYAN),
             colors.wrap(tbl.line, foreground=colors.YELLOW))
     print text

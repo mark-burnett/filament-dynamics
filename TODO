@@ -5,6 +5,12 @@ goals for wednesday:
         at least random model with fluorescence weights against all 3 results
 
 
+process utils
+    list active processes
+    close processes
+    list # active jobs, awaiting jobs, etc. (general job status)
+
+
 controller process
     is it time to just separate objective and run jobs?
         each objective job could prance across all runs for a given par set
