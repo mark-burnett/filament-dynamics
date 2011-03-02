@@ -61,11 +61,12 @@ slice_parameter_table = schema.Table('slice_parameter', global_state.metadata,
                       unique=True, nullable=False),
         mysql_engine='InnoDB')
 
-#schema.Index('slice_parameter_unique_columns',
-#        slice_parameter_table.c.objective_bind_id,
-#        slice_parameter_table.c.parameter_name,
-#        unique=True)
-
+slice_mesh_table = schema.Table('slice_mesh', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('slice_parameter_id',
+                      schema.ForeignKey('slice_parameter.id'), nullable=False),
+        schema.Column('value', schema.types.Float),
+        mysql_engine='InnoDB')
 
 # ---------------------------------------------------------------------
 # - Logging tables                                                    -

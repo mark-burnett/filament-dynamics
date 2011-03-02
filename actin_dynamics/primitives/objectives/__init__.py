@@ -15,6 +15,7 @@
 
 from registry import objective_registry as registry
 
+from simple_data_fit import *
 from pyrene_fit import *
 
-#del base_classes
+del base_classes

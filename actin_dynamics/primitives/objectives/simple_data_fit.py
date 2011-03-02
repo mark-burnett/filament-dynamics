@@ -23,13 +23,13 @@ class SimpleDataFit(_Objective):
                  interpolate_simulation=True, label=None):
         self.residual_function      = getattr(_residuals, residual_type)
         self.measurement_name       = measurement
-        self.interpolate_simulation = interpolate_simulation
+        self.interpolate_simulation = bool(interpolate_simulation)
 
         _Objective.__init__(self, label=label)
 
     def perform(self, run, target):
         sim_result = run.analyses[self.measurement_name]
-        data = run.experiments.objectives[self.label].measurement
+        data = run.experiment.objectives[self.label].measurement
 
         if self.interpolate_simulation:
             interp = _interpolation.resample_measurement(sim_result, data[0])

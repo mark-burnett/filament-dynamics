@@ -96,12 +96,6 @@ class ObjectiveBind(Bind):
                 dict(self.variable_arguments), self.data)
 
     @property
-    def slice_column_map(self):
-        return dict((sp.parameter_name, sp.column_name)
-                # XXX Stupid 0....
-                    for sp in self.slice_definition[0].parameters)
-
-    @property
     def measurement(self):
         times  = []
         values = []

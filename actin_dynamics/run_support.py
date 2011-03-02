@@ -40,10 +40,16 @@ def run_job(job, db_session):
         analysis_result.run = run
         db_session.add(analysis_result)
 
+    log.debug('Calculating %s objectives for job %s.',
+              len(run.objectives), job.id)
     for objective in run.objectives:
+        log.debug('Calculating objective %s for job %s.',
+                  objective.bind.label, job.id)
         o = factories.bindings.db_single(objective.bind,
                                          objective.all_parameters)
         o.perform(job.run, objective)
+        log.debug('Storing summary of objective %s for job %s.',
+                  objective.bind.label, job.id)
         store_summary_information(objective)
 
     log.info('Finished job %s.', job.id)
@@ -52,7 +58,10 @@ def store_summary_information(objective):
     parameters = objective.all_parameters
     values = dict((col_name, parameters[par_name])
                   for par_name, col_name in
-                      objective.bind.slice_column_map.iteritems())
+    # XXX Stupid 0....
+                      objective.bind.slice_definition[0].column_map.iteritems())
+#    log.debug('Storing value = %s for objective_id = %s',
+#              objective.value, objective.id)
     values['objective_id'] = objective.id
     values['value'] = objective.value
 

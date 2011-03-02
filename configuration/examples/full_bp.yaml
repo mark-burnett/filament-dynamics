@@ -413,7 +413,7 @@ experiments:
                     fixed_arguments:
                         measurement:   total_adppi_count
                         residual_type: naked_chi_squared
-                        interpolate_simulations: True
+                        interpolate_simulation: True
 
                 pollard_pyrene_fit:
                     class_name: PyreneFit

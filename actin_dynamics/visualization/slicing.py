@@ -14,247 +14,84 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import bisect
-import itertools
-import operator
 
 import numpy
 
-from sqlalchemy import schema, types, orm
-import elixir
+from sqlalchemy import func, schema, sql
 
-from actin_dynamics.io import database
+from actin_dynamics import database
 
 class Slicer(object):
-    def __init__(self, summary_class, table):
-        self.summary_class = summary_class
-        self.table         = table
+    def __init__(self, table, meshes, column_map):
+        self.table      = table
+        self.meshes     = meshes
+        self.column_map = column_map
 
     @classmethod
-    def from_group(cls, group, value_name, value_type=None,
-                   run_parameters=None, analysis_parameters=None,
-                   table_name=None):
-        '''
-        value_type specifies whether to look in runs or analyses
-                for the value name.
-        value_type can either be 'run' or 'value'.
-        '''
-        if value_type is None:
-            value_type = 'run'
-        if run_parameters is None:
-            run_parameters = []
-        if analysis_parameters is None:
-            analysis_parameters = []
-        if table_name is None:
-            table_name = 'slicing_temp'
+    def from_objective_bind(cls, objective_bind):
+        # XXX again with the 0
+        sd = objective_bind.slice_definition[0]
 
-        table = _create_table(run_parameters=run_parameters,
-                              analysis_parameters=analysis_parameters,
-                              table_name=table_name)
-        column_names = run_parameters + analysis_parameters
+        table_name = sd.table_name
+        column_map = sd.column_map
+        meshes     = sd.meshes
 
-        summary_class = _create_class(table, column_names)
+        table = schema.Table(table_name, database.global_state.metadata,
+                             autoload=True)
 
-        _fill_table(summary_class, group,
-                    value_name=value_name, value_type=value_type,
-                    run_parameters=run_parameters,
-                    analysis_parameters=analysis_parameters)
-
-        return cls(summary_class=summary_class, table=table)
-
-
-    def _get_column(self, column_name):
-        return getattr(self.summary_class, column_name)
-
-    def _get_columns(self, column_names):
-        return [self._get_column(name) for name in column_names]
-
-
-    def _get_meshes(self, columns):
-        results = []
-        for column in columns:
-            query = elixir.session.query(column).distinct().order_by(column)
-            results.append(map(operator.itemgetter(0), query))
-        return results
-
-    def _get_mesh_dicts(self, column_names):
-        columns = self._get_columns(column_names)
-        values  = self._get_meshes(columns)
-
-        return dict((n, v) for n, v in itertools.izip(column_names, values))
+        return cls(table, meshes, column_map)
 
 
     def slice(self, **fixed_values):
-        column_names = [c for c in self.summary_class.column_names
-                        if c not in fixed_values]
-        columns = self._get_columns(column_names)
-        query = elixir.session.query(self.summary_class.value, *columns
-                ).filter_by(**fixed_values)
-        meshes = self._get_meshes(columns)
+        abscissae_names = [n for n in self.column_map.keys()
+                           if n not in fixed_values]
+        select_columns = [self.table.c[self.column_map[n]]
+                          for n in abscissae_names]
+        select_columns.append(self.table.c.value)
 
-        values = _convert_results_to_array(query, meshes)
-        return values, column_names, meshes
+        like_clauses = [self.table.c[self.column_map[n]].like(v)
+                        for n, v in fixed_values.iteritems()]
+
+        query = sql.select(select_columns, whereclause=sql.and_(*like_clauses))
+
+        result_set = query.execute()
+
+        return _format_result(result_set, abscissae_names, self.meshes)
 
 
     def minimum_values(self, *abscissae_names):
-        meshes = self._get_meshes(self._get_columns(abscissae_names))
+        # We want to select all the columns except the objective id.
+        column_names = [self.column_map[an] for an in abscissae_names]
+        group_columns = [self.table.c[cn] for cn in column_names]
+        # And the minimum value
+        select_columns = group_columns + [func.min(self.table.c.value)]
 
-        shape = [len(m) for m in meshes]
-        if not shape:
-            best = elixir.session.query(self.summary_class
-                    ).order_by('value').first()
-            return _format_result(best, self.table)
-        result = numpy.zeros(shape)
+        query = sql.select(select_columns, group_by=group_columns)
+        result_set = query.execute()
 
-        for indexes, mesh_point in _iterate_meshes(abscissae_names, meshes,
-                                                   enum=True):
-            best = elixir.session.query(self.summary_class.value
-                    ).filter_by(**mesh_point).order_by('value').first()
-            result[tuple(indexes)] = best[0]
-        return result, abscissae_names, meshes
+        return _format_result(result_set, abscissae_names, self.meshes)
 
 
-def _convert_results_to_array(query, meshes):
-    shape = [len(m) for m in meshes]
-    if sum(shape) == 0:
-        return numpy.array([query.first()])
+def _format_result(result_set, names, meshes):
+    '''
+    Converts the (x(1), x(2), ..., x(n), y) tuples of a result set
+    into an n-dimensional numpy array.
+    '''
+    mesh_list = [meshes[n] for n in names]
+
+    shape = map(len, mesh_list)
     result = numpy.zeros(shape)
 
-    for row in query:
-        slices = []
-        for i, abscissa_values in enumerate(meshes):
-            index = bisect.bisect_left(abscissa_values, row[i + 1])
-            slices.append(slice(index, index + 1))
+    for indexes, value in _index_iterator(result_set, mesh_list):
+        result[tuple(indexes)] = value
 
-        result[slices] = row[0] # Assign value.
-
-    return result
+    return result, names, mesh_list
 
 
-# XXX Generate a meaningful unique id for the table
-def _create_table(run_parameters, analysis_parameters, table_name):
-    columns = []
-    for name in itertools.chain(run_parameters, analysis_parameters):
-        columns.append(schema.Column(name, types.Float, index=True))
-
-    table = schema.Table(table_name, elixir.metadata,
-                         schema.Column('id', types.Integer, primary_key=True),
-                         schema.Column('run_id', types.Integer,
-                                       schema.ForeignKey('run.id')),
-                         schema.Column('value', types.Float),
-                         prefixes=['TEMPORARY'],
-                         *columns)
-    elixir.metadata.create_all()
-
-    return table
-
-def _create_class(table, columns):
-    class TempTable(object):
-        column_names = columns
-        def __init__(self, **kwargs):
-            for key, value in kwargs.iteritems():
-                setattr(self, key, value)
-
-    orm.mapper(TempTable, table)
-
-    return TempTable
-
-
-def _fill_table(summary_class, group,
-                value_name=None, value_type=None,
-                run_parameters=None, analysis_parameters=None):
-    if 'run' == value_type.lower():
-        if not analysis_parameters:
-            return _fill_run_table(summary_class, group,
-                                   value_name=value_name,
-                                   run_parameters=run_parameters)
-        else:
-            raise RuntimeError("This shouldn't happen.")
-    elif 'analysis' == value_type.lower():
-        return _fill_analysis_table(summary_class, group,
-                                    value_name=value_name,
-                                    run_parameters=run_parameters,
-                                    analysis_parameters=analysis_parameters)
-    else:
-        raise RuntimeError("Illegal value_type specified.")
-
-def _fill_analysis_table(summary_class, group, value_name=None,
-                         run_parameters=None, analysis_parameters=None):
-    for run in database.Run.query.filter_by(group=group):
-        run_properties = _extract_properties(run, run_parameters)
-
-        analysis_query = database.Analysis.query.filter_by(run=run)
-        meshes = _get_analysis_meshes(analysis_query, analysis_parameters)
-
-        for analysis_values in _iterate_meshes(analysis_parameters, meshes):
-            best_value = _analysis_min_value(analysis_query,
-                                             analysis_values,
-                                             value_name)
-
-            properties = analysis_values
-            properties.update(run_properties)
-            properties['value'] = best_value
-
-            new_object = summary_class(**properties)
-            new_object.run_id = run.id
-            elixir.session.add(new_object)
-
-    # XXX Be wary of burning through too much memory by not committing sooner.
-    elixir.session.commit()
-
-
-# XXX There may be a way to speed this up with real queries.
-#       It probably requires completely abandoning elixir...which I will do..
-def _get_analysis_meshes(query, parameter_names):
-    values = dict((n, set()) for n in parameter_names)
-    for analysis in query:
-        for name in parameter_names:
-            values[name].add(analysis.get_parameter(name))
-    return [values[n] for n in parameter_names]
-
-
-def _iterate_meshes(names, meshes, enum=False):
-    if enum:
-        iterator = itertools.product(*map(enumerate, meshes))
-        for ivals in iterator:
-            indexes = map(operator.itemgetter(0), ivals)
-            values  = map(operator.itemgetter(1), ivals)
-            yield indexes, dict((n, v) for n, v in itertools.izip(names, values))
-    else:
-        for values in itertools.product(*meshes):
-            yield dict((n, v) for n, v in itertools.izip(names, values))
-
-
-def _analysis_min_value(analyses, analysis_values, value_name):
-    best = None
-    for a in analyses:
-        if a.contains_parameters(analysis_values):
-            this_value = a.get_value(value_name)
-            if best is None or this_value < best:
-                best = this_value
-
-    return best
-
-
-def _fill_run_table(summary_class, group, value_name, run_parameters):
-    for run in database.Run.query.filter_by(group=group):
-        run_properties = _extract_properties(run, run_parameters, value_name=value_name)
-        new_object = summary_class(**run_properties)
-        new_object.run_id = run.id
-        elixir.session.add(new_object)
-
-    # XXX Be wary of burning through too much memory by not committing sooner.
-    elixir.session.commit()
-
-
-def _extract_properties(obj, parameter_names, value_name=None):
-    results = dict((name, obj.get_parameter(name))
-                    for name in parameter_names)
-    if value_name:
-        results['value'] = obj.get_value(value_name)
-
-    return results
-
-def _format_result(obj, table):
-    names  = table.c.keys()[3:]
-    values = [getattr(obj, name) for name in names]
-    return [obj.value], names, values
+def _index_iterator(result_set, mesh_list):
+    for row in result_set:
+        indexes = []
+        for i, m in enumerate(row[:-1]):
+            indexes.append(bisect.bisect_left(mesh_list[i], m))
+        value = row[len(row)-1]
+        yield tuple(indexes), value

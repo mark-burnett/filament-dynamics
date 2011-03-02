@@ -62,13 +62,19 @@ class Controller(object):
                                  experiment=experiment)
                 # loop over objective pars
                 for obj_name, obj_bind in experiment.objectives.iteritems():
-                    obj_def = expt_par_specs.get('objective', {}).get(obj_name,
-                                                                      {})
+                    obj_def = expt_par_specs.get('objective', {}
+                            ).get(obj_name, {})
+                    any_objectives_created = False
                     for obj_pars in meshes.parameters_from_spec(obj_def):
+                        any_objectives_created = True
                         # create objective
-                        o = database.Objective(parameters=obj_pars,
-                                               bind=obj_bind,
-                                               run=r)
+                        database.Objective(parameters=obj_pars,
+                                           bind=obj_bind,
+                                           run=r)
+
+                    if not any_objectives_created:
+                        database.Objective(bind=obj_bind, run=r)
+
                 # Queue the job.
                 with db_session.transaction:
                     j = database.Job(run=r, creator=process)

@@ -22,6 +22,7 @@ from sqlalchemy import schema
 from sqlalchemy import types
 
 from actin_dynamics import database, primitives
+from actin_dynamics.numerical import meshes
 
 from actin_dynamics import logger
 
@@ -132,9 +133,25 @@ def static_summary_tables(experiments, par_spec_dict):
             sd = database.SliceDefinition(table_name=table_name,
                                           objective_bind=ob)
             for pn, cn in itertools.izip(par_names, col_names):
-                sd.parameters.append(
-                        database.SliceParameter(parameter_name=pn,
-                                                column_name=cn))
+                sp = database.SliceParameter(parameter_name=pn,
+                                             column_name=cn,
+                                             definition=sd)
+
+            make_slice_parameter_meshes(sd, e_dict.get('simulation', {}),
+                                        run_par_names)
+
+            make_slice_parameter_meshes(sd, e_dict.get('objective', {}
+                ).get(ob.label, {}), obj_par_names)
+
+
+def make_slice_parameter_meshes(slice_definition, par_specs, par_names):
+    for n in par_names:
+        sp = slice_definition.get_parameter(n)
+        make_single_slice_mesh(sp, par_specs[n])
+
+def make_single_slice_mesh(slice_parameter, par_spec):
+    for v in meshes.make_mesh(**par_spec):
+        database.SliceMesh(parameter=slice_parameter, value=v)
 
 
 def create_objective_summary_table(table_name, col_names):
