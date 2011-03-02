@@ -41,7 +41,6 @@ class Slicer(object):
 
         return cls(table, meshes, column_map)
 
-
     def slice(self, **fixed_values):
         abscissae_names = [n for n in self.column_map.keys()
                            if n not in fixed_values]
