@@ -15,6 +15,9 @@
 
 from base_classes import Measurement as _Measurement
 
+from actin_dynamics import logger
+_log = logger.getLogger(__file__)
+
 class Length(_Measurement):
     def __init__(self, label=None):
         _Measurement.__init__(self, label=label)
@@ -44,6 +47,6 @@ class StateCountSum(_Measurement):
 
     def perform(self, time, filaments):
         for filament in filaments:
-            state_count = filament.state_count(self.base_state)
+            state_count  = filament.state_count(self.base_state)
             state_count += filament.state_count(self.prefix + self.base_state)
             self.store(time, state_count, filament)

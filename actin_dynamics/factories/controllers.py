@@ -28,7 +28,7 @@ def load_complete_session(db_session, filename):
     experiments_dict = session_dict.get('experiments', {})
     log.debug('Found %s experiment definitions.' % len(experiments_dict))
 
-    model_dict = session_dict.get('model', {})
+    model_dict = session_dict.get('models', {})
     log.debug('Found %s model definitions.' % len(model_dict))
 
     global_parameters = session_dict.get('global_parameters', {})

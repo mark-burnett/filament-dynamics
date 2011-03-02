@@ -5,28 +5,41 @@ goals for wednesday:
         at least random model with fluorescence weights against all 3 results
 
 
+visualization
+    make sure the old visualization code is brought up to speed
+    add useful amount of theme management?
+
+testing
+    need input validation for yaml files
+        * super important, because input bugs are tricky
+    need tests for some of this new code.
+
 process utils
     list active processes
     close processes
     list # active jobs, awaiting jobs, etc. (general job status)
     report run times for each job
 
+log viewer
+    no color option (for file dumping)
+    default start time of -2 min or something
+        or perhaps last N entries?
+    try db_session.expire_all() instead of grabbing a new session on refresh
+
+sim.sh
+    integrate better log viewing options
+
+
+performance profiling
+    record job start/stop times
+
 
 controller process
-    is it time to just separate objective and run jobs?
-        each objective job could prance across all runs for a given par set
-
     global fit mechanism
         do some kind of coarse mesh/random to start
         then start generating children
+        *** NOTE This is unlikely to be useful for the first paper.
 
-database structure
-    validation rules (e.g. for bind module_names)
-    cascading deletes/orphans
-
-visualization
-    holy balls this will be better with better internal structure
-    still going to need to create temporary/summary tables
 
 Do some vocab/docs
     session

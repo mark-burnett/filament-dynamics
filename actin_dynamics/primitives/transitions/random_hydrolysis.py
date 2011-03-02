@@ -16,7 +16,6 @@
 from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
-
 class RandomHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'rate', 'new_state']
     def __init__(self, old_state=None, rate=None, new_state=None, label=None):

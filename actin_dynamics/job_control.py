@@ -36,25 +36,18 @@ def process(process_type, db_session):
     '''
     Yields a process to be used for identifying work done.
     '''
-    print 'entered proc'
     rev, ctx = version.source_revision()
     p = database.Process(code_revision=rev, code_changeset=ctx,
                          hostname=socket.gethostname(),
                          uname=os.uname(), type=process_type)
 
     with db_session.transaction:
-        print 'inside stupid sub transaction.'
         db_session.add(p)
-        print 'bottom of stupid sub transaction.'
 
     # NOTE This just makes it easy to properly log the process.
     global PID
     PID = p.id
     log.info('Registered process %s as %s.' % (p.id, p.type))
-
-    print '---------------------'
-    print PID
-    print '---------------------'
 
     yield p
 

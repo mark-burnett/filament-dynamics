@@ -1,4 +1,4 @@
-model:
+models:
     transitions:
         # Polymerization
         barbed_pyrene_atp_polymerization:

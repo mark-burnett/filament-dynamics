@@ -18,6 +18,9 @@ from .base_classes import Objective as _Objective
 from actin_dynamics.numerical import residuals as _residuals
 from actin_dynamics.numerical import interpolation as _interpolation
 
+from actin_dynamics import logger
+log = logger.getLogger(__file__)
+
 class SimpleDataFit(_Objective):
     def __init__(self, measurement=None, residual_type=None,
                  interpolate_simulation=True, label=None):
@@ -28,11 +31,17 @@ class SimpleDataFit(_Objective):
         _Objective.__init__(self, label=label)
 
     def perform(self, run, target):
+        log.debug('Perfomring SimpleDataFit of %s.', self.measurement_name)
         sim_result = run.analyses[self.measurement_name]
         data = run.experiment.objectives[self.label].measurement
+        log.debug('Data times: %s',  data[0])
+        log.debug('Data values: %s', data[1])
 
         if self.interpolate_simulation:
             interp = _interpolation.resample_measurement(sim_result, data[0])
+            log.debug('interp times: %s', interp[0])
+            log.debug('interp values: %s', interp[1])
             target.value = self.residual_function(interp, data)
+            log.debug('Objective value: %s.', target.value)
         else:
             target.value = self.residual_function(sim_result, data)

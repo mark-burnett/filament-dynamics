@@ -20,6 +20,7 @@ from . import logger
 
 from . import database
 
+from . import logger
 log = logger.getLogger(__file__)
 
 def run_job(job, db_session):

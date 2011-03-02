@@ -23,7 +23,7 @@ MAX_NAME_LENGTH = 128
 MAX_POLY_LENGTH = 16
 MAX_TABLE_NAME_LENGTH  = 30
 MAX_COLUMN_NAME_LENGTH = 30
-MAX_LOG_MESSAGE_SIZE = 256
+MAX_LOG_MESSAGE_SIZE = 1024
 
 
 # The database has 3 major branches:  job control, configuration, and data
