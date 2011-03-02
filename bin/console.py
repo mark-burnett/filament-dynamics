@@ -15,12 +15,11 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy
+import pylab
 
 from IPython.Shell import IPShellEmbed
 
-from actin_dynamics import io
-
-from actin_dynamics import database
+from actin_dynamics import database, visualization
 
 from actin_dynamics.configuration import command_line_parsers
 from actin_dynamics.configuration import ini_parsers
@@ -33,10 +32,15 @@ banner = '''
     under certain conditions; for details read the LICENSE file.'''
 
 def console_main():
+    # Make plotting interactive
+    pylab.ion()
+
+    # Prepare and drop into iPython shell.
     namespace = {'database': database,
                  'db_session': database.DBSession(),
                  'numpy': numpy,
-                 'io': io}
+                 'pylab': pylab,
+                 'visualization': visualization}
 
     shell = IPShellEmbed(argv=[], banner=banner)
     shell(local_ns=namespace)

@@ -13,15 +13,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from actin_dynamics import logger as _logger
+
+_log = _logger.getLogger(__file__)
+
 def get_measurement(simulation_results, name, measurement_type):
     if 'filament' == measurement_type:
         iterator = iter_filaments(simulation_results)
+        measurement_key = 'measurements'
     else:
         iterator = simulation_results
+        measurement_key = 'concentrations'
 
     results = []
     for item in iterator:
-        results.append(item['measurements'][name])
+        results.append(item[measurement_key][name])
     return results
 
 

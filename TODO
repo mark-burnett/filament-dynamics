@@ -5,9 +5,16 @@ goals for wednesday:
         at least random model with fluorescence weights against all 3 results
 
 
+configuration
+    *** allow more "global" like config, e.g. sesion binds or something.
+        think about pieper & wegner..3 experiments with only 2 differences.
+    validation for config files
+
 visualization
     make sure the old visualization code is brought up to speed
     add useful amount of theme management?
+
+    check slice fixed points against mesh values to make sure they match
 
 testing
     need input validation for yaml files

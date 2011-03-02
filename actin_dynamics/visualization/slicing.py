@@ -70,6 +70,17 @@ class Slicer(object):
 
         return _format_result(result_set, abscissae_names, self.meshes)
 
+    def get_best_parameters(self):
+        parameter_names = self.column_map.keys()
+        column_names = [self.column_map[n] for n in parameter_names]
+        select_columns = [self.table.c[n] for n in column_names]
+        select_columns.append(func.min(self.table.c.value))
+        select_columns.append(self.table.c.objective_id)
+
+        result_set = sql.select(select_columns).execute()
+        row = result_set.fetchone()
+        return dict((n, v) for n, v in zip(parameter_names, row)), row[len(row)-1]
+
 
 def _format_result(result_set, names, meshes):
     '''

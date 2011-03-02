@@ -13,11 +13,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import talk
 #from fit_1d import adppi
-from kinsim import kinsim_comparison
-from single_run import plot_run
-import real
+#from kinsim import kinsim_comparison
+#from single_run import plot_run
+#import real
 
 #del fit_1d
-del kinsim
-del single_run
+#del kinsim
+#del single_run

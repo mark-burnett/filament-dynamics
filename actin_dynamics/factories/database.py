@@ -174,6 +174,7 @@ def create_static_session(db_session, name=None, parameters={}, model={},
     session = database.Session(name=name)
     db_session.add(session)
     session.parameters = parameters
+#    log.debug('session parameters: %s', parameters)
 
     session.models.append(static_model(model))
     session.experiments = static_experiments(experiments, parameters)

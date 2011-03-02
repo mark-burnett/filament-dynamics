@@ -53,16 +53,16 @@ def simple(slicer, abscissa_name, min_color=None, slice_color=None,
            logscale_x=False, logscale_y=False,
            **kwargs):
 
-    best_val, all_names, best_x = slicer.minimum_values()
+    best_pars, best_id = slicer.get_best_parameters()
 
-    fixed_point = dict((n, x) for n, x in itertools.izip(all_names, best_x)
+    fixed_point = dict((n, x) for n, x in best_pars.iteritems()
                        if n != abscissa_name)
 
-    min_y, junk_name, min_x = slicer.minimum_values(abscissa_name)
     if kwargs:
-        sl_y, junk_name, sl_x = slicer.slice(**kwargs)
-    else:
-        sl_y, junk_name, sl_x = slicer.slice(**fixed_point)
+        fixed_point.update(kwargs)
+    sl_y, junk_name, sl_x = slicer.slice(**fixed_point)
+
+    min_y, junk_name, min_x = slicer.minimum_values(abscissa_name)
 
     measurements.plot_smooth((min_x[0], min_y), color=min_color, linewidth=2)
     measurements.plot_smooth((sl_x[0], sl_y), color=slice_color, linewidth=2)
