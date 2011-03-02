@@ -48,9 +48,14 @@ def setup_database_from_dict(db_dict):
     dbc = DatabaseConfiguration(**db_dict)
 
     engine = create_engine(dbc.bind)
+    database.global_state.metadata.bind = engine
+    database.global_state.metadata.create_all(engine)
+
     db_session_class = orm.sessionmaker(bind=engine)
-    database.metadata.create_all(engine)
 
     # Assign singletons
+    database.global_state.DBSession = db_session_class
+    database.global_state.engine = engine
+
+    # XXX Convenience singleton outside of global state box.
     database.DBSession = db_session_class
-    database.engine = engine

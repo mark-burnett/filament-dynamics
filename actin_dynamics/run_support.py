@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from sqlalchemy import schema
+
 from . import factories
 from . import logger
 
@@ -42,5 +44,20 @@ def run_job(job, db_session):
         o = factories.bindings.db_single(objective.bind,
                                          objective.all_parameters)
         o.perform(job.run, objective)
+        store_summary_information(objective)
 
     log.info('Finished job %s.', job.id)
+
+def store_summary_information(objective):
+    parameters = objective.all_parameters
+    values = dict((col_name, parameters[par_name])
+                  for par_name, col_name in
+                      objective.bind.slice_column_map.iteritems())
+    values['objective_id'] = objective.id
+    values['value'] = objective.value
+
+    # XXX Stupid 0....
+    table = schema.Table(objective.bind.slice_definition[0].table_name,
+                         database.global_state.metadata,
+                         autoload=True)
+    table.insert(values).execute()

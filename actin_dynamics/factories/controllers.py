@@ -20,7 +20,7 @@ from actin_dynamics import logger
 
 log = logger.getLogger(__file__)
 
-def load_complete_session(filename):
+def load_complete_session(db_session, filename):
     session_dict = definitions.load_definition(filename)
     name = session_dict.get('name', None)
     log.debug("Loading session: '%s'." % name)
@@ -34,9 +34,11 @@ def load_complete_session(filename):
     global_parameters = session_dict.get('global_parameters', {})
     log.debug('Found %s global parameters.' % len(global_parameters))
 
-    session = database.create_static_session(name=name,
+    par_spec_dict = session_dict.get('parameter_specifications', {})
+    session = database.create_static_session(db_session, name=name,
             parameters=global_parameters, model=model_dict,
-            experiments=experiments_dict)
+            experiments=experiments_dict,
+            parameter_specifications=par_spec_dict)
 
     parameter_specifications_dict = session_dict.get(
             'parameter_specifications', {})

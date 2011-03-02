@@ -13,6 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import base64
+import uuid
+
+import itertools
+
+from sqlalchemy import schema
+from sqlalchemy import types
+
 from actin_dynamics import database, primitives
 
 from actin_dynamics import logger
@@ -105,12 +113,54 @@ def load_data(objectives, parameters, definitions):
         o.measurement = fr.run()
 
 
-def create_static_session(name=None, parameters={}, model={}, experiments={},
+def _create_name():
+    return base64.b64encode(uuid.uuid4().bytes)[:-2]
+
+def static_summary_tables(experiments, par_spec_dict):
+    for e in experiments:
+        e_dict = par_spec_dict.get(e.name, {})
+        run_par_names = e_dict.get('simulation', {}).keys()
+        for ob in e.objective_list:
+            obj_par_names = e_dict.get('objective', {}).get(ob.label, {}).keys()
+            table_name = 'slice_%s' % _create_name()
+
+            par_names = run_par_names + obj_par_names
+            col_names = ['col_%s' % _create_name() for pn in par_names]
+
+            table = create_objective_summary_table(table_name, col_names)
+
+            sd = database.SliceDefinition(table_name=table_name,
+                                          objective_bind=ob)
+            for pn, cn in itertools.izip(par_names, col_names):
+                sd.parameters.append(
+                        database.SliceParameter(parameter_name=pn,
+                                                column_name=cn))
+
+
+def create_objective_summary_table(table_name, col_names):
+    columns = [schema.Column(cn, types.Float, index=True)
+               for cn in col_names]
+
+    table = schema.Table(table_name, database.global_state.metadata,
+            schema.Column('objective_id', types.Integer,
+                          schema.ForeignKey('objective.id'), primary_key=True),
+            schema.Column('value', types.Float, index=True),
+            *columns)
+
+    table.create()
+
+    return table
+
+def create_static_session(db_session, name=None, parameters={}, model={},
+                          experiments={}, parameter_specifications={},
                           **kwargs):
     session = database.Session(name=name)
+    db_session.add(session)
     session.parameters = parameters
 
     session.models.append(static_model(model))
     session.experiments = static_experiments(experiments, parameters)
+
+    static_summary_tables(session.experiments, parameter_specifications)
 
     return session

@@ -30,7 +30,7 @@ def main(session_filename):
     db_session = database.DBSession()
     with job_control.process('controller', db_session) as process:
         session, par_spec = factories.controllers.load_complete_session(
-            session_filename)
+            db_session, session_filename)
 
         c = mesh_controller.Controller(session, par_spec)
         c.create_jobs(db_session, process)

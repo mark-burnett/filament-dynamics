@@ -13,7 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .global_state import metadata
+import global_state
 
 from . import tables
 
@@ -29,8 +29,7 @@ from .parameters import *
 from .results import *
 from .runs import *
 from .sessions import *
-
-del global_state
+from .slice import *
 
 del analyses
 del arguments
@@ -44,3 +43,4 @@ del parameters
 del results
 del runs
 del sessions
+del slice

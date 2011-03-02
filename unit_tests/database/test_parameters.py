@@ -56,6 +56,19 @@ class TestParameter(DBTestCase):
         self.assertEqual(1, self.db_session.query(database.ObjectiveParameter
             ).count())
 
+    def test_repeated_name_assignment(self):
+        sp = database.SessionParameter(name='hi', value=0.3)
+        sp.session_id = 0
+
+        self.db_session.add(sp)
+        self.db_session.commit()
+
+        rp = database.RunParameter(name='hi', value=2.6)
+        rp.run_id = 0
+
+        self.db_session.add(rp)
+        self.db_session.commit()
+
 
 if '__main__' == __name__:
     unittest.main()

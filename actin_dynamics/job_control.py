@@ -20,6 +20,8 @@ import os
 
 import contextlib
 
+import sqlalchemy.exceptions
+
 from . import database
 from . import version
 
@@ -63,14 +65,21 @@ def process(process_type, db_session):
 
 
 def get_job(process_id, db_session):
-    with db_session.transaction:
-        job = db_session.query(database.Job).filter_by(complete=False,
-                worker_id=None).with_lockmode('update_nowait').first()
-        if job:
-            job.worker_id = process_id
-            log.debug('Job acquired, id = %s.' % job.id)
+    try:
+        with db_session.transaction:
+            job = db_session.query(database.Job).filter_by(complete=False,
+                    worker_id=None).with_lockmode('update_nowait').first()
+            if job:
+                job.worker_id = process_id
+                log.debug('Job acquired, id = %s.' % job.id)
+            else:
+                log.debug('No jobs found.')
+    except sqlalchemy.exceptions.OperationalError as oe:
+        if 1213 == oe.orig[0]:
+            _log.warn('Deadlock while acquiring job %s.', job.id)
+            job = None
         else:
-            log.debug('No jobs found.')
+            raise
     return job
 
 

@@ -27,8 +27,8 @@ class DBTestCase(unittest.TestCase):
 
     def setUp(self):
         self.db_session = self.DBSession()
-        database.metadata.create_all(self.engine)
+        database.global_state.metadata.create_all(self.engine)
 
     def tearDown(self):
         self.db_session.close()
-        database.metadata.drop_all(self.engine)
+        database.global_state.metadata.drop_all(self.engine)

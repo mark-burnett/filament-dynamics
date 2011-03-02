@@ -37,9 +37,6 @@ class TestSession(DBTestCase):
         for par_name, value in test_data.iteritems():
             self.assertEqual(value, s2.parameters[par_name])
 
-    def test_run_relationship(self):
-        pass
-
 
 if '__main__' == __name__:
     unittest.main()

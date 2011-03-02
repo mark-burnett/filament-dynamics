@@ -22,12 +22,16 @@ from . import utils
 
 from actin_dynamics.numerical import interpolation, workalike
 
+from actin_dynamics import logger as _logger
+
+_log = _logger.getLogger(__file__)
+
 class StandardErrorMean(_base_classes.Analysis):
-    def __init__(self, sample_period=None, simulation_duration=None,
+    def __init__(self, sample_period=None, stop_time=None,
                  interpolation_method=None, measurement_name=None,
                  measurement_type=None, label=None, **kwargs):
         self.sample_period        = sample_period
-        self.simulation_duration  = simulation_duration
+        self.stop_time            = stop_time
         self.interpolation_method = interpolation_method
         self.measurement_name     = measurement_name
         self.measurement_type     = measurement_type
@@ -39,10 +43,15 @@ class StandardErrorMean(_base_classes.Analysis):
         raw_measurements = utils.get_measurement(simulation_results,
                                                  self.measurement_name,
                                                  self.measurement_type)
-        sample_times = workalike.arange(0, self.simulation_duration,
+        sample_times = workalike.arange(0, self.stop_time,
                                         self.sample_period)
+        if not sample_times:
+            _log.error('Sample time length is 0.  ' +
+                       'Measurement name: %s, stop_time: %s, period %s.',
+                       self.measurement_name, self.stop_time,
+                       self.sample_period)
         sampled_measurements = [interpolation.resample_measurement(
-            raw_measurements, sample_times, method=self.interpolation_method)
+            rm, sample_times, method=self.interpolation_method)
                 for rm in raw_measurements]
 
         # Perfom SEM analysis on that measurement
@@ -61,7 +70,7 @@ def _calculate_sem(measurements):
     errors = []
     for tv in transposed_values:
         mean = sum(tv) / len(tv)
-        err = std(tv, mean) / sqrt_N
+        err = workalike.std(tv, mean) / sqrt_N
         means.append(mean)
         errors.append(err)
 
