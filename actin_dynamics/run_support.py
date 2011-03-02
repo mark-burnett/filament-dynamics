@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,61 +13,61 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import elixir
-import StringIO
-import yaml
-
-from . import io as _io
-from . import simulations as _simulations
+from sqlalchemy import schema
 
 from . import factories
+from . import logger
 
-from .analysis.standard_error_of_mean import analyze_parameter_set
+from . import database
 
-def run_simulation_job(job):
-    parameters   = job.parameters_dict
-    object_graph = yaml.load(StringIO.StringIO(job.group.object_graph))
+from . import logger
+log = logger.getLogger(__file__)
 
-    sim_generator = factories.simulation_generator(object_graph, parameters)
-    analyzed_set  = typical_run(parameters, sim_generator)
+def run_job(job, db_session):
+    run = job.run
+    num_sims = int(run.all_parameters['number_of_simulations'])
+    log.info('Staring job %s: %s simulations of run %s.', job.id,
+             num_sims, job.run_id)
+    results = []
+    for i in xrange(num_sims):
+        log.debug('Starting job %s simulation %s.', job.id, i + 1)
+        simulation = factories.simulations.make_run(run)
+        results.append(simulation.run())
 
-    run = _io.database.Run.from_analyzed_set(analyzed_set)
-    run.group  = job.group
-    run.job_id = job.id
+    for analysis in run.experiment.analysis_list:
+        log.debug('Analysing job %s: %s.', job.id, analysis.label)
+        a = factories.bindings.db_single(analysis, run.all_parameters)
+        analysis_result = a.perform(results, factories.analysis.make_result)
+        analysis_result.run = run
+        db_session.add(analysis_result)
 
+    log.debug('Calculating %s objectives for job %s.',
+              len(run.objectives), job.id)
+    for objective in run.objectives:
+        log.debug('Calculating objective %s for job %s.',
+                  objective.bind.label, job.id)
+        o = factories.bindings.db_single(objective.bind,
+                                         objective.all_parameters)
+        o.perform(job.run, objective)
+        log.debug('Storing summary of objective %s for job %s.',
+                  objective.bind.label, job.id)
+        store_summary_information(objective)
 
-def typical_run(parameters, simulation_iterator):
-    sim_results = map(run_and_report, simulation_iterator)
-    full_set = {'parameters': parameters, 'simulations': sim_results}
+    log.info('Finished job %s.', job.id)
 
-    return analyze_parameter_set(full_set)
+def store_summary_information(objective):
+    parameters = objective.all_parameters
+    values = dict((col_name, parameters[par_name])
+                  for par_name, col_name in
+    # XXX Stupid 0....
+                      objective.bind.slice_definition[0].column_map.iteritems())
+#    log.debug('Storing value = %s for objective_id = %s',
+#              objective.value, objective.id)
+    values['objective_id'] = objective.id
+    values['value'] = objective.value
 
-
-def run_simulations(simulation_factory, group):
-    for parameters, simulation_iterator in simulation_factory:
-        analyzed_set = typical_run(parameters, simulation_iterator)
-
-        run = _io.database.Run.from_analyzed_set(analyzed_set)
-        run.group = group
-
-
-def run_and_report(sim):
-    _simulations.run_simulation(sim)
-    return report_measurements(sim)
-
-
-def report_measurements(sim):
-    concentration_results = {}
-    for state, c in sim.concentrations.iteritems():
-        concentration_results[state] = zip(*c.data)
-
-    filament_results = []
-    for filament in sim.filaments:
-        fr = {}
-        fr['final_state']  = filament.states
-        fr['measurements'] = dict((name, zip(*values))
-                for name, values in filament.measurements.iteritems())
-        filament_results.append(fr)
-
-    return {'concentrations': concentration_results,
-            'filaments':      filament_results}
+    # XXX Stupid 0....
+    table = schema.Table(objective.bind.slice_definition[0].table_name,
+                         database.global_state.metadata,
+                         autoload=True)
+    table.insert(values).execute()

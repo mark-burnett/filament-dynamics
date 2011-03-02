@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,31 +13,45 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def instantiate_binding(object_dict, parameters, registry):
-    cls = registry[object_dict['class_name']]
+from actin_dynamics import primitives
 
-    par_map = {}
-    dict_map = {}
-    try: # NOTE getattr doesn't appear to work on yaml 'dicts' for some reason.
-        for local_name, value in object_dict['parameters'].iteritems():
-            try:
-                temp_map = {}
-                for internal_key, internal_value in value.iteritems():
-                    temp_map[internal_key] = parameters[internal_value]
-                dict_map[local_name] = temp_map
-            except:
-                par_map[local_name] = value
-    except:
-        pass
+def db_single(bind, parameters):
+    registry = getattr(primitives, bind.module_name).registry
+    cls = registry[bind.class_name]
 
     kwargs = dict((local_name, parameters[global_name])
-                  for local_name, global_name in par_map.iteritems())
-    kwargs.update(dict_map)
+          for local_name, global_name in bind.variable_arguments.iteritems())
 
-    try:
-        fixed_pars = object_dict['fixed_parameters']
-        kwargs.update(fixed_pars)
-    except:
-        pass
+    kwargs['label'] = bind.label
+    kwargs.update(bind.fixed_arguments)
 
     return cls(**kwargs)
+
+def db_multiple(binds, parameters):
+    results = []
+    for b in binds:
+        results.append(db_single(b, parameters))
+    return results
+
+
+def dict_single(object_dict, parameters, label, registry):
+    cls = registry[object_dict['class_name']]
+
+    kwargs = {}
+    for argument_name, parameter_name in object_dict.get('variable_arguments',
+                                             {}).iteritems():
+        kwargs[argument_name] = parameters[parameter_name]
+
+    kwargs['label'] = label
+
+    fixed_pars = object_dict.get('fixed_arguments', {})
+    kwargs.update(fixed_pars)
+
+    return cls(**kwargs)
+
+def dict_multiple(binds, parameters, registry):
+    results = []
+    for label, object_dict in binds.iteritems():
+        results.append(dict_single(object_dict, parameters, label, registry))
+
+    return results

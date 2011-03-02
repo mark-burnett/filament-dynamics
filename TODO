@@ -1,32 +1,55 @@
-For Talk:
-    "basic" plots
-        1d chi squared plots
-            (fit sensitivity plots)
-
-        chi squared surface plots
-
-    "assembled" plots
-        duplicate pollard fit without pyrene correction
-        sensivity to parameters for simple random model
-        corrolation plots
-
-    infrastructure
-        make a summary table for each group contianing parameters and values
+goals for wednesday:
+    logging - this shouldn't be too hard and could be really valuable.
+    reproduce a simple pollard sim with the new backend
+    visible progress on p & w
+        at least random model with fluorescence weights against all 3 results
 
 
-Validation:
-    automate some higher level tests
-        analytic vs my run
-    Analysis code needs more unit tests.
+visualization
+    make sure the old visualization code is brought up to speed
+    add useful amount of theme management?
+
+testing
+    need input validation for yaml files
+        * super important, because input bugs are tricky
+    need tests for some of this new code.
+
+process utils
+    list active processes
+    close processes
+    list # active jobs, awaiting jobs, etc. (general job status)
+    report run times for each job
+
+log viewer
+    no color option (for file dumping)
+    default start time of -2 min or something
+        or perhaps last N entries?
+    try db_session.expire_all() instead of grabbing a new session on refresh
+
+sim.sh
+    integrate better log viewing options
 
 
-BUGS:
-    Is there a problem with the single random simulation?
-        a pyrene sim looked oddly low for first 2 data points.
-            have not been able to duplicate.
+performance profiling
+    record job start/stop times
 
 
-Visualization:
-    Refactor Theme to only contain color and linestyle/width info.
-    Visualization for short time stuff.
-    extend reduction plots for 4 hydrolysis parameters
+controller process
+    global fit mechanism
+        do some kind of coarse mesh/random to start
+        then start generating children
+        *** NOTE This is unlikely to be useful for the first paper.
+
+
+Do some vocab/docs
+    session
+    run
+    job
+    primitive
+    bind
+    analysis
+    objective
+    simulation
+    stage - just slang?
+    ? slice
+    ? projection

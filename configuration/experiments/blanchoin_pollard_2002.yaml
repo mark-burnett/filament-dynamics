@@ -1,0 +1,254 @@
+experiments:
+    blanchoin_pollard_2002:
+        parameters:
+            simulation_duration: 40
+
+            seed_concentration: 6
+
+            initial_atp_concentration: 5.7
+            initial_pyrene_atp_concentration: 0.3
+
+            barbed_atp_polymerization_rate:    11.6
+            barbed_adppi_polymerization_rate:   3.4
+            barbed_adp_polymerization_rate:     2.9
+
+            barbed_pyrene_atp_polymerization_rate:    11.6
+            barbed_pyrene_adppi_polymerization_rate:   3.4
+            barbed_pyrene_adp_polymerization_rate:     2.9
+
+            barbed_atp_depolymerization_rate:   1.4
+            barbed_adppi_depolymerization_rate: 0.2
+            barbed_adp_depolymerization_rate:   5.4
+
+            barbed_pyrene_atp_depolymerization_rate:   1.4
+            barbed_pyrene_adppi_depolymerization_rate: 0.2
+            barbed_pyrene_adp_depolymerization_rate:   5.4
+
+            pointed_atp_polymerization_rate:     0
+            pointed_adppi_polymerization_rate:   0
+            pointed_adp_polymerization_rate:     0
+
+            pointed_pyreneatp_polymerization_rate:     0
+            pointed_pyreneadppi_polymerization_rate:   0
+            pointed_pyreneadp_polymerization_rate:     0
+
+            pointed_atp_depolymerization_rate:   0
+            pointed_adppi_depolymerization_rate: 0
+            pointed_adp_depolymerization_rate:   0
+
+            pointed_pyrene_atp_depolymerization_rate:   0
+            pointed_pyrene_adppi_depolymerization_rate: 0
+            pointed_pyrene_adp_depolymerization_rate:   0
+
+        simulation:
+            filaments:
+                filament_factory:
+                    class_name: SingleStateFixedLengthFromConcentrations
+                    variable_arguments:
+                        number: number_of_filaments
+                        concentration: seed_concentration
+                        filament_tip_concentration: filament_tip_concentration
+                    fixed_arguments:
+                        state: ADP
+
+            concentrations:
+                pyrene_ATP:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        initial_concentration: initial_pyrene_atp_concentration
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+
+                ATP:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        initial_concentration: initial_atp_concentration
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+
+                pyrene_ADPPi:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+                ADPPi:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+                pyrene_ADP:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+                ADP:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+
+                Pi:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+            end_conditions:
+                duration:
+                    class_name: Duration
+                    variable_arguments:
+                        duration: simulation_duration
+
+            measurements:
+                length:
+                    class_name: Length
+
+                pyrene_ATP:
+                    class_name: StateCount
+                    fixed_arguments:
+                        state: pyrene_ATP
+
+                ATP:
+                    class_name: StateCount
+                    fixed_arguments:
+                        state: ATP
+
+                total_ATP:
+                    class_name: StateCountSum
+                    fixed_arguments:
+                        base_state: ATP
+                        prefix: pyrene_
+
+                pyrene_ADPPi:
+                    class_name: StateCount
+                    fixed_arguments:
+                        state: pyrene_ADPPi
+
+                ADPPi:
+                    class_name: StateCount
+                    fixed_arguments:
+                        state: ADPPi
+
+                total_ADPPi:
+                    class_name: StateCountSum
+                    fixed_arguments:
+                        base_state: ADPPi
+                        prefix: pyrene_
+
+                pyrene_ADP:
+                    class_name: StateCount
+                    fixed_arguments:
+                        state: pyrene_ADP
+
+                ADP:
+                    class_name: StateCount
+                    fixed_arguments:
+                        state: ADP
+
+                total_ADP:
+                    class_name: StateCountSum
+                    fixed_arguments:
+                        base_state: ADP
+                        prefix: pyrene_
+            
+        analyses:
+            # XXX add entry for total f-actin
+            length:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: length
+                    measurement_type: filament
+
+            pyrene_ATP:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: pyrene_ATP
+                    measurement_type: filament
+
+            pyrene_ADPPi:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: pyrene_ADPPi
+                    measurement_type: filament
+
+            total_ADPPi:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: total_ADPPi
+                    measurement_type: filament
+
+            pyrene_ADP:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: pyrene_ADP
+                    measurement_type: filament
+
+        objectives:
+            loaders:
+                pollard_adppi_fit:
+                    class_name: DatReader
+                    fixed_arguments:
+                        filename: 'pollard_2002/adppi_concentration.dat'
+
+                pollard_pyrene_fit:
+                    class_name: DatReader
+                    variable_arguments:
+                        sample_period: sample_period
+                        xmax: simulation_duration
+                    fixed_arguments:
+                        xmin: 0
+                        filename: 'pollard_2002/pyrene_fluorescence.dat'
+                        interpolate_data: True
+
+
+            executors:
+                pollard_adppi_fit:
+                    class_name: SimpleDataFit
+                    fixed_arguments:
+                        measurement:   total_ADPPi
+                        residual_type: naked_chi_squared
+                        interpolate_simulation: True
+
+                pollard_pyrene_fit:
+                    class_name: PyreneFit
+                    variable_arguments:
+                        pyrene_ATP:   pyrene_atp_weight
+                        pyrene_ADPPi: pyrene_adppi_weight
+                        pyrene_ADP:   pyrene_adp_weight
+
+                    fixed_arguments:
+                        residual_type: naked_chi_squared

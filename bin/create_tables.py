@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#    Copyright (C) 2010-2011 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,10 +15,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import elixir
-
-from actin_dynamics import io
+from actin_dynamics.configuration import command_line_parsers
+from actin_dynamics.configuration import ini_parsers
 
 if '__main__' == __name__:
-    io.db_config.setup_database()
-    elixir.create_all()
+    namespace = command_line_parsers.worker_process()
+    ini_parsers.setup_database(namespace.config)

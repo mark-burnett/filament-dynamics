@@ -13,88 +13,75 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import time
+import datetime
+import socket
+import os
 
-import elixir
+import contextlib
 
-from .io import database
+import sqlalchemy.exceptions
 
-from . import utils
+from . import database
+from . import version
+
+from . import logger
+
+log = logger.getLogger(__file__)
+
+PID = None
+
+@contextlib.contextmanager
+def process(process_type, db_session):
+    '''
+    Yields a process to be used for identifying work done.
+    '''
+    rev, ctx = version.source_revision()
+    p = database.Process(code_revision=rev, code_changeset=ctx,
+                         hostname=socket.gethostname(),
+                         uname=os.uname(), type=process_type)
+
+    with db_session.transaction:
+        db_session.add(p)
+
+    # NOTE This just makes it easy to properly log the process.
+    global PID
+    PID = p.id
+    log.info('Registered process %s as %s.' % (p.id, p.type))
+
+    yield p
+
+    # Rollback, to make sure an exception doesn't block unregistering.
+    with db_session.transaction:
+        p.stop_time = datetime.datetime.now()
+    log.info('Unegistered process %s.' % p.id)
 
 
-PID = os.getpid()
-
-
-def job_iterator():
-    job = True
-    while job:
-        job = get_job()
-        if job:
-            yield job
-
-def get_job():
+def get_job(process_id, db_session):
     try:
-        return _get_job_mysql()
-    except elixir.sqlalchemy.exc.OperationalError:
-        elixir.session.rollback()
-        global get_job
-        get_job = _get_job_fallback
-        return _get_job_fallback()
-
-def _get_job_mysql():
-    update_sql = 'UPDATE job SET pid = %s WHERE pid = 0 LIMIT 1;' % PID
-    if elixir.metadata.bind.execute(update_sql):
-        # There should be exactly one of these.
-        return database.Job.query.filter_by(pid=PID, complete=False).first()
-
-def _get_job_fallback():
-    job_query = database.Job.query.filter_by(pid=0, complete=False)
-    job = job_query.with_lockmode('update').first()
-    if job:
-        job.pid = PID
-        elixir.session.commit()
-
+        with db_session.transaction:
+            job = db_session.query(database.Job).filter_by(complete=False,
+                    worker_id=None).with_lockmode('update_nowait').first()
+            if job:
+                job.worker_id = process_id
+                log.debug('Job acquired, id = %s.' % job.id)
+            else:
+                log.debug('No jobs found.')
+    except sqlalchemy.exceptions.OperationalError as oe:
+        if 1213 == oe.orig[0]:
+            _log.warn('Deadlock while acquiring job %s.', job.id)
+            job = None
+        else:
+            raise
     return job
 
 
-def cleanup_jobs():
-    job_query = database.Job.query
+# XXX This may need to delete partial data, like analyses or something.
+# XXX Fix session management
+def cleanup_incomplete_jobs():
+    db_session = database.DBSession()
+    job_query = db_session.query(database.Job).filter_by(complete=False
+            ).filter(database.Job.worker != None)
 
-    job_query.filter_by(complete=True).delete()
-    job_query.update({'pid': 0})
-    elixir.session.commit()
-
-
-def create_jobs(parameter_iterator, object_graph_yaml, group_name):
-    group = database.Group.get_or_create(name=group_name)
-    group.revision = utils.get_mercurial_revision()
-    group.object_graph = object_graph_yaml
-
-    for pars in parameter_iterator:
-        job = database.Job.from_parameters_dict(pars, group)
-        elixir.session.commit()
-
-
-def complete_job(job):
-    job.complete = True
-    elixir.session.commit()
-
-
-def delete_all_jobs():
-    database.Job.query.delete()
-    elixir.session.commit()
-
-
-def duplicate_jobs_exist():
-    for i1, j1 in enumerate(database.Job.query):
-        j1p = j1.parameters_dict
-        for i2, j2 in enumerate(database.Job.query):
-            if i1 != i2 and j1p == j2.parameters_dict:
-                return j1, j2
-
-def duplicate_results_exist(group):
-    for i1, r1 in enumerate(database.Run.query.filter_by(group=group)):
-        for i2, r2 in enumerate(database.Run.query.filter_by(group=group)):
-            if i1 != i2 and r1.job_id == r2.job_id:
-                return r1, r2
+    job_query.update({'worker': None})
+    db_session.commit()

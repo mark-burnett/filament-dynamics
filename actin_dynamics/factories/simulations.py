@@ -13,37 +13,25 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import shortcuts
+from . import bindings
 
-from ..simulations import Simulation
+from ..simulation_strategy import Simulation
 
-def make_simulation(object_graph, parameters):
-    filaments = shortcuts.make_filaments(object_graph['filaments'],
-                                         parameters)
+def make_run(run):
+    parameters = run.all_parameters
 
-    transitions = shortcuts.make_transitions(object_graph['transitions'],
-                                             parameters)
+    filament_factories = bindings.db_multiple(run.filaments,      parameters)
+    transitions        = bindings.db_multiple(run.transitions,    parameters)
+    measurements       = bindings.db_multiple(run.measurements,   parameters)
+    end_conditions     = bindings.db_multiple(run.end_conditions, parameters)
+    concentration_list = bindings.db_multiple(run.concentrations, parameters)
 
-    measurements = shortcuts.make_measurements(
-            object_graph['measurements'], parameters)
+    filaments = []
+    for ff in filament_factories:
+        filaments.extend(ff.create())
 
-    end_conditions = shortcuts.make_end_conditions(
-            object_graph['end_conditions'], parameters)
-
-    concentrations = shortcuts.make_concentrations(
-            object_graph['concentrations'], parameters)
+    concentrations = dict((c.label, c) for c in concentration_list)
 
     return Simulation(transitions=transitions, concentrations=concentrations,
                       measurements=measurements, end_conditions=end_conditions,
                       filaments=filaments)
-
-
-def simulation_generator(object_graph, parameters):
-    try:
-        number_simulations = parameters['number_of_simulations']
-    except:
-        print parameters
-        raise
-
-    for i in xrange(int(number_simulations)):
-        yield make_simulation(object_graph, parameters)

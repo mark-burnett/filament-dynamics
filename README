@@ -9,21 +9,24 @@ See the LICENSE file for more details.
 - Requirements                                                         -
 ------------------------------------------------------------------------
 
-CPython version 2.6 or 2.7 (Not 3.x ready yet.)
+CPython version 2.6 or later (Not 3.x ready yet.)
 
 mysql
-    you can just use sqlite for testing, but for the real deal, use mysql
+    you can just use sqlite for testing, but for the real deal, use
+    mysql (postgresql should also work)
 
 IPython (used for analysis shell)
 
 Python Packages:
 argparse (if using python 2.6)
 configobj
-elixir
 discover
 mysqldb
 sqlalchemy
 yaml
+
+scipy
+matplotlib
 
 ------------------------------------------------------------------------
 - Setup                                                                -
@@ -38,41 +41,14 @@ are installed, then start hunting for the problem.  If you need help getting
 the software to run, please check the project's Google Code site (especially
 the wiki).
 
+# XXX add discussion about database setup
+
     If you have found a portability issue or other bug, please submit a ticket
 on the project's Google Code site.
 
 ------------------------------------------------------------------------
 - Running                                                              -
 ------------------------------------------------------------------------
-
-WARNING:  This section is out of date. (XXX)
-
-    To perform a simulation, create a new directory (probably in the
-data directory) and place parameters and object graph configuration
-files in that directory:
-
-mkdir results/new_simulation
-cp examples/pollard_2002/*.yaml results/new_simulation/
-
-    Run the simulations, specifying the number of simulations to run
-per parameter set:
-
-./sim.sh -d results/new_simulation -n 8
-
-    To analyze the data, stay in the same directory and use console.py:
-
-./console.py
-
-    Once in the console, you can combine the simulation results using:
-
-ac = io.load_directory('results/new_simulation')
-
-    Now you can perform a variety of available analysis.  Check the
-actin_dynamics/analysis and actin_dynamics/visualization modules for
-more info.  One example would be:
-
-analysis.perform_pollard(ac)
-visualization.pollard.plot_fit(ac)
 
 ------------------------------------------------------------------------
 - Adding Simulations                                                   -

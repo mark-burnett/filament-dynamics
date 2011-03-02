@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010 - 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,10 +13,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import concentrations
-import end_conditions
-import measurements
-import filaments
-import transitions
+import logging
+import logging.handlers
 
-del meta_classes
+import primitives
+
+try:
+    nh = logging.handlers.NullHandler()
+except AttributeError:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
+
+    nh = NullHandler()
+
+logging.getLogger().addHandler(nh)
