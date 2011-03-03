@@ -57,6 +57,9 @@ def _log_discriminators(parser):
     parser.add_argument('--polling_period', type=float, default=1,
                         help='Delay between database checks.')
 
+    parser.add_argument('-n', '--nocolor', action='store_true',
+                        help="Don't display colors.")
+
     return parser
 
 

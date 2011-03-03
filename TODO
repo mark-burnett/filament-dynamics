@@ -1,8 +1,14 @@
 goals for wednesday:
-    logging - this shouldn't be too hard and could be really valuable.
     reproduce a simple pollard sim with the new backend
     visible progress on p & w
         at least random model with fluorescence weights against all 3 results
+
+goals for end of march:
+    pollard analysis (done)
+    pieper & wegner analysis
+    tip diffusion analysis
+        fit data/standard analysis
+        tip diffusion coefficient as function of concentration
 
 
 configuration
@@ -31,7 +37,6 @@ log viewer
     no color option (for file dumping)
     default start time of -2 min or something
         or perhaps last N entries?
-    try db_session.expire_all() instead of grabbing a new session on refresh
 
 sim.sh
     integrate better log viewing options

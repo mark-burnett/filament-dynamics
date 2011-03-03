@@ -55,7 +55,8 @@ def make_query(last_id, start_time, min_level, levelname, process_type,
 
 
 def main(start, min_level, levelname, process_type, process_id,
-         follow, polling_period):
+         follow, polling_period, use_color):
+    disp = display.LogDisplayer(use_color=use_color)
     # NOTE We only need a read-only session.
     # I don't know whether SQLA supports that.
     if start:
@@ -66,18 +67,18 @@ def main(start, min_level, levelname, process_type, process_id,
     db_session = database.DBSession()
 
     with db_session.transaction:
-        last_id = display.print_all(make_query(0, start_time, min_level,
-                                               levelname, process_type,
-                                               process_id, db_session))
+        last_id = disp.print_all(make_query(0, start_time, min_level,
+                                            levelname, process_type,
+                                            process_id, db_session))
 
     if follow:
         while True:
             time.sleep(polling_period)
             with db_session.transaction:
-                this_id = display.print_all(make_query(last_id, start_time,
-                                                       min_level, levelname,
-                                                       process_type,
-                                                       process_id, db_session))
+                this_id = disp.print_all(make_query(last_id, start_time,
+                                                    min_level, levelname,
+                                                    process_type,
+                                                    process_id, db_session))
             if this_id:
                 last_id = this_id
 
@@ -90,6 +91,7 @@ if '__main__' == __name__:
         main(namespace.start,
              namespace.min_level, namespace.levelname,
              namespace.process_type, namespace.process_id,
-             namespace.follow, namespace.polling_period)
+             namespace.follow, namespace.polling_period,
+             not namespace.nocolor)
     except KeyboardInterrupt:
         pass # This is the normal halting path for follow mode.

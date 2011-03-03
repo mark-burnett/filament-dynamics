@@ -17,83 +17,112 @@ import os.path
 
 from . import colors
 
-g = lambda t: colors.wrap(t, foreground=colors.GREY)
+_default_color_scheme = {
+        # Text colors
+        'default':           {'foreground': colors.GREEN, 'bold': True},
+        'message':           {'foreground': colors.WHITE},
+        'filler':            {'foreground': colors.GREY},
+        'time':              {'foreground': colors.GREY},
+        'path':              {'foreground': colors.CYAN},
+        'filename':          {'foreground': colors.GREEN},
+        'exception_name':    {'foreground': colors.RED},
+        'exception_message': {'foreground': colors.WHITE},
+        'function_name':     {'foreground': colors.GREEN},
+        'code':              {'foreground': colors.YELLOW},
+        'line_number':       {'foreground': colors.CYAN},
 
-def print_all(seq):
-    last_id = None
-    for record in seq:
-        last_id = record.id
-        print_record(record)
-    return last_id
+        # Process types
+        'worker':     {'foreground': colors.PURPLE},
+        'controller': {'foreground': colors.YELLOW, 'bold': True},
+        'test':       {'foreground': colors.BLUE, 'bold': True},
 
-_log_colors = {
-    'DEBUG':     lambda t: colors.wrap(t, foreground=colors.GREY),
-    'INFO':      lambda t: colors.wrap(t, foreground=colors.YELLOW),
-    'WARNING':   lambda t: colors.wrap(t, foreground=colors.YELLOW, bold=True),
-    'ERROR':     lambda t: colors.wrap(t, foreground=colors.RED, bold=True),
-    'CRITICAL':  lambda t: colors.wrap(t, background=colors.RED, bold=True),
-    'EXCEPTION': lambda t: colors.wrap(t, background=colors.BLUE, bold=True)}
+        # Logging levels
+        'DEBUG':     {'foreground': colors.GREY},
+        'INFO':      {'foreground': colors.YELLOW},
+        'WARNING':   {'foreground': colors.YELLOW, 'bold': True},
+        'ERROR':     {'foreground': colors.RED, 'bold': True},
+        'CRITICAL':  {'background': colors.RED, 'bold': True},
+        'EXCEPTION': {'background': colors.BLUE, 'bold': True}}
 
-def _get_level_text(record):
-    if record.exception:
-        return _log_colors['EXCEPTION']('EXCEPTION')
-    return _log_colors[record.levelname](record.levelname)
-
-_proc_colors = {
-    'worker':     lambda t: colors.wrap(t, foreground=colors.PURPLE),
-    'controller': lambda t: colors.wrap(t, foreground=colors.YELLOW, bold=True)}
-
-def _get_process_text(record):
-    wrapper = _proc_colors.get(record.process.type.lower(),
-            lambda t: colors.wrap(t, foreground=colors.BLUE, bold=True))
-    text = "%s %s%s %s" % (g('Process type:'), wrapper(record.process.type),
-                           g(', Process id:'), wrapper(record.process.id))
+def _null_wrapper(text, *args, **kwargs):
     return text
 
-def print_record(record):
-    directory, filename = os.path.split(record.pathname)
-    header =\
-'''%s %s    %s
-  %s%s%s
-  %s%s%s %s%s%s%s
-      %s''' % (_get_level_text(record), g(record.time),
-       _get_process_text(record),
+def _null_clear():
+    return ''
 
-       g("Directory: '"),
-       colors.wrap(directory, foreground=colors.CYAN),
-       g("'"),
+class LogDisplayer(object):
+    def __init__(self, use_color=True, color_scheme=_default_color_scheme):
+        if use_color:
+            self._wrapper = colors.wrap
+            self._clear   = colors.clear
+        else:
+            self._wrapper = _null_wrapper
+            self._clear   = _null_clear
 
-       g("File: '"),
-       colors.wrap(filename, foreground=colors.GREEN),
-       g("', Line"),
-       colors.wrap(record.lineno, foreground=colors.GREEN),
-       g(", Function: '"),
-       colors.wrap(record.funcName, foreground=colors.GREEN),
-       g("'"),
-       record.message)
+        self._filler_spec = color_scheme.get('filler', {})
+        self.color_scheme = color_scheme
 
-    print header
+    def wrap(self, text, key=None):
+        color_spec = self.color_scheme.get(key,
+                self.color_scheme.get('default', {}))
+        return self._wrapper(text, close=self._filler_spec, **color_spec)
 
-    if record.exception:
-        print_exception(record.exception)
+    def clear(self):
+        print self._clear(),
 
-def print_exception(exception):
-    header = "    %s%s %s" % (
-       colors.wrap(exception.type_name, foreground=colors.RED),
-       g(':'), exception.message)
+    def print_all(self, sequence):
+        last_id = None
+        for record in sequence:
+            last_id = record.id
+            self.print_record(record)
+        return last_id
 
-    print header
+    def print_record(self, record):
+        # Set initial color to grey.
+        print self.wrap('')
+        # Header
+        #   log level, time, process type, process id
+        if record.exception:
+            log_level = 'EXCEPTION'
+        else:
+            log_level = record.levelname
+        print '%s %s\tProcess type: %s, Process id: %s' % (
+                self.wrap(log_level, log_level),
+                self.wrap(record.time, 'time'),
+                self.wrap(record.process.type,
+                          record.process.type),
+                self.wrap(record.process.id,
+                          record.process.type))
+        # Directory
+        directory, filename = os.path.split(record.pathname)
+        print "  Directory: '%s'" % self.wrap(directory, 'path')
+        # File
+        #   filename, line number, function name
+        print "  File: '%s', Line %s, Function: '%s'" % (
+                self.wrap(filename, 'filename'),
+                self.wrap(record.lineno, 'line_number'),
+                self.wrap(record.funcName, 'function_name'))
+        # Message
+        print '    %s' % self.wrap(record.message, 'message')
+        # Exception
+        if record.exception:
+            self.print_exception(record.exception)
+        # Clear
+        self.clear()
 
-    print_traceback(exception.traceback)
+    def print_exception(self, exception):
+        print "  %s%s %s" % (self.wrap(exception.type_name, 'exception_name'),
+                               self.wrap(':', 'filler'),
+                               self.wrap(exception.message, 'exception_message'))
 
-def print_traceback(traceback):
-    for tbl in traceback:
-        print_tb_level(tbl)
-    print ''
+        self.print_traceback(exception.traceback)
 
-def print_tb_level(tbl):
-    text = "%s\n  %s: %s" % (
-            colors.wrap(tbl.filename, foreground=colors.GREEN),
-            colors.wrap(tbl.lineno, foreground=colors.CYAN),
-            colors.wrap(tbl.line, foreground=colors.YELLOW))
-    print text
+    def print_traceback(self, traceback):
+        for tbl in traceback:
+            self._print_tb_level(tbl)
+        print ''
+
+    def _print_tb_level(self, tbl):
+        print "%s\n  %s: %s" % (self.wrap(tbl.filename, 'filename'),
+                                self.wrap(tbl.lineno,   'line_number'),
+                                self.wrap(tbl.line,     'code'))

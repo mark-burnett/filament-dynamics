@@ -20,11 +20,13 @@ IPython (used for analysis shell)
 Python Packages:
 argparse (if using python 2.6)
 configobj
+dateutil
 discover
 mysqldb
 sqlalchemy
 yaml
 
+numpy
 scipy
 matplotlib
 
