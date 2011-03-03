@@ -78,14 +78,13 @@ class LogDisplayer(object):
         return last_id
 
     def print_record(self, record):
-        # Set initial color to grey.
-        print self.wrap('')
         # Header
         #   log level, time, process type, process id
         if record.exception:
             log_level = 'EXCEPTION'
         else:
             log_level = record.levelname
+
         print '%s %s\tProcess type: %s, Process id: %s' % (
                 self.wrap(log_level, log_level),
                 self.wrap(record.time, 'time'),
