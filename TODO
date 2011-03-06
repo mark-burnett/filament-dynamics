@@ -14,24 +14,28 @@ goals for end of march:
 
 visualization - high priority
     make sure the old visualization code is brought up to speed
-    add useful amount of theme management?
 
     check slice fixed points against mesh values to make sure they match
 
 
-testing - high priority
+validation - high priority
     need input validation for yaml files
-        * super important, because input bugs are tricky
+        * important, because input bugs are tricky
+        check for missing parameters
+        check for unrecognized keys (like 'model' instead of 'models')
     unit testing opportunities
         input code
         configuration building code
         factory code
 
 
-configuration - medium priority
-    *** allow more "global" like config, e.g. sesion binds or something.
+configuration - medium-high priority
+    allow more "global" like config, e.g. sesion binds or something.
         think about pieper & wegner..3 experiments with only 2 differences.
+    * this would allow us to have a 'constants' file we could import
+        would include e.g. standard/fujiwara rates or frank's coefficients
     validation for config files
+
 
 performance profiling - medium priority
     record job start/stop times

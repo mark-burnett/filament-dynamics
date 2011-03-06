@@ -13,36 +13,44 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
-
-import numpy
 import pylab
 
 from .. import slicing
 
 from . import fit_1d
 
-COLORS = numpy.array([
-        ['#06246F', '#2A4380', '#123EAB', '#466FD5', '#6C8AD5'],  # blue
-        ['#3F046F', '#582781', '#640CAB', '#9240D5', '#A468D5'],  # purple
-        ['#00782D', '#238B49', '#00B945', '#37DC74', '#63DC90'],  # green
-        ['#A66F00', '#BF9030', '#FFAB00', '#FFC040', '#FFD173']]) # orange
-
 def random_adppi(adppi_ob, pyrene_ob):
     adppi_slicer  = slicing.Slicer.from_objective_bind(adppi_ob)
     pyrene_slicer = slicing.Slicer.from_objective_bind(pyrene_ob)
-    max_val = 14
+#    max_val = 14
     pylab.figure()
 
     blvd, best_pyrene_id = pyrene_slicer.get_best_parameters()
-#    print 'pyrene best pars', blvd
 
-    fit_1d.simple(adppi_slicer, 'cleavage_rate',
-                  min_color=COLORS[2][0], slice_color=COLORS[2][3],
+    fit_1d.slice_and_min(
+                  slicer=adppi_slicer, abscissa_name='cleavage_rate',
+                  slice_attributes=['adppi_dark'],
+                  min_attributes=['adppi_light'],
+                  shared_attributes=['simulation_line'],
+                  y_lower_bound=0,
                   filament_tip_concentration=blvd['filament_tip_concentration'])
     pylab.xlabel('Cleavage Rate (s^-1)')
     pylab.ylabel('F-ADP-Pi Fit (AU)')
-#    pylab.ylim(0, max_val)
+
+def random_pyrene(pyrene_ob):
+    pyrene_slicer = slicing.Slicer.from_objective_bind(pyrene_ob)
+#    max_val = 14
+    pylab.figure()
+
+    fit_1d.slice_and_min(
+                  slicer=pyrene_slicer,
+                  abscissa_name='filament_tip_concentration',
+                  slice_attributes=['pyrene_dark'],
+                  min_attributes=['pyrene_light'],
+                  shared_attributes=['simulation_line'],
+                  y_lower_bound=0)
+    pylab.xlabel('Filament Tip Concentration (uM)')
+    pylab.ylabel('Pryene Intensity Fit (AU)')
 
 
 def random_length(group):
@@ -78,51 +86,6 @@ def random_length(group):
     pylab.ylabel('Filament Tip Concentration (uM)')
     pylab.colorbar()
 
-
-def random_pyrene(pyrene_ob):
-    slicer = slicing.Slicer.from_objective_bind(pyrene_ob)
-    max_val = 2.5
-
-    pylab.figure()
-
-    pylab.subplot(1,2,1)
-    fit_1d.simple(slicer, 'filament_tip_concentration',
-                  min_color=COLORS[1][0], slice_color=COLORS[1][3])
-    pylab.xlabel('Filament Tip Concentration (uM)')
-    pylab.ylabel('Pyrene Fit (AU)')
-    pylab.ylim(0, max_val)
-
-#    pylab.subplot(1,3,2)
-#    fit_1d.simple(slicer, 'cleavage_rate',
-#                  min_color=COLORS[1][0], slice_color=COLORS[1][3])
-#    pylab.xlabel('Cleavage Rate (s^-1)')
-#    pylab.ylabel('Pyrene Fit (AU)')
-#    pylab.ylim(0, max_val)
-
-    pylab.subplot(1,2,2)
-    fit_1d.simple(slicer, 'pyrene_atp_weight',
-                  min_color=COLORS[1][0], slice_color=COLORS[1][3])
-    pylab.xlabel('ATP Fluorescence Weight (AU)')
-    pylab.ylabel('Pyrene Fit (AU)')
-    pylab.ylim(0, max_val)
-
-#    pylab.figure()
-#
-#    pylab.subplot(1,2,1)
-#    fit_1d.contour(slicer, abscissae_names=['cleavage_rate',
-#                                            'filament_tip_concentration'],
-#                   max_val=max_val)
-#    pylab.xlabel('Cleavage Rate (s^-1)')
-#    pylab.ylabel('Filament Tip Concentration (uM)')
-#    pylab.colorbar()
-#
-#    pylab.subplot(1,2,2)
-#    fit_1d.contour(slicer, abscissae_names=['cleavage_rate',
-#                                            'atp_weight'],
-#                   max_val=max_val)
-#    pylab.xlabel('Cleavage Rate (s^-1)')
-#    pylab.ylabel('ATP Fluorescence Weight (AU)')
-#    pylab.colorbar()
 
 
 def coop(group):
