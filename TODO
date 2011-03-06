@@ -1,7 +1,8 @@
-goals for wednesday:
-    reproduce a simple pollard sim with the new backend
-    visible progress on p & w
-        at least random model with fluorescence weights against all 3 results
+goals for thursday:
+    ? reproduce a simple pollard sim with the new backend
+    progress on p & w
+        visual spreads for all 3 experiments
+
 
 goals for end of march:
     pollard analysis (done)
@@ -11,49 +12,44 @@ goals for end of march:
         tip diffusion coefficient as function of concentration
 
 
-configuration
-    *** allow more "global" like config, e.g. sesion binds or something.
-        think about pieper & wegner..3 experiments with only 2 differences.
-    validation for config files
-
-visualization
+visualization - high priority
     make sure the old visualization code is brought up to speed
     add useful amount of theme management?
 
     check slice fixed points against mesh values to make sure they match
 
-testing
+
+testing - high priority
     need input validation for yaml files
         * super important, because input bugs are tricky
-    need tests for some of this new code.
+    unit testing opportunities
+        input code
+        configuration building code
+        factory code
 
-process utils
+
+configuration - medium priority
+    *** allow more "global" like config, e.g. sesion binds or something.
+        think about pieper & wegner..3 experiments with only 2 differences.
+    validation for config files
+
+performance profiling - medium priority
+    record job start/stop times
+
+
+
+process utils - low priority
     list active processes
     close processes
     list # active jobs, awaiting jobs, etc. (general job status)
     report run times for each job
 
-log viewer
-    no color option (for file dumping)
-    default start time of -2 min or something
-        or perhaps last N entries?
 
-sim.sh
+sim.sh - low priority
     integrate better log viewing options
 
 
-performance profiling
-    record job start/stop times
-
-
-controller process
-    global fit mechanism
-        do some kind of coarse mesh/random to start
-        then start generating children
-        *** NOTE This is unlikely to be useful for the first paper.
-
-
-Do some vocab/docs
+Do some vocab/docs - low priority
     session
     run
     job
@@ -65,3 +61,10 @@ Do some vocab/docs
     stage - just slang?
     ? slice
     ? projection
+
+
+controller process - very low priority
+    global fit mechanism
+        do some kind of coarse mesh/random to start
+        then start generating children
+        *** NOTE This is unlikely to be useful for the first paper.
