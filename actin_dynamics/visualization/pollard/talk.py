@@ -17,7 +17,7 @@ import pylab
 
 from .. import slicing
 
-from . import fit_1d
+from .. import fit_1d
 
 def random_adppi(adppi_ob, pyrene_ob):
     adppi_slicer  = slicing.Slicer.from_objective_bind(adppi_ob)
