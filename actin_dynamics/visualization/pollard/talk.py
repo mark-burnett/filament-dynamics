@@ -28,6 +28,18 @@ COLORS = numpy.array([
         ['#00782D', '#238B49', '#00B945', '#37DC74', '#63DC90'],  # green
         ['#A66F00', '#BF9030', '#FFAB00', '#FFC040', '#FFD173']]) # orange
 
+def random_pi(pi_ob, pyrene_ob):
+    pi_slicer  = slicing.Slicer.from_objective_bind(pi_ob)
+    pyrene_slicer = slicing.Slicer.from_objective_bind(pyrene_ob)
+    pylab.figure()
+
+    blvd, best_pyrene_id = pyrene_slicer.get_best_parameters()
+    fit_1d.simple(pi_slicer, 'release_rate',
+                  min_color=COLORS[2][0], slice_color=COLORS[2][3],
+                  filament_tip_concentration=blvd['filament_tip_concentration'])
+    pylab.xlabel('Release Rate (s^-1)')
+    pylab.ylabel('[Pi] Fit (AU)')
+
 def random_adppi(adppi_ob, pyrene_ob):
     adppi_slicer  = slicing.Slicer.from_objective_bind(adppi_ob)
     pyrene_slicer = slicing.Slicer.from_objective_bind(pyrene_ob)
@@ -81,16 +93,16 @@ def random_length(group):
 
 def random_pyrene(pyrene_ob):
     slicer = slicing.Slicer.from_objective_bind(pyrene_ob)
-    max_val = 2.5
+#    max_val = 2.5
 
     pylab.figure()
 
-    pylab.subplot(1,2,1)
+#    pylab.subplot(1,2,1)
     fit_1d.simple(slicer, 'filament_tip_concentration',
                   min_color=COLORS[1][0], slice_color=COLORS[1][3])
     pylab.xlabel('Filament Tip Concentration (uM)')
     pylab.ylabel('Pyrene Fit (AU)')
-    pylab.ylim(0, max_val)
+#    pylab.ylim(0, max_val)
 
 #    pylab.subplot(1,3,2)
 #    fit_1d.simple(slicer, 'cleavage_rate',
@@ -99,12 +111,12 @@ def random_pyrene(pyrene_ob):
 #    pylab.ylabel('Pyrene Fit (AU)')
 #    pylab.ylim(0, max_val)
 
-    pylab.subplot(1,2,2)
-    fit_1d.simple(slicer, 'pyrene_atp_weight',
-                  min_color=COLORS[1][0], slice_color=COLORS[1][3])
-    pylab.xlabel('ATP Fluorescence Weight (AU)')
-    pylab.ylabel('Pyrene Fit (AU)')
-    pylab.ylim(0, max_val)
+#    pylab.subplot(1,2,2)
+#    fit_1d.simple(slicer, 'pyrene_atp_weight',
+#                  min_color=COLORS[1][0], slice_color=COLORS[1][3])
+#    pylab.xlabel('ATP Fluorescence Weight (AU)')
+#    pylab.ylabel('Pyrene Fit (AU)')
+#    pylab.ylim(0, max_val)
 
 #    pylab.figure()
 #

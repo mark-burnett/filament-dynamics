@@ -35,15 +35,15 @@ parameter_specifications:
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.003
-                upper_bound: 0.003
-                mesh_type:   log
+                lower_bound: 0.001
+                upper_bound: 0.004
+                mesh_type:   linear
                 num_points:  10
 
             filament_tip_concentration:
-                lower_bound: 0.005
-                upper_bound: 0.040
-                mesh_type:   log
+                lower_bound: 0.00005
+                upper_bound: 0.005
+                mesh_type:   linear
                 num_points:  20
 
         objective:
@@ -75,9 +75,9 @@ parameter_specifications:
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.003
-                upper_bound: 0.003
-                mesh_type:   log
+                lower_bound: 0.001
+                upper_bound: 0.004
+                mesh_type:   linear
                 num_points:  10
 
             filament_tip_concentration:
@@ -115,9 +115,9 @@ parameter_specifications:
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.003
-                upper_bound: 0.003
-                mesh_type:   log
+                lower_bound: 0.001
+                upper_bound: 0.004
+                mesh_type:   linear
                 num_points:  10
 
             filament_tip_concentration:
