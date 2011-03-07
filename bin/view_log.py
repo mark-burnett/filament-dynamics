@@ -87,7 +87,7 @@ def main(filter_by_time=False, start_time=None, stop_time=None,
 
     if follow:
         while True:
-            if datetime.datetime.now() > stop_time:
+            if stop_time and datetime.datetime.now() > stop_time:
                 break
 
             time.sleep(polling_period)

@@ -37,6 +37,7 @@ def random_adppi(adppi_ob, pyrene_ob):
     pylab.xlabel('Cleavage Rate (s^-1)')
     pylab.ylabel('F-ADP-Pi Fit (AU)')
 
+
 def random_pyrene(pyrene_ob):
     pyrene_slicer = slicing.Slicer.from_objective_bind(pyrene_ob)
 #    max_val = 14
@@ -53,38 +54,38 @@ def random_pyrene(pyrene_ob):
     pylab.ylabel('Pryene Intensity Fit (AU)')
 
 
-def random_length(group):
-    slicer = slicing.Slicer.from_group(group, 'pollard_length_chi_squared',
-                                run_parameters=['filament_tip_concentration',
-                                                'cleavage_rate'],
-                                table_name='rrf')
-
-    max_val = 0.6
-
-    pylab.figure()
-
-#    pylab.subplot(1,2,1)
-    fit_1d.simple(slicer, 'filament_tip_concentration',
-                  min_color=COLORS[0][0], slice_color=COLORS[0][3])
-    pylab.xlabel('Filament Tip Concentration (uM)')
-    pylab.ylabel('F-actin Fit (AU)')
-    pylab.ylim(0, max_val)
-
-#    pylab.subplot(1,2,2)
-#    fit_1d.simple(slicer, 'cleavage_rate',
+#def random_length(group):
+#    slicer = slicing.Slicer.from_group(group, 'pollard_length_chi_squared',
+#                                run_parameters=['filament_tip_concentration',
+#                                                'cleavage_rate'],
+#                                table_name='rrf')
+#
+#    max_val = 0.6
+#
+#    pylab.figure()
+#
+##    pylab.subplot(1,2,1)
+#    fit_1d.simple(slicer, 'filament_tip_concentration',
 #                  min_color=COLORS[0][0], slice_color=COLORS[0][3])
-#    pylab.xlabel('Cleavage Rate (s^-1)')
+#    pylab.xlabel('Filament Tip Concentration (uM)')
 #    pylab.ylabel('F-actin Fit (AU)')
 #    pylab.ylim(0, max_val)
-
-    pylab.figure()
-
-    fit_1d.contour(slicer, abscissae_names=['cleavage_rate',
-                                            'filament_tip_concentration'],
-                   max_val=max_val)
-    pylab.xlabel('Cleavage Rate (s^-1)')
-    pylab.ylabel('Filament Tip Concentration (uM)')
-    pylab.colorbar()
+#
+##    pylab.subplot(1,2,2)
+##    fit_1d.simple(slicer, 'cleavage_rate',
+##                  min_color=COLORS[0][0], slice_color=COLORS[0][3])
+##    pylab.xlabel('Cleavage Rate (s^-1)')
+##    pylab.ylabel('F-actin Fit (AU)')
+##    pylab.ylim(0, max_val)
+#
+#    pylab.figure()
+#
+#    fit_1d.contour(slicer, abscissae_names=['cleavage_rate',
+#                                            'filament_tip_concentration'],
+#                   max_val=max_val)
+#    pylab.xlabel('Cleavage Rate (s^-1)')
+#    pylab.ylabel('Filament Tip Concentration (uM)')
+#    pylab.colorbar()
 
 
 

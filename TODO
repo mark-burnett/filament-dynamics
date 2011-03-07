@@ -13,6 +13,8 @@ goals for end of march:
 
 
 visualization - high priority
+    make bulk plotting functions that plot a whole session
+    get contour plots working
     make sure the old visualization code is brought up to speed
 
     check slice fixed points against mesh values to make sure they match

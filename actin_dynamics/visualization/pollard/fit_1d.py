@@ -22,6 +22,8 @@ import matplotlib.ticker
 from .. import measurements
 from .. import themes
 
+import pprint
+
 def plot_slice(slicer, abscissae_name, slice_point={},
                logscale_x=False, logscale_y=False, **kwargs):
     y, junk, x = slicer.slice(**slice_point)
@@ -61,9 +63,11 @@ def slice_and_min(slicer=None, abscissa_name=None, theme=None,
     if fixed_values:
         fixed_point.update(fixed_values)
 
-    print 'Best parameters:', best_pars
+    print 'Best parameters:'
+    pprint.pprint(best_pars)
     print 'Best objective id:', best_id
-    print 'Slice fixed point:', fixed_point
+    print 'Slice fixed point:'
+    pprint.pprint(fixed_point)
 
     sl_y,  junk_name, sl_x  = slicer.slice(**fixed_point)
     min_y, junk_name, min_x = slicer.minimum_values(abscissa_name)
@@ -81,70 +85,60 @@ def slice_and_min(slicer=None, abscissa_name=None, theme=None,
         pylab.gca().set_yscale('log')
 
     # Set automatic bounds.
-    if x_lower_bound is not None:
+    if x_lower_bound is None:
         x_lower_bound = min_x[0][0]
-    if x_upper_bound is not None:
+    if x_upper_bound is None:
         x_upper_bound = min_x[0][-1]
 
-    if y_lower_bound is not None:
+    if y_lower_bound is None:
         y_lower_bound = min(min(min_y), min(sl_y))
-    if y_upper_bound is not None:
+    if y_upper_bound is None:
         y_upper_bound = max(max(min_y), max(sl_y))
 
     pylab.xlim(x_lower_bound, x_upper_bound)
     pylab.ylim(y_lower_bound, y_upper_bound)
 
 
-def simple_contour(values, x, y, min_val=0, max_val=1,
-                   logscale_x=False, logscale_y=False, logscale_z=False):
+def minimum_contour(slicer, x_name, y_name,
+                    logscale_x=False, logscale_y=False, logscale_z=False,
+                    x_lower_bound=None, x_upper_bound=None,
+                    y_lower_bound=None, y_upper_bound=None,
+                    z_lower_bound=None, z_upper_bound=None):
+    # Get z values
+    z, xy_names, xy_meshes = slicer.minimum_values(x_name, y_name)
+    x_mesh, y_mesh = xy_meshes
+
+    # Transform z (for matplotlib's convention) and take log.
     if logscale_z:
-        values = numpy.log10(values)
-
-    # XXX Apparently, you have to transpose stuff for matplotlib...
-    values = values.transpose()
-    X, Y = numpy.meshgrid(x, y)
-
-    #locator = matplotlib.ticker.MaxNLocator(10)
-    #locator.create_dummy_axis()
-    #locator.set_bounds(min_val, max_val)
-    #levels = locator()
-
-    pylab.contourf(X, Y, values, cmap=pylab.cm.PRGn)
-#    pylab.contourf(X, Y, values, levels, cmap=pylab.cm.PRGn)
-
-    if logscale_x:
-        pylab.gca().set_xscale('log')
-    if logscale_y:
-        pylab.gca().set_yscale('log')
-
-    pylab.xlim(x[0], x[-1])
-    pylab.ylim(y[0], y[-1])
-
-def contour(slicer, abscissae_names, max_val=None,
-            logscale_x=False, logscale_y=False, logscale_z=False):
-    values, names, meshes = slicer.minimum_values(*abscissae_names)
-
-    if logscale_z:
-        values = numpy.log10(values)
-
-    # XXX Apparently, you have to transpose stuff for matplotlib...
-    values = values.transpose()
-    X, Y = numpy.meshgrid(meshes[0], meshes[1])
+        plot_z = numpy.log10(z).transpose()
+    else:
+        plot_z = z.transpose()
 
     locator = matplotlib.ticker.MaxNLocator(10)
-    if max_val:
-        locator.create_dummy_axis()
-        locator.set_bounds(0, max_val)
+    locator.create_dummy_axis()
+    if logscale_z:
+        if z_lower_bound and z_upper_bound:
+            locator.set_bounds(numpy.log10(z_lower_bound),
+                               numpy.log10(z_upper_bound))
+    else:
+        locator.set_bounds(z_lower_bound, z_upper_bound)
     levels = locator()
 
-    result = pylab.contourf(X, Y, values, levels, cmap=pylab.cm.PRGn)
+    plot_x, plot_y = numpy.meshgrid(x_mesh, y_mesh)
+    pylab.contourf(plot_x, plot_y, plot_z, levels, cmap=pylab.cm.PRGn)
 
-    if logscale_x:
-        pylab.gca().set_xscale('log')
-    if logscale_y:
-        pylab.gca().set_yscale('log')
+    # Set automatic bounds.
+    if x_lower_bound is None:
+        x_lower_bound = x_mesh[0]
+    if x_upper_bound is None:
+        x_upper_bound = x_mesh[-1]
 
-    pylab.xlim(meshes[0][0], meshes[0][-1])
-    pylab.ylim(meshes[1][0], meshes[1][-1])
+    if y_lower_bound is None:
+        y_lower_bound = y_mesh[0]
+    if y_upper_bound is None:
+        y_upper_bound = y_mesh[-1]
 
-    return result
+    pylab.xlim(x_lower_bound, x_upper_bound)
+    pylab.ylim(y_lower_bound, y_upper_bound)
+
+    pylab.colorbar()
