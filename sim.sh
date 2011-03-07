@@ -22,6 +22,7 @@ SPLIT_COMMAND=""
 CONFIG_COMMAND=""
 
 CREATE_JOBS=true
+VIEW_LOG=true
 
 display_args() {
     echo "Options:"
@@ -38,7 +39,7 @@ typeset -i SIMNUM NUM_PROCESSES
 
 let NUM_PROCESSES=1
 
-while getopts "s:n:c:jh" FLAG; do
+while getopts "s:n:c:jlh" FLAG; do
     case $FLAG in
         "s")
             SESSION_FILENAME=$OPTARG;;
@@ -48,6 +49,8 @@ while getopts "s:n:c:jh" FLAG; do
             let NUM_PROCESSES=$OPTARG;;
         "j")
             CREATE_JOBS=false;;
+        "l")
+            VIEW_LOG=false;;
         "h")
             display_args
             exit 0
@@ -66,8 +69,10 @@ for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
     echo "Started process #$SIMNUM"
 done
 
-echo "Following log."
-bin/view_log.py -f $CONFIG_COMMAND
+if $VIEW_LOG; then
+    echo "Following log."
+    bin/view_log.py -f $CONFIG_COMMAND
+fi
 
 trap 'exit 0' HUP
 trap 'kill -s HUP 0' EXIT

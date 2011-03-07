@@ -1,0 +1,80 @@
+# This file contains the configuration file skeleton I would like to adapt to.
+parameter_specifications:
+    experiment_name:
+        simulation:
+            par_spec_definition
+        objective:
+            objective_name:
+                par_spec_definition
+
+session:
+    name: str_literal
+
+    parameters:
+        par_name: float_literal
+
+    concentrations:
+        bind_label:
+            bind_definition
+    end_conditions:
+        bind_label:
+            bind_definition
+    filaments:
+        bind_label:
+            bind_definition
+    measurements:
+        bind_label:
+            bind_definition
+    transitions:
+        bind_label:
+            bind_definition
+    analyses:
+        analysis_name:
+            bind_definition
+
+    data:
+        bind_label:
+            bind_definition
+    objectives:
+        bind_label:
+            bind_definition
+
+
+experiments:
+    experiment_name:
+        parameters:
+            par_name: float_literal
+
+        concentrations:
+            bind_label:
+                bind_definition
+        end_conditions:
+            bind_label:
+                bind_definition
+        filaments:
+            bind_label:
+                bind_definition
+        measurements:
+            bind_label:
+                bind_definition
+        transitions:
+            bind_label:
+                bind_definition
+        analyses:
+            bind_label:
+                bind_definition
+
+        data:
+            bind_label:
+                bind_definition
+        objectives:
+            bind_label:
+                bind_definition
+
+models:
+    transitions:
+        bind_label:
+            bind_definition
+
+import:
+    - 'relative/path/to/file.yaml'

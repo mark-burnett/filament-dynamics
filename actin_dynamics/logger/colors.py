@@ -41,11 +41,14 @@ def make_sequence(foreground=WHITE, background=BLACK, bold=False):
     bg_identifier = str(background + 10)
     return "%s%s%sm" % (ESCAPE_SEQUENCE, bg_identifier, fg_identifier)
 
-def reset_sequence():
+def clear():
     return '%sm' % ESCAPE_SEQUENCE
 
 
-def wrap(text, foreground=WHITE, background=BLACK, bold=False):
-    return "%s%s%s" % (make_sequence(foreground=foreground,
-                                     background=background, bold=bold),
-                       text, reset_sequence())
+def wrap(text, foreground=WHITE, background=BLACK, bold=False, close={}):
+    return "%s%s%s%s%s" % (clear(),
+                         make_sequence(foreground=foreground,
+                                       background=background, bold=bold),
+                         text,
+                         clear(),
+                         make_sequence(**close))

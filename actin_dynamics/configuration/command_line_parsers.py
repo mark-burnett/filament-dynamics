@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+import datetime
 
 def _config(parser):
     parser.add_argument('-c', '--config', default='configuration/config.ini',
@@ -33,12 +34,18 @@ def _delays_and_timeouts(parser):
     return parser
 
 def _log_discriminators(parser):
-    parser.add_argument('--start', default=None,
+    parser.add_argument('-t', '--time', action='store_true',
+                        help='Filter results in time.')
+    default_start_datetime = (datetime.datetime.now() -
+                              datetime.timedelta(minutes=5))
+    parser.add_argument('--start_time', default=str(default_start_datetime),
                         help='Show log events later than this.')
+    parser.add_argument('--stop_time', default=None,
+                        help="Don't show log entries later than this.")
 
 
-    parser.add_argument('--min_level', default=None,
-                        help='Show only log events of this level and higher.')
+    parser.add_argument('--min_level', type=int, default=None,
+                        help='Show only log events of this level and higher (int).')
 
     parser.add_argument('--levelname', default=None,
                         help='Show only log events of this level.')
@@ -52,10 +59,13 @@ def _log_discriminators(parser):
 
 
     parser.add_argument('-f', '--follow', action='store_true',
-                        help='Remain alive and continue to report new events.')
+                        help='Continue to report new events.')
 
     parser.add_argument('--polling_period', type=float, default=1,
                         help='Delay between database checks.')
+
+    parser.add_argument('-n', '--nocolor', action='store_true',
+                        help="Don't display colors.")
 
     return parser
 
