@@ -1,11 +1,21 @@
 # This file contains the configuration file skeleton I would like to adapt to.
+
+# Database implications:
+# Sessions will have binds of their own.
+# More complex connection between simulation runs and parameter sets.
+
+# Code implications:
+# Simulation construction will have to build objects from session binds.
+# Mesh controller will be slightly altered to deal with new run/experiment.
+# Probably need a way to get analyses from run for a given experiment.
+
+# For now we can assume a mesh parameter spec.
 parameter_specifications:
+    simulation:
+        par_spec_definition
     experiment_name:
-        simulation:
+        objective_name:
             par_spec_definition
-        objective:
-            objective_name:
-                par_spec_definition
 
 session:
     name: str_literal
@@ -30,13 +40,6 @@ session:
             bind_definition
     analyses:
         analysis_name:
-            bind_definition
-
-    data:
-        bind_label:
-            bind_definition
-    objectives:
-        bind_label:
             bind_definition
 
 

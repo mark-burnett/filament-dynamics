@@ -43,7 +43,6 @@ slice_definition_table = schema.Table('slice_definition', global_state.metadata,
         schema.Column('objective_bind_id', schema.types.Integer,
                       schema.ForeignKey('bind.id'),
                       unique=True, nullable=False),
-#                      primary_key=True),
         schema.Column('table_name', schema.types.String(MAX_TABLE_NAME_LENGTH),
                       unique=True, nullable=False),
         mysql_engine='InnoDB')
@@ -285,10 +284,11 @@ schema.Index('experiment_unique_columns',
 
 # Connects simulation, analysis, & objective primitives to experiment.
 # XXX Consider using multi-table inheritance for binds..
+#       It has the drawback that I would have double inheritance.
 experiment_bind_table = schema.Table('experiment_bind', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('bind_id', schema.ForeignKey('bind.id'),
-                      nullable=False),
+                      unique=True, nullable=False),
         schema.Column('experiment_id', schema.ForeignKey('experiment.id'),
                       nullable=False),
         mysql_engine='InnoDB')
@@ -322,7 +322,7 @@ model_table = schema.Table('model', global_state.metadata,
 model_bind_table = schema.Table('model_bind', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('bind_id', schema.ForeignKey('bind.id'),
-                      nullable=False),
+                      unique=True, nullable=False),
         schema.Column('model_id', schema.ForeignKey('model.id'),
                       nullable=False),
         mysql_engine='InnoDB')
