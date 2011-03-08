@@ -1,4 +1,4 @@
-name: 'Pieper & Wegner Random'
+name: 'Pieper & Wegner Random FTC'
 
 import:
     - 'models/three_state_random_random.yaml'
@@ -6,8 +6,8 @@ import:
     - 'constants.yaml'
 
 global_parameters:
-    number_of_simulations: 5
-    number_of_filaments:   2
+    number_of_simulations: 10
+    number_of_filaments:   3
 
 
 parameter_specifications:
