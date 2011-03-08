@@ -15,11 +15,20 @@
 
 import yaml
 import os.path
+import sys
+
+from .. import logger
+log = logger.getLogger(__file__)
 
 def load_definition(filename):
     results = None
-    with open(filename) as f:
-        results = yaml.load(f)
+    log.debug("Loading definition from '%s'.", filename)
+    try:
+        with open(filename) as f:
+            results = yaml.load(f)
+    except IOError:
+        log.exception("Definition file '%s' not loaded.", filename)
+        sys.exit()
 
     source_directory, junk = os.path.split(filename)
 

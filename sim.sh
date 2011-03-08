@@ -30,6 +30,7 @@ display_args() {
     echo "    -s <filename>         Session file to use."
     echo "    -c <filename>         Configuration file to use."
     echo "    -n <integer>          Number of worker processes."
+    echo "    -l                    Do not show log."
     echo "    -j                    Do not create jobs, just complete them."
     echo "                              Note:  only '-n <integer>' argument used."
     echo
@@ -72,7 +73,7 @@ done
 if $VIEW_LOG; then
     echo "Following log."
     bin/view_log.py -f $CONFIG_COMMAND
-fi
 
-trap 'exit 0' HUP
-trap 'kill -s HUP 0' EXIT
+    trap 'exit 0' HUP
+    trap 'kill -s HUP 0' EXIT
+fi
