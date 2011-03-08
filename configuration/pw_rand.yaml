@@ -3,26 +3,11 @@ name: 'Pieper & Wegner Random'
 import:
     - 'models/three_state_random_random.yaml'
     - 'experiments/pieper_wegner_1996.yaml'
+    - 'constants.yaml'
 
 global_parameters:
     number_of_simulations: 5
     number_of_filaments:   2
-
-experiments:
-    pieper_wegner_100:
-        parameters:
-            initial_pyrene_atp_concentration: 4
-            initial_pyrene_adp_concentration: 0
-
-    pieper_wegner_90:
-        parameters:
-            initial_pyrene_atp_concentration: 3.7
-            initial_pyrene_adp_concentration: 0.3
-
-    pieper_wegner_50:
-        parameters:
-            initial_pyrene_atp_concentration: 2
-            initial_pyrene_adp_concentration: 2
 
 
 parameter_specifications:
@@ -35,36 +20,16 @@ parameter_specifications:
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.001
-                upper_bound: 0.004
+                lower_bound: 0.003
+                upper_bound: 0.003
                 mesh_type:   linear
-                num_points:  10
+                num_points:  1
 
             filament_tip_concentration:
-                lower_bound: 0.00005
-                upper_bound: 0.005
+                lower_bound: 0.001
+                upper_bound: 0.01
                 mesh_type:   linear
-                num_points:  20
-
-        objective:
-            pieper_wegner_pyrene_fit:
-                pyrene_atp_weight:
-                    lower_bound: 0.37
-                    upper_bound: 0.37
-                    mesh_type:   linear
-                    num_points:  1
-
-                pyrene_adppi_weight:
-                    lower_bound: 0.56
-                    upper_bound: 0.56
-                    mesh_type:   linear
-                    num_points:  1
-
-                pyrene_adp_weight:
-                    lower_bound: 0.75
-                    upper_bound: 0.75
-                    mesh_type:   linear
-                    num_points:  1
+                num_points:  40
 
     pieper_wegner_90:
         simulation:
@@ -75,36 +40,16 @@ parameter_specifications:
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.001
-                upper_bound: 0.004
+                lower_bound: 0.003
+                upper_bound: 0.003
                 mesh_type:   linear
-                num_points:  10
+                num_points:  1
 
             filament_tip_concentration:
-                lower_bound: 0.005
-                upper_bound: 0.040
-                mesh_type:   log
-                num_points:  20
-
-        objective:
-            pieper_wegner_pyrene_fit:
-                pyrene_atp_weight:
-                    lower_bound: 0.37
-                    upper_bound: 0.37
-                    mesh_type:   linear
-                    num_points:  1
-
-                pyrene_adppi_weight:
-                    lower_bound: 0.56
-                    upper_bound: 0.56
-                    mesh_type:   linear
-                    num_points:  1
-
-                pyrene_adp_weight:
-                    lower_bound: 0.75
-                    upper_bound: 0.75
-                    mesh_type:   linear
-                    num_points:  1
+                lower_bound: 0.001
+                upper_bound: 0.01
+                mesh_type:   linear
+                num_points:  40
 
     pieper_wegner_50:
         simulation:
@@ -115,33 +60,13 @@ parameter_specifications:
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.001
-                upper_bound: 0.004
+                lower_bound: 0.003
+                upper_bound: 0.003
                 mesh_type:   linear
-                num_points:  10
+                num_points:  1
 
             filament_tip_concentration:
-                lower_bound: 0.005
-                upper_bound: 0.040
-                mesh_type:   log
-                num_points:  20
-
-        objective:
-            pieper_wegner_pyrene_fit:
-                pyrene_atp_weight:
-                    lower_bound: 0.37
-                    upper_bound: 0.37
-                    mesh_type:   linear
-                    num_points:  1
-
-                pyrene_adppi_weight:
-                    lower_bound: 0.56
-                    upper_bound: 0.56
-                    mesh_type:   linear
-                    num_points:  1
-
-                pyrene_adp_weight:
-                    lower_bound: 0.75
-                    upper_bound: 0.75
-                    mesh_type:   linear
-                    num_points:  1
+                lower_bound: 0.001
+                upper_bound: 0.01
+                mesh_type:   linear
+                num_points:  40

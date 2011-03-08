@@ -3,6 +3,25 @@ goals for thursday:
     progress on p & w
         visual spreads for all 3 experiments
 
+steps for thursday:
+    update (verbose) configurations
+        each experiment has 3 objectives
+            flat fluorescence
+            brooks fluorescence
+            pi
+        random model
+        cooperative model
+    visualize
+        for each experiment
+            fluorescences vs filament tip concentration
+            Pi fit as contour and individually in both dimensions
+        combined
+            pick best ftc for each experiment
+            use that to slice the Pi fit
+            add those Pi chi**2's
+            plot contour and individually
+    write code that does the whole visualization set
+
 
 goals for end of march:
     pollard analysis (done)
@@ -14,7 +33,6 @@ goals for end of march:
 
 visualization - high priority
     make bulk plotting functions that plot a whole session
-    get contour plots working
     make sure the old visualization code is brought up to speed
 
     check slice fixed points against mesh values to make sure they match

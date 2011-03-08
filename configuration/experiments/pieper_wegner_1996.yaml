@@ -42,6 +42,10 @@ global_parameters:
 
 experiments:
     pieper_wegner_100:
+        parameters:
+            initial_pyrene_atp_concentration: 4
+            initial_pyrene_adp_concentration: 0
+
         simulation:
             filaments:
                 filament_factory:
@@ -194,7 +198,17 @@ experiments:
                     fixed_arguments:
                         filename: 'pieper_wegner_1996/phosphate_concentration_100_0.dat'
 
-                pieper_wegner_pyrene_fit:
+                flat_pyrene_fit:
+                    class_name: DatReader
+                    variable_arguments:
+                        sample_period: sample_period
+                        xmax: simulation_duration
+                    fixed_arguments:
+                        xmin: 0
+                        filename: 'pieper_wegner_1996/pyrene_fluorescence_100_0.dat'
+                        interpolate_data: True
+
+                brooks_pyrene_fit:
                     class_name: DatReader
                     variable_arguments:
                         sample_period: sample_period
@@ -213,17 +227,32 @@ experiments:
                         residual_type: naked_chi_squared
                         interpolate_simulation: True
 
-                pieper_wegner_pyrene_fit:
+                flat_pyrene_fit:
+                    class_name: PyreneFit
+                    fixed_arguments:
+                        pyrene_ATP:    1
+                        pyrene_ADPPi:  1
+                        pyrene_ADP:    1
+                        residual_type: naked_chi_squared
+
+                brooks_pyrene_fit:
                     class_name: PyreneFit
                     variable_arguments:
-                        pyrene_ATP:   pyrene_atp_weight
-                        pyrene_ADPPi: pyrene_adppi_weight
-                        pyrene_ADP:   pyrene_adp_weight
+                        pyrene_ATP:   brooks_atp_weight
+                        pyrene_ADPPi: brooks_adppi_weight
+                        pyrene_ADP:   brooks_adp_weight
+
+                    fixed_arguments:
+                        residual_type: naked_chi_squared
 
                     fixed_arguments:
                         residual_type: naked_chi_squared
 
     pieper_wegner_90:
+        parameters:
+            initial_pyrene_atp_concentration: 3.7
+            initial_pyrene_adp_concentration: 0.3
+
         simulation:
             filaments:
                 filament_factory:
@@ -376,7 +405,17 @@ experiments:
                     fixed_arguments:
                         filename: 'pieper_wegner_1996/phosphate_concentration_90_10.dat'
 
-                pieper_wegner_pyrene_fit:
+                flat_pyrene_fit:
+                    class_name: DatReader
+                    variable_arguments:
+                        sample_period: sample_period
+                        xmax: simulation_duration
+                    fixed_arguments:
+                        xmin: 0
+                        filename: 'pieper_wegner_1996/pyrene_fluorescence_90_10.dat'
+                        interpolate_data: True
+
+                brooks_pyrene_fit:
                     class_name: DatReader
                     variable_arguments:
                         sample_period: sample_period
@@ -395,17 +434,29 @@ experiments:
                         residual_type: naked_chi_squared
                         interpolate_simulation: True
 
-                pieper_wegner_pyrene_fit:
+                flat_pyrene_fit:
+                    class_name: PyreneFit
+                    fixed_arguments:
+                        pyrene_ATP:    1
+                        pyrene_ADPPi:  1
+                        pyrene_ADP:    1
+                        residual_type: naked_chi_squared
+
+                brooks_pyrene_fit:
                     class_name: PyreneFit
                     variable_arguments:
-                        pyrene_ATP:   pyrene_atp_weight
-                        pyrene_ADPPi: pyrene_adppi_weight
-                        pyrene_ADP:   pyrene_adp_weight
+                        pyrene_ATP:   brooks_atp_weight
+                        pyrene_ADPPi: brooks_adppi_weight
+                        pyrene_ADP:   brooks_adp_weight
 
                     fixed_arguments:
                         residual_type: naked_chi_squared
 
     pieper_wegner_50:
+        parameters:
+            initial_pyrene_atp_concentration: 2
+            initial_pyrene_adp_concentration: 2
+
         simulation:
             filaments:
                 filament_factory:
@@ -558,7 +609,17 @@ experiments:
                     fixed_arguments:
                         filename: 'pieper_wegner_1996/phosphate_concentration_50_50.dat'
 
-                pieper_wegner_pyrene_fit:
+                flat_pyrene_fit:
+                    class_name: DatReader
+                    variable_arguments:
+                        sample_period: sample_period
+                        xmax: simulation_duration
+                    fixed_arguments:
+                        xmin: 0
+                        filename: 'pieper_wegner_1996/pyrene_fluorescence_50_50.dat'
+                        interpolate_data: True
+
+                brooks_pyrene_fit:
                     class_name: DatReader
                     variable_arguments:
                         sample_period: sample_period
@@ -577,12 +638,20 @@ experiments:
                         residual_type: naked_chi_squared
                         interpolate_simulation: True
 
-                pieper_wegner_pyrene_fit:
+                flat_pyrene_fit:
+                    class_name: PyreneFit
+                    fixed_arguments:
+                        pyrene_ATP:    1
+                        pyrene_ADPPi:  1
+                        pyrene_ADP:    1
+                        residual_type: naked_chi_squared
+
+                brooks_pyrene_fit:
                     class_name: PyreneFit
                     variable_arguments:
-                        pyrene_ATP:   pyrene_atp_weight
-                        pyrene_ADPPi: pyrene_adppi_weight
-                        pyrene_ADP:   pyrene_adp_weight
+                        pyrene_ATP:   brooks_atp_weight
+                        pyrene_ADPPi: brooks_adppi_weight
+                        pyrene_ADP:   brooks_adp_weight
 
                     fixed_arguments:
                         residual_type: naked_chi_squared
