@@ -26,6 +26,10 @@ def add(a, b):
     return result
 
 
+def multiply(vector, number):
+    return [v * number for v in vector]
+
+
 def arange(min_value, max_value, dx):
     result = []
     value = min_value
