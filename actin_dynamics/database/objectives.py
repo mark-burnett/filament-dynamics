@@ -34,9 +34,9 @@ class Objective(object):
             self.parameters = parameters
 
     def __repr__(self):
-        return "%s(run=%s, bind=%s, value=%s, parameters=%s)" % (
-            self.__class__.__name__, self.run, self.bind, self.value,
-            self.parameters)
+        return "%s(id=%s, run_id=%s, bind_id=%s, value=%s, parameters=%s)" % (
+            self.__class__.__name__, self.id, self.run_id, self.objective_bind_id,
+            self.value, self.parameters)
 
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.ObjectiveParameter)
@@ -51,4 +51,4 @@ class Objective(object):
 _orm.mapper(Objective, _tables.objective_table, properties={
     '_parameters': _orm.relationship(_parameters.ObjectiveParameter,
         collection_class=_orm.collections.attribute_mapped_collection('name')),
-    'bind': _orm.relationship(_binds.ObjectiveBind)})
+    'bind': _orm.relationship(_binds.ObjectiveBind, backref='objectives')})

@@ -39,11 +39,11 @@ class Bind(object):
             self.variable_arguments = variable_arguments
 
     def __repr__(self):
-        return ("%s(label='%s', class_name='%s'," +
-                " module_name='%s',  fixed_arguments=%s," +
+        return ("%s(id=%s, label='%s', class_name='%s'," +
+                " fixed_arguments=%s," +
                 " variable_arguments=%s)") % (
-                self.__class__.__name__, self.label, self.class_name,
-                self.module_name, dict(self.fixed_arguments),
+                self.__class__.__name__, self.id, self.label, self.class_name,
+                dict(self.fixed_arguments),
                 dict(self.variable_arguments))
 
     fixed_arguments = _ap('_fixed_arguments', 'value',
@@ -86,14 +86,6 @@ class ObjectiveBind(Bind):
         if data:
             self.data
         Bind.__init__(self, *args, **kwargs)
-
-    def __repr__(self):
-        return ("%s(label='%s', class_name='%s'," +
-                " module_name='%s',  fixed_arguments=%s," +
-                " variable_arguments=%s, data=%s)") % (
-                self.__class__.__name__, self.label, self.class_name,
-                self.module_name, dict(self.fixed_arguments),
-                dict(self.variable_arguments), self.data)
 
     @property
     def measurement(self):

@@ -34,9 +34,13 @@ class Session(object):
             self.parameters = parameters
 
     def __repr__(self):
-        return ('%s(name="%s", parameters=%s, experiments=%s, models=%s)'
-                % (self.__class__.__name__, self.name, self.parameters,
-                   self.experiments, self.models))
+        return '%s(id=%s, name="%s")' % (self.__class__.__name__,
+                                         self.id, self.name)
+
+    def get_experiment(self, name):
+        for e in self.experiments:
+            if name == e.name:
+                return e
 
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.SessionParameter)

@@ -33,10 +33,8 @@ class Model(object):
             self.transitions = transitions
 
     def __repr__(self):
-        return (
-"%s(name='%s', session=%s, concentrations=%s, transitions=%s)" % (
-            self.__class__.__name__, self.name, self.session,
-            self.concentrations, self.transitions))
+        return "%s(id=%s, name='%s', session_id=%s)" % (
+            self.__class__.__name__, self.id, self.name, self.session_id)
 
 _orm.mapper(Model, _tables.model_table, properties={
     'concentrations': _orm.relationship(_binds.ConcentrationBind,

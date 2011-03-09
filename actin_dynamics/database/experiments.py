@@ -52,12 +52,8 @@ class Experiment(object):
             self.objective_list = objective_list
 
     def __repr__(self):
-        return (("%s(name='%s', parameters=%s, session=%s, filaments=%s," +
-                " measurements=%s, end_conditions=%s, concentrations=%s," +
-                " transitions=%s)")
-            % (self.__class__.__name__, self.name, self.parameters, self.session,
-               self.filaments, self.measurements, self.end_conditions,
-               self.concentrations, self.transitions))
+        return "%s(id=%s, name='%s', session_id=%s)" % (
+               self.__class__.__name__, self.id, self.name, self.session_id)
 
     parameters = _ap('_parameters', 'value',
                      creator=_parameters.ExperimentParameter)

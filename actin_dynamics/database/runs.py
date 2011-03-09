@@ -42,9 +42,9 @@ class Run(object):
             self.analysis_list = analysis_list
 
     def __repr__(self):
-        return "%s(experiment=%s, analyses=%s, objectives=%s, parameters=%s)" % (
-            self.__class__.__name__, self.experiment,
-            self.analyses, self.objectives, self.parameters)
+        return "%s(id=%s, experiment_id=%s, model_id=%s, parameters=%s)" % (
+            self.__class__.__name__, self.id, self.experiment_id, self.model_id,
+            self.parameters)
 
     parameters = _ap('_parameters', 'value', creator=_parameters.RunParameter)
     analyses   = _ap('_analyses', 'measurement', creator=_analyses.Analysis)

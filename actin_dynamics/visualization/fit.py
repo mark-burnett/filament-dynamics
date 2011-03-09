@@ -35,17 +35,18 @@ def plot_slice(slicer, abscissae_name, slice_point={},
     pylab.xlim(x[0][0], x[0][-1])
 
 
-def plot_min(slicer, abscissae_name,
+def plot_min(slicer, abscissae_name, scale_x=1,
              logscale_x=False, logscale_y=False, **kwargs):
     y, junk, x = slicer.minimum_values(abscissae_name)
+    scaled_x = [xv * scale_x for xv in x[0]]
 
-    measurements.plot_smooth((x[0], y), **kwargs)
+    measurements.plot_smooth((scaled_x, y), **kwargs)
 
     if logscale_x:
         pylab.gca().set_xscale('log')
     if logscale_y:
         pylab.gca().set_yscale('log')
-    pylab.xlim(x[0][0], x[0][-1])
+    pylab.xlim(x[0][0] * scale_x, x[0][-1] * scale_x)
 
 
 def slice_and_min(slicer=None, abscissa_name=None, theme=None,

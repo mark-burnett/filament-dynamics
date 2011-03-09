@@ -1,0 +1,42 @@
+import: ['models/basic_polymerization.yaml']
+
+models:
+    transitions:
+        pyrene_cleavage:
+            class_name: RandomHydrolysis
+            fixed_arguments:
+                old_state: pyrene_ATP
+                new_state: pyrene_ADPPi
+            variable_arguments:
+                rate: cleavage_rate
+
+        cleavage:
+            class_name: RandomHydrolysis
+            fixed_arguments:
+                old_state: ATP
+                new_state: ADPPi
+            variable_arguments:
+                rate: cleavage_rate
+
+
+        pyrene_release:
+            class_name: CooperativeHydrolysisWithByproduct
+            fixed_parameters:
+                old_state: pyrene_ADPPi
+                new_state: pyrene_ADP
+                byproduct: Pi
+            parameters:
+                rate: release_rate
+                pyrene_ADP: release_cooperativity
+                ADP:        release_cooperativity
+
+        release:
+            class_name: CooperativeHydrolysisWithByproduct
+            fixed_parameters:
+                old_state: ADPPi
+                new_state: ADP
+                byproduct: Pi
+            parameters:
+                rate: release_rate
+                pyrene_ADP: release_cooperativity
+                ADP:        release_cooperativity

@@ -65,9 +65,9 @@ class Job(object):
             self.complete = complete
 
     def __repr__(self):
-        return "%s(run=%s, worker=%s, creator=%s, complete=%s)" % (
-                self.__class__.__name__, self.run,
-                self.worker, self.creator, self.complete)
+        return ("%s(id=%s, run_id=%s, worker_id=%s, creator_id=%s, complete=%s)"
+                % (self.__class__.__name__, self.id, self.run_id,
+                   self.worker_id, self.creator_id, self.complete))
 
 _orm.mapper(Job, _tables.job_table, properties={
     'run': _orm.relationship(_runs.Run, backref='job'),
