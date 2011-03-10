@@ -72,9 +72,13 @@ class Slicer(object):
         return _format_result(result_set, abscissae_names, self.meshes)
 
 
-    def get_best_near(self, **fixed_values):
-        nearest_values = self.get_nearest_values(**fixed_values)
-
+#    def get_best_near(self, **fixed_values):
+#        nearest_values = self.get_nearest_values(**fixed_values)
+#        z, par_names, par_meshes = self.slice(**nearest_values)
+#
+#        index = numpy.argmin(z)
+#        print index
+#
 
     def get_nearest_values(self, **fixed_values):
         result = {}
@@ -109,6 +113,20 @@ class Slicer(object):
 
     def get_worst_value(self):
         result_set = sql.select([func.max(self.table.c.value)]).execute()
+        return result_set.scalar()
+
+    def get_id(self, **fixed_values):
+        abscissae_names = [n for n in self.column_map.keys()
+                           if n not in fixed_values]
+        select_columns = [self.table.c.objective_id]
+
+        nearest_values = self.get_nearest_values(**fixed_values)
+        like_clauses = [self.table.c[self.column_map[n]].like(v)
+                        for n, v in nearest_values.iteritems()]
+
+        query = sql.select(select_columns, whereclause=sql.and_(*like_clauses))
+
+        result_set = query.execute()
         return result_set.scalar()
 
 

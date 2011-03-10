@@ -20,20 +20,20 @@ parameter_specifications:
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.00001
+                lower_bound: 0.000001
                 upper_bound: 0.005
-                mesh_type:   linear
-                num_points:  10
+                mesh_type:   log
+                num_points:  30
 
             release_cooperativity:
                 lower_bound: 1
                 upper_bound: 1000000
                 mesh_type:   log
-                num_points:  20
+                num_points:  30
 
             filament_tip_concentration:
-                lower_bound: 0.00442
-                upper_bound: 0.00442
+                lower_bound: 0.00142
+                upper_bound: 0.00142
                 mesh_type:   linear
                 num_points:  1
 
@@ -46,20 +46,20 @@ parameter_specifications:
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.00001
+                lower_bound: 0.000001
                 upper_bound: 0.005
-                mesh_type:   linear
-                num_points:  10
+                mesh_type:   log
+                num_points:  30
 
             release_cooperativity:
                 lower_bound: 1
                 upper_bound: 1000000
                 mesh_type:   log
-                num_points:  20
+                num_points:  30
 
             filament_tip_concentration:
-                lower_bound: 0.00328
-                upper_bound: 0.00328
+                lower_bound: 0.00116
+                upper_bound: 0.00116
                 mesh_type:   linear
                 num_points:  1
 
@@ -72,19 +72,19 @@ parameter_specifications:
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.00001
+                lower_bound: 0.000001
                 upper_bound: 0.005
-                mesh_type:   linear
-                num_points:  10
+                mesh_type:   log
+                num_points:  30
 
             release_cooperativity:
                 lower_bound: 1
                 upper_bound: 1000000
                 mesh_type:   log
-                num_points:  20
+                num_points:  30
 
             filament_tip_concentration:
-                lower_bound: 0.00373
-                upper_bound: 0.00373
+                lower_bound: 0.00135
+                upper_bound: 0.00135
                 mesh_type:   linear
                 num_points:  1

@@ -54,13 +54,14 @@ def plot_min(slicer, abscissae_name, scale_x=1,
         pylab.gca().set_yscale('log')
     pylab.xlim(x[0][0] * scale_x, x[0][-1] * scale_x)
 
-def averaged_min(slicers, abscissae_name,
+def averaged_min(slicers, abscissae_name, scale_x=1,
                  logscale_x=False, logscale_y=False, **kwargs):
     all_measurements = []
     for slicer in slicers:
         y, junk, x = slicer.minimum_values(abscissae_name)
         e = [0 for yv in y]
-        all_measurements.append((x[0], y, e))
+        scaled_x = [xv * scale_x for xv in x[0]]
+        all_measurements.append((scaled_x, y, e))
 
     average_measurement = numerical.measurements.scale(
             numerical.measurements.add(all_measurements[:2]),

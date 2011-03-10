@@ -25,16 +25,16 @@ from unit_tests.mocks.concentrations import MockConcentration
 
 class CooperativeHydrolysisTest(unittest.TestCase):
     def setUp(self):
-        self.strand = Filament([1, 2, 3, 1, 2, 3, 1])
-        self.normal_one = CooperativeHydrolysis(old_state=1,
-                rate=3, new_state=2, cooperativities={3: 2})
-        self.normal_two = CooperativeHydrolysis(old_state=2,
-                rate=2, new_state=3, cooperativities={1:3})
-        self.normal_three = CooperativeHydrolysis(old_state=1,
-                rate=4, new_state=2, cooperativities={2:3})
+        self.strand = Filament(['a', 'b', 'c', 'a', 'b', 'c', 'a'])
+        self.normal_one = CooperativeHydrolysis(old_state='a',
+                rate=3, new_state='b', c=2)
+        self.normal_two = CooperativeHydrolysis(old_state='b',
+                rate=2, new_state='c', a=3)
+        self.normal_three = CooperativeHydrolysis(old_state='a',
+                rate=4, new_state='b', b=3)
 
-        self.missing = CooperativeHydrolysis(old_state=4,
-                rate=7, new_state=8, cooperativities={5:1.5})
+        self.missing = CooperativeHydrolysis(old_state='d',
+                rate=7, new_state=8, e=1.5)
 
     def test_normal_rates(self):
         self.assertEqual(self.normal_one.R([self.strand],   None), [15])
@@ -46,18 +46,18 @@ class CooperativeHydrolysisTest(unittest.TestCase):
 
     def test_perform_normal_boundary(self):
         self.normal_one.perform(None, [self.strand], None, 0, 7)
-        self.assertEqual(list(self.strand.states), [1, 2, 3, 1, 2, 3, 2])
+        self.assertEqual(list(self.strand.states), ['a', 'b', 'c', 'a', 'b', 'c', 'b'])
         self.assertEqual(self.normal_one.R([self.strand], None), [9])
         self.assertEqual(self.normal_two.R([self.strand], None), [14])
 
         self.normal_one.perform(None, [self.strand], None, 0, 8)
-        self.assertEqual(list(self.strand.states), [1, 2, 3, 2, 2, 3, 2])
+        self.assertEqual(list(self.strand.states), ['a', 'b', 'c', 'b', 'b', 'c', 'b'])
         self.assertEqual(self.normal_one.R([self.strand], None), [3])
         self.assertEqual(self.normal_two.R([self.strand], None), [12])
 
     def test_perform_normal_random(self):
         self.normal_one.perform(None, [self.strand], None, 0, 0)
-        self.assertEqual(list(self.strand.states), [2, 2, 3, 1, 2, 3, 1])
+        self.assertEqual(list(self.strand.states), ['b', 'b', 'c', 'a', 'b', 'c', 'a'])
         self.assertEqual(self.normal_one.R([self.strand], None), [12])
         self.assertEqual(self.normal_two.R([self.strand], None), [10])
 

@@ -61,5 +61,4 @@ class DatReader(_FileReader):
 
         sample_times = _workalike.arange(self.xmin, self.xmax,
                                          self.sample_period)
-        print sample_times
         return _interpolation.resample_measurement(raw_results, sample_times)

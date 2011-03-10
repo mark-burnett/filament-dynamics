@@ -15,13 +15,16 @@
 
 import bisect
 
-def _interp1d(x_data, y_data):
+def interp1d(x_data, y_data):
     def inner(x):
         left = bisect.bisect_left(x_data, x)
-        result = linear_project(x_data[left],     y_data[left],
-                                x_data[left + 1], y_data[left + 1],
-                                x)
-        return result
+        if left > 0:
+            result = linear_project(x_data[left - 1], y_data[left - 1],
+                                    x_data[left],    y_data[left],
+                                    x)
+            return result
+        else:
+            raise IndexError
 
     return inner
 
@@ -31,20 +34,20 @@ def linear_resample(data, new_x):
     if 1 == len(x_data):
         return new_x, [y_data[0] for x in new_x]
 
-    linterp = _interp1d(x_data, y_data)
+    linterp = interp1d(x_data, y_data)
 
     result = []
     for x in new_x:
         try:
-            y = float(linterp(x))
+            y = linterp(x)
         except IndexError:
-            if x < x_data[0]:
+            if x <= x_data[0]:
                 y = linear_project(x_data[0], y_data[0],
                                    x_data[1], y_data[1], x)
             elif x > x_data[-1]:
                 y = linear_project(x_data[-2], y_data[-2],
                                    x_data[-1], y_data[-1], x)
-        result.append(y)
+        result.append(float(y))
 
     return new_x, result
 
@@ -74,7 +77,10 @@ interpolation_methods = {'linear': linear_resample,
 
 
 def resample_measurement(measurement, sample_times, method='linear'):
-    resample = interpolation_methods[method]
+    if str == type(method):
+        resample = interpolation_methods[method]
+    else:
+        resample = method
 
     # Resample value
     value_data = measurement[:2]

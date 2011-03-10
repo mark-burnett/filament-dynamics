@@ -14,6 +14,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import operator
+import itertools
+import pprint
 
 import scipy.interpolate
 import pylab
@@ -24,6 +26,7 @@ from . import fit
 from . import themes
 from . import measurements
 
+from actin_dynamics import database
 from actin_dynamics.factories import bindings
 import actin_dynamics.numerical.measurements
 from actin_dynamics import numerical
@@ -45,7 +48,7 @@ def pi_session(session):
     contour_pi(session)
 
     # Timecourses for all minima!
-    minima_timecourses_pi(session)
+#    minima_timecourses_pi(session)
 
 
 def side_by_side_pyrene(session, parameter_name='filament_tip_concentration',
@@ -236,7 +239,7 @@ def contour_pi(session, logscale_x=True, logscale_y=True, logscale_z=True):
     pylab.title('Average')
 
 
-def timecourse(run, final_pyrene_value=None, with_date=True, theme=None):
+def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False, theme=None):
     if not theme:
         theme = themes.Theme()
 
@@ -261,7 +264,6 @@ def timecourse(run, final_pyrene_value=None, with_date=True, theme=None):
                               **theme('pi_light', 'data_points'))
 
     # both pyrene intensities + data
-    flat_bind   = run.experiment.objectives['flat_pyrene_fit']
     brooks_bind = run.experiment.objectives['brooks_pyrene_fit']
 
     pyrene_data = brooks_bind.measurement
@@ -274,11 +276,13 @@ def timecourse(run, final_pyrene_value=None, with_date=True, theme=None):
     measurements.plot_smooth(scaled_pyrene_data, label='Pyrene Data',
                              **theme('pyrene_light3', 'data_line'))
 
-    flat_objective = bindings.db_single(flat_bind, run.all_parameters)
-    flat_fit, flat_measurement = flat_objective.fit_measurement(run,
-            scaled_pyrene_data)
-    measurements.plot_smooth(flat_measurement, label='Flat Pyrene Simulation',
-                             **theme('pyrene_light1', 'simulation_line'))
+    if flat_pyrene:
+        flat_bind = run.experiment.objectives['flat_pyrene_fit']
+        flat_objective = bindings.db_single(flat_bind, run.all_parameters)
+        flat_fit, flat_measurement = flat_objective.fit_measurement(run,
+                scaled_pyrene_data)
+        measurements.plot_smooth(flat_measurement, label='Flat Pyrene Simulation',
+                                 **theme('pyrene_light1', 'simulation_line'))
 
     brooks_objective = bindings.db_single(brooks_bind, run.all_parameters)
     brooks_fit, brooks_measurement = brooks_objective.fit_measurement(run,
@@ -287,66 +291,44 @@ def timecourse(run, final_pyrene_value=None, with_date=True, theme=None):
                              label='Brooks Pyrene Simulation',
                              **theme('pyrene_dark', 'simulation_line'))
 
-    # limits
+    # Limits
     pylab.xlim(0, 600)
     pylab.ylim(0, None)
+
+    # Labels
+    pylab.xlabel('Time (s)')
+    pylab.ylabel('Concentration (uM)')
     pylab.legend(loc=4)
 
-
-
-class Simple2dSpliner(object):
-    def __init__(self, x, y, z, epsilon=1e-3, *args, **kwargs):
-        self.x, self.y = numpy.meshgrid(x, y)
-        self.z = numpy.reshape(z, reduce(operator.mul, z.shape))
-
-        weights = numpy.ones(self.z.shape) * epsilon
-        self.tck = scipy.interpolate.bisplrep(self.x, self.y, self.z, w=weights,
-                                              nxest=len(x), nyest=len(y),
-                                              *args, **kwargs)
-
-    def __call__(self, x, y, derivative=0):
-        return scipy.interpolate.bisplev(x, y, self.tck,
-                                         dx=int(derivative), dy=int(derivative))
-
-def minima_timecourses_pi(session, scale=4, threshold=None,
-                          x_name='release_cooperativity',
-                          y_name='release_rate'):
+def plot_best_run(session, db_session, objective_name='pieper_wegner_pi_fit',
+                  **fixed_values):
     e100 = session.get_experiment('pieper_wegner_100')
     e90  = session.get_experiment('pieper_wegner_90')
     e50  = session.get_experiment('pieper_wegner_50')
 
-    s100 = slicing.Slicer.from_objective_bind(e100.objectives['pieper_wegner_pi_fit'])
-    s90  = slicing.Slicer.from_objective_bind( e90.objectives['pieper_wegner_pi_fit'])
-    s50  = slicing.Slicer.from_objective_bind( e50.objectives['pieper_wegner_pi_fit'])
+    s100 = slicing.Slicer.from_objective_bind(e100.objectives[objective_name])
+    s90  = slicing.Slicer.from_objective_bind( e90.objectives[objective_name])
+    s50  = slicing.Slicer.from_objective_bind( e50.objectives[objective_name])
 
-    # Get z values
-    all_zs = []
-    for slicer in [s100, s90, s50]:
-        z, xy_names, xy_meshes = slicer.minimum_values(x_name, y_name)
-        x_mesh, y_mesh = xy_meshes
-        all_zs.append(z)
+    actual_values = s100.get_nearest_values(**fixed_values)
 
-    # Average z values
-    averaged_zs = reduce(operator.add, all_zs) / len(all_zs)
+    z100, names, meshes = s100.slice(**actual_values)
+    z90,  names, meshes =  s90.slice(**actual_values)
+    z50,  names, meshes =  s50.slice(**actual_values)
 
-    # Calculate the second derivative everywhere.
-    spliner = Simple2dSpliner(x_mesh, y_mesh, averaged_zs)
-    second_derivatives = spliner(x_mesh, y_mesh, derivative=2)
+    avg_z = reduce(operator.add, [z100, z90, z50]) / 3
 
-    # Flatten second derivative.
-    second_derivatives = numpy.reshape(second_derivatives,
-            reduce(operator.mul, second_derivatives.shape))
+    index = numpy.unravel_index(numpy.argmin(avg_z), avg_z.shape)
+    print avg_z[index]
+    best_values = dict(actual_values)
+    for name, mesh, i in itertools.izip(names, meshes, index):
+        best_values[name] = mesh[i]
 
-    mag_sd = numpy.abs(second_derivatives)
-    sdmin = numpy.min(mag_sd)
-    sd_index = numpy.argmin(mag_sd)
+    print 'Plotting for values:'
+    pprint.pprint(best_values)
 
-    if threshold is None:
-        threshold = scale * sdmin
+    objective_id = s100.get_id(**best_values)
 
-    flat_average =  numpy.reshape(averaged_zs,
-            reduce(operator.mul, averaged_zs.shape))
+    objective = db_session.query(database.Objective).filter_by(id=objective_id).first()
 
-    print 'Sharpest minimum:', sdmin, 'at index:', sd_index, 'value:', flat_average[sd_index]
-    print '%s minima below threshold = %s.' % (sum(mag_sd < threshold),
-                                               threshold)
+    timecourse(objective.run)
