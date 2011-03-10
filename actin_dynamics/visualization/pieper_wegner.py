@@ -243,7 +243,7 @@ def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False, 
     if not theme:
         theme = themes.Theme()
 
-    pylab.figure()
+#    pylab.figure()
     # unweighted f-actin
     total_factin = numerical.measurements.add([
         run.analyses['pyrene_ATP'],
@@ -300,6 +300,37 @@ def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False, 
     pylab.ylabel('Concentration (uM)')
     pylab.legend(loc=4)
 
+def all_timecourses(session, db_session,
+                    objective_name='pieper_wegner_pi_fit', **parameters):
+    e100 = session.get_experiment('pieper_wegner_100')
+    e90  = session.get_experiment('pieper_wegner_90')
+    e50  = session.get_experiment('pieper_wegner_50')
+
+    s100 = slicing.Slicer.from_objective_bind(e100.objectives[objective_name])
+    s90  = slicing.Slicer.from_objective_bind( e90.objectives[objective_name])
+    s50  = slicing.Slicer.from_objective_bind( e50.objectives[objective_name])
+
+    pylab.figure()
+
+    pylab.subplot(2,2,1)
+    id_100 = s100.get_id(**parameters)
+    obj_100 = db_session.query(database.Objective).filter_by(id=id_100).first()
+    timecourse(obj_100.run)
+    pylab.title('100% ATP')
+
+    pylab.subplot(2,2,2)
+    id_90 = s90.get_id(**parameters)
+    obj_90 = db_session.query(database.Objective).filter_by(id=id_90).first()
+    timecourse(obj_90.run)
+    pylab.title('90% ATP')
+
+    pylab.subplot(2,2,3)
+    id_50 = s50.get_id(**parameters)
+    obj_50 = db_session.query(database.Objective).filter_by(id=id_50).first()
+    timecourse(obj_50.run)
+    pylab.title('50% ATP')
+
+
 def plot_best_run(session, db_session, objective_name='pieper_wegner_pi_fit',
                   **fixed_values):
     e100 = session.get_experiment('pieper_wegner_100')
@@ -327,8 +358,4 @@ def plot_best_run(session, db_session, objective_name='pieper_wegner_pi_fit',
     print 'Plotting for values:'
     pprint.pprint(best_values)
 
-    objective_id = s100.get_id(**best_values)
-
-    objective = db_session.query(database.Objective).filter_by(id=objective_id).first()
-
-    timecourse(objective.run)
+    all_timecourses(session, db_session, objective_name=objective_name, **best_values)

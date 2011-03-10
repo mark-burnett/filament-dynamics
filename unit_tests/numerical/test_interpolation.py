@@ -94,8 +94,5 @@ class TestLineaerResample(unittest.TestCase):
                 interpolation.linear_resample(self.measurement, new_x))
 
 
-
-
-
 if '__main__' == __name__:
     unittest.main()
