@@ -49,8 +49,8 @@ def run_job(job, db_session):
         o = factories.bindings.db_single(objective.bind,
                                          objective.all_parameters)
         o.perform(job.run, objective)
-        log.debug('Storing summary of objective %s for job %s.',
-                  objective.bind.label, job.id)
+        log.debug('Storing summary of %s for job %s (%s).',
+                  objective.bind.label, job.id, objective.value)
         store_summary_information(objective)
 
     log.info('Finished job %s.', job.id)

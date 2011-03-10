@@ -1,4 +1,4 @@
-import: ['models/basic_polymerization.yaml']
+import: ['basic_polymerization.yaml']
 
 models:
     transitions:

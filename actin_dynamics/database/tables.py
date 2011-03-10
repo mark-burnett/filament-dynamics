@@ -368,5 +368,5 @@ objective_table = schema.Table('objective', global_state.metadata,
         schema.Column('run_id', schema.ForeignKey('run.id'), nullable=False),
         schema.Column('objective_bind_id', schema.ForeignKey('bind.id'),
                       nullable=False),
-        schema.Column('value', schema.types.Float, index=True),
+        schema.Column('value', schema.types.Float),
         mysql_engine='InnoDB')

@@ -29,7 +29,7 @@ parameter_specifications:
                 lower_bound: 0.001
                 upper_bound: 0.01
                 mesh_type:   linear
-                num_points:  40
+                num_points:  80
 
     pieper_wegner_90:
         simulation:
@@ -49,7 +49,7 @@ parameter_specifications:
                 lower_bound: 0.001
                 upper_bound: 0.01
                 mesh_type:   linear
-                num_points:  40
+                num_points:  80
 
     pieper_wegner_50:
         simulation:
@@ -69,4 +69,4 @@ parameter_specifications:
                 lower_bound: 0.001
                 upper_bound: 0.01
                 mesh_type:   linear
-                num_points:  40
+                num_points:  80

@@ -27,16 +27,30 @@ class PyreneFit(_Objective):
 
     def perform(self, run, target):
         data = run.experiment.objectives[self.label].measurement
+        fit, measurement = self.fit_measurement(run, data)
+
+        target.value = fit
+
+    def unnormalized_measurement(self, run):
         analyses = run.analyses
         measurements = []
         for name, weight in self.weights.iteritems():
             measurements.append(_measurements.scale(analyses[name], weight))
-        unnormalized_measurement = _measurements.add(measurements)
+        return _measurements.add(measurements)
+
+    def fit_measurement(self, run, data):
+        unnormalized_measurement = self.unnormalized_measurement(run)
 
         fit, norm = _pyrene_normalization(unnormalized_measurement, data,
                                           self.residual_function)
+        measurement = _measurements.scale(unnormalized_measurement, norm)
+#        print unnormalized_measurement[1][-1], norm, measurement[1][-1], data[1][-1]
+#        measurement = _measurements.scale(measurement, data[1][-1]/measurement[1][-1])
+#        print fit, self.residual_function(measurement, data)
 
-        target.value = fit
+
+        return fit, measurement
+
 
 
 def _pyrene_normalization(fluorescence_sim=None, fluorescence_data=None,
@@ -50,12 +64,17 @@ def _pyrene_normalization(fluorescence_sim=None, fluorescence_data=None,
     def model_function(normalization):
         scaled_sim = _measurements.scale(fluorescence_sim, normalization[0])
 
-        return residual_function(fluorescence_data, scaled_sim)
+        result = residual_function(fluorescence_data, scaled_sim)
+#        print normalization, result
+        return result
 
     # Use scipy to generate the results.
-    normalization_guess = 1
+    normalization_guess = (float(fluorescence_data[1][-1]) /
+                           fluorescence_sim[1][-1])
 
     fit_results = _optimize.fmin(model_function, normalization_guess,
+#                                 xtol=1e-6, ftol=1e-6,
                                  disp=False, full_output=True)
+#    print fit_results
 
     return fit_results[1], fit_results[0][0]

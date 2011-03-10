@@ -23,8 +23,8 @@ from . import mixins as _mixins
 class CooperativeHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'pointed_neighbors', 'rate', 'new_state',
                  'boundary_rates']
-    def __init__(self, old_state=None, rate=None, cooperativities=None,
-                 new_state=None, label=None):
+    def __init__(self, old_state=None, rate=None, new_state=None, label=None,
+                 **cooperativities):
         self.old_state        = old_state
         self.rate             = rate
         self.new_state        = new_state

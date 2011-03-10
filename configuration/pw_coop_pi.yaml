@@ -1,4 +1,4 @@
-name: 'Pieper & Wegner Cooperative Pi'
+name: 'Test Pieper & Wegner Cooperative Pi'
 
 import:
     - 'models/three_state_random_cooperative.yaml'
@@ -6,7 +6,7 @@ import:
     - 'constants.yaml'
 
 global_parameters:
-    number_of_simulations: 10
+    number_of_simulations: 5
     number_of_filaments:   3
 
 
@@ -23,17 +23,17 @@ parameter_specifications:
                 lower_bound: 0.00001
                 upper_bound: 0.005
                 mesh_type:   linear
-                num_points:  20
+                num_points:  10
 
             release_cooperativity:
                 lower_bound: 1
                 upper_bound: 1000000
                 mesh_type:   log
-                num_points:  30
+                num_points:  20
 
             filament_tip_concentration:
-                lower_bound: 0.00469
-                upper_bound: 0.00469
+                lower_bound: 0.00442
+                upper_bound: 0.00442
                 mesh_type:   linear
                 num_points:  1
 
@@ -49,17 +49,17 @@ parameter_specifications:
                 lower_bound: 0.00001
                 upper_bound: 0.005
                 mesh_type:   linear
-                num_points:  20
+                num_points:  10
 
             release_cooperativity:
                 lower_bound: 1
                 upper_bound: 1000000
                 mesh_type:   log
-                num_points:  30
+                num_points:  20
 
             filament_tip_concentration:
-                lower_bound: 0.00331
-                upper_bound: 0.00331
+                lower_bound: 0.00328
+                upper_bound: 0.00328
                 mesh_type:   linear
                 num_points:  1
 
@@ -75,16 +75,16 @@ parameter_specifications:
                 lower_bound: 0.00001
                 upper_bound: 0.005
                 mesh_type:   linear
-                num_points:  20
+                num_points:  10
 
             release_cooperativity:
                 lower_bound: 1
                 upper_bound: 1000000
                 mesh_type:   log
-                num_points:  30
+                num_points:  20
 
             filament_tip_concentration:
-                lower_bound: 0.00377
-                upper_bound: 0.00377
+                lower_bound: 0.00373
+                upper_bound: 0.00373
                 mesh_type:   linear
                 num_points:  1

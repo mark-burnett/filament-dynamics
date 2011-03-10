@@ -72,7 +72,7 @@ done
 
 if $VIEW_LOG; then
     echo "Following log."
-    bin/view_log.py -f $CONFIG_COMMAND
+    bin/view_log.py -t -f $CONFIG_COMMAND
 
     trap 'exit 0' HUP
     trap 'kill -s HUP 0' EXIT

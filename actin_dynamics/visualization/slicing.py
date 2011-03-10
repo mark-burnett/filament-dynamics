@@ -48,8 +48,9 @@ class Slicer(object):
                           for n in abscissae_names]
         select_columns.append(self.table.c.value)
 
+        nearest_values = self.get_nearest_values(**fixed_values)
         like_clauses = [self.table.c[self.column_map[n]].like(v)
-                        for n, v in fixed_values.iteritems()]
+                        for n, v in nearest_values.iteritems()]
 
         query = sql.select(select_columns, whereclause=sql.and_(*like_clauses))
 
@@ -70,6 +71,24 @@ class Slicer(object):
 
         return _format_result(result_set, abscissae_names, self.meshes)
 
+
+    def get_best_near(self, **fixed_values):
+        nearest_values = self.get_nearest_values(**fixed_values)
+
+
+    def get_nearest_values(self, **fixed_values):
+        result = {}
+        for name, value in fixed_values.iteritems():
+            mesh = self.meshes[name]
+            i = bisect.bisect_left(mesh, value)
+            if len(mesh) <= i:
+                result[name] = mesh[-1]
+            elif 0 == i:
+                result[name] = mesh[0]
+            else:
+                result[name] = min(mesh[i], mesh[i - 1])
+        return result
+
     def get_best_parameters(self):
         parameter_names = self.column_map.keys()
         column_names = [self.column_map[n] for n in parameter_names]
@@ -77,20 +96,20 @@ class Slicer(object):
 
         best_id = self.get_best_id()
         result_set = sql.select(select_columns,
-                                self.table.c.objective_id == best_id
-                                ).execute()
+                                self.table.c.objective_id == best_id,
+                                limit=1).execute()
         row = result_set.fetchone()
         result = dict((n, v) for n, v in zip(parameter_names, row)) #, row[len(row)-1]
         return result
 
     def get_best_id(self):
-        result_set = sql.select([self.table.c.objective_id]
+        result_set = sql.select([self.table.c.objective_id], limit=1,
                                 ).order_by(self.table.c.value).execute()
-        return result_set.fetchone()[0]
+        return result_set.scalar()
 
     def get_worst_value(self):
         result_set = sql.select([func.max(self.table.c.value)]).execute()
-        return result_set.fetchone()[0]
+        return result_set.scalar()
 
 
 def _format_result(result_set, names, meshes):
@@ -101,7 +120,7 @@ def _format_result(result_set, names, meshes):
     mesh_list = [meshes[n] for n in names]
 
     shape = map(len, mesh_list)
-    result = numpy.zeros(shape)
+    result = -numpy.ones(shape)
 
     for indexes, value in _index_iterator(result_set, mesh_list):
         result[tuple(indexes)] = value

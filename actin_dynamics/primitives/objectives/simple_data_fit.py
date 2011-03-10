@@ -45,3 +45,6 @@ class SimpleDataFit(_Objective):
             log.debug('Objective value: %s.', target.value)
         else:
             target.value = self.residual_function(sim_result, data)
+
+        if target.value <= 0:
+            log.warn('Negative or zero residual found %s.', target.value)

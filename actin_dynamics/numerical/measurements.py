@@ -18,9 +18,6 @@ import math
 
 from actin_dynamics.numerical import workalike
 
-from .. import logger
-log = logger.getLogger(__file__)
-
 
 def add_number(measurement, number):
     result = [list(component) for component in measurement]
@@ -38,11 +35,8 @@ def scale(measurement, factor):
     time = measurement[0]
     rest = measurement[1:]
 
-    log.debug("Scale factor = %s, type = %s.", factor, type(factor))
-
     scaled_rest = []
     for component in rest:
-        log.debug('Component member type = %s.', type(component[0]))
         scaled_rest.append([c * factor for c in component])
 
     return list([time]) + scaled_rest

@@ -33,3 +33,10 @@ def load_data(filename):
         new_row = map(float, row)
         results.append(new_row)
     return zip(*results)
+
+def write_data(filename, data):
+    with open(filename, 'w') as f:
+        writer = csv.writer(f, dialect=DataThiefDialect)
+
+        for row in zip(*data):
+            writer.writerow(row)

@@ -17,6 +17,12 @@ import numpy
 import pylab
 import matplotlib.ticker
 
+import itertools
+import operator
+
+import actin_dynamics.numerical.measurements
+from actin_dynamics import numerical
+
 from . import measurements
 from . import themes
 
@@ -47,6 +53,34 @@ def plot_min(slicer, abscissae_name, scale_x=1,
     if logscale_y:
         pylab.gca().set_yscale('log')
     pylab.xlim(x[0][0] * scale_x, x[0][-1] * scale_x)
+
+def averaged_min(slicers, abscissae_name,
+                 logscale_x=False, logscale_y=False, **kwargs):
+    all_measurements = []
+    for slicer in slicers:
+        y, junk, x = slicer.minimum_values(abscissae_name)
+        e = [0 for yv in y]
+        all_measurements.append((x[0], y, e))
+
+    average_measurement = numerical.measurements.scale(
+            numerical.measurements.add(all_measurements[:2]),
+            1.0 / len(all_measurements))
+
+    measurements.plot_smooth(average_measurement, **kwargs)
+
+    if logscale_x:
+        pylab.gca().set_xscale('log')
+    if logscale_y:
+        pylab.gca().set_yscale('log')
+    pylab.xlim(average_measurement[0][0], average_measurement[0][-1])
+
+    best_y = None
+    best_x = None
+    for x, y, e in itertools.izip(*average_measurement):
+        if best_y is None or y < best_y:
+            best_x = x
+            best_y = y
+    return best_x
 
 
 def slice_and_min(slicer=None, abscissa_name=None, theme=None,
@@ -98,11 +132,12 @@ def slice_and_min(slicer=None, abscissa_name=None, theme=None,
     pylab.ylim(y_lower_bound, y_upper_bound)
 
 
-def minimum_contour(slicer, x_name, y_name,
-                    logscale_x=False, logscale_y=False, logscale_z=False,
-                    x_lower_bound=None, x_upper_bound=None,
-                    y_lower_bound=None, y_upper_bound=None,
-                    z_lower_bound=None, z_upper_bound=None):
+def contour(slicer, x_name, y_name,
+            logscale_x=False, logscale_y=False, logscale_z=False,
+            x_lower_bound=None, x_upper_bound=None,
+            y_lower_bound=None, y_upper_bound=None,
+            z_lower_bound=None, z_upper_bound=None,
+            colorbar=True):
     # Get z values
     z, xy_names, xy_meshes = slicer.minimum_values(x_name, y_name)
     x_mesh, y_mesh = xy_meshes
@@ -113,18 +148,20 @@ def minimum_contour(slicer, x_name, y_name,
     else:
         plot_z = z.transpose()
 
-    locator = matplotlib.ticker.MaxNLocator(10)
-    locator.create_dummy_axis()
-    if logscale_z:
-        if z_lower_bound and z_upper_bound:
-            locator.set_bounds(numpy.log10(z_lower_bound),
-                               numpy.log10(z_upper_bound))
-    else:
-        locator.set_bounds(z_lower_bound, z_upper_bound)
-    levels = locator()
+#    locator = matplotlib.ticker.MaxNLocator(10)
+#    locator.create_dummy_axis()
+#    if logscale_z:
+#        if z_lower_bound and z_upper_bound:
+#            locator.set_bounds(numpy.log10(z_lower_bound),
+#                               numpy.log10(z_upper_bound))
+#    else:
+#        if z_lower_bound or z_upper_bound:
+#            locator.set_bounds(z_lower_bound, z_upper_bound)
+#    levels = locator()
 
     plot_x, plot_y = numpy.meshgrid(x_mesh, y_mesh)
-    pylab.contourf(plot_x, plot_y, plot_z, levels, cmap=pylab.cm.PRGn)
+    pylab.contourf(plot_x, plot_y, plot_z, cmap=pylab.cm.PRGn)
+#    pylab.contourf(plot_x, plot_y, plot_z, levels, cmap=pylab.cm.PRGn)
 
     # Set automatic bounds.
     if x_lower_bound is None:
@@ -137,7 +174,72 @@ def minimum_contour(slicer, x_name, y_name,
     if y_upper_bound is None:
         y_upper_bound = y_mesh[-1]
 
+    if logscale_x:
+        pylab.gca().set_xscale('log')
+    if logscale_y:
+        pylab.gca().set_yscale('log')
+
     pylab.xlim(x_lower_bound, x_upper_bound)
     pylab.ylim(y_lower_bound, y_upper_bound)
 
-    pylab.colorbar()
+    if colorbar:
+        pylab.colorbar()
+
+
+def averaged_contour(slicers, x_name, y_name,
+                     logscale_x=False, logscale_y=False, logscale_z=False,
+                     x_lower_bound=None, x_upper_bound=None,
+                     y_lower_bound=None, y_upper_bound=None,
+                     z_lower_bound=None, z_upper_bound=None,
+                     colorbar=True):
+    # Get z values
+    all_zs = []
+    for slicer in slicers:
+        z, xy_names, xy_meshes = slicer.minimum_values(x_name, y_name)
+        x_mesh, y_mesh = xy_meshes
+        all_zs.append(z)
+
+    # Average z values
+    averaged_zs = reduce(operator.add, all_zs) / len(all_zs)
+
+    # Transform z (for matplotlib's convention) and take log.
+    if logscale_z:
+        plot_z = numpy.log10(averaged_zs).transpose()
+    else:
+        plot_z = averaged_zs.transpose()
+
+#    locator = matplotlib.ticker.MaxNLocator(10)
+#    locator.create_dummy_axis()
+#    if logscale_z:
+#        if z_lower_bound and z_upper_bound:
+#            locator.set_bounds(numpy.log10(z_lower_bound),
+#                               numpy.log10(z_upper_bound))
+#    else:
+#        locator.set_bounds(z_lower_bound, z_upper_bound)
+#    levels = locator()
+
+    plot_x, plot_y = numpy.meshgrid(x_mesh, y_mesh)
+    pylab.contourf(plot_x, plot_y, plot_z, cmap=pylab.cm.PRGn)
+#    pylab.contourf(plot_x, plot_y, plot_z, levels, cmap=pylab.cm.PRGn)
+
+    # Set automatic bounds.
+    if x_lower_bound is None:
+        x_lower_bound = x_mesh[0]
+    if x_upper_bound is None:
+        x_upper_bound = x_mesh[-1]
+
+    if y_lower_bound is None:
+        y_lower_bound = y_mesh[0]
+    if y_upper_bound is None:
+        y_upper_bound = y_mesh[-1]
+
+    if logscale_x:
+        pylab.gca().set_xscale('log')
+    if logscale_y:
+        pylab.gca().set_yscale('log')
+
+    pylab.xlim(x_lower_bound, x_upper_bound)
+    pylab.ylim(y_lower_bound, y_upper_bound)
+
+    if colorbar:
+        pylab.colorbar()
