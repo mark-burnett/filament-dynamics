@@ -18,6 +18,8 @@ import csv as _csv
 
 from .base_classes import FileReader as _FileReader
 
+from actin_dynamics.numerical import interpolation as _interpolation
+from actin_dynamics.numerical import workalike as _workalike
 from actin_dynamics.io import comments as _comments
 
 class _DatDialect(_csv.Dialect):
@@ -53,4 +55,11 @@ class DatReader(_FileReader):
             new_row = map(float, row)
             results.append(new_row)
 
-        return zip(*results)
+        raw_results = zip(*results)
+        if not self.interpolate_data:
+            return raw_results
+
+        sample_times = _workalike.arange(self.xmin, self.xmax,
+                                         self.sample_period)
+        print sample_times
+        return _interpolation.resample_measurement(raw_results, sample_times)
