@@ -1,12 +1,5 @@
-goals for thursday:
-    progress on p & w
-        visual spreads for all 3 experiments
-
-steps for thursday:
-    best timecourse plots
-        best ftc
-        best pi
-        comparative "near best" pi's
+goals for Tuesday
+    P&W preliminary analysis
 
 
 goals for end of march:
@@ -35,19 +28,12 @@ validation - high priority
 configuration - medium-high priority
     allow more "global" like config, e.g. sesion binds or something.
         think about pieper & wegner..3 experiments with only 2 differences.
-    * this would allow us to have a 'constants' file we could import
-        would include e.g. standard/fujiwara rates or frank's coefficients
     validation for config files
 
-
-database
-    set appropriate cascades for deletes
-        it's going to be hard to keep the db clean without this
 
 
 performance profiling - medium priority
     record job start/stop times
-
 
 
 process utils - low priority
@@ -55,6 +41,12 @@ process utils - low priority
     close processes
     list # active jobs, awaiting jobs, etc. (general job status)
     report run times for each job
+    estimate remaining run time from session start time # jobs complete, etc
+
+
+database - low priority
+    set appropriate cascades for deletes
+        it's going to be hard to keep the db clean without this
 
 
 sim.sh - low priority
