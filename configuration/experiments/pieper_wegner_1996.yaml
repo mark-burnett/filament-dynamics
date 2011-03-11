@@ -196,7 +196,7 @@ experiments:
                 pieper_wegner_pi_fit:
                     class_name: DatReader
                     fixed_arguments:
-                        filename: 'pieper_wegner_1996/phosphate_concentration_100_0.dat'
+                        filename: 'pieper_wegner_1996/mg_phosphate_concentration_100_0.dat'
 
                 flat_pyrene_fit:
                     class_name: DatReader
@@ -205,7 +205,7 @@ experiments:
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/pyrene_fluorescence_100_0.dat'
+                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_100_0.dat'
                         interpolate_data: True
 
                 brooks_pyrene_fit:
@@ -215,7 +215,7 @@ experiments:
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/pyrene_fluorescence_100_0.dat'
+                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_100_0.dat'
                         interpolate_data: True
 
 
@@ -403,7 +403,7 @@ experiments:
                 pieper_wegner_pi_fit:
                     class_name: DatReader
                     fixed_arguments:
-                        filename: 'pieper_wegner_1996/phosphate_concentration_90_10.dat'
+                        filename: 'pieper_wegner_1996/mg_phosphate_concentration_90_10.dat'
 
                 flat_pyrene_fit:
                     class_name: DatReader
@@ -412,7 +412,7 @@ experiments:
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/pyrene_fluorescence_90_10.dat'
+                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_90_10.dat'
                         interpolate_data: True
 
                 brooks_pyrene_fit:
@@ -422,7 +422,7 @@ experiments:
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/pyrene_fluorescence_90_10.dat'
+                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_90_10.dat'
                         interpolate_data: True
 
 
@@ -607,7 +607,7 @@ experiments:
                 pieper_wegner_pi_fit:
                     class_name: DatReader
                     fixed_arguments:
-                        filename: 'pieper_wegner_1996/phosphate_concentration_50_50.dat'
+                        filename: 'pieper_wegner_1996/mg_phosphate_concentration_50_50.dat'
 
                 flat_pyrene_fit:
                     class_name: DatReader
@@ -616,7 +616,7 @@ experiments:
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/pyrene_fluorescence_50_50.dat'
+                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_50_50.dat'
                         interpolate_data: True
 
                 brooks_pyrene_fit:
@@ -626,7 +626,7 @@ experiments:
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/pyrene_fluorescence_50_50.dat'
+                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_50_50.dat'
                         interpolate_data: True
 
 

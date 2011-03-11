@@ -341,6 +341,8 @@ def plot_best_run(session, db_session, objective_name='pieper_wegner_pi_fit',
     s90  = slicing.Slicer.from_objective_bind( e90.objectives[objective_name])
     s50  = slicing.Slicer.from_objective_bind( e50.objectives[objective_name])
 
+    print s100.minimum_values('release_cooperativity', 'release_rate')
+
     actual_values = s100.get_nearest_values(**fixed_values)
 
     z100, names, meshes = s100.slice(**actual_values)

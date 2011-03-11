@@ -111,6 +111,10 @@ class Slicer(object):
                                 ).order_by(self.table.c.value).execute()
         return result_set.scalar()
 
+    def get_best_value(self):
+        result_set = sql.select([func.min(self.table.c.value)]).execute()
+        return result_set.scalar()
+
     def get_worst_value(self):
         result_set = sql.select([func.max(self.table.c.value)]).execute()
         return result_set.scalar()

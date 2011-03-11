@@ -17,6 +17,7 @@ from .base_classes import Objective as _Objective
 
 from actin_dynamics.numerical import residuals as _residuals
 from actin_dynamics.numerical import interpolation as _interpolation
+import itertools as _itertools
 
 from actin_dynamics import logger
 log = logger.getLogger(__file__)
@@ -34,17 +35,28 @@ class SimpleDataFit(_Objective):
         log.debug('Perfomring SimpleDataFit of %s.', self.measurement_name)
         sim_result = run.analyses[self.measurement_name]
         data = run.experiment.objectives[self.label].measurement
-        log.debug('Data times: %s',  data[0])
-        log.debug('Data values: %s', data[1])
-
         if self.interpolate_simulation:
             interp = _interpolation.resample_measurement(sim_result, data[0])
             log.debug('interp times: %s', interp[0])
             log.debug('interp values: %s', interp[1])
             target.value = self.residual_function(interp, data)
             log.debug('Objective value: %s.', target.value)
+
+            for st, dt in _itertools.izip(interp[0], data[0]):
+                if st != dt:
+                    log.error('Simulation and data times not equal.')
+                    log.info('Data time: %s.', data[0])
+                    log.info('Sim time:  %s.', interp[0])
+                    break
+
+            log.debug('Sim  values: %s', interp[1])
+            log.debug('Data values: %s', data[1])
+
         else:
             target.value = self.residual_function(sim_result, data)
+
+            log.debug('Sim  values: %s', sim_result[1])
+            log.debug('Data values: %s', data[1])
 
         if target.value <= 0:
             log.warn('Negative or zero residual found %s.', target.value)
