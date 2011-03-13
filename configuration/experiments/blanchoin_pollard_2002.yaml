@@ -28,9 +28,9 @@ experiments:
             pointed_adppi_polymerization_rate:   0
             pointed_adp_polymerization_rate:     0
 
-            pointed_pyreneatp_polymerization_rate:     0
-            pointed_pyreneadppi_polymerization_rate:   0
-            pointed_pyreneadp_polymerization_rate:     0
+            pointed_pyrene_atp_polymerization_rate:     0
+            pointed_pyrene_adppi_polymerization_rate:   0
+            pointed_pyrene_adp_polymerization_rate:     0
 
             pointed_atp_depolymerization_rate:   0
             pointed_adppi_depolymerization_rate: 0

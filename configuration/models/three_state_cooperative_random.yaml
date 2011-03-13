@@ -5,10 +5,10 @@ models:
         # Hydrolysis
         pyrene_cleavage:
             class_name: CooperativeHydrolysis
-            fixed_parameters:
+            fixed_arguments:
                 old_state: pyrene_ATP
                 new_state: pyrene_ADPPi
-            parameters:
+            variable_arguments:
                 rate: cleavage_rate
                 pyrene_ADPPi: cleavage_cooperativity
                 ADPPi:        cleavage_cooperativity
@@ -17,10 +17,10 @@ models:
 
         cleavage:
             class_name: CooperativeHydrolysis
-            fixed_parameters:
+            fixed_arguments:
                 old_state: ATP
                 new_state: ADPPi
-            parameters:
+            variable_arguments:
                 rate: cleavage_rate
                 pyrene_ADPPi: cleavage_cooperativity
                 ADPPi:        cleavage_cooperativity
@@ -30,18 +30,18 @@ models:
 
         pyrene_release:
             class_name: RandomHydrolysisWithByproduct
-            fixed_parameters:
+            fixed_arguments:
                 old_state: pyrene_ADPPi
                 new_state: pyrene_ADP
                 byproduct: Pi
-            parameters:
+            variable_arguments:
                 rate: release_rate
 
         release:
             class_name: RandomHydrolysisWithByproduct
-            fixed_parameters:
+            fixed_arguments:
                 old_state: ADPPi
                 new_state: ADP
                 byproduct: Pi
-            parameters:
+            variable_arguments:
                 rate: release_rate

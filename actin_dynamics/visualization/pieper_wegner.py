@@ -347,12 +347,13 @@ def plot_best_run(session, db_session, objective_name='pieper_wegner_pi_fit',
 
     z100, names, meshes = s100.slice(**actual_values)
     z90,  names, meshes =  s90.slice(**actual_values)
-    z50,  names, meshes =  s50.slice(**actual_values)
+#    z50,  names, meshes =  s50.slice(**actual_values)
 
-    avg_z = reduce(operator.add, [z100, z90, z50]) / 3
+#    avg_z = reduce(operator.add, [z100, z90, z50]) / 3
 
-    index = numpy.unravel_index(numpy.argmin(avg_z), avg_z.shape)
-    print avg_z[index]
+#    index = numpy.unravel_index(numpy.argmin(avg_z), avg_z.shape)
+    index = numpy.unravel_index(numpy.argmin(z100), z100.shape)
+#    print avg_z[index]
     best_values = dict(actual_values)
     for name, mesh, i in itertools.izip(names, meshes, index):
         best_values[name] = mesh[i]

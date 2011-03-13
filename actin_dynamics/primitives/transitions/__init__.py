@@ -20,6 +20,7 @@ from cooperative_hydrolysis import *
 from depolymerization import *
 from polymerization import *
 from random_hydrolysis import *
+from tip_hydrolysis import *
 from vectorial_hydrolysis import *
 
 del concentration_changes
@@ -27,6 +28,7 @@ del cooperative_hydrolysis
 del depolymerization
 del polymerization
 del random_hydrolysis
+del tip_hydrolysis
 del vectorial_hydrolysis
 
 del base_classes
