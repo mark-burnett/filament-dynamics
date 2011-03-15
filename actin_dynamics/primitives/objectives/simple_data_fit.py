@@ -38,7 +38,7 @@ class SimpleDataFit(_Objective):
         if self.interpolate_simulation:
             interp = _interpolation.resample_measurement(sim_result, data[0])
 
-            log.debug('interp times: %s', interp[0])
+#            log.debug('interp times: %s', interp[0])
             log.debug('Sim  values: %s', interp[1])
             log.debug('Data values: %s', data[1])
 

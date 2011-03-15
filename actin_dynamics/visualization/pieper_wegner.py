@@ -266,6 +266,32 @@ def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False,
     measurements.plot_scatter(pi_data, label='[Pi] Data',
                               **theme('pi_light', 'data_points'))
 
+    # XXX Print out the data points
+    import bisect
+    blah_sim_pi = run.analyses['Pi']
+    print '------------------------------'
+    print 'Timecourse Pi data comparison.'
+    for t, v, e in zip(*pi_data):
+        index = bisect.bisect_left(blah_sim_pi[0], t)
+        if 0 < index < len(blah_sim_pi[0]):
+            print ' Point bounded:'
+            print '   below:', blah_sim_pi[0][index - 1], blah_sim_pi[1][index - 1]
+            print '    data:', t, v
+            print '   above:', blah_sim_pi[0][index], blah_sim_pi[1][index]
+        elif 0 == index:
+            print ' Point Unbounded Below:'
+            print '    data:', t, v
+            print '   above:', blah_sim_pi[0][0], blah_sim_pi[1][0]
+            print '    next:', blah_sim_pi[0][1], blah_sim_pi[1][1]
+        else:
+            print '  Point Unbounded Above:'
+            print '     prev:', blah_sim_pi[0][index - 2], blah_sim_pi[1][index - 2]
+            print '    below:', blah_sim_pi[0][index - 1], blah_sim_pi[1][index - 1]
+            print '     data:', t, v
+
+
+        
+
     # both pyrene intensities + data
     brooks_bind = run.experiment.objectives['brooks_pyrene_fit']
 
@@ -390,7 +416,12 @@ def plot_best_run(session, db_session, objective_name='pieper_wegner_pi_fit',
 
     index = numpy.unravel_index(numpy.argmin(avg_z), avg_z.shape)
 
-    print 'Best fit:', numpy.min(avg_z)
+#    print 'Best fit:', numpy.min(avg_z)
+    print 'Phosphate concentration fit.'
+    print '100% ATP Fit:', z100[index]
+    print ' 90% ATP Fit:', z90[index]
+    print ' 50% ATP Fit:', z50[index]
+    print ' Average Fit:', avg_z[index]
 
 #    print z100[index], z90[index], z50[index], avg_z[index]
 #    print numpy.min(z100), numpy.min(z90), numpy.min(z50), numpy.min(avg_z)

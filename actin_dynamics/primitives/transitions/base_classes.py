@@ -30,8 +30,8 @@ class Transition(object):
     __slots__ = ['label']
     def __init__(self, label=None):
         self.label = label
-        _log.debug('Registerring transition %s as class %s.', label,
-                   self.__class__.__name__)
+#        _log.debug('Creating transition %s as class %s.', label,
+#                   self.__class__.__name__)
 
     def perform(self, time, filaments, concentrations, index, r):
         pass
