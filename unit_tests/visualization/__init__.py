@@ -12,20 +12,3 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-import unittest
-
-from sqlalchemy import create_engine, orm
-
-from actin_dynamics import database
-
-class DBTestCase(unittest.TestCase):
-    def setUp(self):
-        self.engine = create_engine('sqlite:///:memory:')
-        self.DBSession = orm.sessionmaker(bind=self.engine)
-        self.db_session = self.DBSession()
-        database.global_state.metadata.create_all(self.engine)
-
-    def tearDown(self):
-        self.db_session.close()
-        database.global_state.metadata.drop_all(self.engine)
