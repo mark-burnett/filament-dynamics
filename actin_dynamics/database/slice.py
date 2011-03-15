@@ -41,7 +41,7 @@ _orm.mapper(SliceParameter, _tables.slice_parameter_table, properties={
 
 
 class SliceDefinition(object):
-    def __init__(self, objective_bind, table_name=None):
+    def __init__(self, objective_bind=None, table_name=None):
         if objective_bind:
             self.objective_bind = objective_bind
         if table_name:

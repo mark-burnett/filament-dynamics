@@ -31,7 +31,10 @@ class Slicer(object):
     def from_objective_bind(cls, objective_bind):
         # XXX again with the 0
         sd = objective_bind.slice_definition[0]
+        return cls.from_slice_definition(sd)
 
+    @classmethod
+    def from_slice_definition(cls, sd):
         table_name = sd.table_name
         column_map = sd.column_map
         meshes     = sd.meshes
@@ -90,7 +93,12 @@ class Slicer(object):
             elif 0 == i:
                 result[name] = mesh[0]
             else:
-                result[name] = min(mesh[i], mesh[i - 1])
+                lower_diff = abs(value - mesh[i - 1])
+                upper_diff = abs(value - mesh[i])
+                if lower_diff < upper_diff:
+                    result[name] = mesh[i - 1]
+                else:
+                    result[name] = mesh[i]
         return result
 
     def get_best_parameters(self):
