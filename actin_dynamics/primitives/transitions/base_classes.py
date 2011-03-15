@@ -19,6 +19,9 @@ from ..meta_classes import Registration
 
 from registry import transition_registry
 
+from actin_dynamics import logger as _logger
+_log = _logger.getLogger(__file__)
+
 class Transition(object):
     __metaclass__ = Registration
     registry = transition_registry
@@ -27,6 +30,8 @@ class Transition(object):
     __slots__ = ['label']
     def __init__(self, label=None):
         self.label = label
+        _log.debug('Registerring transition %s as class %s.', label,
+                   self.__class__.__name__)
 
     def perform(self, time, filaments, concentrations, index, r):
         pass

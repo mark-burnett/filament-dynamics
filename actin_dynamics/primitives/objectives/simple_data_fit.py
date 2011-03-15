@@ -32,31 +32,23 @@ class SimpleDataFit(_Objective):
         _Objective.__init__(self, label=label)
 
     def perform(self, run, target):
-        log.debug('Perfomring SimpleDataFit of %s.', self.measurement_name)
+        log.debug('Performing SimpleDataFit of %s.', self.measurement_name)
         sim_result = run.analyses[self.measurement_name]
         data = run.experiment.objectives[self.label].measurement
         if self.interpolate_simulation:
             interp = _interpolation.resample_measurement(sim_result, data[0])
+
             log.debug('interp times: %s', interp[0])
-            log.debug('interp values: %s', interp[1])
-            target.value = self.residual_function(interp, data)
-            log.debug('Objective value: %s.', target.value)
-
-            for st, dt in _itertools.izip(interp[0], data[0]):
-                if st != dt:
-                    log.error('Simulation and data times not equal.')
-                    log.info('Data time: %s.', data[0])
-                    log.info('Sim time:  %s.', interp[0])
-                    break
-
             log.debug('Sim  values: %s', interp[1])
             log.debug('Data values: %s', data[1])
 
+            target.value = self.residual_function(interp, data)
         else:
             target.value = self.residual_function(sim_result, data)
 
             log.debug('Sim  values: %s', sim_result[1])
             log.debug('Data values: %s', data[1])
+        log.debug('Objective value: %s.', target.value)
 
         if target.value <= 0:
             log.warn('Negative or zero residual found %s.', target.value)

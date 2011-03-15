@@ -31,7 +31,7 @@ from actin_dynamics.factories import bindings
 import actin_dynamics.numerical.measurements
 from actin_dynamics import numerical
 
-def pi_session(session):
+def pi_session(session, db_session):
     # Release Cooperativity
     best_cooperativity = combined_pi(session, logscale_x=True, logscale_y=True)
     side_by_side_pyrene(session, parameter_name='release_cooperativity',
@@ -40,14 +40,16 @@ def pi_session(session):
 
     # Release Rate
     combined_pi(session, parameter_name='release_rate',
-                x_label='Release Rate (s^-1)')
+                x_label='Release Rate (s^-1)', logscale_x=True, logscale_y=True)
     side_by_side_pyrene(session, parameter_name='release_rate',
-                        x_label='Release Rate (s^-1)', x_scale=1)
+                        x_label='Release Rate (s^-1)', x_scale=1,
+                        logscale_x=True, logscale_y=True)
 
     # Contours
     contour_pi(session)
 
     # Timecourses for all minima!
+    plot_best_run(session, db_session)
 #    minima_timecourses_pi(session)
 
 
@@ -239,7 +241,8 @@ def contour_pi(session, logscale_x=True, logscale_y=True, logscale_z=True):
     pylab.title('Average')
 
 
-def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False, theme=None):
+def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False,
+               tip_release=False, theme=None):
     if not theme:
         theme = themes.Theme()
 
@@ -291,6 +294,16 @@ def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False, 
                              label='Brooks Pyrene Simulation',
                              **theme('pyrene_dark', 'simulation_line'))
 
+    if tip_release:
+        tip_pyrene_pi = run.analyses['tip_pyrene_phosphate_release']
+        tip_pi = run.analyses['tip_phosphate_release']
+        tip_release_pi = numerical.measurements.add([tip_pyrene_pi, tip_pi])
+        tip_release_pi = numerical.measurements.scale(tip_release_pi,
+                run.all_parameters['filament_tip_concentration'])
+        measurements.plot_smooth(tip_release_pi,
+                                 label='[Pi] release from tip',
+                                 **theme('pi_dark', 'simulation_line'))
+
     # Limits
     pylab.xlim(0, 600)
     pylab.ylim(0, None)
@@ -300,8 +313,8 @@ def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False, 
     pylab.ylabel('Concentration (uM)')
     pylab.legend(loc=4)
 
-def all_timecourses(session, db_session,
-                    objective_name='pieper_wegner_pi_fit', **parameters):
+def all_timecourses(session, db_session, objective_name='pieper_wegner_pi_fit',
+                    tip_release=False, **parameters):
     e100 = session.get_experiment('pieper_wegner_100')
     e90  = session.get_experiment('pieper_wegner_90')
     e50  = session.get_experiment('pieper_wegner_50')
@@ -315,45 +328,73 @@ def all_timecourses(session, db_session,
     pylab.subplot(2,2,1)
     id_100 = s100.get_id(**parameters)
     obj_100 = db_session.query(database.Objective).filter_by(id=id_100).first()
-    timecourse(obj_100.run)
+    timecourse(obj_100.run, tip_release=tip_release)
     pylab.title('100% ATP')
 
     pylab.subplot(2,2,2)
     id_90 = s90.get_id(**parameters)
     obj_90 = db_session.query(database.Objective).filter_by(id=id_90).first()
-    timecourse(obj_90.run)
+    timecourse(obj_90.run, tip_release=tip_release)
     pylab.title('90% ATP')
 
     pylab.subplot(2,2,3)
     id_50 = s50.get_id(**parameters)
     obj_50 = db_session.query(database.Objective).filter_by(id=id_50).first()
-    timecourse(obj_50.run)
+    timecourse(obj_50.run, tip_release=tip_release)
     pylab.title('50% ATP')
 
 
 def plot_best_run(session, db_session, objective_name='pieper_wegner_pi_fit',
-                  **fixed_values):
+                  tip_release=False, **fixed_values):
     e100 = session.get_experiment('pieper_wegner_100')
     e90  = session.get_experiment('pieper_wegner_90')
     e50  = session.get_experiment('pieper_wegner_50')
+
+    p100 = slicing.Slicer.from_objective_bind(e100.objectives['brooks_pyrene_fit'])
+    p90  = slicing.Slicer.from_objective_bind( e90.objectives['brooks_pyrene_fit'])
+    p50  = slicing.Slicer.from_objective_bind( e50.objectives['brooks_pyrene_fit'])
 
     s100 = slicing.Slicer.from_objective_bind(e100.objectives[objective_name])
     s90  = slicing.Slicer.from_objective_bind( e90.objectives[objective_name])
     s50  = slicing.Slicer.from_objective_bind( e50.objectives[objective_name])
 
-    print s100.minimum_values('release_cooperativity', 'release_rate')
+    best_100 = p100.get_best_parameters()
+    best_90  = p90.get_best_parameters()
+    best_50  = p50.get_best_parameters()
+
+    ftc_100 = best_100['filament_tip_concentration']
+    ftc_90  = best_90['filament_tip_concentration']
+    ftc_50  = best_50['filament_tip_concentration']
+
+
+    print '100% ATP FTC:', ftc_100
+    print ' 90% ATP FTC:', ftc_90
+    print ' 50% ATP FTC:', ftc_50
+
 
     actual_values = s100.get_nearest_values(**fixed_values)
 
-    z100, names, meshes = s100.slice(**actual_values)
-    z90,  names, meshes =  s90.slice(**actual_values)
-#    z50,  names, meshes =  s50.slice(**actual_values)
+    z100, names, meshes = s100.slice(filament_tip_concentration=ftc_100,
+                                     **actual_values)
+    z90,  names, meshes =  s90.slice(filament_tip_concentration=ftc_90,
+                                     **actual_values)
+    z50,  names, meshes =  s50.slice(filament_tip_concentration=ftc_50,
+                                     **actual_values)
+#    print names
 
-#    avg_z = reduce(operator.add, [z100, z90, z50]) / 3
+    avg_z = reduce(operator.add, [z100, z90, z50]) / 3
 
-#    index = numpy.unravel_index(numpy.argmin(avg_z), avg_z.shape)
-    index = numpy.unravel_index(numpy.argmin(z100), z100.shape)
-#    print avg_z[index]
+#    print 'is this working?'
+#    print z100[0][5][5][0], z90[0][5][5][0], z50[0][5][5][0], avg_z[0][5][5][0]
+#    print sum([z100[0][5][5][0], z90[0][5][5][0], z50[0][5][5][0]]) / 3
+
+    index = numpy.unravel_index(numpy.argmin(avg_z), avg_z.shape)
+
+    print 'Best fit:', numpy.min(avg_z)
+
+#    print z100[index], z90[index], z50[index], avg_z[index]
+#    print numpy.min(z100), numpy.min(z90), numpy.min(z50), numpy.min(avg_z)
+
     best_values = dict(actual_values)
     for name, mesh, i in itertools.izip(names, meshes, index):
         best_values[name] = mesh[i]
@@ -361,4 +402,86 @@ def plot_best_run(session, db_session, objective_name='pieper_wegner_pi_fit',
     print 'Plotting for values:'
     pprint.pprint(best_values)
 
-    all_timecourses(session, db_session, objective_name=objective_name, **best_values)
+    all_timecourses(session, db_session, objective_name=objective_name,
+                    tip_release=tip_release, **best_values)
+
+
+def plot_best_100_run(session, db_session, objective_name='pieper_wegner_pi_fit',
+                      tip_release=False, **fixed_values):
+    e100 = session.get_experiment('pieper_wegner_100')
+
+    s100 = slicing.Slicer.from_objective_bind(e100.objectives[objective_name])
+
+    actual_values = s100.get_nearest_values(**fixed_values)
+
+    z100, names, meshes = s100.slice(**actual_values)
+
+    avg_z = z100
+
+    index = numpy.unravel_index(numpy.argmin(avg_z), avg_z.shape)
+
+    print 'Best fit:', numpy.min(avg_z)
+
+    best_values = dict(actual_values)
+    for name, mesh, i in itertools.izip(names, meshes, index):
+        best_values[name] = mesh[i]
+
+    print 'Plotting for values:'
+    pprint.pprint(best_values)
+
+    all_timecourses(session, db_session, objective_name=objective_name,
+                    tip_release=tip_release, **best_values)
+
+
+def plot_best_90_run(session, db_session, objective_name='pieper_wegner_pi_fit',
+                      tip_release=False, **fixed_values):
+    e90 = session.get_experiment('pieper_wegner_90')
+
+    s90 = slicing.Slicer.from_objective_bind(e90.objectives[objective_name])
+
+    actual_values = s90.get_nearest_values(**fixed_values)
+
+    z90, names, meshes = s90.slice(**actual_values)
+
+    avg_z = z90
+
+    index = numpy.unravel_index(numpy.argmin(avg_z), avg_z.shape)
+
+    print 'Best fit:', numpy.min(avg_z)
+
+    best_values = dict(actual_values)
+    for name, mesh, i in itertools.izip(names, meshes, index):
+        best_values[name] = mesh[i]
+
+    print 'Plotting for values:'
+    pprint.pprint(best_values)
+
+    all_timecourses(session, db_session, objective_name=objective_name,
+                    tip_release=tip_release, **best_values)
+
+
+def plot_best_50_run(session, db_session, objective_name='pieper_wegner_pi_fit',
+                      tip_release=False, **fixed_values):
+    e50 = session.get_experiment('pieper_wegner_50')
+
+    s50 = slicing.Slicer.from_objective_bind(e50.objectives[objective_name])
+
+    actual_values = s50.get_nearest_values(**fixed_values)
+
+    z50, names, meshes = s50.slice(**actual_values)
+
+    avg_z = z50
+
+    index = numpy.unravel_index(numpy.argmin(avg_z), avg_z.shape)
+
+    print 'Best fit:', numpy.min(avg_z)
+
+    best_values = dict(actual_values)
+    for name, mesh, i in itertools.izip(names, meshes, index):
+        best_values[name] = mesh[i]
+
+    print 'Plotting for values:'
+    pprint.pprint(best_values)
+
+    all_timecourses(session, db_session, objective_name=objective_name,
+                    tip_release=tip_release, **best_values)
