@@ -1,5 +1,6 @@
-goals for Tuesday
-    P&W preliminary analysis
+goals for Friday
+    show good timecourses
+    show good contour (everything is just shifted tbh)
 
 
 goals for end of march:
@@ -9,9 +10,32 @@ goals for end of march:
         fit data/standard analysis
         tip diffusion coefficient as function of concentration
 
+visualizations for publication
+    pollard (ignore release -- just use best fit result from p & w)
+        fit ftc (brooks vs flat, assume brooks)
+            best fit slice
+            timecourses
+        fit adppi
+            best fit slices
+            contours
+            timecourses
 
-visualization - high priority
-    make bulk plotting functions that plot a whole session
+    p & w (ignore cleavage --just use best fit result from pollard)
+        only show cooperative model
+            fit ftc (choose brooks as better fit)
+                brooks vs flat
+                    best fit slices
+                timecourses
+            fit pi
+                best fit slices
+                contours
+                timecourses
+
+    fujiwara (does this cooperative model fit data)
+        simulated histograms vs data histograms (just show an example?)
+        histogram width vs time (shows we fit all the fujiwara data)
+        D vs concentration (vavylonis plot)
+            this is the predictive/directly comparable to other theory plot
 
 
 validation - high priority
