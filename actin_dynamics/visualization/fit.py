@@ -138,10 +138,11 @@ def contour(slicer, x_name, y_name,
             x_lower_bound=None, x_upper_bound=None,
             y_lower_bound=None, y_upper_bound=None,
             z_lower_bound=None, z_upper_bound=None,
-            colorbar=True):
+            scale_x=1, colorbar=True):
     # Get z values
     z, xy_names, xy_meshes = slicer.minimum_values(x_name, y_name)
     x_mesh, y_mesh = xy_meshes
+    scaled_x = [x * scale_x for x in x_mesh]
 
     # Transform z (for matplotlib's convention) and take log.
     if logscale_z:
@@ -160,15 +161,15 @@ def contour(slicer, x_name, y_name,
 #            locator.set_bounds(z_lower_bound, z_upper_bound)
 #    levels = locator()
 
-    plot_x, plot_y = numpy.meshgrid(x_mesh, y_mesh)
+    plot_x, plot_y = numpy.meshgrid(scaled_x, y_mesh)
     pylab.contourf(plot_x, plot_y, plot_z, cmap=pylab.cm.PRGn)
 #    pylab.contourf(plot_x, plot_y, plot_z, levels, cmap=pylab.cm.PRGn)
 
     # Set automatic bounds.
     if x_lower_bound is None:
-        x_lower_bound = x_mesh[0]
+        x_lower_bound = scaled_x[0]
     if x_upper_bound is None:
-        x_upper_bound = x_mesh[-1]
+        x_upper_bound = scaled_x[-1]
 
     if y_lower_bound is None:
         y_lower_bound = y_mesh[0]
@@ -192,12 +193,14 @@ def averaged_contour(slicers, x_name, y_name,
                      x_lower_bound=None, x_upper_bound=None,
                      y_lower_bound=None, y_upper_bound=None,
                      z_lower_bound=None, z_upper_bound=None,
+                     scale_x=1,
                      colorbar=True):
     # Get z values
     all_zs = []
     for slicer in slicers:
         z, xy_names, xy_meshes = slicer.minimum_values(x_name, y_name)
         x_mesh, y_mesh = xy_meshes
+        scaled_x = [x * scale_x for x in x_mesh]
         all_zs.append(z)
 
     # Average z values
@@ -219,15 +222,15 @@ def averaged_contour(slicers, x_name, y_name,
 #        locator.set_bounds(z_lower_bound, z_upper_bound)
 #    levels = locator()
 
-    plot_x, plot_y = numpy.meshgrid(x_mesh, y_mesh)
+    plot_x, plot_y = numpy.meshgrid(scaled_x, y_mesh)
     pylab.contourf(plot_x, plot_y, plot_z, cmap=pylab.cm.PRGn)
 #    pylab.contourf(plot_x, plot_y, plot_z, levels, cmap=pylab.cm.PRGn)
 
     # Set automatic bounds.
     if x_lower_bound is None:
-        x_lower_bound = x_mesh[0]
+        x_lower_bound = scaled_x[0]
     if x_upper_bound is None:
-        x_upper_bound = x_mesh[-1]
+        x_upper_bound = scaled_x[-1]
 
     if y_lower_bound is None:
         y_lower_bound = y_mesh[0]

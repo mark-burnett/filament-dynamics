@@ -91,7 +91,7 @@ class SlicerTests(base_test_cases.DBTestCase):
             cv = dict((column_map[n], v) for n, v in dv.iteritems())
             value = sum(values)
             cv['value'] = value
-            cv['id'] = value
+            cv['objective_id'] = value
             self.engine.execute(table.insert(cv))
 
 
@@ -126,7 +126,14 @@ class SlicerTests(base_test_cases.DBTestCase):
             self.assertEqual(['parB'], list(parB_s_names))
             self.assertEqual([self.meshes['parB']], list(parB_s_meshes))
 
-        # Nearest value tests.
+        # Best parameter test.
+        self.assertEqual({'parA': 0.0, 'parB': 0.0}, s.get_best_parameters())
+
+        # Best value test.
+        self.assertEqual(0.0, s.get_best_value())
+
+        # Best id test.
+        self.assertEqual(0, s.get_best_id())
 
 
 if '__main__' == __name__:

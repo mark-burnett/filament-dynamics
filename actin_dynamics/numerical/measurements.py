@@ -15,9 +15,24 @@
 
 import copy
 import math
+import bisect
 
 from actin_dynamics.numerical import workalike
 
+
+def time_slice(measurement, start_time=None, stop_time=None):
+    start_index = 0
+    stop_index  = len(measurement[0])
+    if start_time is not None:
+        start_index = bisect.bisect_left(measurement[0], start_time)
+    if stop_time is not None:
+        stop_index = bisect.bisect_right(measurement[0], stop_time)
+
+    sliced_measurement = []
+    for component in measurement:
+        sliced_measurement.append(component[start_index:stop_index])
+
+    return sliced_measurement
 
 def add_number(measurement, number):
     result = [list(component) for component in measurement]
