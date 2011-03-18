@@ -21,12 +21,12 @@ class FixedConcentration(_Concentration):
     states = None
 
     __slots__ = ['value', 'data']
-    def __init__(self, concentration=-1, measurement_label=None):
+    def __init__(self, concentration=-1, label=None):
         if concentration < 0:
             raise ValueError('Negative concentrations not allowed.')
         self.value = concentration
         self.data = [(0, concentration)]
-        _Concentration.__init__(self, measurement_label)
+        _Concentration.__init__(self, label=label)
 
 
 class ZeroConcentration(_Concentration):
@@ -35,7 +35,7 @@ class ZeroConcentration(_Concentration):
     states = None
 
     __slots__ = ['value', 'data']
-    def __init__(self, measurement_label=None):
+    def __init__(self, label=None):
         self.value = 0
         self.data = [(0, 0)]
-        _Concentration.__init__(self, measurement_label)
+        _Concentration.__init__(self, label=label)

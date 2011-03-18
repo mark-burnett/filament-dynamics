@@ -16,6 +16,12 @@
 import numpy
 import pylab
 
+def plot_bar(measurement):
+    centers, values, errors = measurement
+
+    width = float(centers[1] - centers[0])
+    left_edges = [c - width/2 for c in centers]
+    pylab.bar(left_edges, values, width=width)
 
 def plot_smooth(measurement,
                 color='black', linestyle='solid',

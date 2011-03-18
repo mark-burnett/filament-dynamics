@@ -1,0 +1,356 @@
+experiments:
+    fujiwara_2002:
+        parameters:
+            simulation_duration: 3600
+
+            filament_tip_concentration: 0.0001
+
+            barbed_pyrene_atp_polymerization_rate:    11.6
+            barbed_pyrene_adppi_polymerization_rate:   3.4
+            barbed_pyrene_adp_polymerization_rate:     2.9
+
+            barbed_atp_polymerization_rate:    11.6
+            barbed_adppi_polymerization_rate:   3.4
+            barbed_adp_polymerization_rate:     2.9
+
+            barbed_pyrene_atp_depolymerization_rate:   1.4
+            barbed_pyrene_adppi_depolymerization_rate: 0.2
+            barbed_pyrene_adp_depolymerization_rate:   5.4
+
+            barbed_atp_depolymerization_rate:   1.4
+            barbed_adppi_depolymerization_rate: 0.2
+            barbed_adp_depolymerization_rate:   5.4
+
+            pointed_pyrene_atp_polymerization_rate:     1.3
+            pointed_pyrene_adppi_polymerization_rate:   0.11
+            pointed_pyrene_adp_polymerization_rate:     0.14
+
+            pointed_atp_polymerization_rate:     1.3
+            pointed_adppi_polymerization_rate:   0.11
+            pointed_adp_polymerization_rate:     0.14
+
+            pointed_pyrene_atp_depolymerization_rate:   0.8
+            pointed_pyrene_adppi_depolymerization_rate: 0.02
+            pointed_pyrene_adp_depolymerization_rate:   0.25
+
+            pointed_atp_depolymerization_rate:   0.8
+            pointed_adppi_depolymerization_rate: 0.02
+            pointed_adp_depolymerization_rate:   0.25
+
+        simulation:
+            filaments:
+                filament_factory:
+                    class_name: SingleStateFixedLength
+                    variable_arguments:
+                        number: number_of_filaments
+                    fixed_arguments:
+                        state:  ADP
+                        length: 200
+
+            concentrations:
+                pyrene_ATP:
+                    class_name: ZeroConcentration
+
+                ATP:
+                    class_name: FixedConcentration
+                    variable_arguments:
+                        concentration: atp_concentration
+
+                pyrene_ADPPi:
+                    class_name: ZeroConcentration
+
+                ADPPi:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+                pyrene_ADP:
+                    class_name: ZeroConcentration
+
+                ADP:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+
+                Pi:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+            end_conditions:
+                duration:
+                    class_name: Duration
+                    variable_arguments:
+                        duration: simulation_duration
+
+            measurements:
+                length:
+                    class_name: Length
+
+        analyses:
+            ss_histogram_60:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 60
+
+            ss_histogram_120:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 120
+
+            ss_histogram_180:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 180
+
+            ss_histogram_240:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 240
+
+            ss_histogram_300:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 300
+
+            ss_histogram_360:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 360
+
+            ss_histogram_420:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 420
+
+            ss_histogram_480:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 480
+
+            ss_histogram_540:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 540
+
+            ss_histogram_600:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 600
+
+            ss_histogram_660:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 660
+
+            ss_histogram_720:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 720
+
+            ss_histogram_780:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 780
+
+            ss_histogram_840:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 840
+
+            ss_histogram_900:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 900
+
+            ss_histogram_960:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 960
+
+            ss_histogram_1020:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 1020
+
+            ss_histogram_1080:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 1080
+
+            ss_histogram_1140:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 1140
+
+            ss_histogram_1200:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 1200
+
+            ss_histogram_1500:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 1500
+
+            ss_histogram_1800:
+                class_name: TipDiffusionHistogram
+                variable_arguments:
+                    sample_period: histogram_sample_period
+                    stop_time: simulation_duration
+                    start_time: histogram_start_time
+                    bin_size: histogram_bin_size
+                fixed_arguments:
+                    interpolation_method: linear
+                    tau: 1800
+
+        objectives:
+            executors:
+                diffusion_coefficient:
+                    class_name: DiffusionCoefficient
+                    fixed_arguments:
+                        analysis_prefix: ss_histogram_
+
+                diffusion_fit:
+                    class_name: DiffusionCoefficientFit
+                    variable_arguments:
+                        expected_value: expected_diffusion_coefficient
+                    fixed_arguments:
+                        analysis_prefix: ss_histogram_
+                        residual_type: naked_chi_squared

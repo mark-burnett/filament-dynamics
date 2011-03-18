@@ -1,0 +1,51 @@
+name: 'Fujiwara Tip Diffusion'
+import:
+    - 'experiments/fujiwara_2002.yaml'
+
+    - 'models/three_state_cooperative_cooperative.yaml'
+    - 'models/nucleotide_exchange.yaml'
+    - 'models/pi_release_in_solution.yaml'
+
+#    - 'constants.yaml'
+
+global_parameters:
+    atp_concentration: 0.3
+
+    expected_diffusion_coefficient: 28.6
+    number_of_simulations: 5
+    number_of_filaments:   5
+
+    # In-solution interactions
+    nucleotide_exchange_rate: 0.01
+    pi_release_in_solution:   10000
+
+    histogram_start_time:    900
+    histogram_sample_period: 30
+    histogram_bin_size:      74.07 # This is about 0.2 um in monomers
+
+parameter_specifications:
+    fujiwara_2002:
+        simulation:
+            cleavage_rate:
+                lower_bound: 0.005
+                upper_bound: 0.005
+                mesh_type:   linear
+                num_points:  1
+
+            cleavage_cooperativity:
+                lower_bound: 2236
+                upper_bound: 2236
+                mesh_type:   linear
+                num_points:  1
+
+            release_rate:
+                lower_bound: 0.005
+                upper_bound: 0.005
+                mesh_type:   linear
+                num_points:  1
+
+            release_cooperativity:
+                lower_bound: 187
+                upper_bound: 187
+                mesh_type:   linear
+                num_points:  1

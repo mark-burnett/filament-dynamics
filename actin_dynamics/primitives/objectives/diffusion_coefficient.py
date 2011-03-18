@@ -14,6 +14,33 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .base_classes import Objective as _Objective
+from actin_dynamics.numerical import residuals as _residuals
+
+from actin_dynamics.numerical import regression
+
+from actin_dynamics import logger
+log = logger.getLogger(__file__)
+
+class DiffusionCoefficient(_Objective):
+    def __init__(self, analysis_prefix=None, label=None):
+        self.analysis_prefix   = analysis_prefix
+
+        _Objective.__init__(self, label=label)
+
+    def perform(self, run, target):
+        # Get histograms
+        histograms = get_histograms(run, self.analysis_prefix)
+
+        # Fit gaussians
+        taus, means, variances = gaussian_fits(histograms)
+
+        # Calculate slope of line through points using residual function
+        m, b = regression.fit_line(taus, variances)
+
+        # Calculate D (D = slope / 2) and assign the residual to target.value
+        D = m / 2
+        target.value = D
+
 
 class DiffusionCoefficientFit(_Objective):
     def __init__(self, analysis_prefix=None, expected_value=None, label=None,
@@ -26,13 +53,13 @@ class DiffusionCoefficientFit(_Objective):
 
     def perform(self, run, target):
         # Get histograms
-        histograms = get_histograms(run, prefix)
+        histograms = get_histograms(run, self.analysis_prefix)
 
         # Fit gaussians
-        taus, means, variances = gaussian_fits(histograms, self.residual_function)
+        taus, means, variances = gaussian_fits(histograms)
 
         # Calculate slope of line through points using residual function
-        m, b, r = regression.fit_line(taus, variances, self.residual_function)
+        m, b = regression.fit_line(taus, variances)
 
         # Calculate D (D = slope / 2) and assign the residual to target.value
         D = m / 2
@@ -45,8 +72,7 @@ def get_histograms(run, prefix):
     for label, analysis in run.analyses.iteritems():
         if label[:prefix_length] == prefix:
             tau = float(label[prefix_length:])
-            m = analysis.measurement
-            unsorted.append((tau, m))
+            unsorted.append((tau, analysis))
 
     return sorted(unsorted)
 
@@ -58,8 +84,7 @@ def gaussian_fits(histograms):
     for tau, histogram in histograms:
         taus.append(tau)
 
-        mean, variance, quality  = regression.fit_gaussian(histogram,
-                self.residual_function)
+        mean, variance = regression.fit_gaussian(histogram[0], histogram[1])
         means.append(mean)
         variances.append(variance)
 

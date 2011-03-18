@@ -18,15 +18,15 @@ from . import mixins as _mixins
 
 class ConcentrationChange(_SolutionTransition):
     __slots__ = ['old_state', 'rate', 'new_state']
-    def __init__(self, old_state=None, rate=None, new_state=None):
+    def __init__(self, old_state=None, rate=None, new_state=None, label=None):
         self.old_state = old_state
         self.rate      = rate
         self.new_state = new_state
 
-        _SolutionTransition.__init__(self)
+        _SolutionTransition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
-        return self.rate * concentrations[self.old_state].value
+        return [self.rate * concentrations[self.old_state].value]
 
     def perform(self, time, filaments, concentrations, index, r):
         concentrations[self.old_state].remove_monomer(time)

@@ -27,16 +27,17 @@ _log = _logger.getLogger(__file__)
 
 class TipDiffusionHistogram(_base_classes.Analysis):
     def __init__(self, sample_period=None, start_time=None, stop_time=None,
+                 interpolation_method=None,
                  measurement_name='length', measurement_type='filament',
                  label=None, bin_size=None, tau=None, **kwargs):
-        self.sample_period        = sample_period
-        self.start_time           = start_time
-        self.stop_time            = stop_time
+        self.sample_period        = float(sample_period)
+        self.start_time           = float(start_time)
+        self.stop_time            = float(stop_time)
         self.interpolation_method = interpolation_method
         self.measurement_name     = measurement_name
         self.measurement_type     = measurement_type
-        self.bin_size             = bin_size
-        self.tau                  = tau
+        self.bin_size             = float(bin_size)
+        self.tau                  = float(tau)
 
         _base_classes.Analysis.__init__(self, label=label, **kwargs)
 
