@@ -13,7 +13,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pollard
-import slicing
-import pieper_wegner
-import measurements
+from . import measurements
+from . import slicing
+
+def D_vs_concentration(session, db_session):
+    ob = sess.get_experiment('fujiwara_2002').objectives['diffusion_coefficient']
+    s = slicing.Slicer.from_objective_bind(ob)
+
+    Ds, name, concentration_mesh = s.minimum_values('atp_concentration')
+
+    measurements.line((concentration_mesh, Ds))

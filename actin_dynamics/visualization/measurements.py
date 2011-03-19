@@ -16,17 +16,14 @@
 import numpy
 import pylab
 
-def plot_bar(measurement):
+def bar(measurement, color='black', **kwargs):
     centers, values, errors = measurement
 
-    width = float(centers[1] - centers[0])
-    left_edges = [c - width/2 for c in centers]
-    pylab.bar(left_edges, values, width=width)
+    pylab.bar(centers, values, width=width, align='center', color=color,
+              **kwargs)
 
-def plot_smooth(measurement,
-                color='black', linestyle='solid',
-                line_alpha=1, fill_alpha=0.5,
-                **kwargs):
+def line(measurement, color='black', linestyle='solid',
+         line_alpha=1, fill_alpha=0.5, **kwargs):
     bounds = get_bounds(measurement)
     times, values = measurement[:2]
 
@@ -39,7 +36,7 @@ def plot_smooth(measurement,
     pylab.xlim(times[0], times[-1])
 
 
-def plot_scatter(measurement, color='black', fmt='o', **kwargs):
+def scatter(measurement, color='black', fmt='o', **kwargs):
     error_bars = get_error_bars(measurement)
     times, values = measurement[:2]
 
