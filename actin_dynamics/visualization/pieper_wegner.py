@@ -52,6 +52,67 @@ def pi_session(session, db_session):
     plot_best_run(session, db_session)
 #    minima_timecourses_pi(session)
 
+def side_by_side_adppi(session, parameter_name='release_rate',
+                       x_label='Release Rate (s^-1)',
+                       theme=None, logscale_x=False, logscale_y=False):
+    e100 = session.get_experiment('pieper_wegner_100')
+    e90  = session.get_experiment('pieper_wegner_90')
+    e50  = session.get_experiment('pieper_wegner_50')
+
+    s100 = slicing.Slicer.from_objective_bind(e100.objectives['pieper_wegner_pi_fit'])
+    s90 = slicing.Slicer.from_objective_bind(e90.objectives['pieper_wegner_pi_fit'])
+    s50 = slicing.Slicer.from_objective_bind(e50.objectives['pieper_wegner_pi_fit'])
+
+    worst_fit = max(s100.get_worst_value(),
+                    s90.get_worst_value(),
+                    s50.get_worst_value())
+
+    if not theme:
+        theme = themes.Theme()
+
+    pylab.figure()
+
+    pylab.subplot(1,3,1)
+    fit.plot_min(s100, parameter_name,
+                 logscale_x=logscale_x, logscale_y=logscale_y,
+                 **theme('pyrene_dark', 'simulation_line'))
+    if not logscale_y:
+        pylab.ylim(0, worst_fit)
+    else:
+        pylab.ylim(None, worst_fit)
+    pylab.xlabel(x_label)
+    pylab.ylabel('Quality of Fit (AU)')
+    pylab.title('100% G-ATP-actin')
+
+
+    pylab.subplot(1,3,2)
+    fit.plot_min(s90, parameter_name,
+                 logscale_x=logscale_x, logscale_y=logscale_y,
+                 **theme('pyrene_dark', 'simulation_line'))
+    if not logscale_y:
+        pylab.ylim(0, worst_fit)
+    else:
+        pylab.ylim(None, worst_fit)
+    pylab.xlabel(x_label)
+    pylab.title('90% G-ATP-actin')
+
+
+    pylab.subplot(1,3,3)
+    fit.plot_min(s50, parameter_name,
+                 logscale_x=logscale_x, logscale_y=logscale_y,
+                 **theme('pyrene_dark', 'simulation_line'))
+    if not logscale_y:
+        pylab.ylim(0, worst_fit)
+    else:
+        pylab.ylim(None, worst_fit)
+    pylab.xlabel(x_label)
+    pylab.title('50% G-ATP-actin')
+
+    print 'Best values for', x_label
+    print '100%% ATP:', s100.get_best_parameters()[parameter_name]
+    print '90%% ATP:', s90.get_best_parameters()[parameter_name]
+    print '90%% ATP:', s90.get_best_parameters()[parameter_name]
+
 
 def side_by_side_pyrene(session, parameter_name='filament_tip_concentration',
                         x_label='Filament Tip Concentration (nM)', x_scale=1000,
@@ -306,14 +367,14 @@ def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False,
     factin_concentration = numerical.measurements.scale(total_factin,
             run.all_parameters['filament_tip_concentration'])
 
-    measurements.plot_smooth(factin_concentration, label='F-actin',
+    measurements.line(factin_concentration, label='F-actin',
                              **theme('factin_dark', 'simulation_line'))
 
     # pi + data
-    measurements.plot_smooth(run.analyses['Pi'], label='[Pi] Simulation',
+    measurements.line(run.analyses['Pi'], label='[Pi] Simulation',
                              **theme('pi_dark', 'simulation_line'))
     pi_data = run.experiment.objectives['pieper_wegner_pi_fit'].measurement
-    measurements.plot_scatter(pi_data, label='[Pi] Data',
+    measurements.scatter(pi_data, label='[Pi] Data',
                               **theme('pi_light', 'data_points'))
 
     # XXX Print out the data points
@@ -352,7 +413,7 @@ def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False,
         scale_factor = 1
     scaled_pyrene_data = numerical.measurements.scale(pyrene_data, scale_factor)
 
-    measurements.plot_smooth(scaled_pyrene_data, label='Pyrene Data',
+    measurements.line(scaled_pyrene_data, label='Pyrene Data',
                              **theme('pyrene_light3', 'data_line'))
 
     if flat_pyrene:
@@ -360,13 +421,13 @@ def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False,
         flat_objective = bindings.db_single(flat_bind, run.all_parameters)
         flat_fit, flat_measurement = flat_objective.fit_measurement(run,
                 scaled_pyrene_data)
-        measurements.plot_smooth(flat_measurement, label='Flat Pyrene Simulation',
+        measurements.line(flat_measurement, label='Flat Pyrene Simulation',
                                  **theme('pyrene_light1', 'simulation_line'))
 
     brooks_objective = bindings.db_single(brooks_bind, run.all_parameters)
     brooks_fit, brooks_measurement = brooks_objective.fit_measurement(run,
             scaled_pyrene_data)
-    measurements.plot_smooth(brooks_measurement,
+    measurements.line(brooks_measurement,
                              label='Brooks Pyrene Simulation',
                              **theme('pyrene_dark', 'simulation_line'))
 
@@ -376,7 +437,7 @@ def timecourse(run, final_pyrene_value=None, with_date=True, flat_pyrene=False,
         tip_release_pi = numerical.measurements.add([tip_pyrene_pi, tip_pi])
         tip_release_pi = numerical.measurements.scale(tip_release_pi,
                 run.all_parameters['filament_tip_concentration'])
-        measurements.plot_smooth(tip_release_pi,
+        measurements.line(tip_release_pi,
                                  label='[Pi] release from tip',
                                  **theme('pi_dark', 'simulation_line'))
 
@@ -418,6 +479,59 @@ def all_timecourses(session, db_session, objective_name='pieper_wegner_pi_fit',
     obj_50 = db_session.query(database.Objective).filter_by(id=id_50).first()
     timecourse(obj_50.run, tip_release=tip_release)
     pylab.title('50% ATP')
+
+
+def best_ftc_timecourses(session, db_session, tip_release=False, **parameters):
+    e100 = session.get_experiment('pieper_wegner_100')
+    e90  = session.get_experiment('pieper_wegner_90')
+    e50  = session.get_experiment('pieper_wegner_50')
+
+    p100 = slicing.Slicer.from_objective_bind(e100.objectives['brooks_pyrene_fit'])
+    p90  = slicing.Slicer.from_objective_bind( e90.objectives['brooks_pyrene_fit'])
+    p50  = slicing.Slicer.from_objective_bind( e50.objectives['brooks_pyrene_fit'])
+
+    s100 = slicing.Slicer.from_objective_bind(e100.objectives['pieper_wegner_pi_fit'])
+    s90  = slicing.Slicer.from_objective_bind( e90.objectives['pieper_wegner_pi_fit'])
+    s50  = slicing.Slicer.from_objective_bind( e50.objectives['pieper_wegner_pi_fit'])
+
+    pylab.figure()
+
+    pylab.subplot(2,2,1)
+    print '100%% ATP'
+    best_ftc_single_timecourse(p100, s100, db_session, tip_release=tip_release,
+                               **parameters)
+    pylab.title('100% ATP')
+
+    pylab.subplot(2,2,2)
+    print '90%% ATP'
+    best_ftc_single_timecourse(p90, s90, db_session, tip_release=tip_release,
+                               **parameters)
+    pylab.title('90% ATP')
+
+    pylab.subplot(2,2,3)
+    print '50%% ATP'
+    best_ftc_single_timecourse(p50, s50, db_session, tip_release=tip_release,
+                               **parameters)
+    pylab.title('50% ATP')
+
+def best_ftc_single_timecourse(pyrene_slicer, pi_slicer, db_session, tip_release=False,
+                               **parameters):
+    # Get best ftc given parameters (Pyrene fit)
+    pyrene_pars = pyrene_slicer.get_best_parameters_near(**parameters)
+
+    # Use best ftc + parameters to get best run ([Pi] fit)
+    pi_par = dict(parameters)
+    pi_par['filament_tip_concentration'] = pyrene_pars['filament_tip_concentration']
+
+    run_pars = pi_slicer.get_best_parameters_near(**pi_par)
+    pprint.pprint(run_pars)
+
+    objective_id = pyrene_slicer.get_id(**run_pars)
+
+    # Use run to plot timecourse
+    objective = db_session.query(database.Objective
+            ).filter_by(id=objective_id).first()
+    timecourse(objective.run, tip_release=tip_release)
 
 
 def plot_run(session, **fixed_values):

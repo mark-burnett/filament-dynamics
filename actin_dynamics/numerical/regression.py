@@ -17,12 +17,10 @@ import itertools
 from scipy import polyfit
 
 def fit_gaussian(x_mesh, y_mesh):
-    bin_size = x_mesh[1] - x_mesh[0]
-    total_y = sum(y_mesh) * bin_size
-    mean = sum(x * y for x, y in itertools.izip(x_mesh, y_mesh)) * bin_size / total_y
-
+    total_y = sum(y_mesh)
+    mean = sum(x * y for x, y in itertools.izip(x_mesh, y_mesh)) / total_y
     variance = sum(y * (x - mean)**2
-                   for x, y in itertools.izip(x_mesh, y_mesh)) * bin_size / total_y
+                   for x, y in itertools.izip(x_mesh, y_mesh)) / total_y
     return mean, variance
 
 

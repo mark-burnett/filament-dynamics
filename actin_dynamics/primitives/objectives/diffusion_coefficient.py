@@ -33,12 +33,15 @@ class DiffusionCoefficient(_Objective):
 
         # Fit gaussians
         taus, means, variances = gaussian_fits(histograms)
+        log.debug('taus = %s', taus)
+        log.debug('variances = %s', variances)
 
         # Calculate slope of line through points using residual function
         m, b = regression.fit_line(taus, variances)
 
         # Calculate D (D = slope / 2) and assign the residual to target.value
         D = m / 2
+        log.debug('slope = %s, intercept = %s, D = %s', m, b, D)
         target.value = D
 
 
@@ -74,7 +77,7 @@ def get_histograms(run, prefix):
             tau = float(label[prefix_length:])
             unsorted.append((tau, analysis))
 
-    return sorted(unsorted)
+    return sorted(unsorted, key=lambda x: x[0])
 
 
 def gaussian_fits(histograms):

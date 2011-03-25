@@ -41,7 +41,7 @@ def arange(min_value, max_value, dx):
 def linspace(min_value, max_value, num_points):
     if num_points > 1:
         dx = float(max_value - min_value) / (num_points - 1)
-        return [min_value + i * dx for i in xrange(num_points)]
+        return [min_value + i * dx for i in xrange(int(num_points))]
     else:
         return [min_value]
 

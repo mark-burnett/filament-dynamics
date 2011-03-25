@@ -32,7 +32,7 @@ def plot_slice(slicer, abscissae_name, slice_point={},
                logscale_x=False, logscale_y=False, **kwargs):
     y, junk, x = slicer.slice(**slice_point)
 
-    measurements.plot_smooth((x[0], y), **kwargs)
+    measurements.line((x[0], y), **kwargs)
 
     if logscale_x:
         pylab.gca().set_xscale('log')
@@ -46,7 +46,7 @@ def plot_min(slicer, abscissae_name, scale_x=1,
     y, junk, x = slicer.minimum_values(abscissae_name)
     scaled_x = [xv * scale_x for xv in x[0]]
 
-    measurements.plot_smooth((scaled_x, y), **kwargs)
+    measurements.line((scaled_x, y), **kwargs)
 
     if logscale_x:
         pylab.gca().set_xscale('log')
@@ -67,7 +67,7 @@ def averaged_min(slicers, abscissae_name, scale_x=1,
             numerical.measurements.add(all_measurements[:2]),
             1.0 / len(all_measurements))
 
-    measurements.plot_smooth(average_measurement, **kwargs)
+    measurements.line(average_measurement, **kwargs)
 
     if logscale_x:
         pylab.gca().set_xscale('log')
@@ -108,9 +108,9 @@ def slice_and_min(slicer=None, abscissa_name=None, theme=None,
 
     if not theme:
         theme = themes.Theme()
-    measurements.plot_smooth((min_x[0], min_y),
+    measurements.line((min_x[0], min_y),
                              **theme(*(min_attributes + shared_attributes)))
-    measurements.plot_smooth((sl_x[0], sl_y),
+    measurements.line((sl_x[0], sl_y),
                              **theme(*(slice_attributes + shared_attributes)))
 
     if logscale_x:

@@ -62,26 +62,44 @@ class Slicer(object):
         return _format_result(result_set, abscissae_names, self.meshes)
 
 
-    def minimum_values(self, *abscissae_names):
+    def minimum_values(self, *abscissae_names, **fixed_values):
         # We want to select all the columns except the objective id.
         column_names = [self.column_map[an] for an in abscissae_names]
         group_columns = [self.table.c[cn] for cn in column_names]
         # And the minimum value
         select_columns = group_columns + [func.min(self.table.c.value)]
 
-        query = sql.select(select_columns, group_by=group_columns)
+        # Where constraints
+        nearest_values = self.get_nearest_values(**fixed_values)
+        like_clauses = [self.table.c[self.column_map[n]].like(v)
+                        for n, v in nearest_values.iteritems()]
+
+
+        query = sql.select(select_columns, group_by=group_columns,
+                           whereclause=sql.and_(*like_clauses))
         result_set = query.execute()
 
         return _format_result(result_set, abscissae_names, self.meshes)
 
 
-#    def get_best_near(self, **fixed_values):
-#        nearest_values = self.get_nearest_values(**fixed_values)
-#        z, par_names, par_meshes = self.slice(**nearest_values)
-#
-#        index = numpy.argmin(z)
-#        print index
-#
+    def get_best_parameters_near(self, **fixed_values):
+        parameter_names = self.column_map.keys()
+        column_names = [self.column_map[n] for n in parameter_names]
+        select_columns = [self.table.c[n] for n in column_names]
+
+        nearest_values = self.get_nearest_values(**fixed_values)
+        like_clauses = [self.table.c[self.column_map[n]].like(v)
+                        for n, v in nearest_values.iteritems()]
+
+        query = sql.select(select_columns,
+                           whereclause=sql.and_(*like_clauses)
+                           ).order_by(self.table.c.value)
+        result_set = query.execute()
+
+        row = result_set.fetchone()
+        result = dict((n, v) for n, v in zip(parameter_names, row))
+        return result
+
 
     def get_nearest_values(self, **fixed_values):
         result = {}
@@ -111,7 +129,7 @@ class Slicer(object):
                                 self.table.c.objective_id == best_id,
                                 limit=1).execute()
         row = result_set.fetchone()
-        result = dict((n, v) for n, v in zip(parameter_names, row)) #, row[len(row)-1]
+        result = dict((n, v) for n, v in zip(parameter_names, row))
         return result
 
     def get_best_id(self):
@@ -150,7 +168,10 @@ def _format_result(result_set, names, meshes):
     mesh_list = [meshes[n] for n in names]
 
     shape = map(len, mesh_list)
-    result = -numpy.ones(shape)
+    if shape:
+        result = -numpy.ones(shape)
+    else:
+        result = numpy.array([-1])
 
     for indexes, value in _index_iterator(result_set, mesh_list):
         result[tuple(indexes)] = value

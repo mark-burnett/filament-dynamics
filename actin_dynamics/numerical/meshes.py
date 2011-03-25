@@ -35,11 +35,16 @@ class ParameterMeshIterator(object):
             raise StopIteration()
 
 def make_mesh(lower_bound, upper_bound, num_points, mesh_type):
+    '''
+    Mesh includes the upper bound:  [lower_bound, upper_bound]
+    '''
+    effective_ub = (upper_bound - lower_bound) / (2 * num_points) + upper_bound
+
     if 'linear' == mesh_type.lower():
-        return workalike.linspace(lower_bound, upper_bound, num_points)
+        return workalike.linspace(lower_bound, effective_ub, num_points)
     elif 'log' == mesh_type.lower():
         ulower_bound = math.log(lower_bound)
-        uupper_bound = math.log(upper_bound)
+        uupper_bound = math.log(effective_ub)
         transformed_range = workalike.linspace(ulower_bound, uupper_bound,
                                                num_points)
         return [math.exp(tr) for tr in transformed_range]

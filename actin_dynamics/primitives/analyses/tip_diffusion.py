@@ -19,7 +19,7 @@ from . import base_classes as _base_classes
 
 from . import utils
 
-from actin_dynamics.numerical import interpolation, workalike, measurements, histograms
+from actin_dynamics.numerical import interpolation, workalike, measurements, histograms, regression
 
 from actin_dynamics import logger as _logger
 
@@ -74,14 +74,17 @@ class TipDiffusionHistogram(_base_classes.Analysis):
 
 def _remove_velocity(sampled_measurements, start_time, stop_time):
     results = []
-    for m in sampled_measurements:
-        sliced_measurement = measurements.time_slice(m, start_time, stop_time)
+    for measurement in sampled_measurements:
+        sliced_measurement = measurements.time_slice(measurement,
+                                                     start_time, stop_time)
 
-        values = sliced_measurement[1]
-        discrete_slope = float(values[-1] - values[0]) / len(values)
+        times  = numpy.array(sliced_measurement[0])
+        values = numpy.array(sliced_measurement[1])
 
-        results.append(numpy.array([v - i * discrete_slope
-                                    for i, v in enumerate(values)]))
+        slope, intercept = regression.fit_line(times, values)
+
+        results.append(values - slope * times - intercept)
+
     return results
 
 

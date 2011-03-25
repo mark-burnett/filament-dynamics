@@ -13,7 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pollard
+#import pollard
 import slicing
 import pieper_wegner
 import measurements
+import fujiwara
+
+import new_pollard

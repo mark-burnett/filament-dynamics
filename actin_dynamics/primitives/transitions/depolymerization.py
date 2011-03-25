@@ -15,6 +15,9 @@
 
 from base_classes import FilamentTransition as _FilamentTransition
 
+from actin_dynamics import logger as _logger
+_log = _logger.getLogger(__file__)
+
 class _FixedRate(_FilamentTransition):
     skip_registration = True
     __slots__ = ['state', 'rate']
@@ -38,6 +41,8 @@ class _FixedRate(_FilamentTransition):
         return result
 
     def perform(self, time, filaments, concentrations, index, r):
+        if not len(filaments[index]):
+            _log.warn('Filament completely depolymerized.')
         _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
 
 class BarbedDepolymerization(_FixedRate):

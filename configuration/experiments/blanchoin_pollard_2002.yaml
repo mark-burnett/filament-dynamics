@@ -5,8 +5,8 @@ experiments:
 
             seed_concentration: 6
 
-            initial_atp_concentration: 5.7
-            initial_pyrene_atp_concentration: 0.3
+            initial_atp_concentration:        0
+            initial_pyrene_atp_concentration: 6
 
             barbed_atp_polymerization_rate:    11.6
             barbed_adppi_polymerization_rate:   3.4
@@ -224,7 +224,17 @@ experiments:
                     fixed_arguments:
                         filename: 'pollard_2002/adppi_concentration.dat'
 
-                pollard_pyrene_fit:
+                flat_pyrene_fit:
+                    class_name: DatReader
+                    variable_arguments:
+                        sample_period: sample_period
+                        xmax: simulation_duration
+                    fixed_arguments:
+                        xmin: 0
+                        filename: 'pollard_2002/pyrene_fluorescence.dat'
+                        interpolate_data: True
+
+                brooks_pyrene_fit:
                     class_name: DatReader
                     variable_arguments:
                         sample_period: sample_period
@@ -238,17 +248,27 @@ experiments:
             executors:
                 pollard_adppi_fit:
                     class_name: SimpleDataFit
+                    variable_arguments:
+                        scale_simulation_by: filament_tip_concentration
                     fixed_arguments:
                         measurement:   total_ADPPi
                         residual_type: naked_chi_squared
                         interpolate_simulation: True
 
-                pollard_pyrene_fit:
+                flat_pyrene_fit:
+                    class_name: PyreneFit
+                    fixed_arguments:
+                        pyrene_ATP:    1
+                        pyrene_ADPPi:  1
+                        pyrene_ADP:    1
+                        residual_type: naked_chi_squared
+
+                brooks_pyrene_fit:
                     class_name: PyreneFit
                     variable_arguments:
-                        pyrene_ATP:   pyrene_atp_weight
-                        pyrene_ADPPi: pyrene_adppi_weight
-                        pyrene_ADP:   pyrene_adp_weight
+                        pyrene_ATP:   brooks_atp_weight
+                        pyrene_ADPPi: brooks_adppi_weight
+                        pyrene_ADP:   brooks_adp_weight
 
                     fixed_arguments:
                         residual_type: naked_chi_squared
