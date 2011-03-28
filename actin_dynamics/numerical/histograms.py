@@ -47,7 +47,7 @@ def make_histogram(values, bin_size):
     pct_error = 1 / math.sqrt(len(values))
     errors = [pct_error * c for c in counts]
 
-    return centers, counts, errors
+    return centers[:-1], counts[:-1], errors[:-1]
 
 
 def get_bin_distance(value, bin_size):

@@ -3,7 +3,7 @@ experiments:
         parameters:
             simulation_duration: 3600
 
-            filament_tip_concentration: 0.1
+#            filament_tip_concentration: 0.1
 
             barbed_pyrene_atp_polymerization_rate:    11.6
             barbed_pyrene_adppi_polymerization_rate:   3.4
@@ -17,41 +17,46 @@ experiments:
             barbed_pyrene_adppi_depolymerization_rate: 0.2
             barbed_pyrene_adp_depolymerization_rate:   5.4
 
+#            barbed_atp_depolymerization_rate:   1.4
+#            barbed_adppi_depolymerization_rate: 0.2
+#            barbed_adp_depolymerization_rate:   5.4
+
+            # Vavylonis's parameters
             barbed_atp_depolymerization_rate:   1.4
-            barbed_adppi_depolymerization_rate: 0.2
-            barbed_adp_depolymerization_rate:   5.4
+            barbed_adppi_depolymerization_rate: 1.1
+            barbed_adp_depolymerization_rate:   7.2
 
-            pointed_pyrene_atp_polymerization_rate:     1.3
-            pointed_pyrene_adppi_polymerization_rate:   0.11
-            pointed_pyrene_adp_polymerization_rate:     0.14
+ #           pointed_pyrene_atp_polymerization_rate:     1.3
+ #           pointed_pyrene_adppi_polymerization_rate:   0.11
+ #           pointed_pyrene_adp_polymerization_rate:     0.14
+ #
+ #           pointed_atp_polymerization_rate:     1.3
+ #           pointed_adppi_polymerization_rate:   0.11
+ #           pointed_adp_polymerization_rate:     0.14
+ #
+ #           pointed_pyrene_atp_depolymerization_rate:   0.8
+ #           pointed_pyrene_adppi_depolymerization_rate: 0.02
+ #           pointed_pyrene_adp_depolymerization_rate:   0.25
+ #
+ #           pointed_atp_depolymerization_rate:   0.8
+ #           pointed_adppi_depolymerization_rate: 0.02
+ #           pointed_adp_depolymerization_rate:   0.25
 
-            pointed_atp_polymerization_rate:     1.3
-            pointed_adppi_polymerization_rate:   0.11
-            pointed_adp_polymerization_rate:     0.14
+            pointed_pyrene_atp_polymerization_rate:     0
+            pointed_pyrene_adppi_polymerization_rate:   0
+            pointed_pyrene_adp_polymerization_rate:     0
 
-            pointed_pyrene_atp_depolymerization_rate:   0.8
-            pointed_pyrene_adppi_depolymerization_rate: 0.02
-            pointed_pyrene_adp_depolymerization_rate:   0.25
+            pointed_atp_polymerization_rate:     0
+            pointed_adppi_polymerization_rate:   0
+            pointed_adp_polymerization_rate:     0
 
-            pointed_atp_depolymerization_rate:   0.8
-            pointed_adppi_depolymerization_rate: 0.02
-            pointed_adp_depolymerization_rate:   0.25
+            pointed_pyrene_atp_depolymerization_rate:   0
+            pointed_pyrene_adppi_depolymerization_rate: 0
+            pointed_pyrene_adp_depolymerization_rate:   0
 
-#            pointed_pyrene_atp_polymerization_rate:     0
-#            pointed_pyrene_adppi_polymerization_rate:   0
-#            pointed_pyrene_adp_polymerization_rate:     0
-#
-#            pointed_atp_polymerization_rate:     0
-#            pointed_adppi_polymerization_rate:   0
-#            pointed_adp_polymerization_rate:     0
-#
-#            pointed_pyrene_atp_depolymerization_rate:   0
-#            pointed_pyrene_adppi_depolymerization_rate: 0
-#            pointed_pyrene_adp_depolymerization_rate:   0
-#
-#            pointed_atp_depolymerization_rate:   0
-#            pointed_adppi_depolymerization_rate: 0
-#            pointed_adp_depolymerization_rate:   0
+            pointed_atp_depolymerization_rate:   0
+            pointed_adppi_depolymerization_rate: 0
+            pointed_adp_depolymerization_rate:   0
 
         simulation:
             filaments:
@@ -76,32 +81,41 @@ experiments:
                     class_name: ZeroConcentration
 
                 ADPPi:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                    fixed_arguments:
-                        initial_concentration: 0
+                    class_name: ZeroConcentration
+
+#                ADPPi:
+#                    class_name: FixedReagent
+#                    variable_arguments:
+#                        filament_tip_concentration: filament_tip_concentration
+#                        number: number_of_filaments
+#                    fixed_arguments:
+#                        initial_concentration: 0
 
                 pyrene_ADP:
                     class_name: ZeroConcentration
 
                 ADP:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                    fixed_arguments:
-                        initial_concentration: 0
+                    class_name: ZeroConcentration
+
+#                ADP:
+#                    class_name: FixedReagent
+#                    variable_arguments:
+#                        filament_tip_concentration: filament_tip_concentration
+#                        number: number_of_filaments
+#                    fixed_arguments:
+#                        initial_concentration: 0
 
 
                 Pi:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                    fixed_arguments:
-                        initial_concentration: 0
+                    class_name: ZeroConcentration
+
+#                Pi:
+#                    class_name: FixedReagent
+#                    variable_arguments:
+#                        filament_tip_concentration: filament_tip_concentration
+#                        number: number_of_filaments
+#                    fixed_arguments:
+#                        initial_concentration: 0
 
             end_conditions:
                 duration:

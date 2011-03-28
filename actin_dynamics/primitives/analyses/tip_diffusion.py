@@ -19,10 +19,9 @@ from . import base_classes as _base_classes
 
 from . import utils
 
-from actin_dynamics.numerical import interpolation, workalike, measurements, histograms, regression
+from actin_dynamics.numerical import interpolation, workalike, measurements, histograms, regression, residuals
 
 from actin_dynamics import logger as _logger
-
 _log = _logger.getLogger(__file__)
 
 class TipDiffusionHistogram(_base_classes.Analysis):
@@ -57,41 +56,51 @@ class TipDiffusionHistogram(_base_classes.Analysis):
             rm, sample_times, method=self.interpolation_method)
                 for rm in raw_measurements]
 
-        # Remove first order changes (average growth)
-        velocity_subtracted_values = _remove_velocity(sampled_measurements,
-                                                      self.start_time,
-                                                      self.stop_time)
-
-        # Extract fluctuations
+        # Amount to shift to find fluctuations.
         delta = int(self.tau / self.sample_period)
-        fluctuations = _extract_fluctuations(velocity_subtracted_values, delta)
+
+        fluctuations = []
+        for measurement in sampled_measurements:
+            subtracted_measurement = _remove_velocity(measurement)
+            sliced_measurement = measurements.time_slice(subtracted_measurement,
+                                                         self.start_time,
+                                                         self.stop_time)
+            filament_fluctuations = _extract_fluctuations(sliced_measurement,
+                                                          delta)
+            fluctuations.extend(filament_fluctuations)
 
         # Make histogram
         histogram = histograms.make_histogram(fluctuations, self.bin_size)
+#        _log.warn('histo x: %s', histogram[0])
+#        _log.warn('histo y: %s', histogram[1])
 
         return result_factory(histogram, label=self.label)
 
 
-def _remove_velocity(sampled_measurements, start_time, stop_time):
+def _remove_velocity(measurement):
+    times  = numpy.array(measurement[0])
+    values = numpy.array(measurement[1])
+
+    slope = regression.fit_zero_line(times, values)
+    intercept = values[0]
+
+#    _log.warn('times: %s', times)
+#    _log.warn('values: %s', values)
+#    resid = residuals.naked_chi_squared(measurement,
+#        (times, (slope * times) + intercept))
+#    _log.warn('slope = %s, intercept = %s, resid = %s', slope, intercept, resid)
+
+    return times, values - (slope * times + intercept)
+
+
+def _extract_fluctuations(measurement, delta):
     results = []
-    for measurement in sampled_measurements:
-        sliced_measurement = measurements.time_slice(measurement,
-                                                     start_time, stop_time)
+    values = measurement[1]
+    if len(values) < delta:
+        _log.error('Tau too large:  delta = %s, length = %s.',
+                    delta, len(values))
 
-        times  = numpy.array(sliced_measurement[0])
-        values = numpy.array(sliced_measurement[1])
-
-        slope, intercept = regression.fit_line(times, values)
-
-        results.append(values - slope * times - intercept)
-
-    return results
-
-
-def _extract_fluctuations(values, delta):
-    results = []
-    for v in values:
-        shifted = numpy.roll(v, delta)
-        difference = shifted[delta:] - v[delta:]
-        results.extend(list(difference))
+    shifted = numpy.roll(values, delta)
+    difference = values[delta:] - shifted[delta:]
+    results.extend(list(difference))
     return results

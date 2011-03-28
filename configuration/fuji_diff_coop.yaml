@@ -3,8 +3,8 @@ import:
     - 'experiments/fujiwara_2002.yaml'
 
     - 'models/three_state_cooperative_random.yaml'
-    - 'models/nucleotide_exchange.yaml'
-    - 'models/pi_release_in_solution.yaml'
+#    - 'models/nucleotide_exchange.yaml'
+#    - 'models/pi_release_in_solution.yaml'
 #    - 'models/fast_tip_phosphate_release.yaml'
 
 #    - 'constants.yaml'
@@ -12,15 +12,15 @@ import:
 global_parameters:
     expected_diffusion_coefficient: 28.6
     number_of_simulations: 5
-    number_of_filaments:   5
+    number_of_filaments:   1
 
-    initial_filament_length: 10000
+    initial_filament_length: 100000
 
     # In-solution interactions
-    nucleotide_exchange_rate: 0.01
-    pi_release_in_solution:   10000
+#    nucleotide_exchange_rate: 0.01
+#    pi_release_in_solution:   10000
 
-    tip_phosphate_release: 2
+#    tip_phosphate_release: 2
 
     histogram_start_time:    900
     histogram_sample_period: 30
@@ -30,10 +30,10 @@ parameter_specifications:
     fujiwara_2002:
         simulation:
             atp_concentration:
-                lower_bound: 0.01
-                upper_bound: 0.2
+                lower_bound: 0.1
+                upper_bound: 0.1
                 mesh_type:   linear
-                num_points:  8
+                num_points:  1
 
             cleavage_rate:
                 lower_bound: 0.3
@@ -48,7 +48,9 @@ parameter_specifications:
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.003
-                upper_bound: 0.003
+#                lower_bound: 0.003
+#                upper_bound: 0.003
+                lower_bound: 0.004
+                upper_bound: 0.004
                 mesh_type:   linear
                 num_points:  1
