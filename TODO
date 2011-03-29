@@ -1,14 +1,19 @@
-goals for Friday
-    show good timecourses
-    show good contour (everything is just shifted tbh)
+goals for Thursday
+    compare Vavylonis parameters with standard pars
+    Peak D location vs cooperativities
 
 
 goals for end of march:
     pollard analysis (done)
-    pieper & wegner analysis
+    pieper & wegner analysis (doneish)
+    release rate analysis
     tip diffusion analysis
         fit data/standard analysis
         tip diffusion coefficient as function of concentration
+
+
+add cap-type filament
+
 
 visualizations for publication
     pollard (ignore release -- just use best fit result from p & w)

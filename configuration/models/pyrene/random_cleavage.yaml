@@ -1,0 +1,10 @@
+models:
+    transitions:
+        # Hydrolysis
+        pyrene_cleavage:
+            class_name: RandomHydrolysis
+            fixed_arguments:
+                old_state: pyrene_ATP
+                new_state: pyrene_ADPPi
+            variable_arguments:
+                rate: cleavage_rate

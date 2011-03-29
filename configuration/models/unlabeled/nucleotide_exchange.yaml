@@ -1,0 +1,9 @@
+models:
+    transitions:
+        nucleotide_exchange:
+            class_name: ConcentrationChange
+            variable_arguments:
+                rate: nucleotide_exchange_rate
+            fixed_arguments:
+                old_state: ADP
+                new_state: ATP

@@ -18,7 +18,7 @@ import random
 
 from base_classes import FilamentFactory as _FilamentFactory
 
-from .single_strand_filaments import Filament
+from actin_dynamics.state.single_strand_filaments import Filament
 
 class SingleStateFixedLength(_FilamentFactory):
     def __init__(self, state=None, length=None, number=None, label=None):

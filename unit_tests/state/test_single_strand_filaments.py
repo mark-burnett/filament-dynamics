@@ -1,7 +1,7 @@
 import unittest
 import collections
 
-from actin_dynamics.primitives.filaments.single_strand_filaments import Filament
+from actin_dynamics.state.single_strand_filaments import Filament
 from actin_dynamics.primitives import concentrations
 
 # This would be a decent test to adapt and add for good measure.
