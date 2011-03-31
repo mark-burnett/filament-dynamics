@@ -1,0 +1,5 @@
+import:
+    - 'components/barbed_polymerization.yaml'
+    - 'components/cooperative.yaml'
+    - 'components/random_release.yaml'
+    - 'components/pointed_polymerization.yaml'

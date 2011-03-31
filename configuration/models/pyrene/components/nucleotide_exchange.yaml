@@ -1,0 +1,9 @@
+models:
+    transitions:
+        pyrene_nucleotide_exchange:
+            class_name: ConcentrationChange
+            variable_arguments:
+                rate: nucleotide_exchange_rate
+            fixed_arguments:
+                old_state: pyrene_ADP
+                new_state: pyrene_ATP

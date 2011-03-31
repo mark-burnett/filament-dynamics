@@ -1,0 +1,46 @@
+models:
+    transitions:
+        # Polymerization
+        pyrene_pointed_atp_polymerization:
+            class_name: BarbedPolymerization
+            fixed_arguments:
+                state: ATP
+            variable_arguments:
+                rate: pyrene_pointed_atp_polymerization_rate
+
+        pyrene_pointed_adppi_polymerization:
+            class_name: BarbedPolymerization
+            fixed_arguments:
+                state: ADPPi
+            variable_arguments:
+                rate: pyrene_pointed_adppi_polymerization_rate
+
+        pyrene_pointed_adp_polymerization:
+            class_name: BarbedPolymerization
+            fixed_arguments:
+                state: ADP
+            variable_arguments:
+                rate: pyrene_pointed_adp_polymerization_rate
+
+
+        # Depolymerization
+        pyrene_pointed_atp_depolymerization:
+            class_name: BarbedDepolymerization
+            fixed_arguments:
+                state: ATP
+            variable_arguments:
+                rate: pyrene_pointed_atp_depolymerization_rate
+
+        pyrene_pointed_adppi_depolymerization:
+            class_name: BarbedDepolymerization
+            fixed_arguments:
+                state: ADPPi
+            variable_arguments:
+                rate: pyrene_pointed_adppi_depolymerization_rate
+
+        pyrene_pointed_adp_depolymerization:
+            class_name: BarbedDepolymerization
+            fixed_arguments:
+                state: ADP
+            variable_arguments:
+                rate: pyrene_pointed_adp_depolymerization_rate

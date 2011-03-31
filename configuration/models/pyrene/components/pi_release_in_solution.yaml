@@ -1,11 +1,10 @@
 models:
     transitions:
-        pi_release_in_solution:
+        pyrene_pi_release_in_solution:
             class_name: ConcentrationChangeWithByproduct
             variable_arguments:
                 rate: nucleotide_exchange_rate
             fixed_arguments:
-                old_state: ADPPi
-                new_state: ADP
+                old_state: pyrene_ADPPi
+                new_state: pyrene_ADP
                 byproduct: Pi
-
