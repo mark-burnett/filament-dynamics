@@ -11,13 +11,11 @@ experiments:
         simulation:
             filaments:
                 filament_factory:
-                    class_name: SingleStateFixedLengthFromConcentrations
+                    class_name: InertFilament
                     variable_arguments:
                         number: number_of_filaments
-                        concentration: seed_concentration
-                        filament_tip_concentration: filament_tip_concentration
                     fixed_arguments:
-                        state: ADP
+                        state: Spectrin
 
             concentrations:
                 pyrene_ATP:
@@ -27,22 +25,7 @@ experiments:
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
 
-                ATP:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        initial_concentration: initial_atp_concentration
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-
                 pyrene_ADPPi:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                    fixed_arguments:
-                        initial_concentration: 0
-
-                ADPPi:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration: filament_tip_concentration
@@ -57,15 +40,6 @@ experiments:
                         number: number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
-
-                ADP:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                    fixed_arguments:
-                        initial_concentration: 0
-
 
                 Pi:
                     class_name: FixedReagent
@@ -94,17 +68,6 @@ experiments:
                     class_name: StateCount
                     fixed_arguments:
                         state: pyrene_ADPPi
-
-                ADPPi:
-                    class_name: StateCount
-                    fixed_arguments:
-                        state: ADPPi
-
-                total_ADPPi:
-                    class_name: StateCountSum
-                    fixed_arguments:
-                        base_state: ADPPi
-                        prefix: pyrene_
 
                 pyrene_ADP:
                     class_name: StateCount

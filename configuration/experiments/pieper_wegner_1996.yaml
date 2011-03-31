@@ -8,38 +8,6 @@ global_parameters:
     initial_atp_concentration: 0
     initial_adp_concentration: 0
 
-    barbed_atp_polymerization_rate:    11.6
-    barbed_adppi_polymerization_rate:   3.4
-    barbed_adp_polymerization_rate:     2.9
-
-    barbed_pyrene_atp_polymerization_rate:    11.6
-    barbed_pyrene_adppi_polymerization_rate:   3.4
-    barbed_pyrene_adp_polymerization_rate:     2.9
-
-    barbed_atp_depolymerization_rate:   1.4
-    barbed_adppi_depolymerization_rate: 0.2
-    barbed_adp_depolymerization_rate:   5.4
-
-    barbed_pyrene_atp_depolymerization_rate:   1.4
-    barbed_pyrene_adppi_depolymerization_rate: 0.2
-    barbed_pyrene_adp_depolymerization_rate:   5.4
-
-    pointed_atp_polymerization_rate:     0
-    pointed_adppi_polymerization_rate:   0
-    pointed_adp_polymerization_rate:     0
-
-    pointed_pyrene_atp_polymerization_rate:     0
-    pointed_pyrene_adppi_polymerization_rate:   0
-    pointed_pyrene_adp_polymerization_rate:     0
-
-    pointed_atp_depolymerization_rate:   0
-    pointed_adppi_depolymerization_rate: 0
-    pointed_adp_depolymerization_rate:   0
-
-    pointed_pyrene_atp_depolymerization_rate:   0
-    pointed_pyrene_adppi_depolymerization_rate: 0
-    pointed_pyrene_adp_depolymerization_rate:   0
-
 experiments:
     pieper_wegner_100:
         parameters:
@@ -140,7 +108,6 @@ experiments:
 
             
         analyses:
-            # XXX add entry for total f-actin
             length:
                 class_name: StandardErrorMean
                 variable_arguments:
@@ -347,7 +314,6 @@ experiments:
 
             
         analyses:
-            # XXX add entry for total f-actin
             length:
                 class_name: StandardErrorMean
                 variable_arguments:
@@ -551,7 +517,6 @@ experiments:
 
             
         analyses:
-            # XXX add entry for total f-actin
             length:
                 class_name: StandardErrorMean
                 variable_arguments:

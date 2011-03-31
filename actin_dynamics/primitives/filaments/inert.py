@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,11 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from registry import filament_factory_registry as registry
+from base_classes import FilamentFactory as _FilamentFactory
 
-from single_state import *
-from inert import *
+from actin_dynamics.state.single_strand_filaments import Filament
 
-del single_state
-def inert
-del base_classes
+class InertFilament(_FilamentFactory):
+    def __init__(self, state=None, label=None):
+        self.state = state
+        _FilamentFactory.__init__(self, label=label)
+
+    def create(self):
+        return [Filament([state]) for i in xrange(self.number)]

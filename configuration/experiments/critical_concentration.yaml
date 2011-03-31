@@ -1,0 +1,52 @@
+experiments:
+    critical_concentration:
+        parameters:
+            simulation_duration: 600
+
+        simulation:
+            filaments:
+                filament_factory:
+                    class_name: SingleStateFixedLength
+                    variable_arguments:
+                        number: number_of_filaments
+                        length: initial_filament_length
+                    fixed_arguments:
+                        state:  ADP
+
+            concentrations:
+                ATP:
+                    class_name: FixedConcentration
+                    variable_arguments:
+                        concentration: atp_concentration
+
+                ADPPi:
+                    class_name: ZeroConcentration
+
+                ADP:
+                    class_name: ZeroConcentration
+
+                Pi:
+                    class_name: ZeroConcentration
+
+            end_conditions:
+                duration:
+                    class_name: Duration
+                    variable_arguments:
+                        duration: simulation_duration
+
+            measurements:
+                length:
+                    class_name: Length
+
+        analyses:
+            elongation_rate:
+                class_name: ElongationRate
+                variable_arguments:
+                    sample_period: sample_period
+
+        objectives:
+            executors:
+                critical_concentration:
+                    class_name: CriticalConcentration
+                    variable_arguments:
+                        expected_value: expected_critical_concentration
