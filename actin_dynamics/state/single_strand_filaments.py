@@ -68,7 +68,7 @@ class Filament(object):
         self.states.popleft()
 
 
-    def containted_states(self):
+    def contained_states(self):
         return self.relative_state_indices.keys()
 
 
@@ -135,7 +135,7 @@ class Filament(object):
         return len(self.states)
 
     def __contains__(self, state):
-        return state in self.containted_states()
+        return state in self.contained_states()
 
 
     def _update_relative_indices(self, absolute_index, old_state, new_state):

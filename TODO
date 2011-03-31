@@ -1,7 +1,8 @@
 goals for Thursday
-    compare Vavylonis parameters with standard pars
-    Peak D location vs cooperativities
-
+    - critical concentration
+    - release rate/cooperativity data fit
+    - D vs [G-ATP-actin] for various rho_r's
+    - D vs [G-ATP-actin] for tip release
 
 goals for end of march:
     pollard analysis (done)
@@ -10,9 +11,6 @@ goals for end of march:
     tip diffusion analysis
         fit data/standard analysis
         tip diffusion coefficient as function of concentration
-
-
-add cap-type filament
 
 
 visualizations for publication

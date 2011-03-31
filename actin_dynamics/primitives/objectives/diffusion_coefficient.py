@@ -33,9 +33,9 @@ class DiffusionCoefficient(_Objective):
 
         # Fit gaussians
         taus, means, variances = gaussian_fits(histograms)
-        log.warn('taus = %s', taus)
-        log.warn('means = %s', means)
-        log.warn('variances = %s', variances)
+#        log.warn('taus = %s', taus)
+#        log.warn('means = %s', means)
+#        log.warn('variances = %s', variances)
 
         # Calculate slope of line through points using residual function
         m, b = regression.fit_line(taus, variances)
@@ -44,7 +44,7 @@ class DiffusionCoefficient(_Objective):
         # Calculate D (D = slope / 2) and assign the residual to target.value
         D = m / 2
 #        log.warn('slope = %s, D = %s', m, D)
-        log.warn('slope = %s, intercept = %s, D = %s', m, b, D)
+#        log.warn('slope = %s, intercept = %s, D = %s', m, b, D)
         target.value = D
 
 

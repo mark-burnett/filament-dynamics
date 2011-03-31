@@ -18,14 +18,15 @@ from collections import defaultdict
 
 from actin_dynamics.primitives.transitions.cooperative_hydrolysis import *
 
-from actin_dynamics.state.single_strand_filaments import Filament
+from actin_dynamics.state.segmented_filaments import SegmentedFilament
 
 from unit_tests.mocks.concentrations import MockConcentration
 
 
 class CooperativeHydrolysisTest(unittest.TestCase):
     def setUp(self):
-        self.strand = Filament(['a', 'b', 'c', 'a', 'b', 'c', 'a'])
+        self.strand = SegmentedFilament.from_iterable(
+                ['a', 'b', 'c', 'a', 'b', 'c', 'a'])
         self.normal_one = CooperativeHydrolysis(old_state='a',
                 rate=3, new_state='b', c=2)
         self.normal_two = CooperativeHydrolysis(old_state='b',
@@ -45,19 +46,19 @@ class CooperativeHydrolysisTest(unittest.TestCase):
         self.assertEqual(self.missing.R([self.strand], None), [0])
 
     def test_perform_normal_boundary(self):
-        self.normal_one.perform(None, [self.strand], None, 0, 7)
-        self.assertEqual(list(self.strand.states), ['a', 'b', 'c', 'a', 'b', 'c', 'b'])
+        self.normal_one.perform(None, [self.strand], None, 0, 10)
+        self.assertEqual(list(self.strand), ['a', 'b', 'c', 'b', 'b', 'c', 'a'])
         self.assertEqual(self.normal_one.R([self.strand], None), [9])
-        self.assertEqual(self.normal_two.R([self.strand], None), [14])
+        self.assertEqual(self.normal_two.R([self.strand], None), [10])
 
         self.normal_one.perform(None, [self.strand], None, 0, 8)
-        self.assertEqual(list(self.strand.states), ['a', 'b', 'c', 'b', 'b', 'c', 'b'])
+        self.assertEqual(list(self.strand), ['a', 'b', 'c', 'b', 'b', 'c', 'b'])
         self.assertEqual(self.normal_one.R([self.strand], None), [3])
         self.assertEqual(self.normal_two.R([self.strand], None), [12])
 
     def test_perform_normal_random(self):
         self.normal_one.perform(None, [self.strand], None, 0, 0)
-        self.assertEqual(list(self.strand.states), ['b', 'b', 'c', 'a', 'b', 'c', 'a'])
+        self.assertEqual(list(self.strand), ['b', 'b', 'c', 'a', 'b', 'c', 'a'])
         self.assertEqual(self.normal_one.R([self.strand], None), [12])
         self.assertEqual(self.normal_two.R([self.strand], None), [10])
 

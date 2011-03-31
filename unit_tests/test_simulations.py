@@ -18,7 +18,8 @@ import random
 import unittest
 
 from actin_dynamics.simulation_strategy import Simulation
-from actin_dynamics.state.single_strand_filaments import Filament
+from actin_dynamics.state.segmented_filaments import SegmentedFilament
+from actin_dynamics.state.segmented_filaments import BasicSegment
 
 from unit_tests.mocks.end_conditions import MockEndCondition
 from unit_tests.mocks.measurements import MockMeasurement
@@ -32,15 +33,14 @@ class BasicSimulationTests(unittest.TestCase):
         concentrations = {}
         measurements   = [MockMeasurement('mock_measurement')]
         ecs            = [MockEndCondition(3)]
-        filaments      = [Filament([5])]
+        filaments      = [SegmentedFilament(BasicSegment(state=5, count=1))]
         rng            = MockRNG(0.5)
 
         sim = Simulation(transitions=transitions, concentrations=concentrations,
                          measurements=measurements, end_conditions=ecs,
                          filaments=filaments, rng=rng)
 
-        sim.run()
-        measurements = sim.report()
+        measurements = sim.run()
         sim_data = measurements['concentrations']
         final_state = [f['final_state'] for f in measurements['filaments']]
         filament_data = [f['measurements'] for f in measurements['filaments']]
@@ -56,7 +56,7 @@ class BasicSimulationTests(unittest.TestCase):
         concentrations = {}
         measurements   = [MockMeasurement('measurement_1'),
                           MockMeasurement('measurement_2')]
-        filaments      = [Filament([5])]
+        filaments      = [SegmentedFilament(BasicSegment(state=5, count=1))]
         ecs            = [MockEndCondition(3)]
         rng            = MockRNG(0.5)
 
@@ -64,8 +64,7 @@ class BasicSimulationTests(unittest.TestCase):
                          measurements=measurements, end_conditions=ecs,
                          filaments=filaments, rng=rng)
 
-        sim.run()
-        measurements = sim.report()
+        measurements = sim.run()
         filament_data = [f['measurements'] for f in measurements['filaments']]
 
         self.assertEqual(2, len(filament_data[0]))

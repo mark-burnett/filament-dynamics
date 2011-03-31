@@ -17,14 +17,14 @@ import unittest
 from collections import defaultdict
 
 from actin_dynamics.primitives.transitions.vectorial_hydrolysis import *
-from actin_dynamics.state.single_strand_filaments import Filament
+from actin_dynamics.state.segmented_filaments import SegmentedFilament
 
 from unit_tests.mocks.concentrations import MockConcentration
 
 
 class VectorialHydrolysisSingleFilamentTest(unittest.TestCase):
     def setUp(self):
-        self.filament = Filament([1, 2, 3, 1, 2, 3, 1])
+        self.filament = SegmentedFilament.from_iterable([1, 2, 3, 1, 2, 3, 1])
 
         self.normal_one = VectorialHydrolysis(old_state=1, pointed_neighbor=3,
                                               new_state=2, rate=3)
@@ -56,9 +56,9 @@ class VectorialHydrolysisSingleFilamentTest(unittest.TestCase):
 
 class VectorialHydrolysisMultipleFilamentTest(unittest.TestCase):
     def setUp(self):
-        self.filaments = [Filament([1, 2, 3, 1, 2, 3, 1]),
-                          Filament([2, 3, 1, 2, 3, 1, 2]),
-                          Filament([3, 2, 1, 3, 2, 1, 3])]
+        self.filaments = [SegmentedFilament.from_iterable([1, 2, 3, 1, 2, 3, 1]),
+                          SegmentedFilament.from_iterable([2, 3, 1, 2, 3, 1, 2]),
+                          SegmentedFilament.from_iterable([3, 2, 1, 3, 2, 1, 3])]
 
         self.normal_one = VectorialHydrolysis(old_state=1, pointed_neighbor=3,
                                               new_state=2, rate=3)
@@ -102,7 +102,7 @@ class VectorialHydrolysisMultipleFilamentTest(unittest.TestCase):
 
 class VectorialHydrolysisWithByproductSingleFilamentTest(unittest.TestCase):
     def setUp(self):
-        self.filament = Filament([1, 2, 3, 1, 2, 3, 1])
+        self.filament = SegmentedFilament.from_iterable([1, 2, 3, 1, 2, 3, 1])
         self.concentrations = defaultdict(MockConcentration)
 
         self.normal_one = VectorialHydrolysisWithByproduct(old_state=1,

@@ -61,7 +61,8 @@ class Simulation(object):
         filament_results = []
         for filament in self.filaments:
             fr = {}
-            fr['final_state']  = filament.states
+#            fr['final_state']  = filament.states
+            fr['final_state'] = list(filament)
             fr['measurements'] = dict((name, zip(*values))
                     for name, values in filament.measurements.iteritems())
             filament_results.append(fr)

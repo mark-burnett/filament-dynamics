@@ -13,8 +13,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pprint import pprint
-
 import pylab
 import pprint
 
@@ -158,4 +156,4 @@ def get_best_rate(session):
     adppi_pars = adppi_slicer.get_best_parameters_near(
             filament_tip_concentration=pyrene_pars['filament_tip_concentration'])
     print 'Best rate from adppi fit:', adppi_pars['cleavage_rate']
-    pprint(adppi_pars)
+    pprint.pprint(adppi_pars)

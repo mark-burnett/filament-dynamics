@@ -1,5 +1,5 @@
 #name: 'Fujiwara Tip Diffusion - Traditional Random Model'
-name: 'Fujiwara Tip Diffusion - Standard Parameters'
+name: 'Fujiwara Tip Diffusion - Cleavage coop = 1000000'
 import:
     - 'experiments/fujiwara_2002.yaml'
 
@@ -37,14 +37,14 @@ parameter_specifications:
                 num_points:  48
 
             cleavage_rate:
-                lower_bound: 0.3
-                upper_bound: 0.3
+                lower_bound: 0.00160
+                upper_bound: 0.00160
                 mesh_type:   linear
                 num_points:  1
 
             cleavage_cooperativity:
-                lower_bound: 1
-                upper_bound: 1
+                lower_bound: 1000000
+                upper_bound: 1000000
                 mesh_type:   linear
                 num_points:  1
 

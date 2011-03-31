@@ -29,8 +29,11 @@ class CooperativeHydrolysis(_FilamentTransition):
         self.rate             = rate
         self.new_state        = new_state
 
+        for c in cooperativities.itervalues():
+            assert c >= 1
+
         self.pointed_neighbors = cooperativities.keys()
-        self.boundary_rates = dict((s, self.rate * rho)
+        self.boundary_rates = dict((s, self.rate * (rho - 1))
                                    for s, rho in cooperativities.iteritems())
 
         _FilamentTransition.__init__(self, label=label)
@@ -45,9 +48,7 @@ class CooperativeHydrolysis(_FilamentTransition):
                 for pn in self.pointed_neighbors]
 
     def _random_rate(self, filament):
-        return self.rate * (filament.state_count(self.old_state) -
-                sum(filament.boundary_count(self.old_state, pn)
-                    for pn in self.pointed_neighbors))
+        return self.rate * filament.state_count(self.old_state)
 
     def perform(self, time, filaments, concentrations, index, r):
         current_filament = filaments[index]
@@ -62,7 +63,7 @@ class CooperativeHydrolysis(_FilamentTransition):
             boundary_r = r - random_rate
             boundary_index = bisect.bisect_left(running_rates, boundary_r)
 
-            specific_r = boundary_r - running_rates[boundary_index]
+            specific_r = running_rates[boundary_index] - boundary_r
 
             self._perform_boundary(time, current_filament, specific_r,
                                    boundary_rates[boundary_index],
@@ -80,9 +81,10 @@ class CooperativeHydrolysis(_FilamentTransition):
 
     def _perform_random(self, time, filament, r, random_rate):
         target_index = int(r / random_rate)
-        state_index = filament.non_boundary_state_index(self.old_state,
-                                                        self.pointed_neighbors,
-                                                        target_index)
+        state_index = filament.state_index(self.old_state, target_index)
+#        state_index = filament.non_boundary_state_index(self.old_state,
+#                                                        self.pointed_neighbors,
+#                                                        target_index)
         filament[state_index] = self.new_state
 
 

@@ -12,16 +12,3 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-from . import measurements
-from . import slicing
-
-from actin_dynamics import database
-
-def D_vs_concentration(session, **kwargs):
-    ob = session.get_experiment('fujiwara_2002').objectives['diffusion_coefficient']
-    s = slicing.Slicer.from_objective_bind(ob)
-
-    Ds, name, concentration_mesh = s.minimum_values('atp_concentration')
-
-    measurements.line((concentration_mesh[0], Ds), **kwargs)
