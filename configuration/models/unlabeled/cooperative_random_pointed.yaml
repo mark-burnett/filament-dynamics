@@ -1,0 +1,4 @@
+import:
+    - 'components/cooperative.yaml'
+    - 'components/random_release.yaml'
+    - 'components/pointed_polymerization.yaml'

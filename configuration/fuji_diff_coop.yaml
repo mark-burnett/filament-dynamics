@@ -1,14 +1,8 @@
-#name: 'Fujiwara Tip Diffusion - Traditional Random Model'
 name: 'Fujiwara Tip Diffusion - Cleavage coop = 1000000'
 import:
     - 'experiments/fujiwara_2002.yaml'
 
     - 'models/three_state_cooperative_random.yaml'
-#    - 'models/nucleotide_exchange.yaml'
-#    - 'models/pi_release_in_solution.yaml'
-#    - 'models/fast_tip_phosphate_release.yaml'
-
-#    - 'constants.yaml'
 
 global_parameters:
     expected_diffusion_coefficient: 28.6
@@ -16,12 +10,6 @@ global_parameters:
     number_of_filaments:   1
 
     initial_filament_length: 100000
-
-    # In-solution interactions
-#    nucleotide_exchange_rate: 0.01
-#    pi_release_in_solution:   10000
-
-#    tip_phosphate_release: 2
 
     histogram_start_time:    900
     histogram_sample_period: 30
