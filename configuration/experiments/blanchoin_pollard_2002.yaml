@@ -8,38 +8,6 @@ experiments:
             initial_atp_concentration:        0
             initial_pyrene_atp_concentration: 6
 
-            barbed_atp_polymerization_rate:    11.6
-            barbed_adppi_polymerization_rate:   3.4
-            barbed_adp_polymerization_rate:     2.9
-
-            barbed_pyrene_atp_polymerization_rate:    11.6
-            barbed_pyrene_adppi_polymerization_rate:   3.4
-            barbed_pyrene_adp_polymerization_rate:     2.9
-
-            barbed_atp_depolymerization_rate:   1.4
-            barbed_adppi_depolymerization_rate: 0.2
-            barbed_adp_depolymerization_rate:   5.4
-
-            barbed_pyrene_atp_depolymerization_rate:   1.4
-            barbed_pyrene_adppi_depolymerization_rate: 0.2
-            barbed_pyrene_adp_depolymerization_rate:   5.4
-
-            pointed_atp_polymerization_rate:     0
-            pointed_adppi_polymerization_rate:   0
-            pointed_adp_polymerization_rate:     0
-
-            pointed_pyrene_atp_polymerization_rate:     0
-            pointed_pyrene_adppi_polymerization_rate:   0
-            pointed_pyrene_adp_polymerization_rate:     0
-
-            pointed_atp_depolymerization_rate:   0
-            pointed_adppi_depolymerization_rate: 0
-            pointed_adp_depolymerization_rate:   0
-
-            pointed_pyrene_atp_depolymerization_rate:   0
-            pointed_pyrene_adppi_depolymerization_rate: 0
-            pointed_pyrene_adp_depolymerization_rate:   0
-
         simulation:
             filaments:
                 filament_factory:
@@ -122,17 +90,6 @@ experiments:
                     fixed_arguments:
                         state: pyrene_ATP
 
-                ATP:
-                    class_name: StateCount
-                    fixed_arguments:
-                        state: ATP
-
-                total_ATP:
-                    class_name: StateCountSum
-                    fixed_arguments:
-                        base_state: ATP
-                        prefix: pyrene_
-
                 pyrene_ADPPi:
                     class_name: StateCount
                     fixed_arguments:
@@ -154,19 +111,8 @@ experiments:
                     fixed_arguments:
                         state: pyrene_ADP
 
-                ADP:
-                    class_name: StateCount
-                    fixed_arguments:
-                        state: ADP
-
-                total_ADP:
-                    class_name: StateCountSum
-                    fixed_arguments:
-                        base_state: ADP
-                        prefix: pyrene_
             
         analyses:
-            # XXX add entry for total f-actin
             length:
                 class_name: StandardErrorMean
                 variable_arguments:

@@ -2,3 +2,8 @@ global_parameters:
     brooks_atp_weight:   0.37
     brooks_adppi_weight: 0.56
     brooks_adp_weight:   0.75
+
+    # XXX Is this really an ok stopgap practice?
+    pyrene_atp_weight:   0.37
+    pyrene_adppi_weight: 0.56
+    pyrene_adp_weight:   0.75

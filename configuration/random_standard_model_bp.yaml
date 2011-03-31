@@ -1,8 +1,11 @@
 name: 'Pollard Random FTC'
 
 import:
-    - 'models/three_state_random_random.yaml'
     - 'experiments/blanchoin_pollard_2002.yaml'
+    - 'models/unlabeled/random_random_full.yaml'
+    - 'models/pyrene/random_random_full.yaml'
+    - 'parameters/polyermization_fujiwara_full.yaml'
+    - 'parameters/pyrene_coefficients_brooks.yaml'
 
 experiments:
     blanchoin_pollard_2002:
@@ -30,23 +33,3 @@ parameter_specifications:
                 upper_bound: 0.040
                 mesh_type:   log
                 num_points:  20
-
-        objective:
-            pollard_pyrene_fit:
-                pyrene_atp_weight:
-                    lower_bound: 0.37
-                    upper_bound: 0.37
-                    mesh_type:   linear
-                    num_points:  1
-
-                pyrene_adppi_weight:
-                    lower_bound: 0.56
-                    upper_bound: 0.56
-                    mesh_type:   linear
-                    num_points:  1
-
-                pyrene_adp_weight:
-                    lower_bound: 0.75
-                    upper_bound: 0.75
-                    mesh_type:   linear
-                    num_points:  1
