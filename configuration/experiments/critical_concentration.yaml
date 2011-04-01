@@ -40,17 +40,24 @@ experiments:
                     class_name: Length
 
         analyses:
-            elongation_rate:
-                class_name: ElongationRate
+            length:
+                class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: length
+                    measurement_type: filament
 
         objectives:
             executors:
-                critical_concentration:
-                    class_name: CriticalConcentration
-
-                critical_concentration_fit:
-                    class_name: CriticalConcentrationFit
+                elongation_rate:
+                    class_name: ElongationRate
                     variable_arguments:
-                        expected_value: expected_critical_concentration
+                        sample_period: sample_period
+
+                elongation_rate_fit:
+                    class_name: SquaredElongationRate
+                    variable_arguments:
+                        sample_period: sample_period

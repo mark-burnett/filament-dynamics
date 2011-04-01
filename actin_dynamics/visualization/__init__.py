@@ -18,5 +18,6 @@ import slicing
 import pieper_wegner
 import measurements
 import fujiwara
+import critical_concentration
 
 import new_pollard

@@ -19,8 +19,8 @@ from actin_dynamics import logger
 _log = logger.getLogger(__file__)
 
 class Length(_Measurement):
-    def __init__(self, label=None):
-        _Measurement.__init__(self, label=label)
+    def __init__(self, **kwargs):
+        _Measurement.__init__(self, **kwargs)
 
     def perform(self, time, filaments):
         for filament in filaments:

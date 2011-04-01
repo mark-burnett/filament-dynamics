@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,28 +13,26 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
+from .base_classes import Objective as _Objective
 
-from ..meta_classes import Registration
+from actin_dynamics.numerical import measurements
 
-from registry import measurement_registry
-
-class Measurement(object):
-    __metaclass__ = Registration
-    registry = measurement_registry
-    skip_registration = True
-
-    __slots__ = ['label']
+class ElongationRate(_Objective):
     def __init__(self, sample_period=None, label=None):
-        self.label = label
         self.sample_period = sample_period
 
-    def store(self, time, value, filament):
-        measurements = filament.measurements[self.label]
-        if not measurements:
-            measurements.append([time, value])
-        last_time, last_value = measurements[0]
-        if time <= last_time:
-            measurements[0][1] = value
-        else:
-            measurements.append([time + self.sample_period, value])
+        _Objective.__init__(self, label=label)
+
+    def perform(self, run, target):
+        length = run.analyses['length']
+        target.value = measurements.derivative(length)[-1]
+
+class SquaredElongationRate(_Objective):
+    def __init__(self, sample_period=None, label=None):
+        self.sample_period = sample_period
+
+        _Objective.__init__(self, label=label)
+
+    def perform(self, run, target):
+        length = run.analyses['length']
+        target.value = measurements.derivative(length)[-1]**2

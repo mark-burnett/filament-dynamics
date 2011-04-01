@@ -13,35 +13,22 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pylab
-
 from . import measurements
 from . import slicing
 
-from actin_dynamics import database
+import pylab
 
-def D_vs_concentration(session, **kwargs):
-    e = session.get_experiment('fujiwara_2002')
-    D_ob = e.objectives['diffusion_coefficient']
-    D_s = slicing.Slicer.from_objective_bind(D_ob)
+def elongation_rate_vs_conc(session, **kwargs):
+    ob = session.get_experiment('critical_concentration').objectives['elongation_rate']
 
-    Ds, name, concentration_mesh = D_s.minimum_values('atp_concentration')
+    s = slicing.Slicer.from_objective_bind(ob)
 
-    j_ob = e.objectives['elongation_rate']
-    j_s = slicing.Slicer.from_objective_bind(j_ob)
+    rs, names, concentration_mesh = s.minimum_values('atp_concentration')
 
-    js, name, concentration_mesh = j_s.minimum_values('atp_concentration')
-
-    pylab.figure()
-    pylab.subplot(2,1,1)
-    measurements.line((concentration_mesh[0], Ds), **kwargs)
-    pylab.ylabel('Tip Diffusion Coefficient (mon**2 /s)')
-
-    pylab.subplot(2,1,2)
     zero_concentrations = [concentration_mesh[0][0], concentration_mesh[0][-1]]
     zero_values = [0, 0]
 
+    measurements.line((concentration_mesh[0], rs), **kwargs)
     measurements.line((zero_concentrations, zero_values))
-    measurements.line((concentration_mesh[0], js), **kwargs)
-    pylab.ylabel('Elongation Rate (mon /s )')
     pylab.xlabel('[G-ATP-actin] (uM)')
+    pylab.ylabel('Average Elongation Rate (mon / s)')

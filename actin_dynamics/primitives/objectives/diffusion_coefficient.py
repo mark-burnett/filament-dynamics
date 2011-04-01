@@ -18,9 +18,6 @@ from actin_dynamics.numerical import residuals as _residuals
 
 from actin_dynamics.numerical import regression
 
-from actin_dynamics import logger
-log = logger.getLogger(__file__)
-
 class DiffusionCoefficient(_Objective):
     def __init__(self, analysis_prefix=None, label=None):
         self.analysis_prefix   = analysis_prefix
@@ -33,18 +30,12 @@ class DiffusionCoefficient(_Objective):
 
         # Fit gaussians
         taus, means, variances = gaussian_fits(histograms)
-#        log.warn('taus = %s', taus)
-#        log.warn('means = %s', means)
-#        log.warn('variances = %s', variances)
 
         # Calculate slope of line through points using residual function
-        m, b = regression.fit_line(taus, variances)
-#        m = regression.fit_zero_line(taus, variances)
+        m = regression.fit_zero_line(taus, variances)
 
         # Calculate D (D = slope / 2) and assign the residual to target.value
         D = m / 2
-#        log.warn('slope = %s, D = %s', m, D)
-#        log.warn('slope = %s, intercept = %s, D = %s', m, b, D)
         target.value = D
 
 

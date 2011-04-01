@@ -3,59 +3,6 @@ experiments:
         parameters:
             simulation_duration: 3600
 
-            barbed_pyrene_atp_polymerization_rate:    11.6
-            barbed_pyrene_adppi_polymerization_rate:   3.4
-            barbed_pyrene_adp_polymerization_rate:     2.9
-
-            barbed_atp_polymerization_rate:    11.6
-            barbed_adppi_polymerization_rate:   3.4
-            barbed_adp_polymerization_rate:     2.9
-
-            barbed_pyrene_atp_depolymerization_rate:   1.4
-            barbed_pyrene_adppi_depolymerization_rate: 0.2
-            barbed_pyrene_adp_depolymerization_rate:   5.4
-
-            barbed_atp_depolymerization_rate:   1.4
-            barbed_adppi_depolymerization_rate: 0.2
-            barbed_adp_depolymerization_rate:   5.4
-
-            # Vavylonis's parameters
-#            barbed_atp_depolymerization_rate:   1.4
-#            barbed_adppi_depolymerization_rate: 1.1
-#            barbed_adp_depolymerization_rate:   7.2
-
- #           pointed_pyrene_atp_polymerization_rate:     1.3
- #           pointed_pyrene_adppi_polymerization_rate:   0.11
- #           pointed_pyrene_adp_polymerization_rate:     0.14
- #
- #           pointed_atp_polymerization_rate:     1.3
- #           pointed_adppi_polymerization_rate:   0.11
- #           pointed_adp_polymerization_rate:     0.14
- #
- #           pointed_pyrene_atp_depolymerization_rate:   0.8
- #           pointed_pyrene_adppi_depolymerization_rate: 0.02
- #           pointed_pyrene_adp_depolymerization_rate:   0.25
- #
- #           pointed_atp_depolymerization_rate:   0.8
- #           pointed_adppi_depolymerization_rate: 0.02
- #           pointed_adp_depolymerization_rate:   0.25
-
-            pointed_pyrene_atp_polymerization_rate:     0
-            pointed_pyrene_adppi_polymerization_rate:   0
-            pointed_pyrene_adp_polymerization_rate:     0
-
-            pointed_atp_polymerization_rate:     0
-            pointed_adppi_polymerization_rate:   0
-            pointed_adp_polymerization_rate:     0
-
-            pointed_pyrene_atp_depolymerization_rate:   0
-            pointed_pyrene_adppi_depolymerization_rate: 0
-            pointed_pyrene_adp_depolymerization_rate:   0
-
-            pointed_atp_depolymerization_rate:   0
-            pointed_adppi_depolymerization_rate: 0
-            pointed_adp_depolymerization_rate:   0
-
         simulation:
             filaments:
                 filament_factory:
@@ -81,39 +28,15 @@ experiments:
                 ADPPi:
                     class_name: ZeroConcentration
 
-#                ADPPi:
-#                    class_name: FixedReagent
-#                    variable_arguments:
-#                        filament_tip_concentration: filament_tip_concentration
-#                        number: number_of_filaments
-#                    fixed_arguments:
-#                        initial_concentration: 0
-
                 pyrene_ADP:
                     class_name: ZeroConcentration
 
                 ADP:
                     class_name: ZeroConcentration
 
-#                ADP:
-#                    class_name: FixedReagent
-#                    variable_arguments:
-#                        filament_tip_concentration: filament_tip_concentration
-#                        number: number_of_filaments
-#                    fixed_arguments:
-#                        initial_concentration: 0
-
 
                 Pi:
                     class_name: ZeroConcentration
-
-#                Pi:
-#                    class_name: FixedReagent
-#                    variable_arguments:
-#                        filament_tip_concentration: filament_tip_concentration
-#                        number: number_of_filaments
-#                    fixed_arguments:
-#                        initial_concentration: 0
 
             end_conditions:
                 duration:
@@ -124,12 +47,24 @@ experiments:
             measurements:
                 length:
                     class_name: Length
+                    variable_arguments:
+                        sample_period: sample_period
 
         analyses:
+            length:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: linear #previous_value
+                    measurement_name: length
+                    measurement_type: filament
+
             ss_histogram_60:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -140,7 +75,7 @@ experiments:
             ss_histogram_120:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -151,7 +86,7 @@ experiments:
             ss_histogram_180:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -162,7 +97,7 @@ experiments:
             ss_histogram_240:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -173,7 +108,7 @@ experiments:
             ss_histogram_300:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -184,7 +119,7 @@ experiments:
             ss_histogram_360:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -195,7 +130,7 @@ experiments:
             ss_histogram_420:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -206,7 +141,7 @@ experiments:
             ss_histogram_480:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -217,7 +152,7 @@ experiments:
             ss_histogram_540:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -228,7 +163,7 @@ experiments:
             ss_histogram_600:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -239,7 +174,7 @@ experiments:
             ss_histogram_660:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -250,7 +185,7 @@ experiments:
             ss_histogram_720:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -261,7 +196,7 @@ experiments:
             ss_histogram_780:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -272,7 +207,7 @@ experiments:
             ss_histogram_840:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -283,7 +218,7 @@ experiments:
             ss_histogram_900:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -294,7 +229,7 @@ experiments:
             ss_histogram_960:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -305,7 +240,7 @@ experiments:
             ss_histogram_1020:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -316,7 +251,7 @@ experiments:
             ss_histogram_1080:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -327,7 +262,7 @@ experiments:
             ss_histogram_1140:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -338,7 +273,7 @@ experiments:
             ss_histogram_1200:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -349,7 +284,7 @@ experiments:
             ss_histogram_1500:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -360,7 +295,7 @@ experiments:
             ss_histogram_1800:
                 class_name: TipDiffusionHistogram
                 variable_arguments:
-                    sample_period: histogram_sample_period
+                    sample_period: sample_period
                     stop_time: simulation_duration
                     start_time: histogram_start_time
                     bin_size: histogram_bin_size
@@ -370,6 +305,11 @@ experiments:
 
         objectives:
             executors:
+                elongation_rate:
+                    class_name: ElongationRate
+                    variable_arguments:
+                        sample_period: sample_period
+
                 diffusion_coefficient:
                     class_name: DiffusionCoefficient
                     fixed_arguments:

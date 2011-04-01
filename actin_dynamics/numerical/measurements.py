@@ -16,6 +16,9 @@
 import copy
 import math
 import bisect
+import itertools
+
+import numpy
 
 from actin_dynamics.numerical import workalike
 
@@ -71,3 +74,9 @@ def add(measurements):
     errors = map(math.sqrt, errors)
 
     return times, values, errors
+
+def derivative(measurement):
+    times, values, errors = measurement
+    dv = numpy.diff(values)
+    dt = numpy.diff(times)
+    return [n/d for n, d in itertools.izip(dv, dt)]

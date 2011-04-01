@@ -9,6 +9,8 @@ global_parameters:
     number_of_simulations: 100
     number_of_filaments:   1
 
+    sample_period: 30
+
     expected_critical_concentration: 0.16
 
 parameter_specifications:
