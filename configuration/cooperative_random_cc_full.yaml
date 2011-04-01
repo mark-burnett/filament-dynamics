@@ -4,3 +4,36 @@ import:
     - 'experiments/critical_concentration.yaml'
     - 'parameters/polymerization_fujiwara_full.yaml'
     - 'models/unlabeled/cooperative_random_full.yaml'
+
+global_parameters:
+    number_of_simulations: 100
+    number_of_filaments:   1
+
+    expected_critical_concentration: 0.16
+
+parameter_specifications:
+    critical_concentration:
+        simulation:
+            cleavage_rate:
+                lower_bound: 0.3
+                upper_bound: 0.3
+                mesh_type:   linear
+                num_points:  1
+
+            cleavage_cooperativity:
+                lower_bound: 1
+                upper_bound: 1
+                mesh_type:   linear
+                num_points:  1
+
+            release_rate:
+                lower_bound: 0.003
+                upper_bound: 0.003
+                mesh_type:   log
+                num_points:  1
+
+            atp_concentration:
+                lower_bound: 0.05
+                upper_bound: 0.20
+                mesh_type:   linear
+                num_points:  30

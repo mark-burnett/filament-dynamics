@@ -16,8 +16,8 @@
 from registry import filament_factory_registry as registry
 
 from single_state import *
-from inert import *
+from inert_filaments import *
 
 del single_state
-def inert
+del inert_filaments
 del base_classes

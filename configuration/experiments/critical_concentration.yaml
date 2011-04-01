@@ -1,7 +1,8 @@
 experiments:
     critical_concentration:
         parameters:
-            simulation_duration: 600
+            simulation_duration:     600
+            initial_filament_length: 10000
 
         simulation:
             filaments:
@@ -48,5 +49,8 @@ experiments:
             executors:
                 critical_concentration:
                     class_name: CriticalConcentration
+
+                critical_concentration_fit:
+                    class_name: CriticalConcentrationFit
                     variable_arguments:
                         expected_value: expected_critical_concentration
