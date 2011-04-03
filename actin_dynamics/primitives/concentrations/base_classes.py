@@ -26,7 +26,7 @@ class Concentration(object):
     def __init__(self, sample_period=None, label=None):
         self.label = label
         self.sample_period = sample_period
-        self.data  = [(0, self.value)]
+        self.data  = [[0, self.value]]
 
     def add_monomer(self, time):
         self.update_measurement(time)
