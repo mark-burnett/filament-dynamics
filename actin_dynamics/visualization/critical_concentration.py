@@ -13,10 +13,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import pylab
+
 from . import measurements
 from . import slicing
 
-import pylab
+from actin_dynamics.numerical.zero_crossings import zero_crossings
 
 def elongation_rate_vs_conc(session, **kwargs):
     ob = session.get_experiment('critical_concentration').objectives['elongation_rate']
@@ -32,3 +34,13 @@ def elongation_rate_vs_conc(session, **kwargs):
     measurements.line((zero_concentrations, zero_values))
     pylab.xlabel('[G-ATP-actin] (uM)')
     pylab.ylabel('Average Elongation Rate (mon / s)')
+
+def get_cc(experiment):
+    ob = experiment.objectives['elongation_rate']
+
+    s = slicing.Slicer.from_objective_bind(ob)
+
+    rs, names, concentration_mesh = s.minimum_values('atp_concentration')
+    cc = zero_crossings(concentration_mesh[0], rs)[0]
+
+    return cc

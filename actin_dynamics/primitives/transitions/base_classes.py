@@ -49,17 +49,18 @@ class FilamentTransition(Transition):
 
     def perform(self, time, filaments, concentrations, index, r):
         # Store data with each filament
-        if self.label:
-            filament = filaments[index]
-            measurements = filament.measurements[self.label]
-            previous_time, previous_value = measurements[-1]
-            measurements.append((time, previous_value + 1))
+#        if self.label:
+#            filament = filaments[index]
+#            measurements = filament.measurements[self.label]
+#            previous_time, previous_value = measurements[-1]
+#            measurements.append((time, previous_value + 1))
         Transition.perform(self, time, filaments, concentrations, index, r)
 
     def initialize_measurement(self, filaments):
-        if self.label:
-            for filament in filaments:
-                filament.measurements[self.label].append((0, 0))
+        pass
+#        if self.label:
+#            for filament in filaments:
+#                filament.measurements[self.label].append((0, 0))
         Transition.initialize_measurement(self, filaments)
 
 class SolutionTransition(Transition):
@@ -67,11 +68,12 @@ class SolutionTransition(Transition):
 
     __slots__ = ['data', 'count']
     def __init__(self, label=None):
-        self.count = 0
-        self.data  = [(0, 0)]
+#        self.count = 0
+#        self.data  = [(0, 0)]
         Transition.__init__(self, label=label)
 
     def perform(self, time, filaments, concentrations, index, r):
-        self.count += 1
-        self.data.append((time, self.count))
-        Transition.perform(self, time, filaments, concentrations, index, r)
+        pass
+#        self.count += 1
+#        self.data.append((time, self.count))
+#        Transition.perform(self, time, filaments, concentrations, index, r)

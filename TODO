@@ -1,22 +1,31 @@
-goals for Thursday
+goals
     * critical concentration simulation
-    - critical concentration vs rho_c
+    * critical concentration vs rho_c
+
     - release rate/cooperativity data fit
+
     - D vs [G-ATP-actin] for various rho_r's
     - D vs [G-ATP-actin] for tip release
-    - update measurements to use sample period
+
+    + update measurements to use sample period
     - update update standard error calculation to not interpolate
+        need to make sure everything gets converted to do proper
+        interpolation ahead of time first
+
+optimization
+    segmented filament
+        try filter for efficient state count generation
+        what about indexing the segments?
+            some_map[state] = set([segment(state=state, ...) ...])
+        should i further map boundaries?
+        even with these optimizations, do i gain anything?
+
+    stop keeping every damn event
+        you're on the right track now using the sample period for measurements
+        need to extend it to concentrations
 
 consider
     using symlinks for non-unique unlabeled/labeled config files files
-
-goals for end of march:
-    pollard analysis (done)
-    pieper & wegner analysis (doneish)
-    release rate analysis
-    tip diffusion analysis
-        fit data/standard analysis
-        tip diffusion coefficient as function of concentration
 
 
 visualizations for publication

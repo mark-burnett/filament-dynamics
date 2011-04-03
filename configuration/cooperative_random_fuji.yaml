@@ -1,4 +1,4 @@
-name: 'Fujiwara Tip Diffusion - Cleavage Cooperativity = 10'
+name: 'Fujiwara Tip Diffusion - Cleavage Cooperativity = 1000000'
 
 import:
     - 'experiments/fujiwara_2002.yaml'
@@ -12,8 +12,9 @@ global_parameters:
 
     initial_filament_length: 100000
 
-    histogram_start_time: 900
     sample_period:        30
+
+    histogram_start_time: 900
     histogram_bin_size:   74.07 # This is about 0.2 um in monomers
 
 parameter_specifications:
@@ -26,14 +27,14 @@ parameter_specifications:
                 num_points:  48
 
             cleavage_rate:
-                lower_bound: 0.0772
-                upper_bound: 0.0772
+                lower_bound: 0.00161
+                upper_bound: 0.00161
                 mesh_type:   linear
                 num_points:  1
 
             cleavage_cooperativity:
-                lower_bound: 10
-                upper_bound: 10
+                lower_bound: 1000000
+                upper_bound: 1000000
                 mesh_type:   linear
                 num_points:  1
 

@@ -21,6 +21,7 @@ experiments:
                 pyrene_ATP:
                     class_name: FixedReagent
                     variable_arguments:
+                        sample_period: sample_period
                         initial_concentration: initial_pyrene_atp_concentration
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
@@ -28,6 +29,7 @@ experiments:
                 pyrene_ADPPi:
                     class_name: FixedReagent
                     variable_arguments:
+                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
                     fixed_arguments:
@@ -36,6 +38,7 @@ experiments:
                 pyrene_ADP:
                     class_name: FixedReagent
                     variable_arguments:
+                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
                     fixed_arguments:
@@ -44,6 +47,7 @@ experiments:
                 Pi:
                     class_name: FixedReagent
                     variable_arguments:
+                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
                     fixed_arguments:
@@ -58,21 +62,32 @@ experiments:
             measurements:
                 length:
                     class_name: Length
+                    variable_arguments:
+                        sample_period: sample_period
 
                 pyrene_ATP:
                     class_name: StateCount
                     fixed_arguments:
                         state: pyrene_ATP
+                    variable_arguments:
+                        sample_period: sample_period
+
 
                 pyrene_ADPPi:
                     class_name: StateCount
                     fixed_arguments:
                         state: pyrene_ADPPi
+                    variable_arguments:
+                        sample_period: sample_period
+
 
                 pyrene_ADP:
                     class_name: StateCount
                     fixed_arguments:
                         state: pyrene_ADP
+                    variable_arguments:
+                        sample_period: sample_period
+
 
             
         analyses:

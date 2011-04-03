@@ -16,26 +16,28 @@
 from base_classes import Concentration as _Concentration
 
 class FixedConcentration(_Concentration):
-    description = 'Maintains a fixed concentration'
-    parameters = ['concentration']
-    states = None
-
     __slots__ = ['value', 'data']
-    def __init__(self, concentration=-1, label=None):
+    def __init__(self, concentration=-1, **kwargs):
         if concentration < 0:
             raise ValueError('Negative concentrations not allowed.')
         self.value = concentration
-        self.data = [(0, concentration)]
-        _Concentration.__init__(self, label=label)
+        _Concentration.__init__(self, **kwargs)
+
+    def add_monomer(self, time):
+        pass
+
+    def remove_monomer(self, time):
+        pass
 
 
 class ZeroConcentration(_Concentration):
-    description = 'Maintains zero concentration.'
-    parameters = None
-    states = None
-
     __slots__ = ['value', 'data']
-    def __init__(self, label=None):
+    def __init__(self, **kwargs):
         self.value = 0
-        self.data = [(0, 0)]
-        _Concentration.__init__(self, label=label)
+        _Concentration.__init__(self, **kwargs)
+
+    def add_monomer(self, time):
+        pass
+
+    def remove_monomer(self, time):
+        pass

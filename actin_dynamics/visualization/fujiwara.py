@@ -14,13 +14,15 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pylab
+import numpy
 
 from . import measurements
 from . import slicing
 
 from actin_dynamics import database
+from actin_dynamics.numerical.zero_crossings import zero_crossings
 
-def D_vs_concentration(session, **kwargs):
+def D_vs_concentration(session, cc_scale=False, **kwargs):
     e = session.get_experiment('fujiwara_2002')
     D_ob = e.objectives['diffusion_coefficient']
     D_s = slicing.Slicer.from_objective_bind(D_ob)
@@ -32,16 +34,29 @@ def D_vs_concentration(session, **kwargs):
 
     js, name, concentration_mesh = j_s.minimum_values('atp_concentration')
 
-    pylab.figure()
+    concentration_mesh = concentration_mesh[0]
+
+    if cc_scale:
+        cc = zero_crossings(concentration_mesh, js)[0]
+        concentration_mesh = numpy.array(concentration_mesh) / cc
+        print 'cc =', cc
+
+#    pylab.figure()
     pylab.subplot(2,1,1)
-    measurements.line((concentration_mesh[0], Ds), **kwargs)
+    measurements.line((concentration_mesh, Ds), **kwargs)
+    pylab.axvline(x=1, color='black')
     pylab.ylabel('Tip Diffusion Coefficient (mon**2 /s)')
 
     pylab.subplot(2,1,2)
-    zero_concentrations = [concentration_mesh[0][0], concentration_mesh[0][-1]]
+    zero_concentrations = [concentration_mesh[0], concentration_mesh[-1]]
     zero_values = [0, 0]
 
     measurements.line((zero_concentrations, zero_values))
-    measurements.line((concentration_mesh[0], js), **kwargs)
+    measurements.line((concentration_mesh, js), **kwargs)
+    pylab.axvline(x=1, color='black')
     pylab.ylabel('Elongation Rate (mon /s )')
-    pylab.xlabel('[G-ATP-actin] (uM)')
+
+    if cc_scale:
+        pylab.xlabel('[G-ATP-actin] (critical concentrations)')
+    else:
+        pylab.xlabel('[G-ATP-actin] (uM)')

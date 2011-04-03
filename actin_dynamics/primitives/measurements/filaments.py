@@ -29,9 +29,9 @@ class Length(_Measurement):
 
 class StateCount(_Measurement):
     __slots__ = ['state']
-    def __init__(self, state=None, label=None):
+    def __init__(self, state=None, **kwargs):
         self.state = state
-        _Measurement.__init__(self, label=label)
+        _Measurement.__init__(self, **kwargs)
 
     def perform(self, time, filaments):
         for filament in filaments:
@@ -40,10 +40,10 @@ class StateCount(_Measurement):
 
 class StateCountSum(_Measurement):
     __slots__ = ['base_state', 'prefix']
-    def __init__(self, base_state=None, prefix=None, label=None):
+    def __init__(self, base_state=None, prefix=None, **kwargs):
         self.base_state = base_state
         self.prefix     = prefix
-        _Measurement.__init__(self, label=label)
+        _Measurement.__init__(self, **kwargs)
 
     def perform(self, time, filaments):
         for filament in filaments:

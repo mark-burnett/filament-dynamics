@@ -22,9 +22,10 @@ class Concentration(object):
     registry = concentration_registry
     skip_registration = True
 
-    __slots__ = ['label', 'data']
-    def __init__(self, label=None):
+    __slots__ = ['label', 'sample_period', 'data']
+    def __init__(self, sample_period=None, label=None):
         self.label = label
+        self.sample_period = sample_period
         self.data  = [(0, self.value)]
 
     def add_monomer(self, time):
@@ -34,5 +35,10 @@ class Concentration(object):
         self.update_measurement(time)
 
     def update_measurement(self, time):
-        if self.value != self.data[-1][1]:
-            self.data.append((time, self.value))
+#        if self.value != self.data[-1][1]:
+#            self.data.append((time, self.value))
+        last_time, last_value = self.data[-1]
+        if time <= last_time:
+            self.data[-1][1] = self.value
+        else:
+            self.data.append([time + self.sample_period, self.value])
