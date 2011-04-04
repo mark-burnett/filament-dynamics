@@ -10,3 +10,4 @@ models:
                 rate: release_rate
                 pyrene_ADP: release_cooperativity
                 ADP:        release_cooperativity
+                Spectrin:   release_cooperativity
