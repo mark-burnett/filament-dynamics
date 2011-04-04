@@ -36,8 +36,8 @@ def process(process_type, db_session):
     '''
     Yields a process to be used for identifying work done.
     '''
-    rev, ctx = version.source_revision()
-    p = database.Process(code_revision=rev, code_changeset=ctx,
+    ctx = version.source_hash()
+    p = database.Process(code_changeset=ctx,
                          hostname=socket.gethostname(),
                          uname=os.uname(), type=process_type)
 

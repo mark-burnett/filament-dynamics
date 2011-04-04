@@ -13,10 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import mercurial.hg
-import mercurial.ui
+import dulwich
 
-def source_revision():
-    repo = mercurial.hg.repository(mercurial.ui.ui(), '.')
-    parent = repo.parents()[0]
-    return parent.rev(), parent.hex()
+def source_hash():
+    repo = dulwich.repo.Repo('.')
+    return repo.head()
