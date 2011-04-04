@@ -90,7 +90,7 @@ class DBLogRecord(object):
             self.time = time
 
     def __repr__(self):
-        return ("%s(name'%s', pathname='%s', funcName='%s', lineno=%s, "
+        return ("%s(name='%s', pathname='%s', funcName='%s', lineno=%s, "
                 + "levelno=%s, levelname='%s', message='%s', time='%s')") % (
                     self.__class__.__name__, self.name, self.pathname,
                     self.funcName, self.lineno, self.levelno, self.levelname,
