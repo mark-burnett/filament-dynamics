@@ -38,6 +38,18 @@ class StateCount(_Measurement):
             state_count = filament.state_count(self.state)
             self.store(time, state_count, filament)
 
+class WeightedStateTotal(_Measurement):
+    __slots__ = ['weights']
+    def __init__(self, label=None, sample_period=None, **weights):
+        self.weights = weights
+        _Measurement.__init__(self, label=label, sample_period=sample_period)
+
+    def perform(self, time, filaments):
+        for filament in filaments:
+            value = sum(filament.state_count(state) * weight
+                        for state, weight in self.weights.iteritems())
+            self.store(time, value, filament)
+
 class StateCountSum(_Measurement):
     __slots__ = ['base_state', 'prefix']
     def __init__(self, base_state=None, prefix=None, **kwargs):

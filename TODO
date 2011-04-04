@@ -26,6 +26,7 @@ optimization
 
 consider
     using symlinks for non-unique unlabeled/labeled config files files
+    reorganize top-level:  at least rename actin_dynamics to something
 
 
 visualizations for publication
