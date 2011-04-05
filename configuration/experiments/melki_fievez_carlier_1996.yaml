@@ -1,6 +1,5 @@
 global_parameters:
-    simulation_duration: 600
-    sample_period: 1
+    simulation_duration: 2500
 
     seed_concentration: 6
 
@@ -24,6 +23,7 @@ experiments:
                 ATP:
                     class_name: FixedReagent
                     variable_arguments:
+                        sample_period: sample_period
                         initial_concentration: initial_atp_concentration
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
@@ -31,6 +31,7 @@ experiments:
                 ADPPi:
                     class_name: FixedReagent
                     variable_arguments:
+                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
                     fixed_arguments:
@@ -39,6 +40,7 @@ experiments:
                 ADP:
                     class_name: FixedReagent
                     variable_arguments:
+                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
                     fixed_arguments:
@@ -48,6 +50,7 @@ experiments:
                 Pi:
                     class_name: FixedReagent
                     variable_arguments:
+                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
                     fixed_arguments:
@@ -62,36 +65,17 @@ experiments:
             measurements:
                 length:
                     class_name: Length
+                    variable_arguments:
+                        sample_period: sample_period
 
-                ATP:
-                    class_name: StateCount
-                    fixed_arguments:
-                        state: ATP
-
-                ADPPi:
-                    class_name: StateCount
-                    fixed_arguments:
-                        state: ADPPi
-
-                ADP:
-                    class_name: StateCount
-                    fixed_arguments:
-                        state: ADP
-
-                factin:
-                    class_name: WeightedStateTotal
-                    fixed_arguments:
-                        ATP:   1
-                        ADPPI: 1
-                        ADP:   1
-
-            
         analyses:
-            length:
+            factin:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
+                    scale_by:      filament_tip_concentration
+                    subtract:      seed_concentration
                 fixed_arguments:
                     interpolation_method: previous_value
                     measurement_name: length
@@ -107,36 +91,6 @@ experiments:
                     measurement_name: Pi
                     measurement_type: concentration
 
-            pyrene_ATP:
-                class_name: StandardErrorMean
-                variable_arguments:
-                    sample_period: sample_period
-                    stop_time:     simulation_duration
-                fixed_arguments:
-                    interpolation_method: previous_value
-                    measurement_name: pyrene_ATP
-                    measurement_type: filament
-
-            pyrene_ADPPi:
-                class_name: StandardErrorMean
-                variable_arguments:
-                    sample_period: sample_period
-                    stop_time:     simulation_duration
-                fixed_arguments:
-                    interpolation_method: previous_value
-                    measurement_name: pyrene_ADPPi
-                    measurement_type: filament
-
-            pyrene_ADP:
-                class_name: StandardErrorMean
-                variable_arguments:
-                    sample_period: sample_period
-                    stop_time:     simulation_duration
-                fixed_arguments:
-                    interpolation_method: previous_value
-                    measurement_name: pyrene_ADP
-                    measurement_type: filament
-
         objectives:
             loaders:
                 factin_fit:
@@ -146,7 +100,7 @@ experiments:
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'melki_fievez_carlier_1996/fact_concentration.dat'
+                        filename: 'melki_fievez_carlier_1996/factin_concentration.dat'
                         interpolate_data: True
 
                 pi_fit:
@@ -161,14 +115,14 @@ experiments:
 
 
             executors:
-                pi_fit:
+                factin_fit:
                     class_name: SimpleDataFit
                     fixed_arguments:
-                        measurement:   Pi
+                        measurement:   factin
                         residual_type: naked_chi_squared
 
                 pi_fit:
                     class_name: SimpleDataFit
                     fixed_arguments:
-                        measurement:   length
+                        measurement:   Pi
                         residual_type: naked_chi_squared
