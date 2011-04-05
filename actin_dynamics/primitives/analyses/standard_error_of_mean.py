@@ -20,7 +20,7 @@ from . import base_classes as _base_classes
 
 from . import utils
 
-from actin_dynamics.numerical import interpolation, workalike
+from actin_dynamics.numerical import interpolation, workalike, measurements
 
 from actin_dynamics import logger as _logger
 
@@ -29,12 +29,17 @@ _log = _logger.getLogger(__file__)
 class StandardErrorMean(_base_classes.Analysis):
     def __init__(self, sample_period=None, stop_time=None,
                  interpolation_method=None, measurement_name=None,
-                 measurement_type=None, label=None, **kwargs):
+                 measurement_type=None, label=None,
+                 scale_by=1, add=0, subtract=0, **kwargs):
         self.sample_period        = sample_period
         self.stop_time            = stop_time
         self.interpolation_method = interpolation_method
         self.measurement_name     = measurement_name
         self.measurement_type     = measurement_type
+
+        self.scale_by = scale_by
+        self.add      = add
+        self.subtract = subtract
 
         _base_classes.Analysis.__init__(self, label=label, **kwargs)
 
@@ -54,8 +59,18 @@ class StandardErrorMean(_base_classes.Analysis):
             rm, sample_times, method=self.interpolation_method)
                 for rm in raw_measurements]
 
+        scaled_measurements = [measurements.scale(sm, self.scale_by)
+                               for sm in sampled_measurements]
+        added_measurements  = [measurements.add_number(sm, self.add)
+                               for sm in scaled_measurements]
+
+        subtracted_measurements  = [measurements.add_number(am,
+                                        -self.subtract)
+                                    for am in added_measurements]
+
+
         # Perfom SEM analysis on that measurement
-        resulting_measurement = _calculate_sem(sampled_measurements)
+        resulting_measurement = _calculate_sem(subtracted_measurements)
 
         # Create and return result object.
         return result_factory(resulting_measurement, label=self.label)
