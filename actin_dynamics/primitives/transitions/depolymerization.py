@@ -20,21 +20,22 @@ _log = _logger.getLogger(__file__)
 
 class _FixedRate(_FilamentTransition):
     skip_registration = True
-    __slots__ = ['state', 'rate']
-    def __init__(self, state=None, rate=None, label=None):
+    __slots__ = ['state', 'rate', 'check_index']
+    def __init__(self, check_index=None, state=None, rate=None, label=None):
         """
         state - state to depolymerize
         rate  - depolymerization rate (constant)
         """
-        self.state = state
-        self.rate  = rate
+        self.state       = state
+        self.rate        = rate
+        self.check_index = check_index
 
         _FilamentTransition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
         result = []
         for filament in filaments:
-            if self.state == filament[-1]:
+            if self.state == filament[self.check_index]:
                 result.append(self.rate)
             else:
                 result.append(0)
@@ -46,6 +47,10 @@ class _FixedRate(_FilamentTransition):
         _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
 
 class BarbedDepolymerization(_FixedRate):
+    __slots__ = []
+    def __init__(self, **kwargs):
+        _FixedRate.__init__(self, check_index=-1, **kwargs)
+
     def perform(self, time, filaments, concentrations, index, r):
         current_filament = filaments[index]
         current_filament.shrink_barbed_end()
@@ -53,6 +58,10 @@ class BarbedDepolymerization(_FixedRate):
         _FixedRate.perform(self, time, filaments, concentrations, index, r)
 
 class PointedDepolymerization(_FixedRate):
+    __slots__ = []
+    def __init__(self, **kwargs):
+        _FixedRate.__init__(self, check_index=0, **kwargs)
+
     def perform(self, time, filaments, concentrations, index, r):
         current_filament = filaments[index]
         current_filament.shrink_pointed_end()
