@@ -24,7 +24,7 @@ class Measurement(object):
     registry = measurement_registry
     skip_registration = True
 
-    __slots__ = ['label']
+    __slots__ = ['label', 'sample_period']
     def __init__(self, sample_period=None, label=None):
         self.label = label
         self.sample_period = sample_period
