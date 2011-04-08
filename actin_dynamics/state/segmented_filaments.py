@@ -16,13 +16,11 @@
 import itertools
 import collections
 
-# Adapted from StackOverflow:  Martin v. Loewis (Thanks!)
 def iterate_pairs(lst):
-    i = iter(lst)
-    prev = i.next()
-    for item in i:
-        yield prev, item
-        prev = item
+    right = iter(lst)
+    right.next() # skip one!
+    left  = iter(lst)
+    return itertools.izip(left, right)
 
 
 class BasicSegment(object):
@@ -89,10 +87,11 @@ def _segmentize(iterable):
 
 
 class SegmentedFilament(object):
-    __slots__ = ['segments', 'measurements']
+    __slots__ = ['segments', 'measurements', '_length']
     def __init__(self, *segments):
         self.segments = list(segments)
         self.measurements = collections.defaultdict(list)
+        self._length = sum(map(len, self.segments))
 
     @classmethod
     def from_iterable(cls, iterable):
@@ -102,9 +101,11 @@ class SegmentedFilament(object):
         return itertools.chain(*self.segments)
 
     def __len__(self):
-        return sum(map(len, self.segments))
+        return self._length
 
     def __getitem__(self, index):
+        if (0 == index) or (-1 == index):
+            return self.segments[index].state
         if index < 0:
             index = len(self) + index
         # XXX Watch for exception if index not found.
@@ -189,9 +190,9 @@ class SegmentedFilament(object):
 
     def boundary_count(self, barbed_state, pointed_state):
         count = 0
-        for pointed_segment, barbed_segment in iterate_pairs(self.segments):
-            if (barbed_state  == barbed_segment.state and
-                pointed_state == pointed_segment.state):
+        target = [pointed_state, barbed_state]
+        for current in iterate_pairs(self.segments):
+            if current == target:
                 count += 1
         return count
 
@@ -211,14 +212,18 @@ class SegmentedFilament(object):
     def grow_barbed_end(self, state):
         end_segments = self.segments[-1].merge(BasicSegment(state=state, count=1))
         self.segments[-1:] = end_segments
+        self._length += 1
 
     def grow_pointed_end(self, state):
         end_segments = BasicSegment(state=state, count=1).merge(self.segments[0])
         self.segments[0:1] = end_segments
+        self._length += 1
 
 
     def shrink_barbed_end(self):
         self.segments[-1:] = self.segments[-1].decrement()
+        self._length -= 1
 
     def shrink_pointed_end(self):
         self.segments[0:1] = self.segments[0].decrement()
+        self._length -= 1
