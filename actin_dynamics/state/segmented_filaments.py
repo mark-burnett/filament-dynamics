@@ -190,8 +190,8 @@ class SegmentedFilament(object):
 
     def boundary_count(self, barbed_state, pointed_state):
         count = 0
-        target = [pointed_state, barbed_state]
-        for current in iterate_pairs(self.segments):
+        target = (pointed_state, barbed_state)
+        for current in iterate_pairs([seg.state for seg in self.segments]):
             if current == target:
                 count += 1
         return count

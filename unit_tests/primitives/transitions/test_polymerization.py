@@ -19,14 +19,13 @@ from collections import defaultdict
 
 from actin_dynamics.primitives.transitions import BarbedPolymerization
 
-#from actin_dynamics.state.single_strand_filaments import Filament
-from actin_dynamics.state.segmented_filaments import SegmentedFilament
+from actin_dynamics.state.single_strand_filaments import Filament
 
 from unit_tests.mocks.concentrations import MockConcentration
 
 class BarbedPolymerizationSingleFilament(unittest.TestCase):
     def setUp(self):
-        self.filament = SegmentedFilament.from_iterable([None, None, None])
+        self.filament = Filament([None, None, None])
 
         self.concentrations = defaultdict(MockConcentration)
         self.concentrations[1] = MockConcentration(value=3)

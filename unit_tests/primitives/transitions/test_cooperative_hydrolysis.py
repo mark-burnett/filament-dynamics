@@ -18,15 +18,14 @@ from collections import defaultdict
 
 from actin_dynamics.primitives.transitions.cooperative_hydrolysis import *
 
-from actin_dynamics.state.segmented_filaments import SegmentedFilament
+from actin_dynamics.state.single_strand_filaments import Filament
 
 from unit_tests.mocks.concentrations import MockConcentration
 
 
 class CooperativeHydrolysisTest(unittest.TestCase):
     def setUp(self):
-        self.strand = SegmentedFilament.from_iterable(
-                ['a', 'b', 'c', 'a', 'b', 'c', 'a'])
+        self.strand = Filament(['a', 'b', 'c', 'a', 'b', 'c', 'a'])
         self.normal_one = CooperativeHydrolysis(old_state='a',
                 rate=3, new_state='b', c=2)
         self.normal_two = CooperativeHydrolysis(old_state='b',

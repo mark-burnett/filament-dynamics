@@ -17,16 +17,14 @@ import unittest
 from collections import defaultdict
 
 from actin_dynamics.primitives.transitions.random_hydrolysis import *
-#from actin_dynamics.state.single_strand_filaments import Filament
-from actin_dynamics.state.segmented_filaments import SegmentedFilament
+from actin_dynamics.state.single_strand_filaments import Filament
 
 from unit_tests.mocks.concentrations import MockConcentration
 
 
 class RandomHydrolysisSingleFilamentTest(unittest.TestCase):
     def setUp(self):
-#        self.filament = Filament([1, 2, 3, 1, 2, 3, 1])
-        self.filament = SegmentedFilament.from_iterable([1, 2, 3, 1, 2, 3, 1])
+        self.filament = Filament([1, 2, 3, 1, 2, 3, 1])
         self.transition_one  = RandomHydrolysis(old_state=1, new_state=2,
                                                 rate=3)
         self.transition_two  = RandomHydrolysis(old_state=2, new_state=3,
@@ -60,9 +58,9 @@ class RandomHydrolysisSingleFilamentTest(unittest.TestCase):
 
 class RandomHydrolysisMultipleFilamentTest(unittest.TestCase):
     def setUp(self):
-        self.filaments = [SegmentedFilament.from_iterable([1, 2, 3, 1, 2, 3, 1]),
-                          SegmentedFilament.from_iterable([2, 3, 1, 2, 3, 1, 2]),
-                          SegmentedFilament.from_iterable([3, 2, 1, 4, 2, 1, 3])]
+        self.filaments = [Filament([1, 2, 3, 1, 2, 3, 1]),
+                          Filament([2, 3, 1, 2, 3, 1, 2]),
+                          Filament([3, 2, 1, 4, 2, 1, 3])]
         self.transition_one  = RandomHydrolysis(old_state=1, new_state=2,
                                                 rate=3)
         self.transition_two  = RandomHydrolysis(old_state=2, new_state=3,
@@ -97,7 +95,7 @@ class RandomHydrolysisMultipleFilamentTest(unittest.TestCase):
 
 class RandomHydrolysisWithByproductSingleFilamentTest(unittest.TestCase):
     def setUp(self):
-        self.filament = SegmentedFilament.from_iterable([1, 2, 3, 1, 2, 3, 1])
+        self.filament = Filament([1, 2, 3, 1, 2, 3, 1])
         self.concentrations = defaultdict(MockConcentration)
         self.transition_one = RandomHydrolysisWithByproduct(old_state=1,
                 new_state=2, byproduct=11, rate=3)
