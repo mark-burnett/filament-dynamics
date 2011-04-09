@@ -17,17 +17,40 @@ import unittest
 
 import numpy
 
-from actin_dynamics import factories
+import actin_dynamics.io.data
+import actin_dynamics.io.object_graph
 from actin_dynamics import io
-from actin_dynamics import run_support
 
-from actin_dynamics.analysis import accessors
-from actin_dynamics.analysis import interpolation
-from actin_dynamics.analysis import utils
+import yaml
+
+from actin_dynamics.primitives import analyses
+from actin_dynamics import factories
+
+from actin_dynamics.numerical import interpolation
+from actin_dynamics.numerical import measurements
+
+
+SEM = analyses.registry['StandardErrorMean']
+
+def raw_sem_factory(measurement, label):
+    return measurement
+
+def get_measurement(raw_results, parameters, measurement_type=None,
+                    measurement_name=None, scale_by=1, subtract=0):
+    sem = SEM(sample_period=parameters['sample_period'],
+              stop_time=parameters['duration'],
+              interpolation_method='linear',
+              measurement_name=measurement_name,
+              measurement_type=measurement_type,
+              scale_by=scale_by, subtract=subtract)
+    return sem.perform(raw_results, raw_sem_factory)
 
 
 def load_kinsim(filename, sample_period, duration):
-    factin, pi, atp = io.pollard.get_kinsim(filename)
+    time, factin_d, pi_d, atp_d = io.data.load_data(filename)
+    factin = time, factin_d
+    pi = time, pi_d
+    atp = time, atp_d
 
     sample_times = numpy.arange(0, duration + float(sample_period)/2,
                                 sample_period)
@@ -41,16 +64,9 @@ def load_kinsim(filename, sample_period, duration):
 
 
 # Helper code taken from old accessor stuff.
-def get_length(parameter_set):
-    basic_length = parameter_set['sem']['length']
-    subtracted_length = utils.add_number(basic_length,
-            -basic_length[1][0])
-    return utils.scale_measurement(subtracted_length,
-            parameter_set['parameters']['filament_tip_concentration'])
-
 def get_scaled(parameter_set, name):
     basic = parameter_set['sem'][name]
-    return utils.scale_measurement(basic,
+    return measurements.scale(basic,
             parameter_set['parameters']['filament_tip_concentration'])
 
 
@@ -68,19 +84,33 @@ class TestKinsim(unittest.TestCase):
 
     def test_vs_kinsim(self):
         for og_file, par_file, k_file in self.data_sets:
-            og   = io.parse_object_graph_file(open(og_file))
-            pars = io.parse_parameters_file(open(par_file)).next()
+            og   = io.object_graph.parse_object_graph_file(open(og_file))
+            parameters = yaml.load(open(par_file))
 
-            sg = factories.simulations.simulation_generator(og, pars)
+            raw_results = []
+            for i in xrange(parameters['number_of_simulations']):
+                simulation = factories.simulations.make_object_graph(og,
+                        parameters)
+                raw_results.append(simulation.run())
 
-            analyzed_set = run_support.typical_run(pars, sg)
-
-            length_sim = get_length(analyzed_set)
-            pi_sim     = analyzed_set['sem']['Pi']
-            atp_sim    = get_scaled(analyzed_set, 'atp_count')
+            length_sim = get_measurement(raw_results, parameters,
+                                         measurement_type='filament',
+                                         measurement_name='length',
+                                         scale_by=parameters[
+                                             'filament_tip_concentration'],
+                                         subtract=parameters[
+                                             'seed_concentration'])
+            pi_sim     = get_measurement(raw_results, parameters,
+                                         measurement_type='concentration',
+                                         measurement_name='Pi')
+            atp_sim    = get_measurement(raw_results, parameters,
+                                         measurement_type='filament',
+                                         measurement_name='atp_count',
+                                         scale_by=parameters[
+                                             'filament_tip_concentration'])
 
             factin_kin, pi_kin, atp_kin = load_kinsim(k_file,
-                    pars['sample_period'], pars['simulation_duration'])
+                    parameters['sample_period'], parameters['duration'])
 
             self.assert_acceptable(length_sim, factin_kin)
             self.assert_acceptable(pi_sim, pi_kin)

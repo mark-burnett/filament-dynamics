@@ -35,3 +35,32 @@ def make_run(run):
     return Simulation(transitions=transitions, concentrations=concentrations,
                       measurements=measurements, end_conditions=end_conditions,
                       filaments=filaments)
+
+def make_object_graph(object_graph, parameters):
+    from actin_dynamics import primitives
+    filament_factories = bindings.dict_multiple(object_graph['filaments'],
+                                                parameters,
+                                                primitives.filaments.registry)
+    transitions        = bindings.dict_multiple(object_graph['transitions'],
+                                                parameters,
+                                                primitives.transitions.registry)
+    measurements       = bindings.dict_multiple(object_graph['measurements'],
+                                                parameters,
+                                                primitives.measurements.registry)
+    end_conditions     = bindings.dict_multiple(object_graph['end_conditions'],
+                                                parameters,
+                                                primitives.end_conditions.registry)
+    concentration_list = bindings.dict_multiple(object_graph['concentrations'],
+                                                parameters,
+                                                primitives.concentrations.registry)
+
+    filaments = []
+    for ff in filament_factories:
+        filaments.extend(ff.create())
+
+    concentrations = dict((c.label, c) for c in concentration_list)
+
+    return Simulation(transitions=transitions, concentrations=concentrations,
+                      measurements=measurements, end_conditions=end_conditions,
+                      filaments=filaments)
+
