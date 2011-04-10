@@ -16,7 +16,7 @@
 from registry import objective_registry as registry
 
 from simple_data_fit import *
-from pyrene_fit import *
+from renormalized_fit import *
 from diffusion_coefficient import *
 from elongation_rate import *
 

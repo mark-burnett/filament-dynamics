@@ -195,7 +195,7 @@ experiments:
                         interpolate_simulation: True
 
                 flat_pyrene_fit:
-                    class_name: PyreneFit
+                    class_name: RenormalizedFit
                     fixed_arguments:
                         pyrene_ATP:    1
                         pyrene_ADPPi:  1
@@ -203,7 +203,7 @@ experiments:
                         residual_type: naked_chi_squared
 
                 brooks_pyrene_fit:
-                    class_name: PyreneFit
+                    class_name: RenormalizedFit
                     variable_arguments:
                         pyrene_ATP:   brooks_atp_weight
                         pyrene_ADPPi: brooks_adppi_weight
@@ -401,7 +401,7 @@ experiments:
                         interpolate_simulation: True
 
                 flat_pyrene_fit:
-                    class_name: PyreneFit
+                    class_name: RenormalizedFit
                     fixed_arguments:
                         pyrene_ATP:    1
                         pyrene_ADPPi:  1
@@ -409,7 +409,7 @@ experiments:
                         residual_type: naked_chi_squared
 
                 brooks_pyrene_fit:
-                    class_name: PyreneFit
+                    class_name: RenormalizedFit
                     variable_arguments:
                         pyrene_ATP:   brooks_atp_weight
                         pyrene_ADPPi: brooks_adppi_weight
@@ -604,7 +604,7 @@ experiments:
                         interpolate_simulation: True
 
                 flat_pyrene_fit:
-                    class_name: PyreneFit
+                    class_name: RenormalizedFit
                     fixed_arguments:
                         pyrene_ATP:    1
                         pyrene_ADPPi:  1
@@ -612,7 +612,7 @@ experiments:
                         residual_type: naked_chi_squared
 
                 brooks_pyrene_fit:
-                    class_name: PyreneFit
+                    class_name: RenormalizedFit
                     variable_arguments:
                         pyrene_ATP:   brooks_atp_weight
                         pyrene_ADPPi: brooks_adppi_weight

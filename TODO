@@ -1,24 +1,24 @@
 goals
-    * critical concentration simulation
-    * critical concentration vs rho_c
+    - what is the critical concentration data that we are trying to fit?
+
+    * check kinsim of melki paper
+        doesn't match..
+    * scale pi simulation to fit data
 
     - release rate/cooperativity data fit
 
     - D vs [G-ATP-actin] for various rho_r's
     - D vs [G-ATP-actin] for tip release
 
+
+optimization
     + update measurements to use sample period
     - update update standard error calculation to not interpolate
         need to make sure everything gets converted to do proper
         interpolation ahead of time first
 
-optimization
-    segmented filament
-        try filter for efficient state count generation
-        what about indexing the segments?
-            some_map[state] = set([segment(state=state, ...) ...])
-        should i further map boundaries?
-        even with these optimizations, do i gain anything?
+    implement filament as a c++ object
+        simple edge tracking may be fast enough this way
 
     stop keeping every damn event
         you're on the right track now using the sample period for measurements
@@ -73,11 +73,7 @@ configuration - medium-high priority
         think about pieper & wegner..3 experiments with only 2 differences.
     validation for config files
 
-
-
-performance profiling - medium priority
-    record job start/stop times
-
+refactor analysis/objective stuff so that it is more general/less hacky
 
 process utils - low priority
     list active processes

@@ -18,7 +18,7 @@ from .base_classes import Objective as _Objective
 from actin_dynamics.numerical import residuals as _residuals
 from actin_dynamics.numerical import measurements as _measurements
 
-class PyreneFit(_Objective):
+class RenormalizedFit(_Objective):
     def __init__(self, label=None, residual_type=None, **weights):
         self.residual_function = getattr(_residuals, residual_type)
         self.weights = dict((k, float(v)) for k, v in weights.iteritems())

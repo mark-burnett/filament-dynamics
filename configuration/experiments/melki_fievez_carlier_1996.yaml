@@ -175,7 +175,7 @@ experiments:
                         residual_type: naked_chi_squared
 
                 pi_fit:
-                    class_name: SimpleDataFit
+                    class_name: RenormalizedFit
                     fixed_arguments:
-                        measurement:   Pi
+                        Pi: 1
                         residual_type: naked_chi_squared
