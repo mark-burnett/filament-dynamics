@@ -20,43 +20,35 @@ from actin_dynamics import database
 from unit_tests.database.base_test_cases import DBTestCase
 
 class TestRun(DBTestCase):
-    def test_experiment_relationship(self):
-        m = database.Model(name='test expt name')
-        m.session_id = 0
+    def setUp(self):
+        DBTestCase.setUp(self)
+        self.session = database.Session()
 
-        r = database.Run(experiment=m)
-        r.experiment_id = 0
+        self.model = database.Model(session=self.session)
 
-        self.db_session.add(r)
-        self.db_session.commit()
+        self.analysis_bind = database.AnalysisBind(class_name='cls_name',
+                label='test_label')
 
-        r2 = self.db_session.query(database.Run).first()
-        self.assertEqual(r, r2)
-        self.assertEqual(m, r2.model)
-        self.assertTrue(r2.experiment.id >= 1)
+        self.experiment = database.Experiment(session=self.session)
+        self.experiment.analysis_list.append(self.analysis_bind)
 
-    def test_experiment_relationship(self):
-        e = database.Experiment(name='test expt name')
-        e.session_id = 0
-
-        r = database.Run(experiment=e)
-        r.model_id = 0
+    def test_model_experiment_relationships(self):
+        r = database.Run(experiment=self.experiment, model=self.model)
 
         self.db_session.add(r)
         self.db_session.commit()
 
         r2 = self.db_session.query(database.Run).first()
         self.assertEqual(r, r2)
-        self.assertEqual(e, r2.experiment)
+        self.assertEqual(self.model, r2.model)
+        self.assertEqual(self.experiment, r2.experiment)
         self.assertTrue(r2.experiment.id >= 1)
 
     def test_parameters(self):
         test_data = {'par_name_1': 7.2,
                      'par_name_2': 61.3}
 
-        r = database.Run()
-        r.experiment_id = 0
-        r.model_id = 0
+        r = database.Run(experiment=self.experiment, model=self.model)
 
         r.parameters = test_data
 
@@ -70,15 +62,11 @@ class TestRun(DBTestCase):
             self.assertEqual(value, r2.parameters[par_name])
 
     def test_analysis_relationship(self):
-        a = database.Analysis(name='test_name')
-        a.bind_id = 0
+        r = database.Run(experiment=self.experiment, model=self.model)
 
-        r = database.Run(analysis_list=[a])
-        r.model_id = 0
-        r.experiment_id = 0
+        a = database.Analysis(name='test_name', bind=self.analysis_bind, run=r)
 
-        a2 = database.Analysis(name='test_name2', run=r)
-        a2.bind_id = 0
+        a2 = database.Analysis(name='diff_name', bind=self.analysis_bind, run=r)
 
         a2.measurement = range(3), [2,1,3], [0.1, 1.2, 0.3]
 
@@ -88,7 +76,7 @@ class TestRun(DBTestCase):
         r2 = self.db_session.query(database.Run).first()
         self.assertEqual(r, r2)
 
-        self.assertEqual(a2.measurement, r2.analyses['test_name2'])
+        self.assertEqual(a2.measurement, r2.analyses['diff_name'])
         self.assertTrue(r2.analysis_list[0].id >= 1)
         self.assertTrue(r2.analysis_list[1].id >= 1)
 

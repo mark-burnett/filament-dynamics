@@ -49,6 +49,7 @@ class Session(object):
 _orm.mapper(Session, _tables.session_table,
             properties={
     '_parameters': _orm.relationship(_parameters.SessionParameter,
+        backref='session',
         collection_class=_orm.collections.attribute_mapped_collection('name'),
         cascade='all,delete-orphan'),
     'experiments': _orm.relationship(_experiments.Experiment,

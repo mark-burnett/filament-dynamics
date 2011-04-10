@@ -64,7 +64,7 @@ def process(process_type, db_session):
 def get_job(process_id, db_session):
     try:
         with db_session.transaction:
-            job = db_session.query(database.Job).filter_by(complete=False,
+            job = db_session.query(database.Job).filter_by(stop_time=None,
                     worker_id=None).with_lockmode('update_nowait').first()
             if job:
                 job.worker_id = process_id
@@ -72,6 +72,7 @@ def get_job(process_id, db_session):
             else:
                 log.debug('No jobs found.')
     except sqlalchemy.exceptions.OperationalError as oe:
+        # 1213 is the sqlalchemy deadlock warning number.
         if 1213 == oe.orig[0]:
             _log.warn('Deadlock while acquiring job %s.', job.id)
             job = None
@@ -79,12 +80,14 @@ def get_job(process_id, db_session):
             raise
     return job
 
+def mark_job_complete(job, db_session):
+    job.stop_time = datetime.datetime.now()
 
 # XXX This may need to delete partial data, like analyses or something.
 # XXX Fix session management
 def cleanup_incomplete_jobs():
     db_session = database.DBSession()
-    job_query = db_session.query(database.Job).filter_by(complete=False
+    job_query = db_session.query(database.Job).filter_by(stop_time=None,
             ).filter(database.Job.worker != None)
 
     job_query.update({'worker': None})

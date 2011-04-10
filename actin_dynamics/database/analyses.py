@@ -19,23 +19,24 @@ from sqlalchemy import orm as _orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables as _tables
-from . import binds as _binds
-from . import experiments as _experiments
 from . import results as _results
 
 
 class Analysis(object):
-    def __init__(self, run=None, name=None, results=None):
+    def __init__(self, run=None, name=None, results=None, bind=None):
         if run:
             self.run = run
         if name:
             self.name = name
         if results:
             self.results = results
+        if bind:
+            self.bind = bind
 
     def __repr__(self):
-        return "%s(run=%s, name='%s', results=%s)" % (
-            self.__class__.__name__, self.run, self.name, self.results)
+        return "%s(run=%s, name='%s', results=%s, bind_id=%s)" % (
+            self.__class__.__name__, self.run, self.name, self.results,
+            self.bind_id)
 
     @property
     def measurement(self):

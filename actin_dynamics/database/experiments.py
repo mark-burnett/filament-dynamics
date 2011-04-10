@@ -20,7 +20,7 @@ from sqlalchemy.ext.associationproxy import association_proxy as _ap
 from . import tables as _tables
 from . import binds as _binds
 from . import parameters as _parameters
-from . import objectives as _objectives
+from . import runs as _runs
 
 
 class Experiment(object):
@@ -75,27 +75,37 @@ class Experiment(object):
 _orm.mapper(Experiment, _tables.experiment_table, properties={
     'filaments': _orm.relationship(_binds.FilamentBind,
         secondary=_tables.experiment_bind_table,
-        cascade='all,delete-orphan'),
+        cascade='all,delete-orphan',
+        single_parent=True),
     'measurements': _orm.relationship(_binds.MeasurementBind,
         secondary=_tables.experiment_bind_table,
-        cascade='all,delete-orphan'),
+        cascade='all,delete-orphan',
+        single_parent=True),
     'end_conditions': _orm.relationship(_binds.EndConditionBind,
         secondary=_tables.experiment_bind_table,
-        cascade='all,delete-orphan'),
+        cascade='all,delete-orphan',
+        single_parent=True),
     'concentrations': _orm.relationship(_binds.ConcentrationBind,
         secondary=_tables.experiment_bind_table,
-        cascade='all,delete-orphan'),
+        cascade='all,delete-orphan',
+        single_parent=True),
     'transitions': _orm.relationship(_binds.TransitionBind,
         secondary=_tables.experiment_bind_table,
-        cascade='all,delete-orphan'),
+        cascade='all,delete-orphan',
+        single_parent=True),
 
     'analysis_list': _orm.relationship(_binds.AnalysisBind,
         secondary=_tables.experiment_bind_table,
-        cascade='all,delete-orphan'),
+        cascade='all,delete-orphan',
+        single_parent=True),
     'objective_list': _orm.relationship(_binds.ObjectiveBind,
         secondary=_tables.experiment_bind_table,
-        cascade='all,delete-orphan'),
+        cascade='all,delete-orphan',
+        single_parent=True),
 
+    'runs': _orm.relationship(_runs.Run, backref='experiment',
+        cascade='all,delete-orphan', single_parent=True),
     '_parameters': _orm.relationship(_parameters.ExperimentParameter,
+        backref='experiment',
         collection_class=_orm.collections.attribute_mapped_collection('name'),
         cascade='all,delete-orphan')})

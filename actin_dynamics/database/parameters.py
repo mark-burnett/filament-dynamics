@@ -30,22 +30,38 @@ _orm.mapper(Parameter, _tables.parameters_table,
             polymorphic_on=_tables.parameters_table.c.type)
 
 
-class SessionParameter(Parameter): pass
+class SessionParameter(Parameter):
+    def __init__(self, name=None, value=None, session=None):
+        if session:
+            self.session = session
+        Parameter.__init__(self, name=name, value=value)
 
 _orm.mapper(SessionParameter, _tables.session_parameters_table,
             inherits=Parameter, polymorphic_identity='session')
 
-class ExperimentParameter(Parameter): pass
+class ExperimentParameter(Parameter):
+    def __init__(self, name=None, value=None, experiment=None):
+        if experiment:
+            self.experiment = experiment
+        Parameter.__init__(self, name=name, value=value)
 
 _orm.mapper(ExperimentParameter, _tables.experiment_parameters_table,
             inherits=Parameter, polymorphic_identity='experiment')
 
-class RunParameter(Parameter): pass
+class RunParameter(Parameter):
+    def __init__(self, name=None, value=None, run=None):
+        if run:
+            self.run = run
+        Parameter.__init__(self, name=name, value=value)
 
 _orm.mapper(RunParameter, _tables.run_parameters_table,
             inherits=Parameter, polymorphic_identity='run')
 
-class ObjectiveParameter(Parameter): pass
+class ObjectiveParameter(Parameter):
+    def __init__(self, name=None, value=None, objective=None):
+        if objective:
+            self.objective = objective
+        Parameter.__init__(self, name=name, value=value)
 
 _orm.mapper(ObjectiveParameter, _tables.objective_parameters_table,
             inherits=Parameter, polymorphic_identity='objective')

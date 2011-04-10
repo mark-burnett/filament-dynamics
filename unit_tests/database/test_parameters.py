@@ -20,9 +20,24 @@ from actin_dynamics import database
 from unit_tests.database.base_test_cases import DBTestCase
 
 class TestParameter(DBTestCase):
+    def setUp(self):
+        DBTestCase.setUp(self)
+        self.session = database.Session()
+
+        self.objective_bind = database.ObjectiveBind(class_name='cls_name',
+                label='ob_label')
+
+        self.experiment = database.Experiment(session=self.session)
+        self.experiment.objective_list.append(self.objective_bind)
+
+        self.run = database.Run(experiment=self.experiment)
+        self.run.model_id = 0
+
+        self.objective = database.Objective(run=self.run,
+                bind=self.objective_bind)
+
     def test_inheritance_for_cross_talk(self):
-        s = database.SessionParameter(name='hi', value=0.3)
-        s.session_id = 0
+        s = database.SessionParameter(name='hi', value=0.3, session=self.session)
 
         self.db_session.add(s)
         self.db_session.commit()
@@ -39,8 +54,8 @@ class TestParameter(DBTestCase):
         self.assertEqual(0, self.db_session.query(database.ObjectiveParameter
             ).count())
 
-        o = database.ObjectiveParameter(name='bye', value=7.6)
-        o.objective_id = 0
+        o = database.ObjectiveParameter(name='bye', value=7.6,
+                objective=self.objective)
         self.db_session.add(o)
         self.db_session.commit()
 
@@ -57,14 +72,12 @@ class TestParameter(DBTestCase):
             ).count())
 
     def test_repeated_name_assignment(self):
-        sp = database.SessionParameter(name='hi', value=0.3)
-        sp.session_id = 0
+        sp = database.SessionParameter(name='hi', value=0.3, session=self.session)
 
         self.db_session.add(sp)
         self.db_session.commit()
 
-        rp = database.RunParameter(name='hi', value=2.6)
-        rp.run_id = 0
+        rp = database.RunParameter(name='hi', value=2.6, run=self.run)
 
         self.db_session.add(rp)
         self.db_session.commit()

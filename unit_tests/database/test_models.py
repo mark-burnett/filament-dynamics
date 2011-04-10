@@ -20,9 +20,12 @@ from actin_dynamics import database
 from unit_tests.database.base_test_cases import DBTestCase
 
 class TestModel(DBTestCase):
+    def setUp(self):
+        DBTestCase.setUp(self)
+        self.session = database.Session('test session name')
+
     def test_concentration_binds(self):
-        m = database.Model('test model name')
-        m.session_id = 0
+        m = database.Model('test model name', session=self.session)
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -40,8 +43,7 @@ class TestModel(DBTestCase):
         self.assertEqual(cb, m2.concentrations[0])
 
     def test_transition_binds(self):
-        m = database.Model('test model name')
-        m.session_id = 0
+        m = database.Model('test model name', session=self.session)
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -59,16 +61,15 @@ class TestModel(DBTestCase):
         self.assertEqual(cb, m2.transitions[0])
 
     def test_session_relationship(self):
-        s = database.Session('test session name')
 
-        m = database.Model('test model name', session=s)
+        m = database.Model('test model name', session=self.session)
 
         self.db_session.add(m)
         self.db_session.commit()
 
         m2 = self.db_session.query(database.Model).first()
         self.assertEqual(m, m2)
-        self.assertEqual(s, m2.session)
+        self.assertEqual(self.session, m2.session)
         self.assertTrue(m2.session.id >= 1)
 
 if '__main__' == __name__:

@@ -21,6 +21,8 @@ from sqlalchemy.ext.associationproxy import association_proxy as _ap
 from . import tables as _tables
 from . import arguments as _arguments
 from . import results as _results
+from . import objectives as _objectives
+from . import analyses as _analyses
 
 def _create_bind(key, value):
     value.label = key
@@ -80,7 +82,10 @@ _orm.mapper(FilamentBind, inherits=Bind, polymorphic_identity='filaments')
 
 
 class AnalysisBind(Bind): pass
-_orm.mapper(AnalysisBind, inherits=Bind, polymorphic_identity='analyses')
+_orm.mapper(AnalysisBind, inherits=Bind, properties={
+        'analyses': _orm.relationship(_analyses.Analysis,
+            backref='bind', cascade='all,delete-orphan')},
+    polymorphic_identity='analyses')
 
 
 class ObjectiveBind(Bind):
@@ -119,4 +124,7 @@ class ObjectiveBind(Bind):
 _orm.mapper(ObjectiveBind, inherits=Bind, polymorphic_identity='objectives',
         properties={
             'data': _orm.relationship(_results.ObjectiveData,
-                backref='objective_bind', cascade='all,delete-orphan')})
+                backref='objective_bind', cascade='all,delete-orphan'),
+            'objectives': _orm.relationship(_objectives.Objective,
+                backref='bind',
+                cascade='all,delete-orphan')})

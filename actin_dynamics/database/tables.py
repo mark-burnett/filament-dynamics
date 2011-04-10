@@ -342,6 +342,7 @@ run_table = schema.Table('run', global_state.metadata,
 analysis_table = schema.Table('analysis', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('run_id', schema.ForeignKey('run.id'), nullable=False),
+        schema.Column('bind_id', schema.ForeignKey('bind.id'), nullable=False),
         schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
         mysql_engine='InnoDB')
 

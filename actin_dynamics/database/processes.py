@@ -21,12 +21,7 @@ from . import logs as _logs
 from . import jobs as _jobs
 
 class Process(object):
-    def __init__(self, type=None, code_revision=None, code_changeset=None,
-                 hostname=None, uname=None):
-        if type:
-            self.type = type
-        if code_revision:
-            self.code_revision = code_revision
+    def __init__(self, code_changeset=None, hostname=None, uname=None):
         if code_changeset:
             self.code_changeset = code_changeset
         if hostname:
@@ -35,10 +30,9 @@ class Process(object):
             self.uname = uname
 
     def __repr__(self):
-        return ("%s(type='%s', code_revision=%s, code_changeset='%s', "
-                + "hostname='%s', uname=%s, start_time=%s, stop_time=%s)") % (
-                self.__class__.__name__, self.type,
-                self.code_revision, self.code_changeset,
+        return ("%s(code_changeset='%s', hostname='%s', uname=%s, " +
+                "start_time=%s, stop_time=%s)") % (
+                self.__class__.__name__, self.code_changeset,
                 self.hostname, self.uname, self.start_time, self.stop_time)
 
     @property
@@ -52,20 +46,22 @@ class Process(object):
                 self.machine) = new_value
 
 _process_mapper = _orm.mapper(Process, _tables.process_table,
-        polymorphic_on=_tables.process_table.type, properties={
+        polymorphic_on=_tables.process_table.c.type, properties={
     'log_entries': _orm.relationship(_logs.DBLogRecord, backref='process',
         cascade='all,delete-orphan')})
 
 class ControllerProcess(Process): pass
 
 _orm.mapper(ControllerProcess, inherits=_process_mapper, properties={
-    _orm.relationship(_jobs.Job, backref='creator',
+    'jobs': _orm.relationship(_jobs.Job, backref='creator',
         primaryjoin=_tables.job_table.c.creator_id==_tables.process_table.c.id,
-        cascade='all,delete-orphan'})
+        cascade='all,delete-orphan')},
+    polymorphic_identity='controller')
 
 class WorkerProcess(Process): pass
 
 _orm.mapper(WorkerProcess, inherits=_process_mapper, properties={
-    _orm.relationship(_jobs.Job, backref='worker',
+    'jobs': _orm.relationship(_jobs.Job, backref='worker',
         primaryjoin=_tables.job_table.c.worker_id==_tables.process_table.c.id,
-        cascade='all,delete-orphan'})
+        cascade='all,delete-orphan')},
+    polymorphic_identity='worker')

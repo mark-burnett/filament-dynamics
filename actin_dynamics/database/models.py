@@ -18,6 +18,7 @@ from sqlalchemy import orm as _orm
 
 from . import tables as _tables
 from . import binds as _binds
+from . import runs as _runs
 
 
 class Model(object):
@@ -37,9 +38,12 @@ class Model(object):
             self.__class__.__name__, self.id, self.name, self.session_id)
 
 _orm.mapper(Model, _tables.model_table, properties={
+    'runs': _orm.relationship(_runs.Run, backref='model'),
     'concentrations': _orm.relationship(_binds.ConcentrationBind,
         secondary=_tables.model_bind_table,
-        cascade='all,delete-orphan'),
+        cascade='all,delete-orphan',
+        single_parent=True),
     'transitions': _orm.relationship(_binds.TransitionBind,
         secondary=_tables.model_bind_table,
-        cascade='all,delete-orphan')})
+        cascade='all,delete-orphan',
+        single_parent=True)})

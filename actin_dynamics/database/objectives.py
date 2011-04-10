@@ -18,7 +18,6 @@ from sqlalchemy import orm as _orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables as _tables
-from . import binds as _binds
 from . import parameters as _parameters
 
 
@@ -50,7 +49,6 @@ class Objective(object):
 
 _orm.mapper(Objective, _tables.objective_table, properties={
     '_parameters': _orm.relationship(_parameters.ObjectiveParameter,
+        backref='objective',
         collection_class=_orm.collections.attribute_mapped_collection('name'),
-        cascade='all,delete-orphan'),
-    'bind': _orm.relationship(_binds.ObjectiveBind, backref='objectives',
         cascade='all,delete-orphan')})

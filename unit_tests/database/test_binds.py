@@ -21,7 +21,9 @@ from unit_tests.database.base_test_cases import DBTestCase
 
 class TestBind(DBTestCase):
     def test_inheritance_for_cross_talk(self):
+        s = database.Session()
         c = database.ConcentrationBind(class_name='test_class')
+        e = database.Experiment(session=s, concentrations=[c])
 
         self.db_session.add(c)
         self.db_session.commit()
@@ -44,6 +46,7 @@ class TestBind(DBTestCase):
             ).count())
 
         f = database.FilamentBind(class_name='test_class_2')
+        e.filaments.append(f)
         self.db_session.add(f)
         self.db_session.commit()
 
@@ -68,7 +71,9 @@ class TestBind(DBTestCase):
         test_data = {'test_arg_a': 'literal 1',
                      'test_arg_b': 3.2}
 
+        s = database.Session()
         t = database.TransitionBind(class_name='trans_class')
+        e = database.Experiment(session=s, transitions=[t])
         t.fixed_arguments = test_data
 
         self.db_session.add(t)
@@ -84,7 +89,9 @@ class TestBind(DBTestCase):
         test_data = {'test_arg_a': 'par_name_1',
                      'test_arg_b': 'par_name_2'}
 
+        s = database.Session()
         t = database.TransitionBind(class_name='trans_class')
+        e = database.Experiment(session=s, transitions=[t])
         t.variable_arguments = test_data
 
         self.db_session.add(t)

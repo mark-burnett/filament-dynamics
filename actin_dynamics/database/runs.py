@@ -21,8 +21,6 @@ from . import tables as _tables
 from . import parameters as _parameters
 from . import analyses as _analyses
 from . import objectives as _objectives
-from . import models as _models
-from . import experiments as _experiments
 from . import jobs as _jobs
 
 
@@ -84,6 +82,7 @@ class Run(object):
 
 _orm.mapper(Run, _tables.run_table, properties={
     '_parameters': _orm.relationship(_parameters.RunParameter,
+        backref='run',
         collection_class=_orm.collections.attribute_mapped_collection('name'),
         cascade='all,delete-orphan'),
     '_analyses':   _orm.relationship(_analyses.Analysis,
@@ -93,10 +92,6 @@ _orm.mapper(Run, _tables.run_table, properties={
     'analysis_list': _orm.relationship(_analyses.Analysis, backref='run',
         cascade='all,delete-orphan'),
     'objectives': _orm.relationship(_objectives.Objective, backref='run',
-        cascade='all,delete-orphan'),
-    'model': _orm.relationship(_models.Model, backref='runs',
-        cascade='all,delete-orphan'),
-    'experiment': _orm.relationship(_experiments.Experiment, backref='runs',
         cascade='all,delete-orphan'),
     'job': _orm.relationship(_jobs.Job, backref='run',
         cascade='all,delete-orphan')})

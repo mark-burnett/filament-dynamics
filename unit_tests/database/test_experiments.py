@@ -20,9 +20,13 @@ from actin_dynamics import database
 from unit_tests.database.base_test_cases import DBTestCase
 
 class TestExperiment(DBTestCase):
+    def setUp(self):
+        DBTestCase.setUp(self)
+        self.session = database.Session('test session name')
+
+
     def test_filament_binds(self):
-        e = database.Experiment('test expt name')
-        e.session_id = 0
+        e = database.Experiment('test expt name', session=self.session)
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -40,8 +44,7 @@ class TestExperiment(DBTestCase):
         self.assertEqual(fb, e2.filaments[0])
 
     def test_measurement_binds(self):
-        e = database.Experiment('test expt name')
-        e.session_id = 0
+        e = database.Experiment('test expt name', session=self.session)
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -59,8 +62,7 @@ class TestExperiment(DBTestCase):
         self.assertEqual(cb, e2.measurements[0])
 
     def test_end_condition_binds(self):
-        e = database.Experiment('test expt name')
-        e.session_id = 0
+        e = database.Experiment('test expt name', session=self.session)
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -78,8 +80,7 @@ class TestExperiment(DBTestCase):
         self.assertEqual(cb, e2.end_conditions[0])
 
     def test_concentration_binds(self):
-        e = database.Experiment('test expt name')
-        e.session_id = 0
+        e = database.Experiment('test expt name', session=self.session)
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -97,8 +98,7 @@ class TestExperiment(DBTestCase):
         self.assertEqual(cb, e2.concentrations[0])
 
     def test_transition_binds(self):
-        e = database.Experiment('test expt name')
-        e.session_id = 0
+        e = database.Experiment('test expt name', session=self.session)
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
@@ -116,24 +116,21 @@ class TestExperiment(DBTestCase):
         self.assertEqual(cb, e2.transitions[0])
 
     def test_session_relationship(self):
-        s = database.Session('test session name')
-
-        e = database.Experiment('test expt name', session=s)
+        e = database.Experiment('test expt name', session=self.session)
 
         self.db_session.add(e)
         self.db_session.commit()
 
         e2 = self.db_session.query(database.Experiment).first()
         self.assertEqual(e, e2)
-        self.assertEqual(s, e2.session)
+        self.assertEqual(self.session, e2.session)
         self.assertTrue(e2.session.id >= 1)
 
     def test_parameters(self):
         test_data = {'par_name_1': 7.2,
                      'par_name_2': 61.3}
 
-        e = database.Experiment('ses 1')
-        e.session_id = 0
+        e = database.Experiment('ses 1', session=self.session)
 
         e.parameters = test_data
 
