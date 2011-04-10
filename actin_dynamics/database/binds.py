@@ -55,9 +55,11 @@ _orm.mapper(Bind, _tables.bind_table,
             polymorphic_on=_tables.bind_table.c.module_name,
             properties={
     '_fixed_arguments': _orm.relationship(_arguments.FixedArgument,
-        collection_class=_orm.collections.attribute_mapped_collection('name')),
+        collection_class=_orm.collections.attribute_mapped_collection('name'),
+        cascade='all,delete-orphan'),
     '_variable_arguments': _orm.relationship(_arguments.VariableArgument,
-        collection_class=_orm.collections.attribute_mapped_collection('name'))})
+        collection_class=_orm.collections.attribute_mapped_collection('name'),
+        cascade='all,delete-orphan')})
 
 class ConcentrationBind(Bind): pass
 _orm.mapper(ConcentrationBind, inherits=Bind,
@@ -117,4 +119,4 @@ class ObjectiveBind(Bind):
 _orm.mapper(ObjectiveBind, inherits=Bind, polymorphic_identity='objectives',
         properties={
             'data': _orm.relationship(_results.ObjectiveData,
-                backref='objective_bind')})
+                backref='objective_bind', cascade='all,delete-orphan')})

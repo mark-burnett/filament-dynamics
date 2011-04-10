@@ -130,7 +130,6 @@ process_table = schema.Table('process', global_state.metadata,
                       index=True),
 
         # These identify the code.
-        schema.Column('code_revision', schema.types.Integer),
         schema.Column('code_changeset', schema.types.String(40)),
 
         # These identify the machine.
@@ -156,8 +155,8 @@ job_table = schema.Table('job', global_state.metadata,
         schema.Column('creator_id', schema.ForeignKey('process.id'),
                       nullable=False),
         schema.Column('worker_id', schema.ForeignKey('process.id')),
-        schema.Column('complete', schema.types.Boolean, index=True,
-                      default=False),
+        schema.Column('start_time', schema.types.DateTime, index=True),
+        schema.Column('stop_time', schema.types.DateTime, index=True),
         mysql_engine='InnoDB')
 
 

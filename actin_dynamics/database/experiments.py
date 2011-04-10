@@ -74,20 +74,28 @@ class Experiment(object):
 
 _orm.mapper(Experiment, _tables.experiment_table, properties={
     'filaments': _orm.relationship(_binds.FilamentBind,
-        secondary=_tables.experiment_bind_table),
+        secondary=_tables.experiment_bind_table,
+        cascade='all,delete-orphan'),
     'measurements': _orm.relationship(_binds.MeasurementBind,
-        secondary=_tables.experiment_bind_table),
+        secondary=_tables.experiment_bind_table,
+        cascade='all,delete-orphan'),
     'end_conditions': _orm.relationship(_binds.EndConditionBind,
-        secondary=_tables.experiment_bind_table),
+        secondary=_tables.experiment_bind_table,
+        cascade='all,delete-orphan'),
     'concentrations': _orm.relationship(_binds.ConcentrationBind,
-        secondary=_tables.experiment_bind_table),
+        secondary=_tables.experiment_bind_table,
+        cascade='all,delete-orphan'),
     'transitions': _orm.relationship(_binds.TransitionBind,
-        secondary=_tables.experiment_bind_table),
+        secondary=_tables.experiment_bind_table,
+        cascade='all,delete-orphan'),
 
     'analysis_list': _orm.relationship(_binds.AnalysisBind,
-        secondary=_tables.experiment_bind_table),
+        secondary=_tables.experiment_bind_table,
+        cascade='all,delete-orphan'),
     'objective_list': _orm.relationship(_binds.ObjectiveBind,
-        secondary=_tables.experiment_bind_table),
+        secondary=_tables.experiment_bind_table,
+        cascade='all,delete-orphan'),
 
     '_parameters': _orm.relationship(_parameters.ExperimentParameter,
-        collection_class=_orm.collections.attribute_mapped_collection('name'))})
+        collection_class=_orm.collections.attribute_mapped_collection('name'),
+        cascade='all,delete-orphan')})

@@ -59,4 +59,5 @@ class Analysis(object):
 
 # Analysis should have binds
 _orm.mapper(Analysis, _tables.analysis_table, properties={
-    'results': _orm.relationship(_results.AnalysisResult, backref='analysis')})
+    'results': _orm.relationship(_results.AnalysisResult, backref='analysis',
+                                 cascade='all,delete-orphan')})

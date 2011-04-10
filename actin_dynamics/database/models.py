@@ -38,6 +38,8 @@ class Model(object):
 
 _orm.mapper(Model, _tables.model_table, properties={
     'concentrations': _orm.relationship(_binds.ConcentrationBind,
-        secondary=_tables.model_bind_table),
+        secondary=_tables.model_bind_table,
+        cascade='all,delete-orphan'),
     'transitions': _orm.relationship(_binds.TransitionBind,
-        secondary=_tables.model_bind_table)})
+        secondary=_tables.model_bind_table,
+        cascade='all,delete-orphan')})

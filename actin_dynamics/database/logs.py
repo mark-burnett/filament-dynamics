@@ -17,7 +17,6 @@ import datetime as _datetime
 import traceback as _traceback
 
 from sqlalchemy import orm as _orm
-from . import jobs as _jobs
 from . import tables as _tables
 
 class DBTraceback(object):
@@ -61,7 +60,7 @@ class DBException(object):
                 self.__class__.__name__, self.type_name, self.message)
 
 _orm.mapper(DBException, _tables.exception_table, properties={
-    'traceback': _orm.relationship(DBTraceback)})
+    'traceback': _orm.relationship(DBTraceback, cascade='all,delete-orphan')})
 
 class DBLogRecord(object):
     def __init__(self, name=None, pathname=None, funcName=None, lineno=None,
@@ -124,5 +123,5 @@ class DBLogRecord(object):
             self._exception = DBException(*value)
 
 _orm.mapper(DBLogRecord, _tables.logging_table, properties={
-    '_exception': _orm.relationship(DBException, uselist=False),
-    'process': _orm.relationship(_jobs.Process)})
+    '_exception': _orm.relationship(DBException, uselist=False,
+                                    cascade='all,delete-orphan')})

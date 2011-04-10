@@ -31,15 +31,19 @@ log = logger.getLogger(__file__)
 
 PID = None
 
+_process_type_map = {'controller': database.ControllerProcess,
+                     'worker': database.WorkerProcess}
+
 @contextlib.contextmanager
 def process(process_type, db_session):
     '''
     Yields a process to be used for identifying work done.
     '''
     ctx = version.source_hash()
-    p = database.Process(code_changeset=ctx,
-                         hostname=socket.gethostname(),
-                         uname=os.uname(), type=process_type)
+    process_cls = _process_type_map[process_type]
+    p = process_cls(code_changeset=ctx,
+                    hostname=socket.gethostname(),
+                    uname=os.uname())
 
     with db_session.transaction:
         db_session.add(p)

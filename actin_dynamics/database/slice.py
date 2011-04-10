@@ -37,7 +37,8 @@ class SliceParameter(object):
             self.slice_definition = definition
 
 _orm.mapper(SliceParameter, _tables.slice_parameter_table, properties={
-    'mesh': _orm.relationship(SliceMesh, backref='parameter')})
+    'mesh': _orm.relationship(SliceMesh, backref='parameter',
+        cascade='all,delete-orphan')})
 
 
 class SliceDefinition(object):
@@ -66,6 +67,7 @@ class SliceDefinition(object):
 
 
 _orm.mapper(SliceDefinition, _tables.slice_definition_table, properties={
-    'parameters': _orm.relationship(SliceParameter, backref='slice_definition'),
+    'parameters': _orm.relationship(SliceParameter, backref='slice_definition',
+        cascade='all,delete-orphan'),
     'objective_bind': _orm.relationship(_binds.ObjectiveBind,
         backref='slice_definition', single_parent=True)})

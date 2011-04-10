@@ -50,5 +50,7 @@ class Objective(object):
 
 _orm.mapper(Objective, _tables.objective_table, properties={
     '_parameters': _orm.relationship(_parameters.ObjectiveParameter,
-        collection_class=_orm.collections.attribute_mapped_collection('name')),
-    'bind': _orm.relationship(_binds.ObjectiveBind, backref='objectives')})
+        collection_class=_orm.collections.attribute_mapped_collection('name'),
+        cascade='all,delete-orphan'),
+    'bind': _orm.relationship(_binds.ObjectiveBind, backref='objectives',
+        cascade='all,delete-orphan')})
