@@ -1,0 +1,45 @@
+name: 'Fujiwara Tip Diffusion - Release Cooperativity = 1 (corrected)'
+
+import:
+    - 'experiments/fujiwara_2002.yaml'
+    - 'models/unlabeled/random_cooperative_full.yaml'
+    - 'parameters/polymerization_fujiwara_full.yaml'
+
+global_parameters:
+    expected_diffusion_coefficient: 28.6
+    number_of_simulations: 100
+    number_of_filaments:   1
+
+    initial_filament_length: 100000
+
+    sample_period:        30
+
+    histogram_start_time: 900
+    histogram_bin_size:   74.07 # This is about 0.2 um in monomers
+
+parameter_specifications:
+    fujiwara_2002:
+        simulation:
+            atp_concentration:
+                lower_bound: 0.01
+                upper_bound: 0.2
+                mesh_type:   linear
+                num_points:  48
+
+            cleavage_rate:
+                lower_bound: 0.198
+                upper_bound: 0.198
+                mesh_type:   linear
+                num_points:  1
+
+            release_rate:
+                lower_bound: 0.00182
+                upper_bound: 0.00182
+                mesh_type:   linear
+                num_points:  1
+
+            release_cooperativity:
+                lower_bound: 1
+                upper_bound: 1
+                mesh_type:   linear
+                num_points:  1
