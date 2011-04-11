@@ -21,19 +21,31 @@ from . import logs as _logs
 from . import jobs as _jobs
 
 class Process(object):
-    def __init__(self, code_changeset=None, hostname=None, uname=None):
-        if code_changeset:
-            self.code_changeset = code_changeset
+    def __init__(self, code_hash=None, code_modified=None,
+                 hostname=None, uname=None,
+                 start_time=None, stop_time=None):
+        if code_hash:
+            self.code_hash = code_hash
+        if code_modified:
+            self.code_modified = code_modified
+
         if hostname:
             self.hostname = hostname
         if uname:
             self.uname = uname
 
+        if start_time:
+            self.start_time = start_time
+        if stop_time:
+            self.stop_time = stop_time
+
     def __repr__(self):
-        return ("%s(code_changeset='%s', hostname='%s', uname=%s, " +
-                "start_time=%s, stop_time=%s)") % (
-                self.__class__.__name__, self.code_changeset,
-                self.hostname, self.uname, self.start_time, self.stop_time)
+        return ("%s(id=%r, hostname=%r, uname=%r, " +
+                "start_time=%r, stop_time=%r, " +
+                "code_hash=%r, code_modified=%r)") % (
+                self.__class__.__name__, self.id,
+                self.hostname, self.uname, self.start_time, self.stop_time,
+                self.code_hash, self.code_modified)
 
     @property
     def uname(self):

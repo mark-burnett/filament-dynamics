@@ -69,6 +69,10 @@ def _log_discriminators(parser):
 
     return parser
 
+def _process_arguments(parser):
+    parser.add_argument('--live_timeout', type=float, default=900,
+                        help="How long until process is considered a zombie.")
+    return parser
 
 def _build_and_execute_parser(functions):
     parser = argparse.ArgumentParser()
@@ -88,6 +92,9 @@ _db_util_args    = [_config]
 _log_view_args   = [_config,
                     _log_discriminators]
 
+_ps_args         = [_config,
+                    _process_arguments]
+
 
 def controller_process():
     return _build_and_execute_parser(_controller_args)
@@ -100,3 +107,6 @@ def db_util():
 
 def view_log():
     return _build_and_execute_parser(_log_view_args)
+
+def process_utils():
+    return _build_and_execute_parser(_ps_args)

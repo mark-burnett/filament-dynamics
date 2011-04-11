@@ -20,15 +20,17 @@ import time
 
 from actin_dynamics.configuration import command_line_parsers
 from actin_dynamics.configuration import ini_parsers
+from actin_dynamics.configuration import logger as logger_config
 
-from actin_dynamics import job_control, run_support, database
+from actin_dynamics import job_control, run_support, database, process_control
 
 logger = logging.getLogger()
 
 
-def main(idle_timeout, retry_delay):
+def main(idle_timeout, retry_delay, log_dict):
     db_session = database.DBSession()
-    with job_control.process('worker', db_session) as process:
+    with process_control.process('worker', db_session) as process:
+        logger_config.setup_logging_from_dict(log_dict)
         stop_time = time.time() + idle_timeout
         while time.time() < stop_time:
             job = job_control.get_job(process.id, db_session)
@@ -43,10 +45,11 @@ def main(idle_timeout, retry_delay):
 
 if '__main__' == __name__:
     namespace = command_line_parsers.worker_process()
-    ini_parsers.full_config(namespace.config)
+    ini_dict = ini_parsers.full_config(namespace.config)
 
     try:
-        main(namespace.idle_timeout, namespace.retry_delay)
+        main(namespace.idle_timeout, namespace.retry_delay,
+             ini_dict['logging'])
     except:
         logger.exception('Exception in worker main.')
         raise

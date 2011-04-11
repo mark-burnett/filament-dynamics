@@ -130,7 +130,8 @@ process_table = schema.Table('process', global_state.metadata,
                       index=True),
 
         # These identify the code.
-        schema.Column('code_changeset', schema.types.String(40)),
+        schema.Column('code_hash', schema.types.String(40)),
+        schema.Column('code_modified', schema.types.DateTime),
 
         # These identify the machine.
         # First, the hostname (not always identical to the below nodename).

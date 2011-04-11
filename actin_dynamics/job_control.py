@@ -13,53 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import time
 import datetime
-import socket
-import os
-
-import contextlib
 
 import sqlalchemy.exceptions
 
 from . import database
-from . import version
 
 from . import logger
-
 log = logger.getLogger(__file__)
-
-PID = None
-
-_process_type_map = {'controller': database.ControllerProcess,
-                     'worker': database.WorkerProcess}
-
-@contextlib.contextmanager
-def process(process_type, db_session):
-    '''
-    Yields a process to be used for identifying work done.
-    '''
-    ctx = version.source_hash()
-    process_cls = _process_type_map[process_type]
-    p = process_cls(code_changeset=ctx,
-                    hostname=socket.gethostname(),
-                    uname=os.uname())
-
-    with db_session.transaction:
-        db_session.add(p)
-
-    # NOTE This just makes it easy to properly log the process.
-    global PID
-    PID = p.id
-    log.info('Registered process %s as %s.' % (p.id, p.type))
-
-    yield p
-
-    # Rollback, to make sure an exception doesn't block unregistering.
-    with db_session.transaction:
-        p.stop_time = datetime.datetime.now()
-    log.info('Unegistered process %s.' % p.id)
-
 
 def get_job(process_id, db_session):
     try:
@@ -82,13 +43,3 @@ def get_job(process_id, db_session):
 
 def mark_job_complete(job, db_session):
     job.stop_time = datetime.datetime.now()
-
-# XXX This may need to delete partial data, like analyses or something.
-# XXX Fix session management
-def cleanup_incomplete_jobs():
-    db_session = database.DBSession()
-    job_query = db_session.query(database.Job).filter_by(stop_time=None,
-            ).filter(database.Job.worker != None)
-
-    job_query.update({'worker': None})
-    db_session.commit()

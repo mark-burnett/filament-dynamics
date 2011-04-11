@@ -14,7 +14,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import dulwich
+import datetime
 
-def source_hash():
+def source_version():
     repo = dulwich.repo.Repo('.')
-    return repo.head()
+    head = repo.head()
+    commit = repo.commit(head)
+    commit_datetime = datetime.datetime.fromtimestamp(commit.commit_time)
+
+    return head, commit_datetime

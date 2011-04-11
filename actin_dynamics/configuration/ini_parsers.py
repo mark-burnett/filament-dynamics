@@ -16,12 +16,11 @@
 import configobj
 
 from . import database
-from . import logger
 
 def full_config(filename):
     co = configobj.ConfigObj(filename)
     database.setup_database_from_dict(co['database'])
-    logger.setup_logging_from_dict(co['logging'])
+    return co
 
 def setup_database(config_filename):
     '''Uses config file to create database access singletons.

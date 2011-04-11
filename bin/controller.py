@@ -19,16 +19,18 @@ import logging
 
 from actin_dynamics.configuration import command_line_parsers
 from actin_dynamics.configuration import ini_parsers
+from actin_dynamics.configuration import logger as logger_config
 
-from actin_dynamics import job_control, mesh_controller
+from actin_dynamics import mesh_controller, process_control
 from actin_dynamics import factories, database
 
 logger = logging.getLogger()
 
 
-def main(session_filename):
+def main(session_filename, log_dict):
     db_session = database.DBSession()
-    with job_control.process('controller', db_session) as process:
+    with process_control.process('controller', db_session) as process:
+        logger_config.setup_database_from_dict(log_dict)
         session, par_spec = factories.controllers.load_complete_session(
             db_session, session_filename)
 
@@ -38,10 +40,10 @@ def main(session_filename):
 
 if '__main__' == __name__:
     namespace = command_line_parsers.controller_process()
-    ini_parsers.full_config(namespace.config)
+    ini_dict = ini_parsers.full_config(namespace.config)
 
     try:
-        main(namespace.session)
+        main(namespace.session, ini_dict['logging'])
     except:
         logger.exception('Exception in controller main.')
         raise
