@@ -30,7 +30,7 @@ logger = logging.getLogger()
 def main(session_filename, log_dict):
     db_session = database.DBSession()
     with process_control.process('controller', db_session) as process:
-        logger_config.setup_database_from_dict(log_dict)
+        logger_config.setup_logging_from_dict(log_dict)
         session, par_spec = factories.controllers.load_complete_session(
             db_session, session_filename)
 

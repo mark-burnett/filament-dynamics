@@ -84,7 +84,7 @@ _orm.mapper(FilamentBind, inherits=Bind, polymorphic_identity='filaments')
 class AnalysisBind(Bind): pass
 _orm.mapper(AnalysisBind, inherits=Bind, properties={
         'analyses': _orm.relationship(_analyses.Analysis,
-            backref='bind', cascade='all,delete-orphan')},
+            backref='bind', cascade='all')},
     polymorphic_identity='analyses')
 
 

@@ -60,7 +60,7 @@ class Process(object):
 _process_mapper = _orm.mapper(Process, _tables.process_table,
         polymorphic_on=_tables.process_table.c.type, properties={
     'log_entries': _orm.relationship(_logs.DBLogRecord, backref='process',
-        cascade='all,delete-orphan')})
+        cascade='all')})
 
 class ControllerProcess(Process): pass
 

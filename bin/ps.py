@@ -37,16 +37,18 @@ def display_zombie_process(db_session, process):
 
     jobs = process_control.get_completed_jobs(db_session, process)
 
-    print colors.wrap('%s %s completed %s jobs, zombie for %s' % (
-            process.type, process.id, jobs.count(), zombie_time),
+    print colors.wrap('%s(%s) %s %s completed %s jobs, zombie for %s' % (
+            process.hostname, process.nodename, process.type, process.id,
+            jobs.count(), zombie_time),
             foreground=colors.BLACK, bold=True)
 
 def display_live_process(db_session, process):
     jobs = process_control.get_completed_jobs(db_session, process)
     alive_time = datetime.datetime.now() - process.start_time
 
-    print colors.wrap('%s %s completed %s jobs in %s' % (
-            process.type, process.id, jobs.count(), alive_time),
+    print colors.wrap('%s(%s) %s %s completed %s jobs in %s' % (
+            process.hostname, process.nodename, process.type, process.id,
+            jobs.count(), alive_time),
             foreground=colors.GREEN)
 
 def main(live_timeout):
@@ -63,9 +65,12 @@ def main(live_timeout):
         display_live_process(db_session, p)
 
     # Remaining time estimate
-#    if db_session.query(database.Job).filter_by(stop_time=None).count():
-#        print
-#        print process_control.get_runtime_estimate(db_session, live_timeout)
+    job_count = db_session.query(database.Job).filter_by(stop_time=None).count()
+    if job_count:
+        print
+        print '%s jobs remaining -- estimated runtime: %s' % (
+               job_count, process_control.estimate_runtime(db_session,
+                   live_timeout))
 
 
 if '__main__' == __name__:

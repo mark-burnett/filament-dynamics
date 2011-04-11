@@ -17,6 +17,9 @@ import socket
 import os
 import contextlib
 import datetime
+import itertools
+import operator
+import math
 
 from sqlalchemy import sql
 
@@ -26,6 +29,7 @@ from . import version
 PID = None
 
 _ZOMBIE_TIME = 1200
+_WINDOW_TIME = 30
 
 _process_type_map = {'controller': database.ControllerProcess,
                      'worker': database.WorkerProcess}
@@ -47,10 +51,11 @@ def process(process_type, db_session):
     global PID
     PID = p.id
 
-    yield p
-
-    with db_session.transaction:
-        p.stop_time = datetime.datetime.now()
+    try:
+        yield p
+    finally:
+        with db_session.transaction:
+            p.stop_time = datetime.datetime.now()
 
 
 def close_zombie_processes(zombie_time=_ZOMBIE_TIME):
@@ -81,13 +86,16 @@ def get_zombie_processes(db_session, zombie_time=_ZOMBIE_TIME):
                      datetime.timedelta(seconds=zombie_time))
     q = db_session.query(database.WorkerProcess
             ).filter_by(stop_time=None
-            ).filter(sql.not_(database.WorkerProcess.jobs.any(
-                database.Job.start_time > earliest_time)))
+            ).filter(sql.not_(sql.or_(database.WorkerProcess.jobs.any(
+                database.Job.start_time > earliest_time),
+                database.WorkerProcess.start_time > earliest_time)))
     return q
 
-def get_closed_processes(db_session):
+def get_closed_processes(db_session, newer_than=None):
     q = db_session.query(database.WorkerProcess
             ).filter(database.Process.stop_time != None)
+    if newer_than:
+        q = q.filter(database.Process.start_time > newer_than)
     return q
 
 def get_completed_jobs(db_session, process):
@@ -99,3 +107,51 @@ def get_most_recent_job(db_session, process):
     q = db_session.query(database.Job).filter_by(worker=process
             ).order_by(database.Job.start_time.desc())
     return q.first()
+
+
+def estimate_runtime(db_session, zombie_time=_ZOMBIE_TIME,
+        window_time=_WINDOW_TIME):
+    # Get active processes
+    active_processes = get_active_processes(db_session, zombie_time=zombie_time
+            ).order_by(database.WorkerProcess.start_time)
+
+    # Get closed processes newer than oldest active process - window time
+    oldest_active = active_processes.first()
+    oldest_time = oldest_active.start_time - datetime.timedelta(window_time)
+    closed_processes = get_closed_processes(db_session, newer_than=oldest_time)
+
+    # Calculate average time/job based on all those processes
+    times = get_process_job_times(itertools.chain(active_processes,
+                                                  closed_processes))
+    if not times:
+        return 'Unknown'
+
+    average = reduce(operator.add, times) / len(times)
+
+    # Get active jobs
+    active_process_count = active_processes.count()
+    active_jobs = [get_most_recent_job(db_session, p) for p in active_processes]
+
+    active_times = get_job_times(active_jobs)
+    active_complete = reduce(operator.add, active_times,
+            datetime.timedelta()) / active_process_count
+    active_remaining = max(active_complete - average, datetime.timedelta())
+
+    # Get remaining jobs
+    inactive_job_count = db_session.query(database.Job).filter_by(
+            start_time=None).count()
+
+    # Round robin calculation to see how much time is left
+    inactive_time = int(math.ceil(inactive_job_count / active_process_count))
+    inactive_time *= average
+    return active_remaining + inactive_time
+
+
+def get_process_job_times(processes):
+    times = []
+    for p in processes:
+        times.extend(get_job_times(p.jobs))
+    return times
+
+def get_job_times(jobs):
+    return [j.stop_time - j.start_time for j in jobs if j.stop_time]

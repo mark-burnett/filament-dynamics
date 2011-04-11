@@ -25,10 +25,12 @@ log = logger.getLogger(__file__)
 def get_job(process_id, db_session):
     try:
         with db_session.transaction:
-            job = db_session.query(database.Job).filter_by(stop_time=None,
+            job = db_session.query(database.Job).filter_by(
+                    start_time=None, stop_time=None,
                     worker_id=None).with_lockmode('update_nowait').first()
             if job:
                 job.worker_id = process_id
+                job.start_time = datetime.datetime.now()
                 log.debug('Job acquired, id = %s.' % job.id)
             else:
                 log.debug('No jobs found.')

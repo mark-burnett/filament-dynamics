@@ -37,7 +37,7 @@ def main(idle_timeout, retry_delay, log_dict):
             if job:
                 with db_session.transaction:
                     run_support.run_job(job, db_session)
-                    run_support.mark_job_complete(job, db_session)
+                    job_control.mark_job_complete(job, db_session)
                 stop_time = time.time() + idle_timeout
             else:
                 time.sleep(retry_delay)
