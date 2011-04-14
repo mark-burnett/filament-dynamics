@@ -2,7 +2,7 @@ name: 'Fujiwara Tip Diffusion - Cleavage Cooperativity = 1000000'
 
 import:
     - 'experiments/fujiwara_2002.yaml'
-    - 'models/unlabeled/cooperative_random_full.yaml'
+    - 'models/cooperative_random_full.yaml'
     - 'parameters/polymerization_fujiwara_full.yaml'
 
 global_parameters:

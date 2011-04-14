@@ -1,3 +1,7 @@
+import:
+    - 'components/nucleotide_exchange.yaml'
+    - 'components/pi_release_in_solution.yaml'
+
 experiments:
     fujiwara_2002:
         parameters:
@@ -6,37 +10,52 @@ experiments:
         simulation:
             filaments:
                 filament_factory:
-                    class_name: SingleStateFixedLength
+                    class_name: SingleStateFixedLengthFromConcentrations
                     variable_arguments:
                         number: number_of_filaments
-                        length: initial_filament_length
+                        concentration: seed_concentration
+                        filament_tip_concentration: filament_tip_concentration
                     fixed_arguments:
-                        state:  ADP
+                        state: ADP
+
 
             concentrations:
-                pyrene_ATP:
-                    class_name: ZeroConcentration
-
                 ATP:
-                    class_name: FixedConcentration
+                    class_name: FixedReagent
                     variable_arguments:
-                        concentration: atp_concentration
+                        sample_period: sample_period
+                        initial_concentration: initial_atp_concentration
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
 
-                pyrene_ADPPi:
-                    class_name: ZeroConcentration
 
                 ADPPi:
-                    class_name: ZeroConcentration
-
-                pyrene_ADP:
-                    class_name: ZeroConcentration
+                    class_name: FixedReagent
+                    variable_arguments:
+                        sample_period: sample_period
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
 
                 ADP:
-                    class_name: ZeroConcentration
+                    class_name: FixedReagent
+                    variable_arguments:
+                        sample_period: sample_period
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
 
 
                 Pi:
-                    class_name: ZeroConcentration
+                    class_name: FixedReagent
+                    variable_arguments:
+                        sample_period: sample_period
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
 
             end_conditions:
                 duration:

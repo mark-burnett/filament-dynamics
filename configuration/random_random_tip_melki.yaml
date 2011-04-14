@@ -2,7 +2,7 @@ name: 'Tip Melki 1996 - R_t = 5'
 
 import:
     - 'experiments/melki_fievez_carlier_1996.yaml'
-    - 'models/unlabeled/random_random_tip_full.yaml'
+    - 'models/random_random_tip_full.yaml'
     - 'parameters/polymerization_fujiwara_full.yaml'
 
 global_parameters:

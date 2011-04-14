@@ -2,7 +2,7 @@ name: 'Standard Model BP'
 
 import:
     - 'experiments/blanchoin_pollard_2002.yaml'
-    - 'models/pyrene/random_random_full.yaml'
+    - 'models/random_random_full.yaml'
     - 'parameters/polyermization_fujiwara_barbed.yaml'
     - 'parameters/pyrene_coefficients_brooks.yaml'
 

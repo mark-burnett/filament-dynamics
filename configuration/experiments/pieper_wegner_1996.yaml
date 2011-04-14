@@ -4,15 +4,11 @@ global_parameters:
 
     seed_concentration: 6
 
-    # NOTE Just labelling 100% for better statistics
-    initial_atp_concentration: 0
-    initial_adp_concentration: 0
-
 experiments:
     pieper_wegner_100:
         parameters:
-            initial_pyrene_atp_concentration: 4
-            initial_pyrene_adp_concentration: 0
+            initial_atp_concentration: 4
+            initial_adp_concentration: 0
 
         simulation:
             filaments:
@@ -26,13 +22,6 @@ experiments:
                         state: ADP
 
             concentrations:
-                pyrene_ATP:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        initial_concentration: initial_pyrene_atp_concentration
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-
                 ATP:
                     class_name: FixedReagent
                     variable_arguments:
@@ -40,23 +29,7 @@ experiments:
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
 
-                pyrene_ADPPi:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                    fixed_arguments:
-                        initial_concentration: 0
-
                 ADPPi:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                    fixed_arguments:
-                        initial_concentration: 0
-
-                pyrene_ADP:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration: filament_tip_concentration
@@ -91,20 +64,20 @@ experiments:
                 length:
                     class_name: Length
 
-                pyrene_ATP:
+                ATP:
                     class_name: StateCount
                     fixed_arguments:
-                        state: pyrene_ATP
+                        state: ATP
 
-                pyrene_ADPPi:
+                ADPPi:
                     class_name: StateCount
                     fixed_arguments:
-                        state: pyrene_ADPPi
+                        state: ADPPi
 
-                pyrene_ADP:
+                ADP:
                     class_name: StateCount
                     fixed_arguments:
-                        state: pyrene_ADP
+                        state: ADP
 
             
         analyses:
@@ -128,34 +101,34 @@ experiments:
                     measurement_name: Pi
                     measurement_type: concentration
 
-            pyrene_ATP:
+            ATP:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_ATP
+                    measurement_name: ATP
                     measurement_type: filament
 
-            pyrene_ADPPi:
+            ADPPi:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_ADPPi
+                    measurement_name: ADPPi
                     measurement_type: filament
 
-            pyrene_ADP:
+            ADP:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_ADP
+                    measurement_name: ADP
                     measurement_type: filament
 
         objectives:
@@ -165,24 +138,24 @@ experiments:
                     fixed_arguments:
                         filename: 'pieper_wegner_1996/mg_phosphate_concentration_100_0.dat'
 
-                flat_pyrene_fit:
+                pyrene_pyrene_flat_fit:
                     class_name: DatReader
                     variable_arguments:
                         sample_period: sample_period
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_100_0.dat'
+                        filename: 'pieper_wegner_1996/mg_fluorescence_100_0.dat'
                         interpolate_data: True
 
-                brooks_pyrene_fit:
+                pyrene_pyrene_brooks_fit:
                     class_name: DatReader
                     variable_arguments:
                         sample_period: sample_period
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_100_0.dat'
+                        filename: 'pieper_wegner_1996/mg_fluorescence_100_0.dat'
                         interpolate_data: True
 
 
@@ -194,20 +167,20 @@ experiments:
                         residual_type: naked_chi_squared
                         interpolate_simulation: True
 
-                flat_pyrene_fit:
+                pyrene_pyrene_flat_fit:
                     class_name: RenormalizedFit
                     fixed_arguments:
-                        pyrene_ATP:    1
-                        pyrene_ADPPi:  1
-                        pyrene_ADP:    1
+                        ATP:    1
+                        ADPPi:  1
+                        ADP:    1
                         residual_type: naked_chi_squared
 
-                brooks_pyrene_fit:
+                pyrene_pyrene_brooks_fit:
                     class_name: RenormalizedFit
                     variable_arguments:
-                        pyrene_ATP:   brooks_atp_weight
-                        pyrene_ADPPi: brooks_adppi_weight
-                        pyrene_ADP:   brooks_adp_weight
+                        ATP:   brooks_atp_weight
+                        ADPPi: brooks_adppi_weight
+                        ADP:   brooks_adp_weight
 
                     fixed_arguments:
                         residual_type: naked_chi_squared
@@ -217,8 +190,8 @@ experiments:
 
     pieper_wegner_90:
         parameters:
-            initial_pyrene_atp_concentration: 3.7
-            initial_pyrene_adp_concentration: 0.3
+            initial_atp_concentration: 3.7
+            initial_adp_concentration: 0.3
 
         simulation:
             filaments:
@@ -232,13 +205,6 @@ experiments:
                         state: ADP
 
             concentrations:
-                pyrene_ATP:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        initial_concentration: initial_pyrene_atp_concentration
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-
                 ATP:
                     class_name: FixedReagent
                     variable_arguments:
@@ -246,23 +212,7 @@ experiments:
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
 
-                pyrene_ADPPi:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                    fixed_arguments:
-                        initial_concentration: 0
-
                 ADPPi:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                    fixed_arguments:
-                        initial_concentration: 0
-
-                pyrene_ADP:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration: filament_tip_concentration
@@ -297,20 +247,20 @@ experiments:
                 length:
                     class_name: Length
 
-                pyrene_ATP:
+                ATP:
                     class_name: StateCount
                     fixed_arguments:
-                        state: pyrene_ATP
+                        state: ATP
 
-                pyrene_ADPPi:
+                ADPPi:
                     class_name: StateCount
                     fixed_arguments:
-                        state: pyrene_ADPPi
+                        state: ADPPi
 
-                pyrene_ADP:
+                ADP:
                     class_name: StateCount
                     fixed_arguments:
-                        state: pyrene_ADP
+                        state: ADP
 
             
         analyses:
@@ -334,34 +284,34 @@ experiments:
                     measurement_name: Pi
                     measurement_type: concentration
 
-            pyrene_ATP:
+            ATP:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_ATP
+                    measurement_name: ATP
                     measurement_type: filament
 
-            pyrene_ADPPi:
+            ADPPi:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_ADPPi
+                    measurement_name: ADPPi
                     measurement_type: filament
 
-            pyrene_ADP:
+            ADP:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_ADP
+                    measurement_name: ADP
                     measurement_type: filament
 
         objectives:
@@ -371,24 +321,24 @@ experiments:
                     fixed_arguments:
                         filename: 'pieper_wegner_1996/mg_phosphate_concentration_90_10.dat'
 
-                flat_pyrene_fit:
+                pyrene_flat_fit:
                     class_name: DatReader
                     variable_arguments:
                         sample_period: sample_period
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_90_10.dat'
+                        filename: 'pieper_wegner_1996/mg_fluorescence_90_10.dat'
                         interpolate_data: True
 
-                brooks_pyrene_fit:
+                pyrene_brooks_fit:
                     class_name: DatReader
                     variable_arguments:
                         sample_period: sample_period
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_90_10.dat'
+                        filename: 'pieper_wegner_1996/mg_fluorescence_90_10.dat'
                         interpolate_data: True
 
 
@@ -400,28 +350,28 @@ experiments:
                         residual_type: naked_chi_squared
                         interpolate_simulation: True
 
-                flat_pyrene_fit:
+                pyrene_flat_fit:
                     class_name: RenormalizedFit
                     fixed_arguments:
-                        pyrene_ATP:    1
-                        pyrene_ADPPi:  1
-                        pyrene_ADP:    1
+                        ATP:    1
+                        ADPPi:  1
+                        ADP:    1
                         residual_type: naked_chi_squared
 
-                brooks_pyrene_fit:
+                pyrene_brooks_fit:
                     class_name: RenormalizedFit
                     variable_arguments:
-                        pyrene_ATP:   brooks_atp_weight
-                        pyrene_ADPPi: brooks_adppi_weight
-                        pyrene_ADP:   brooks_adp_weight
+                        ATP:   brooks_atp_weight
+                        ADPPi: brooks_adppi_weight
+                        ADP:   brooks_adp_weight
 
                     fixed_arguments:
                         residual_type: naked_chi_squared
 
     pieper_wegner_50:
         parameters:
-            initial_pyrene_atp_concentration: 2
-            initial_pyrene_adp_concentration: 2
+            initial_atp_concentration: 2
+            initial_adp_concentration: 2
 
         simulation:
             filaments:
@@ -435,13 +385,6 @@ experiments:
                         state: ADP
 
             concentrations:
-                pyrene_ATP:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        initial_concentration: initial_pyrene_atp_concentration
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-
                 ATP:
                     class_name: FixedReagent
                     variable_arguments:
@@ -449,23 +392,7 @@ experiments:
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
 
-                pyrene_ADPPi:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                    fixed_arguments:
-                        initial_concentration: 0
-
                 ADPPi:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                    fixed_arguments:
-                        initial_concentration: 0
-
-                pyrene_ADP:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration: filament_tip_concentration
@@ -500,20 +427,20 @@ experiments:
                 length:
                     class_name: Length
 
-                pyrene_ATP:
+                ATP:
                     class_name: StateCount
                     fixed_arguments:
-                        state: pyrene_ATP
+                        state: ATP
 
-                pyrene_ADPPi:
+                ADPPi:
                     class_name: StateCount
                     fixed_arguments:
-                        state: pyrene_ADPPi
+                        state: ADPPi
 
-                pyrene_ADP:
+                ADP:
                     class_name: StateCount
                     fixed_arguments:
-                        state: pyrene_ADP
+                        state: ADP
 
             
         analyses:
@@ -537,34 +464,34 @@ experiments:
                     measurement_name: Pi
                     measurement_type: concentration
 
-            pyrene_ATP:
+            ATP:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_ATP
+                    measurement_name: ATP
                     measurement_type: filament
 
-            pyrene_ADPPi:
+            ADPPi:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_ADPPi
+                    measurement_name: ADPPi
                     measurement_type: filament
 
-            pyrene_ADP:
+            ADP:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: pyrene_ADP
+                    measurement_name: ADP
                     measurement_type: filament
 
         objectives:
@@ -574,24 +501,24 @@ experiments:
                     fixed_arguments:
                         filename: 'pieper_wegner_1996/mg_phosphate_concentration_50_50.dat'
 
-                flat_pyrene_fit:
+                pyrene_flat_fit:
                     class_name: DatReader
                     variable_arguments:
                         sample_period: sample_period
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_50_50.dat'
+                        filename: 'pieper_wegner_1996/mg_fluorescence_50_50.dat'
                         interpolate_data: True
 
-                brooks_pyrene_fit:
+                pyrene_brooks_fit:
                     class_name: DatReader
                     variable_arguments:
                         sample_period: sample_period
                         xmax: simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'pieper_wegner_1996/mg_pyrene_fluorescence_50_50.dat'
+                        filename: 'pieper_wegner_1996/mg_fluorescence_50_50.dat'
                         interpolate_data: True
 
 
@@ -603,20 +530,20 @@ experiments:
                         residual_type: naked_chi_squared
                         interpolate_simulation: True
 
-                flat_pyrene_fit:
+                pyrene_flat_fit:
                     class_name: RenormalizedFit
                     fixed_arguments:
-                        pyrene_ATP:    1
-                        pyrene_ADPPi:  1
-                        pyrene_ADP:    1
+                        ATP:    1
+                        ADPPi:  1
+                        ADP:    1
                         residual_type: naked_chi_squared
 
-                brooks_pyrene_fit:
+                pyrene_brooks_fit:
                     class_name: RenormalizedFit
                     variable_arguments:
-                        pyrene_ATP:   brooks_atp_weight
-                        pyrene_ADPPi: brooks_adppi_weight
-                        pyrene_ADP:   brooks_adp_weight
+                        ATP:   brooks_atp_weight
+                        ADPPi: brooks_adppi_weight
+                        ADP:   brooks_adp_weight
 
                     fixed_arguments:
                         residual_type: naked_chi_squared

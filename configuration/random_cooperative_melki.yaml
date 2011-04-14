@@ -1,13 +1,13 @@
-name: 'Cooperative Melki 1996'
+name: 'Cooperative Melki 1996, rho_c = 10 (Corrected)'
 
 import:
     - 'experiments/melki_fievez_carlier_1996.yaml'
-    - 'models/unlabeled/random_cooperative_full.yaml'
+    - 'models/random_cooperative_full.yaml'
     - 'parameters/polymerization_fujiwara_full.yaml'
 
 global_parameters:
-    number_of_simulations: 10
-    number_of_filaments:   4
+    number_of_simulations: 5
+    number_of_filaments:   3
 
     sample_period: 10
 
@@ -21,14 +21,14 @@ parameter_specifications:
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.001
-                upper_bound: 0.005
+                lower_bound: 0.0001
+                upper_bound: 0.002
                 mesh_type:   linear
-                num_points:  11
+                num_points:  21
 
             release_cooperativity:
-                lower_bound: 1
-                upper_bound: 1
+                lower_bound: 100
+                upper_bound: 100
                 mesh_type:   linear
                 num_points:  1
 
@@ -36,4 +36,4 @@ parameter_specifications:
                 lower_bound: 0.001
                 upper_bound: 0.010
                 mesh_type:   linear
-                num_points:  21
+                num_points:  11

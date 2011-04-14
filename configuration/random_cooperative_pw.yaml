@@ -2,8 +2,7 @@ name: 'Cooperative PW'
 
 import:
     - 'experiments/pieper_wegner_1996.yaml'
-    - 'models/unlabeled/random_cooperative_full.yaml'
-    - 'models/pyrene/random_cooperative_full.yaml'
+    - 'models/random_cooperative_full.yaml'
     - 'parameters/polyermization_fujiwara_barbed.yaml'
     - 'parameters/pyrene_coefficients_brooks.yaml'
 
