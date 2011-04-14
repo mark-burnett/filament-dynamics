@@ -22,6 +22,7 @@ from polymerization import *
 from random_hydrolysis import *
 from tip_hydrolysis import *
 from vectorial_hydrolysis import *
+from reversed_release import *
 
 del concentration_changes
 del cooperative_hydrolysis
@@ -30,5 +31,6 @@ del polymerization
 del random_hydrolysis
 del tip_hydrolysis
 del vectorial_hydrolysis
+del reversed_release
 
 del base_classes
