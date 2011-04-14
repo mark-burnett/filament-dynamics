@@ -20,8 +20,9 @@ from actin_dynamics import logger
 
 log = logger.getLogger(__file__)
 
-def load_complete_session(db_session, filename):
-    session_dict = definitions.load_definition(filename)
+def load_complete_session(db_session, filename, source_directory=None):
+    session_dict = definitions.load_definition(filename,
+            source_directory=source_directory)
     name = session_dict.get('name', None)
     log.debug("Loading session: '%s'." % name)
 

@@ -20,7 +20,10 @@ import sys
 from .. import logger
 log = logger.getLogger(__file__)
 
-def load_definition(filename):
+def load_definition(filename, source_directory=None):
+    if not source_directory:
+        source_directory, junk = os.path.split(filename)
+
     results = None
     log.debug("Loading definition from '%s'.", filename)
     try:
@@ -30,12 +33,11 @@ def load_definition(filename):
         log.exception("Definition file '%s' not loaded.", filename)
         sys.exit()
 
-    source_directory, junk = os.path.split(filename)
-
     imports = results.get('import', [])
     for import_filename in imports:
         results = merge_dicts(results, load_definition(
-            os.path.join(source_directory, import_filename)))
+            os.path.join(source_directory, import_filename),
+            source_directory=source_directory))
 
     return results
 
