@@ -13,14 +13,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from base_classes import FilamentTransition as _FilamentTransition
+from base_classes import Transition
 
-from actin_dynamics import logger as _logger
-_log = _logger.getLogger(__file__)
+from actin_dynamics.numerical import rate_bisect, utils
 
-class _FixedRate(_FilamentTransition):
+class FixedRate(Transition):
     skip_registration = True
-    __slots__ = ['state', 'rate', 'check_index']
+    __slots__ = ['state', 'rate', 'check_index', '_last_rs']
     def __init__(self, check_index=None, state=None, rate=None, label=None):
         """
         state - state to depolymerize
@@ -30,40 +29,38 @@ class _FixedRate(_FilamentTransition):
         self.rate        = rate
         self.check_index = check_index
 
-        _FilamentTransition.__init__(self, label=label)
+        Transition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
-        result = []
+        self._last_rs = []
         for filament in filaments:
             if self.state == filament[self.check_index]:
-                result.append(self.rate)
+                self._last_rs.append(self.rate)
             else:
-                result.append(0)
-        return result
+                self._last_rs.append(0)
+        return sum(self._last_rs)
 
-    def perform(self, time, filaments, concentrations, index, r):
-        if not len(filaments[index]):
-            _log.warn('Filament completely depolymerized.')
-        _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
 
-class BarbedDepolymerization(_FixedRate):
+class BarbedDepolymerization(FixedRate):
     __slots__ = []
     def __init__(self, **kwargs):
-        _FixedRate.__init__(self, check_index=-1, **kwargs)
+        FixedRate.__init__(self, check_index=-1, **kwargs)
 
-    def perform(self, time, filaments, concentrations, index, r):
-        current_filament = filaments[index]
+    def perform(self, time, filaments, concentrations, r):
+        filament_index, remaining_r = rate_bisect.rate_bisect(r,
+                list(utils.running_total(self._last_rs)))
+        current_filament = filaments[filament_index]
         current_filament.shrink_barbed_end()
         concentrations[self.state].add_monomer(time)
-        _FixedRate.perform(self, time, filaments, concentrations, index, r)
 
-class PointedDepolymerization(_FixedRate):
+class PointedDepolymerization(FixedRate):
     __slots__ = []
     def __init__(self, **kwargs):
-        _FixedRate.__init__(self, check_index=0, **kwargs)
+        FixedRate.__init__(self, check_index=0, **kwargs)
 
-    def perform(self, time, filaments, concentrations, index, r):
-        current_filament = filaments[index]
+    def perform(self, time, filaments, concentrations, r):
+        filament_index, remaining_r = rate_bisect.rate_bisect(r,
+                list(utils.running_total(self._last_rs)))
+        current_filament = filaments[filament_index]
         current_filament.shrink_pointed_end()
         concentrations[self.state].add_monomer(time)
-        _FixedRate.perform(self, time, filaments, concentrations, index, r)

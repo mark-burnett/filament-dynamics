@@ -17,12 +17,13 @@
     This module contains a general Kinetic Monte Carlo simulation.
 """
 
-import bisect
 import math
 import random
-import traceback
+import collections
 
 from .numerical import utils
+
+from .numerical import rate_bisect
 
 from . import logger
 
@@ -53,88 +54,64 @@ class Simulation(object):
         self.rng            = rng
 
 
-    def report(self):
-        concentration_results = {}
-        for state, c in self.concentrations.iteritems():
-            concentration_results[state] = zip(*c.data)
+    def measure_concentrations(self, time, results):
+        conc_results = results['concentrations']
+        for name, c in self.concentrations.iteritems():
+            conc_results[name].append((time, c.value))
 
-        filament_results = []
-        for filament in self.filaments:
-            fr = {}
-#            fr['final_state']  = filament.states
-            fr['final_state'] = list(filament)
-            fr['measurements'] = dict((name, zip(*values))
-                    for name, values in filament.measurements.iteritems())
-            filament_results.append(fr)
-
-        return {'concentrations': concentration_results,
-                'filaments':      filament_results}
-
-
-    def run(self):
+    def run(self, sample_period):
         '''
         Perform the actual simulation, starting with initial_state.
         '''
-        # XXX Aliases for a small speedup in cpython.
+        # NOTE Aliases for a small speedup in cpython.
         ml  = math.log
-        bbl = bisect.bisect_left
         if self.rng is not None:
             rng = self.rng
         else:
             rng = random.uniform
 
-        # Initialize end conditions.
-        [e.reset() for e in self.end_conditions]
         time = 0
+        next_measurement = 0
 
-        # Initialize transition measurements.
-        for t in self.transitions:
-            t.initialize_measurement(self.filaments)
-
-        # Perform initial filament measurements
-        for measurement in self.measurements:
-            measurement.perform(time, self.filaments)
+        results = {'concentrations': collections.defaultdict(list),
+                   'filaments': collections.defaultdict(
+                       lambda: collections.defaultdict(list))}
 
         try:
             while not any(e(time, self.filaments, self.concentrations)
                           for e in self.end_conditions):
-                # Calculate partial sums of transition probabilities
-                # NOTE we are keeping the small_Rs here so they don't need to be
-                #   recalculated to determine which filament undergoes transition.
-                small_Rs = []
-                transition_Rs = []
-                for t in self.transitions:
-                    local_Rs = t.R(self.filaments, self.concentrations)
-                    transition_Rs.append(sum(local_Rs))
-                    small_Rs.append(local_Rs)
+                transition_Rs = [t.R(self.filaments, self.concentrations)
+                                 for t in self.transitions]
 
                 running_transition_R = list(utils.running_total(transition_Rs))
-                total_R   = running_transition_R[-1]
+                total_R = running_transition_R[-1]
 
                 # Update simulation time
                 if total_R <= 0:
                     log.warn('ENDING SIMULATION:  no possible events.')
                     break;
-                time += ml(1/rng(0, 1)) / total_R
+
+                # Adjust time first, then record measurements
+                # This provides "previous-value interpolation"
+                dt = ml(1/rng(0, 1)) / total_R
+
+                if time + dt > next_measurement:
+                    self.measure_concentrations(next_measurement, results)
+                    for measurement in self.measurements:
+                        measurement.perform(next_measurement, self.filaments,
+                                            results)
+                    next_measurement += sample_period
+                time = time + dt
 
                 # Figure out which transition to perform
                 transition_r = rng(0, total_R)
-                transition_index = bbl(running_transition_R, transition_r)
+                transition_index, remaining_r = rate_bisect.rate_bisect(
+                        transition_r, running_transition_R)
 
-                # Figure out which filament to perform it on
-                filament_r = running_transition_R[transition_index] - transition_r
-                running_filament_R = list(utils.running_total(
-                    small_Rs[transition_index]))
-                filament_index = bbl(running_filament_R, filament_r)
-
-                # Perform transition
-                state_r = running_filament_R[filament_index] - filament_r
+                # Finally perform the transition
                 self.transitions[transition_index].perform(time, self.filaments,
-                        self.concentrations, filament_index, state_r)
+                        self.concentrations, remaining_r)
 
-                # Perform filament measurements
-                for measurement in self.measurements:
-                    measurement.perform(time, self.filaments)
         except:
             log.critical(
         'Simulation failed: time = %s, concentrations = %s',
@@ -143,4 +120,4 @@ class Simulation(object):
             raise
 
 
-        return self.report()
+        return results

@@ -19,8 +19,6 @@ import random
 from base_classes import FilamentFactory as _FilamentFactory
 
 from actin_dynamics.state.single_strand_filaments import Filament
-#from actin_dynamics.state.segmented_filaments import SegmentedFilament, BasicSegment
-#from actin_dynamics.state.edge_tracking_filaments import EdgeTrackingFilament
 
 class SingleStateFixedLength(_FilamentFactory):
     def __init__(self, state=None, length=None, number=None, label=None):
@@ -31,12 +29,6 @@ class SingleStateFixedLength(_FilamentFactory):
         _FilamentFactory.__init__(self, label=label)
 
     def create(self):
-#        return [EdgeTrackingFilament(counts=[self.length], states=[self.state])
-#                for i in xrange(self.number)]
-#        return [SegmentedFilament(BasicSegment(state=self.state,
-#                                               count=self.length))
-#                for i in xrange(self.number)]
-
         return [Filament(itertools.repeat(self.state, self.length))
                 for i in xrange(self.number)]
 

@@ -13,11 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from base_classes import FilamentTransition as _FilamentTransition
+from base_classes import Transition
 
-class _FixedRate(_FilamentTransition):
+class FixedRate(Transition):
     skip_registration = True
-    __slots__ = ['rate', 'state']
+    __slots__ = ['rate', 'state', '_last_R']
     def __init__(self, state=None, rate=None, label=None):
         """
         'state' that are added to the barbed end of the filament.
@@ -26,28 +26,26 @@ class _FixedRate(_FilamentTransition):
         self.state = state
         self.rate  = rate
 
-        _FilamentTransition.__init__(self, label=label)
+        Transition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
         value = self.rate * concentrations[self.state].value
-        return [value for s in filaments]
-
-    def perform(self, time, filaments, concentrations, index, r):
-        _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
+        self._last_R = value * len(filaments)
+        return self._last_R
 
 
-class BarbedPolymerization(_FixedRate):
+class BarbedPolymerization(FixedRate):
     'Simple polymerization at the barbed end.'
-    def perform(self, time, filaments, concentrations, index, r):
+    def perform(self, time, filaments, concentrations, r):
+        index = int(r / self._last_R)
         current_filament = filaments[index]
         current_filament.grow_barbed_end(self.state)
         concentrations[self.state].remove_monomer(time)
-        _FixedRate.perform(self, time, filaments, concentrations, index, r)
 
-class PointedPolymerization(_FixedRate):
+class PointedPolymerization(FixedRate):
     'Simple polymerization at the barbed end.'
-    def perform(self, time, filaments, concentrations, index, r):
+    def perform(self, time, filaments, concentrations, r):
+        index = int(r / self._last_R)
         current_filament = filaments[index]
         current_filament.grow_pointed_end(self.state)
         concentrations[self.state].remove_monomer(time)
-        _FixedRate.perform(self, time, filaments, concentrations, index, r)

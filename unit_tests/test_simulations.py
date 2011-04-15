@@ -35,17 +35,17 @@ class BasicSimulationTests(unittest.TestCase):
         ecs            = [MockEndCondition(3)]
         filaments      = [SegmentedFilament(BasicSegment(state=5, count=1))]
         rng            = MockRNG(0.5)
+        sample_period  = 0
 
         sim = Simulation(transitions=transitions, concentrations=concentrations,
                          measurements=measurements, end_conditions=ecs,
                          filaments=filaments, rng=rng)
 
-        measurements = sim.run()
+        measurements = sim.run(sample_period)
         sim_data = measurements['concentrations']
-        final_state = [f['final_state'] for f in measurements['filaments']]
-        filament_data = [f['measurements'] for f in measurements['filaments']]
+#        filament_data = [f['measurements'] for f in measurements['filaments']]
+        filament_data = measurements['filaments']
 
-        self.assertEqual([8], list(final_state[0]))
         self.assertEqual(0, len(sim_data))
         self.assertEqual(1, len(filament_data))
         times, values = filament_data[0]['mock_measurement']
@@ -59,12 +59,13 @@ class BasicSimulationTests(unittest.TestCase):
         filaments      = [SegmentedFilament(BasicSegment(state=5, count=1))]
         ecs            = [MockEndCondition(3)]
         rng            = MockRNG(0.5)
+        sample_period  = 0
 
         sim = Simulation(transitions=transitions, concentrations=concentrations,
                          measurements=measurements, end_conditions=ecs,
                          filaments=filaments, rng=rng)
 
-        measurements = sim.run()
+        measurements = sim.run(sample_period)
         filament_data = [f['measurements'] for f in measurements['filaments']]
 
         self.assertEqual(2, len(filament_data[0]))

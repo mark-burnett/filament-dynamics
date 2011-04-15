@@ -23,10 +23,8 @@ class MockTransition(object):
         self.measurements = collections.defaultdict(list)
 
     def R(self, filaments, concentrations):
-        return list(itertools.repeat(self.rate, len(filaments)))
+        return self.rate * len(filaments)
 
-    def perform(self, time, filaments, concentrations, index, r):
+    def perform(self, time, filaments, concentrations, r):
+        index = int (r / self.rate)
         filaments[index][0] += self.add_value
-
-    def initialize_measurement(self, filaments):
-        pass

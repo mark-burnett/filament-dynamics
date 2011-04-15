@@ -37,89 +37,38 @@ class CooperativeHydrolysisTest(unittest.TestCase):
                 rate=7, new_state=8, e=1.5)
 
     def test_normal_rates(self):
-        self.assertEqual(self.normal_one.R([self.strand],   None), [15])
-        self.assertEqual(self.normal_two.R([self.strand],   None), [12])
-        self.assertEqual(self.normal_three.R([self.strand], None), [12])
+        self.assertEqual(self.normal_one.R([self.strand],   None), 15)
+        self.assertEqual(self.normal_two.R([self.strand],   None), 12)
+        self.assertEqual(self.normal_three.R([self.strand], None), 12)
 
     def test_missing_rates(self):
-        self.assertEqual(self.missing.R([self.strand], None), [0])
+        self.assertEqual(self.missing.R([self.strand], None), 0)
 
     def test_perform_normal_boundary(self):
-        self.normal_one.perform(None, [self.strand], None, 0, 10)
+        self.test_normal_rates()
+        self.normal_one.perform(None, [self.strand], None, 10)
         self.assertEqual(list(self.strand), ['a', 'b', 'c', 'b', 'b', 'c', 'a'])
-        self.assertEqual(self.normal_one.R([self.strand], None), [9])
-        self.assertEqual(self.normal_two.R([self.strand], None), [10])
+        self.assertEqual(self.normal_one.R([self.strand], None), 9)
+        self.assertEqual(self.normal_two.R([self.strand], None), 10)
 
-        self.normal_one.perform(None, [self.strand], None, 0, 8)
+        self.normal_one.perform(None, [self.strand], None, 8)
         self.assertEqual(list(self.strand), ['a', 'b', 'c', 'b', 'b', 'c', 'b'])
-        self.assertEqual(self.normal_one.R([self.strand], None), [3])
-        self.assertEqual(self.normal_two.R([self.strand], None), [12])
+        self.assertEqual(self.normal_one.R([self.strand], None), 3)
+        self.assertEqual(self.normal_two.R([self.strand], None), 12)
 
     def test_perform_normal_random(self):
-        self.normal_one.perform(None, [self.strand], None, 0, 0)
+        self.test_normal_rates()
+        self.normal_one.R([self.strand], None)
+        self.normal_one.perform(None, [self.strand], None, 0)
         self.assertEqual(list(self.strand), ['b', 'b', 'c', 'a', 'b', 'c', 'a'])
-        self.assertEqual(self.normal_one.R([self.strand], None), [12])
-        self.assertEqual(self.normal_two.R([self.strand], None), [10])
+        self.assertEqual(self.normal_one.R([self.strand], None), 12)
+        self.assertEqual(self.normal_two.R([self.strand], None), 10)
 
     def test_perform_missing(self):
-        self.assertRaises(ZeroDivisionError, self.missing.perform,
-                          None, [self.strand], None, 0, 0)
+        self.test_missing_rates()
+        self.assertRaises(IndexError, self.missing.perform,
+                          None, [self.strand], None, 0)
 
-
-#class CooperativeHydrolysisWithByproductTest(unittest.TestCase):
-#    def test_notice(self):
-#        # XXX Write some tests for this, and expand the above tests for multi filament.
-#        self.assertFalse(True)
-#    def setUp(self):
-#        self.filament = Filament([1, 2, 3, 1, 2, 3, 1])
-#        self.concentrations = defaultdict(MockConcentration)
-#
-#        self.normal_one = CooperativeHydrolysisWithByproduct(old_state=1,
-#                pointed_neighbor=3, rate=3, cooperativity=2,
-#                new_state=2, byproduct=11)
-#        self.normal_two = CooperativeHydrolysisWithByproduct(old_state=2,
-#                pointed_neighbor=1, rate=2, cooperativity=3,
-#                new_state=3, byproduct=12)
-#        self.normal_three = CooperativeHydrolysisWithByproduct(old_state=1,
-#                pointed_neighbor=2, rate=4, cooperativity=3,
-#                new_state=2, byproduct=13)
-#
-#        self.missing = CooperativeHydrolysisWithByproduct(old_state=4,
-#                pointed_neighbor=5, rate=7, cooperativity=1.5,
-#                new_state=8, byproduct=14)
-#
-#    def test_normal_rates(self):
-#        self.assertEqual(self.normal_one.R(self.filament,   None), 15)
-#        self.assertEqual(self.normal_two.R(self.filament,   None), 12)
-#        self.assertEqual(self.normal_three.R(self.filament, None), 12)
-#
-#    def test_missing_rates(self):
-#        self.assertEqual(self.missing.R(self.filament, None), 0)
-#
-#    def test_perform_normal_boundary(self):
-#        self.normal_one.perform(None, self.filament, self.concentrations, 0)
-#        self.assertEqual(self.filament.states, [1, 2, 3, 2, 2, 3, 1])
-#        self.assertEqual(self.normal_one.R(self.filament, None), 9)
-#        self.assertEqual(self.normal_two.R(self.filament, None), 10)
-#        self.assertEqual(self.concentrations[11].count, 1)
-#
-#        self.normal_one.perform(None, self.filament, self.concentrations, 0)
-#        self.assertEqual(self.filament.states, [1, 2, 3, 2, 2, 3, 2])
-#        self.assertEqual(self.normal_one.R(self.filament, None), 3)
-#        self.assertEqual(self.normal_two.R(self.filament, None), 12)
-#        self.assertEqual(self.concentrations[11].count, 2)
-#
-#    def test_perform_normal_random(self):
-#        self.normal_one.perform(None, self.filament, self.concentrations, 14)
-#        self.assertEqual(self.filament.states, [2, 2, 3, 1, 2, 3, 1])
-#        self.assertEqual(self.normal_one.R(self.filament, None), 12)
-#        self.assertEqual(self.normal_two.R(self.filament, None), 10)
-#        self.assertEqual(self.concentrations[11].count, 1)
-#
-#    def test_perform_missing(self):
-#        self.assertRaises(IndexError, self.missing.perform,
-#                          None, self.filament, self.concentrations, 0)
-#        self.assertEqual(self.concentrations[14].count, 0)
 
 
 if '__main__' == __name__:

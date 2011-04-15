@@ -18,6 +18,6 @@ class MockMeasurement(object):
         self.index = index
         self.label = label
 
-    def perform(self, time, filaments):
+    def perform(self, time, filaments, concentrations):
         for i, filament in enumerate(filaments):
             filament.measurements[self.label].append((time, filament[-1]))

@@ -31,9 +31,6 @@ class Duration(_EndCondition):
         self.duration = duration
         _EndCondition.__init__(self, label=label)
 
-    def reset(self):
-        pass
-
     def __call__(self, time, filaments, concentrations):
         result = time > self.duration
         return time > self.duration
@@ -41,11 +38,8 @@ class Duration(_EndCondition):
 class RandomDuration(Duration):
     'End simulation after 0 to max_duration seconds.'
 
-    __slots__ = ['max_duration']
+    __slots__ = ['duration']
     def __init__(self, max_duration=None):
         if max_duration is None or max_duration <= 0:
             raise ValueError('Illegal max_duration.')
-        self.max_duration = max_duration
-
-    def reset(self):
-        self.duration = random.uniform(0, self.max_duration)
+        self.duration = random.uniform(0, max_duration)

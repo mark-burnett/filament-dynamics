@@ -39,7 +39,6 @@ class RandomDurationTest(unittest.TestCase):
         durations = [20, 6, 107, 85.0]
         for d in durations:
             rd = end_conditions.RandomDuration(d)
-            rd.reset()
             self.assertTrue(rd.duration < d)
 
             cd = rd.duration

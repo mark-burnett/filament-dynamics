@@ -13,32 +13,35 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .base_classes import FilamentTransition as _FilamentTransition
-from . import mixins as _mixins
+from actin_dynamics.numerical import rate_bisect, utils
 
-class RandomHydrolysis(_FilamentTransition):
-    __slots__ = ['old_state', 'rate', 'new_state']
+from .base_classes import Transition
+from . import mixins
+
+class RandomHydrolysis(Transition):
+    __slots__ = ['old_state', 'rate', 'new_state', '_last_rs']
     def __init__(self, old_state=None, rate=None, new_state=None, label=None):
         self.old_state = old_state
         self.rate      = rate
         self.new_state = new_state
 
-        _FilamentTransition.__init__(self, label=label)
+        Transition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
-        return [self.rate * filament.state_count(self.old_state)
-                for filament in filaments]
+        self._last_rs = [self.rate * filament.state_count(self.old_state)
+                         for filament in filaments]
+        return sum(self._last_rs)
 
-    def perform(self, time, filaments, concentrations, filament_index, r):
-        target_index = int(r / self.rate)
+    def perform(self, time, filaments, concentrations, r):
+        filament_index, remaining_r = rate_bisect.rate_bisect(r,
+                list(utils.running_total(self._last_rs)))
         current_filament = filaments[filament_index]
+
+        target_index = int(remaining_r / self.rate)
+
         state_index = current_filament.state_index(self.old_state, target_index)
 
-#        assert(current_filament.states[state_index] == self.old_state)
         current_filament[state_index] = self.new_state
 
-        _FilamentTransition.perform(self, time, filaments, concentrations,
-                                    filament_index, r)
 
-
-RandomHydrolysisWithByproduct = _mixins.add_byproduct(RandomHydrolysis)
+RandomHydrolysisWithByproduct = mixins.add_byproduct(RandomHydrolysis)

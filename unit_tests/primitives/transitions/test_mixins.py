@@ -30,13 +30,13 @@ class ByproductMixinTest(unittest.TestCase):
         self.mixin = WithByproduct(byproduct=11)
 
     def test_normal_perform(self):
-        self.mixin.perform(None, self.strand, self.concentrations, None, None)
+        self.mixin.perform(None, self.strand, self.concentrations, None)
         self.assertEqual(self.concentrations[11].count, 1)
 
-        self.mixin.perform(None, self.strand, self.concentrations, None, None)
+        self.mixin.perform(None, self.strand, self.concentrations, None)
         self.assertEqual(self.concentrations[11].count, 2)
 
-        self.mixin.perform(None, self.strand, self.concentrations, None, None)
+        self.mixin.perform(None, self.strand, self.concentrations, None)
         self.assertEqual(self.concentrations[11].count, 3)
 
 

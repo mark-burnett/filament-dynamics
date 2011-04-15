@@ -16,8 +16,6 @@
 class MockEndCondition(object):
     def __init__(self, max_count):
         self.max_count = max_count
-
-    def reset(self):
         self.count = 0
 
     def __call__(self, time, strand, concentrations):

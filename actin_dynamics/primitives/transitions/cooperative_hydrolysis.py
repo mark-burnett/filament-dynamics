@@ -15,14 +15,14 @@
 
 import bisect
 
-from ...numerical import utils
+from actin_dynamics.numerical import rate_bisect, utils
 
-from .base_classes import FilamentTransition as _FilamentTransition
-from . import mixins as _mixins
+from .base_classes import Transition
+from . import mixins
 
-class CooperativeHydrolysis(_FilamentTransition):
+class CooperativeHydrolysis(Transition):
     __slots__ = ['old_state', 'pointed_neighbors', 'rate', 'new_state',
-                 'boundary_rates']
+                 'boundary_rates', '_last_brs', '_last_rrs', '_last_RR']
     def __init__(self, old_state=None, rate=None, new_state=None, label=None,
                  **cooperativities):
         self.old_state        = old_state
@@ -36,56 +36,66 @@ class CooperativeHydrolysis(_FilamentTransition):
         self.boundary_rates = dict((s, self.rate * (rho - 1))
                                    for s, rho in cooperativities.iteritems())
 
-        _FilamentTransition.__init__(self, label=label)
+        Transition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
-        return [sum(self._boundary_rates(filament)) + self._random_rate(filament)
-                for filament in filaments]
+        return (sum(self._boundary_rates(filaments)) +
+                self._random_rate(filaments))
 
-    def _boundary_rates(self, filament):
-        return [filament.boundary_count(self.old_state, pn)
-                * self.boundary_rates[pn]
+    def _state_boundary_rates(self, filament):
+        return [filament.boundary_count(self.old_state, pn) *
+                    self.boundary_rates[pn]
                 for pn in self.pointed_neighbors]
 
-    def _random_rate(self, filament):
-        return self.rate * filament.state_count(self.old_state)
+    def _boundary_rates(self, filaments):
+        self._last_brs = []
+        for filament in filaments:
+            self._last_brs.append(sum(self._state_boundary_rates(filament)))
+        return self._last_brs
 
-    def perform(self, time, filaments, concentrations, index, r):
-        current_filament = filaments[index]
+    def _random_rate(self, filaments):
+        self._last_rrs = [self.rate * filament.state_count(self.old_state)
+                         for filament in filaments]
+        self._last_RR = sum(self._last_rrs)
+        return self._last_RR
 
-        random_rate = self._random_rate(current_filament)
-        if r < random_rate:
-            self._perform_random(time, current_filament, r, random_rate)
+
+    def perform(self, time, filaments, concentrations, r):
+        if r < self._last_RR:
+            self._perform_random(time, filaments, r)
         else:
-            boundary_rates = self._boundary_rates(current_filament)
-            running_rates = list(utils.running_total(boundary_rates))
-
-            boundary_r = r - random_rate
-            boundary_index = bisect.bisect_left(running_rates, boundary_r)
-
-            specific_r = running_rates[boundary_index] - boundary_r
-
-            self._perform_boundary(time, current_filament, specific_r,
-                                   boundary_rates[boundary_index],
-                                   self.pointed_neighbors[boundary_index])
-
-        _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
+            remaining_r = r - self._last_RR
+            self._perform_boundary(time, filaments, remaining_r)
 
 
-    def _perform_boundary(self, time, filament, r, boundary_rate, pointed_neighbor):
-        target_index = int(r / boundary_rate)
+    def _perform_random(self, time, filaments, r):
+        filament_index, remaining_r = rate_bisect.rate_bisect(r,
+                list(utils.running_total(self._last_rrs)))
+        current_filament = filaments[filament_index]
+        target_index = int(remaining_r / self.rate)
+
+        state_index = current_filament.state_index(self.old_state, target_index)
+
+        current_filament[state_index] = self.new_state
+
+
+    def _perform_boundary(self, time, filaments, r):
+        filament_index, remaining_r = rate_bisect.rate_bisect(r,
+                list(utils.running_total(self._last_brs)))
+        current_filament = filaments[filament_index]
+
+        self._perform_boundary_state(time, current_filament, remaining_r)
+
+    def _perform_boundary_state(self, time, filament, r):
+        state_index, remaining_r = rate_bisect.rate_bisect(r,
+                list(utils.running_total(self._state_boundary_rates(filament))))
+
+        pointed_neighbor = self.pointed_neighbors[state_index]
+        target_index = int(remaining_r / self.boundary_rates[pointed_neighbor])
         state_index = filament.boundary_index(self.old_state,
                                               pointed_neighbor,
                                               target_index)
         filament[state_index] = self.new_state
 
-    def _perform_random(self, time, filament, r, random_rate):
-        target_index = int(r / random_rate)
-        state_index = filament.state_index(self.old_state, target_index)
-#        state_index = filament.non_boundary_state_index(self.old_state,
-#                                                        self.pointed_neighbors,
-#                                                        target_index)
-        filament[state_index] = self.new_state
 
-
-CooperativeHydrolysisWithByproduct = _mixins.add_byproduct(CooperativeHydrolysis)
+CooperativeHydrolysisWithByproduct = mixins.add_byproduct(CooperativeHydrolysis)

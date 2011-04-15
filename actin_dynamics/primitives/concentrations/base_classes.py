@@ -35,8 +35,6 @@ class Concentration(object):
         self.update_measurement(time)
 
     def update_measurement(self, time):
-#        if self.value != self.data[-1][1]:
-#            self.data.append((time, self.value))
         last_time, last_value = self.data[-1]
         if time <= last_time:
             self.data[-1][1] = self.value

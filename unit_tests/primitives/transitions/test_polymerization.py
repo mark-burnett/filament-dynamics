@@ -17,7 +17,7 @@ import unittest
 
 from collections import defaultdict
 
-from actin_dynamics.primitives.transitions import BarbedPolymerization
+from actin_dynamics.primitives.transitions.polymerization import BarbedPolymerization
 
 from actin_dynamics.state.single_strand_filaments import Filament
 
@@ -35,17 +35,18 @@ class BarbedPolymerizationSingleFilament(unittest.TestCase):
         self.poly_two = BarbedPolymerization(state=2, rate=2)
 
     def test_rates(self):
-        self.assertEqual(self.poly_one.R([self.filament], self.concentrations), [3])
-        self.assertEqual(self.poly_two.R([self.filament], self.concentrations), [14])
+        self.assertEqual(self.poly_one.R([self.filament], self.concentrations), 3)
+        self.assertEqual(self.poly_two.R([self.filament], self.concentrations), 14)
 
     def test_normal_perform(self):
-        self.poly_one.perform(None, [self.filament], self.concentrations, 0, None)
+        self.test_rates()
+        self.poly_one.perform(None, [self.filament], self.concentrations, 0)
         self.assertEqual(list(self.filament), [None, None, None, 1])
 
-        self.poly_two.perform(None, [self.filament], self.concentrations, 0, None)
+        self.poly_two.perform(None, [self.filament], self.concentrations, 0)
         self.assertEqual(list(self.filament), [None, None, None, 1, 2])
 
-        self.poly_one.perform(None, [self.filament], self.concentrations, 0, None)
+        self.poly_one.perform(None, [self.filament], self.concentrations, 0)
         self.assertEqual(list(self.filament), [None, None, None, 1, 2, 1])
 
         # Validate rates after some transitions.

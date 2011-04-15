@@ -15,22 +15,11 @@
 
 from registry import transition_registry as registry
 
-from concentration_changes import *
-from cooperative_hydrolysis import *
-from depolymerization import *
-from polymerization import *
-from random_hydrolysis import *
-from tip_hydrolysis import *
-from vectorial_hydrolysis import *
-from reversed_release import *
-
-del concentration_changes
-del cooperative_hydrolysis
-del depolymerization
-del polymerization
-del random_hydrolysis
-del tip_hydrolysis
-del vectorial_hydrolysis
-del reversed_release
-
-del base_classes
+import concentration_changes
+import cooperative_hydrolysis
+import depolymerization
+import polymerization
+import random_hydrolysis
+import tip_hydrolysis
+import vectorial_hydrolysis
+import reversed_release

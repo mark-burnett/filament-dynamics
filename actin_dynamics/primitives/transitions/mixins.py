@@ -17,7 +17,7 @@ class WithByproduct(object):
     def __init__(self, byproduct):
         self.byproduct = byproduct
 
-    def perform(self, time, filaments, concentrations, index, r):
+    def perform(self, time, filaments, concentrations, r):
         concentrations[self.byproduct].add_monomer(time)
 
 def add_byproduct(old_class):
@@ -27,15 +27,16 @@ def add_byproduct(old_class):
     '''
     new_class_name = old_class.__name__ + 'WithByproduct'
 
-    new_class = type(new_class_name, (old_class, WithByproduct), dict(old_class.__dict__))
+    new_class = type(new_class_name, (old_class, WithByproduct),
+                     dict(old_class.__dict__))
 
     def init(self, byproduct=None, **kwargs):
         old_class.__init__(self, **kwargs)
         WithByproduct.__init__(self, byproduct=byproduct)
 
-    def perform(self, time, filaments, concentrations, index, r):
-        old_class.perform(self, time, filaments, concentrations, index, r)
-        WithByproduct.perform(self, time, filaments, concentrations, index, r)
+    def perform(self, time, filaments, concentrations, r):
+        old_class.perform(self, time, filaments, concentrations, r)
+        WithByproduct.perform(self, time, filaments, concentrations, r)
 
     new_class.__init__ = init
     new_class.perform  = perform
