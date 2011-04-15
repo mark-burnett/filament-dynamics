@@ -19,8 +19,24 @@ import numpy
 from . import measurements
 from . import slicing
 
+import actin_dynamics.numerical.measurements
+from actin_dynamics import numerical
+
 from actin_dynamics import database
 from actin_dynamics.numerical.zero_crossings import zero_crossings
+
+def timecourse(run):
+    # Plot concentrations
+    measurements.line(run.analyses['ATP'], color='red',
+            label='[G-ATP-Actin] uM')
+    measurements.line(run.analyses['ADPPi'], color='green',
+            label='[G-ADP-Pi-Actin] uM')
+    measurements.line(run.analyses['ADP'], color='blue',
+            label='[G-ADP-Actin] uM')
+    raw_length = run.analyses['length']
+    scaled_length = numerical.measurements.scale(raw_length,
+            run.all_parameters['filament_tip_concentration'])
+    measurements.line(scaled_length, label='Average Length')
 
 def D_vs_concentration(session, cc_scale=False, **kwargs):
     e = session.get_experiment('fujiwara_2002')
