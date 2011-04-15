@@ -12,12 +12,10 @@ global_parameters:
 
     solution_pi_release_rate: 10000
 
-    filament_tip_concentration: 0.0001
+    filament_tip_concentration: 0.00008
     seed_concentration: 0.01
 
     sample_period:        30
-
-    atp_concentration: 0.3
 
     expected_diffusion_coefficient: 28.6
     histogram_start_time: 900
