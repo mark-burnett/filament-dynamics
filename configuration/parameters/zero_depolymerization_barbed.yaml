@@ -1,0 +1,4 @@
+global_parameters:
+    barbed_atp_depolymerization_rate:   0
+    barbed_adppi_depolymerization_rate: 0
+    barbed_adp_depolymerization_rate:   0

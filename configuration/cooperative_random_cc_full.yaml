@@ -3,7 +3,7 @@ name: 'Critical Concentration - Coopertaive Random Full'
 import:
     - 'experiments/critical_concentration.yaml'
     - 'parameters/polymerization_fujiwara_full.yaml'
-    - 'models/unlabeled/cooperative_random_full.yaml'
+    - 'models/cooperative_random_full.yaml'
 
 global_parameters:
     number_of_simulations: 100

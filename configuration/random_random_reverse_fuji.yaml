@@ -1,14 +1,22 @@
-name: 'Fujiwara Tip Diffusion - Cleavage Cooperativity = 1000000'
+name: 'Fujiwara Tip Diffusion - Reversed Release Rate = 2e-6'
 
 import:
     - 'experiments/fujiwara_2002.yaml'
-    - 'models/cooperative_random_full.yaml'
+    - 'models/random_random_full.yaml'
+    - 'models/components/reverse_release.yaml'
     - 'parameters/polymerization_fujiwara_full.yaml'
 
 global_parameters:
     expected_diffusion_coefficient: 28.6
     number_of_simulations: 100
     number_of_filaments:   1
+
+    initial_filament_length: 100000
+
+    sample_period:        30
+
+    histogram_start_time: 900
+    histogram_bin_size:   74.07 # This is about 0.2 um in monomers
 
 parameter_specifications:
     fujiwara_2002:
@@ -20,19 +28,19 @@ parameter_specifications:
                 num_points:  48
 
             cleavage_rate:
-                lower_bound: 0.00161
-                upper_bound: 0.00161
-                mesh_type:   linear
-                num_points:  1
-
-            cleavage_cooperativity:
-                lower_bound: 1000000
-                upper_bound: 1000000
+                lower_bound: 0.198
+                upper_bound: 0.198
                 mesh_type:   linear
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.003
-                upper_bound: 0.003
+                lower_bound: 0.000780
+                upper_bound: 0.000780
+                mesh_type:   linear
+                num_points:  1
+
+            reverse_release_rate:
+                lower_bound: 0.000002
+                upper_bound: 0.000002
                 mesh_type:   linear
                 num_points:  1

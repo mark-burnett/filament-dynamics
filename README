@@ -5,6 +5,14 @@
 This software package is licensed under the GNU GPL (version 3).
 See the LICENSE file for more details.
 
+
+------------------------------------------------------------------------
+- NOTICE                                                               -
+------------------------------------------------------------------------
+This readme is (unfortunately) out of date.  I will clean it up over the
+summer, as I refactor the project to a global fit paradigm.
+
+
 ------------------------------------------------------------------------
 - Requirements                                                         -
 ------------------------------------------------------------------------

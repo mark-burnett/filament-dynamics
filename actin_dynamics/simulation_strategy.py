@@ -95,44 +95,52 @@ class Simulation(object):
         for measurement in self.measurements:
             measurement.perform(time, self.filaments)
 
-        while not any(e(time, self.filaments, self.concentrations)
-                      for e in self.end_conditions):
-            # Calculate partial sums of transition probabilities
-            # NOTE we are keeping the small_Rs here so they don't need to be
-            #   recalculated to determine which filament undergoes transition.
-            small_Rs = []
-            transition_Rs = []
-            for t in self.transitions:
-                local_Rs = t.R(self.filaments, self.concentrations)
-                transition_Rs.append(sum(local_Rs))
-                small_Rs.append(local_Rs)
+        try:
+            while not any(e(time, self.filaments, self.concentrations)
+                          for e in self.end_conditions):
+                # Calculate partial sums of transition probabilities
+                # NOTE we are keeping the small_Rs here so they don't need to be
+                #   recalculated to determine which filament undergoes transition.
+                small_Rs = []
+                transition_Rs = []
+                for t in self.transitions:
+                    local_Rs = t.R(self.filaments, self.concentrations)
+                    transition_Rs.append(sum(local_Rs))
+                    small_Rs.append(local_Rs)
 
-            running_transition_R = list(utils.running_total(transition_Rs))
-            total_R   = running_transition_R[-1]
+                running_transition_R = list(utils.running_total(transition_Rs))
+                total_R   = running_transition_R[-1]
 
-            # Update simulation time
-            if total_R <= 0:
-                log.warn('ENDING SIMULATION:  no possible events.')
-                break;
-            time += ml(1/rng(0, 1)) / total_R
+                # Update simulation time
+                if total_R <= 0:
+                    log.warn('ENDING SIMULATION:  no possible events.')
+                    break;
+                time += ml(1/rng(0, 1)) / total_R
 
-            # Figure out which transition to perform
-            transition_r = rng(0, total_R)
-            transition_index = bbl(running_transition_R, transition_r)
+                # Figure out which transition to perform
+                transition_r = rng(0, total_R)
+                transition_index = bbl(running_transition_R, transition_r)
 
-            # Figure out which filament to perform it on
-            filament_r = running_transition_R[transition_index] - transition_r
-            running_filament_R = list(utils.running_total(
-                small_Rs[transition_index]))
-            filament_index = bbl(running_filament_R, filament_r)
+                # Figure out which filament to perform it on
+                filament_r = running_transition_R[transition_index] - transition_r
+                running_filament_R = list(utils.running_total(
+                    small_Rs[transition_index]))
+                filament_index = bbl(running_filament_R, filament_r)
 
-            # Perform transition
-            state_r = running_filament_R[filament_index] - filament_r
-            self.transitions[transition_index].perform(time, self.filaments,
-                    self.concentrations, filament_index, state_r)
+                # Perform transition
+                state_r = running_filament_R[filament_index] - filament_r
+                self.transitions[transition_index].perform(time, self.filaments,
+                        self.concentrations, filament_index, state_r)
 
-            # Perform filament measurements
-            for measurement in self.measurements:
-                measurement.perform(time, self.filaments)
+                # Perform filament measurements
+                for measurement in self.measurements:
+                    measurement.perform(time, self.filaments)
+        except:
+            log.critical(
+        'Simulation failed: time = %s, concentrations = %s',
+                      time, dict((key, c.value)
+                          for key, c in self.concentrations.iteritems()))
+            raise
+
 
         return self.report()

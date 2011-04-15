@@ -19,17 +19,13 @@ from actin_dynamics.numerical import residuals as _residuals
 from actin_dynamics.numerical import regression
 
 class DiffusionCoefficient(_Objective):
-    def __init__(self, analysis_prefix=None, label=None):
-        self.analysis_prefix   = analysis_prefix
+    def __init__(self, analysis_name=None, label=None):
+        self.analysis_name = analysis_name
 
         _Objective.__init__(self, label=label)
 
     def perform(self, run, target):
-        # Get histograms
-        histograms = get_histograms(run, self.analysis_prefix)
-
-        # Fit gaussians
-        taus, means, variances = gaussian_fits(histograms)
+        taus, variances, errors = run.analyses[self.analysis_name]
 
         # Calculate slope of line through points using residual function
         m = regression.fit_zero_line(taus, variances)
@@ -40,49 +36,21 @@ class DiffusionCoefficient(_Objective):
 
 
 class DiffusionCoefficientFit(_Objective):
-    def __init__(self, analysis_prefix=None, expected_value=None, label=None,
+    def __init__(self, analysis_name=None, expected_value=None, label=None,
                  residual_type=None):
-        self.analysis_prefix   = analysis_prefix
+        self.analysis_name     = analysis_name
         self.expected_value    = expected_value
         self.residual_function = getattr(_residuals, residual_type)
 
         _Objective.__init__(self, label=label)
 
     def perform(self, run, target):
-        # Get histograms
-        histograms = get_histograms(run, self.analysis_prefix)
-
-        # Fit gaussians
-        taus, means, variances = gaussian_fits(histograms)
+        taus, variances, errors = run.analyses[self.analysis_name]
 
         # Calculate slope of line through points using residual function
-        m, b = regression.fit_line(taus, variances)
+        m = regression.fit_zero_line(taus, variances)
 
         # Calculate D (D = slope / 2) and assign the residual to target.value
         D = m / 2
         target.value = self.residual_function([None, [D]],
                                               [None, [self.expected_value]])
-
-def get_histograms(run, prefix):
-    prefix_length = len(prefix)
-    unsorted = []
-    for label, analysis in run.analyses.iteritems():
-        if label[:prefix_length] == prefix:
-            tau = float(label[prefix_length:])
-            unsorted.append((tau, analysis))
-
-    return sorted(unsorted, key=lambda x: x[0])
-
-
-def gaussian_fits(histograms):
-    taus      = []
-    means     = []
-    variances = []
-    for tau, histogram in histograms:
-        taus.append(tau)
-
-        mean, variance= regression.fit_gaussian(histogram[0], histogram[1])
-        means.append(mean)
-        variances.append(variance)
-
-    return taus, means, variances

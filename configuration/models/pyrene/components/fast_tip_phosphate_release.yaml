@@ -1,9 +1,0 @@
-models:
-    transitions:
-        pyrene_tip_phosphate_release:
-            class_name: BarbedEndHydrolysis
-            variable_arguments:
-                rate: tip_phosphate_release
-            fixed_arguments:
-                old_state: pyrene_ADPPi
-                new_state: pyrene_ADP
