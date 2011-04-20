@@ -15,16 +15,16 @@
 
 from ..meta_classes import Registration
 
-from registry import measurement_registry
+from registry import observer_registry
 
 
 def _datastore_factory():
     return [], []
 
 
-class Measurement(object):
+class Observer(object):
     __metaclass__ = Registration
-    registry = measurement_registry
+    registry = observer_registry
     skip_registration = True
 
     __slots__ = ['label']
@@ -32,11 +32,11 @@ class Measurement(object):
         self.label = label
 
 
-class FilamentMeasurement(Measurement):
+class FilamentObserver(Observer):
     skip_registration = True
      __slots__ = ['_datastore']
      def __init__(self, *args, **kwargs):
-         Measurement.__init__(self, *args, **kwargs)
+         Observer.__init__(self, *args, **kwargs)
 
     def initialize(self, results):
         self._datastore = collections.defaultdict(_datastore_factory)
@@ -48,10 +48,10 @@ class FilamentMeasurement(Measurement):
         result_values.append(state_count)
 
 
-class ConcentrationMeasurement(Measurement):
+class ConcentrationObserver(Observer):
      __slots__ = ['_datastore', '_data_times', '_data_values']
      def __init__(self, *args, **kwargs):
-         Measurement.__init__(self, *args, **kwargs)
+         Observer.__init__(self, *args, **kwargs)
 
     def initialize(self, results):
         self._datastore = _datastore_factory()
@@ -62,5 +62,5 @@ class ConcentrationMeasurement(Measurement):
         self._data_times.append(time)
         self._data_values.append(state_count)
 
-    def perform(self, time, simulation_state):
+    def measure(self, time, simulation_state):
         self.store(time, simulation_state.concentrations[self.label])

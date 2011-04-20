@@ -13,33 +13,33 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from base_classes import FilamentMeasurement
+from base_classes import ObserverMeasurement
 
-class Length(FilamentMeasurement):
+class Length(ObserverMeasurement):
     __slots__ = []
-    def perform(self, time, simulation_state):
+    def measure(self, time, simulation_state):
         for name, filament in simulation_state.filaments.iteritems():
             length = len(filament)
             self.store(time, length, name)
 
-class StateCount(FilamentMeasurement):
+class StateCount(ObserverMeasurement):
     __slots__ = ['state']
     def __init__(self, state=None, **kwargs):
         self.state = state
-        FilamentMeasurement.__init__(self, **kwargs)
+        ObserverMeasurement.__init__(self, **kwargs)
 
-    def perform(self, time, simulation_state, results):
+    def measure(self, time, simulation_state, results):
         for name, filament in simulation_state.filaments.iteritems():
             state_count = filament.state_count(self.state)
             self.store(time, state_count, name)
 
-class WeightedStateTotal(FilamentMeasurement):
+class WeightedStateTotal(ObserverMeasurement):
     __slots__ = ['weights']
     def __init__(self, label=None, **weights):
         self.weights = weights
-        FilamentMeasurement.__init__(self, label=label)
+        ObserverMeasurement.__init__(self, label=label)
 
-    def perform(self, time, simulation_state):
+    def measure(self, time, simulation_state):
         for name, filament in simulation_state.filaments.iteritems():
             value = sum(filament.state_count(simulation_state) * weight
                         for state, weight in self.weights.iteritems())

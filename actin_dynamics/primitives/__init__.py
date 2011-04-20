@@ -16,7 +16,7 @@
 import analyses
 import concentrations
 import end_conditions
-import measurements
+import observers
 import filaments
 import file_readers
 import objectives

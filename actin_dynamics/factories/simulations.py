@@ -22,7 +22,7 @@ def make_run(run):
 
     filament_factories = bindings.db_multiple(run.filaments,      parameters)
     transitions        = bindings.db_multiple(run.transitions,    parameters)
-    measurements       = bindings.db_multiple(run.measurements,   parameters)
+    observers          = bindings.db_multiple(run.observers,   parameters)
     end_conditions     = bindings.db_multiple(run.end_conditions, parameters)
     concentration_list = bindings.db_multiple(run.concentrations, parameters)
 
@@ -33,7 +33,7 @@ def make_run(run):
     concentrations = dict((c.label, c) for c in concentration_list)
 
     return Simulation(transitions=transitions, concentrations=concentrations,
-                      measurements=measurements, end_conditions=end_conditions,
+                      observers=observers, end_conditions=end_conditions,
                       filaments=filaments)
 
 def make_object_graph(object_graph, parameters):
@@ -44,9 +44,9 @@ def make_object_graph(object_graph, parameters):
     transitions        = bindings.dict_multiple(object_graph['transitions'],
                                                 parameters,
                                                 primitives.transitions.registry)
-    measurements       = bindings.dict_multiple(object_graph['measurements'],
+    observers       = bindings.dict_multiple(object_graph['observers'],
                                                 parameters,
-                                                primitives.measurements.registry)
+                                                primitives.observers.registry)
     end_conditions     = bindings.dict_multiple(object_graph['end_conditions'],
                                                 parameters,
                                                 primitives.end_conditions.registry)
@@ -61,6 +61,6 @@ def make_object_graph(object_graph, parameters):
     concentrations = dict((c.label, c) for c in concentration_list)
 
     return Simulation(transitions=transitions, concentrations=concentrations,
-                      measurements=measurements, end_conditions=end_conditions,
+                      observers=observers, end_conditions=end_conditions,
                       filaments=filaments)
 

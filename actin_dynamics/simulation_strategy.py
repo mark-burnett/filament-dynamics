@@ -32,14 +32,14 @@ class Simulation(object):
     """
     Kinetic Monte Carlo simulation object.
     """
-    __slots__ = ['transitions', 'measurements', 'end_conditions',
+    __slots__ = ['transitions', 'observers', 'end_conditions',
                  'state', 'rng']
-    def __init__(self, sample_period=None, transitions=None, measurements=None,
+    def __init__(self, sample_period=None, transitions=None, observers=None,
                  concentrations=None, filaments=None, end_conditions=None,
                  rng=random.uniform):
         self.sample_period  = sample_period
         self.transitions    = transitions
-        self.measurements   = measurements
+        self.observers      = observers
         self.end_conditions = end_conditions
         self.rng            = rng
 
@@ -55,8 +55,8 @@ class Simulation(object):
         ml = math.log
 
         results = {'filaments': {}, 'concentrations': {}}
-        for measurement in self.measurements:
-            measurement.initialize(results)
+        for observer in self.observers:
+            observer.initialize(results)
 
         time = 0
         next_measurement_time = 0
@@ -70,8 +70,8 @@ class Simulation(object):
 
             # This provides causal measurements
             if time + dt > next_measurement_time:
-                for measurement in self.measurements:
-                    measurement.perform(next_measurement_time, self.state)
+                for observer in self.observers:
+                    observer.measure(next_measurement_time, self.state)
                 next_measurement_time += self.sample_period
             time = time + dt
 
