@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,21 +22,6 @@ class Concentration(object):
     registry = concentration_registry
     skip_registration = True
 
-    __slots__ = ['label', 'sample_period', 'data']
-    def __init__(self, sample_period=None, label=None):
+    __slots__ = ['label']
+    def __init__(self, label=None):
         self.label = label
-        self.sample_period = sample_period
-        self.data  = [[0, self.value]]
-
-    def add_monomer(self, time):
-        self.update_measurement(time)
-
-    def remove_monomer(self, time):
-        self.update_measurement(time)
-
-    def update_measurement(self, time):
-        last_time, last_value = self.data[-1]
-        if time <= last_time:
-            self.data[-1][1] = self.value
-        else:
-            self.data.append([time + self.sample_period, self.value])

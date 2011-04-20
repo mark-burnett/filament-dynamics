@@ -16,33 +16,27 @@
 from base_classes import Concentration as _Concentration
 
 class FixedReagent(_Concentration):
-    __slots__ = ['value', 'monomer_count', 'concentration_per_monomer']
+    __slots__ = ['_value', 'monomer_count', 'concentration_per_monomer']
     def __init__(self, initial_concentration=-1,
                  filament_tip_concentration=-1,
                  number=None, label=None, sample_period=None):
         initial_concentration = float(initial_concentration)
-        if initial_concentration < 0:
-            raise ValueError('Negative concentrations not allowed.')
-        if filament_tip_concentration < 0:
-            raise ValueError('Negative concentrations not allowed.')
-
 
         self.monomer_count = int(number * initial_concentration
                               / filament_tip_concentration)
         self.concentration_per_monomer = (filament_tip_concentration / number)
 
-        self.value = self.concentration_per_monomer * self.monomer_count
+        self._value = self.concentration_per_monomer * self.monomer_count
 
-        _Concentration.__init__(self, sample_period=sample_period, label=label)
+        _Concentration.__init__(self, label=label)
 
-    def add_monomer(self, time):
+    def value(self, time):
+        return self._value
+
+    def add_monomer(self):
         self.monomer_count += 1
-        self.value = self.concentration_per_monomer * self.monomer_count
-        _Concentration.add_monomer(self, time)
+        self._value = self.concentration_per_monomer * self.monomer_count
 
-
-    def remove_monomer(self, time):
-        if self.monomer_count > 0:
-            self.monomer_count -= 1
-            self.value = self.concentration_per_monomer * self.monomer_count
-        _Concentration.remove_monomer(self, time)
+    def remove_monomer(self):
+        self.monomer_count -= 1
+        self._value = self.concentration_per_monomer * self.monomer_count

@@ -39,6 +39,7 @@ class CooperativeHydrolysis(Transition):
         Transition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
+        self._last_names = filaments.keys()
         return (sum(self._boundary_rates(filaments)) +
                 self._random_rate(filaments))
 

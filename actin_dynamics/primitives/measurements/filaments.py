@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,52 +13,34 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from base_classes import Measurement as _Measurement
+from base_classes import FilamentMeasurement
 
-from actin_dynamics import logger
-_log = logger.getLogger(__file__)
-
-class Length(_Measurement):
-    def __init__(self, **kwargs):
-        _Measurement.__init__(self, **kwargs)
-
-    def perform(self, time, filaments):
-        for filament in filaments:
+class Length(FilamentMeasurement):
+    __slots__ = []
+    def perform(self, time, simulation_state):
+        for name, filament in simulation_state.filaments.iteritems():
             length = len(filament)
-            self.store(time, length, filament)
+            self.store(time, length, name)
 
-class StateCount(_Measurement):
+class StateCount(FilamentMeasurement):
     __slots__ = ['state']
     def __init__(self, state=None, **kwargs):
         self.state = state
-        _Measurement.__init__(self, **kwargs)
+        FilamentMeasurement.__init__(self, **kwargs)
 
-    def perform(self, time, filaments):
-        for filament in filaments:
+    def perform(self, time, simulation_state, results):
+        for name, filament in simulation_state.filaments.iteritems():
             state_count = filament.state_count(self.state)
-            self.store(time, state_count, filament)
+            self.store(time, state_count, name)
 
-class WeightedStateTotal(_Measurement):
+class WeightedStateTotal(FilamentMeasurement):
     __slots__ = ['weights']
-    def __init__(self, label=None, sample_period=None, **weights):
+    def __init__(self, label=None, **weights):
         self.weights = weights
-        _Measurement.__init__(self, label=label, sample_period=sample_period)
+        FilamentMeasurement.__init__(self, label=label)
 
-    def perform(self, time, filaments):
-        for filament in filaments:
-            value = sum(filament.state_count(state) * weight
+    def perform(self, time, simulation_state):
+        for name, filament in simulation_state.filaments.iteritems():
+            value = sum(filament.state_count(simulation_state) * weight
                         for state, weight in self.weights.iteritems())
-            self.store(time, value, filament)
-
-class StateCountSum(_Measurement):
-    __slots__ = ['base_state', 'prefix']
-    def __init__(self, base_state=None, prefix=None, **kwargs):
-        self.base_state = base_state
-        self.prefix     = prefix
-        _Measurement.__init__(self, **kwargs)
-
-    def perform(self, time, filaments):
-        for filament in filaments:
-            state_count  = filament.state_count(self.base_state)
-            state_count += filament.state_count(self.prefix + self.base_state)
-            self.store(time, state_count, filament)
+            self.store(time, value, name)

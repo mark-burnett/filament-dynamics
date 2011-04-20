@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -28,24 +28,31 @@ class FixedRate(Transition):
 
         Transition.__init__(self, label=label)
 
+
     def R(self, filaments, concentrations):
         value = self.rate * concentrations[self.state].value
         self._last_R = value * len(filaments)
         return self._last_R
 
 
+    def perform(self, time, filaments, concentrations, r):
+        current_filament = filaments.values()[filament_index]
+
+        getattr(current_filament, self._grow_function_name)()
+
+        concentrations[self.state].remove_monomer(time)
+
+
 class BarbedPolymerization(FixedRate):
     'Simple polymerization at the barbed end.'
-    def perform(self, time, filaments, concentrations, r):
-        index = int(r / self._last_R)
-        current_filament = filaments[index]
-        current_filament.grow_barbed_end(self.state)
-        concentrations[self.state].remove_monomer(time)
+    __slots__ = []
+    def __init__(self, **kwargs):
+        self._grow_function_name = 'grow_barbed_end'
+        FixedRate.__init__(self, **kwargs)
 
 class PointedPolymerization(FixedRate):
     'Simple polymerization at the barbed end.'
-    def perform(self, time, filaments, concentrations, r):
-        index = int(r / self._last_R)
-        current_filament = filaments[index]
-        current_filament.grow_pointed_end(self.state)
-        concentrations[self.state].remove_monomer(time)
+    __slots__ = []
+    def __init__(self, **kwargs):
+        self._grow_function_name = 'grow_pointed_end'
+        FixedRate.__init__(self, **kwargs)

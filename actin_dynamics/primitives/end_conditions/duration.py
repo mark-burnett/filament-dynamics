@@ -31,7 +31,7 @@ class Duration(_EndCondition):
         self.duration = duration
         _EndCondition.__init__(self, label=label)
 
-    def __call__(self, time, filaments, concentrations):
+    def __call__(self, time, state):
         result = time > self.duration
         return time > self.duration
 

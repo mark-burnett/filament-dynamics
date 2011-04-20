@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ from .base_classes import Transition
 from . import mixins
 
 class RandomHydrolysis(Transition):
-    __slots__ = ['old_state', 'rate', 'new_state', '_last_rs']
+    __slots__ = ['old_state', 'rate', 'new_state', '_last_rs', '_last_names']
     def __init__(self, old_state=None, rate=None, new_state=None, label=None):
         self.old_state = old_state
         self.rate      = rate
@@ -28,14 +28,19 @@ class RandomHydrolysis(Transition):
         Transition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
-        self._last_rs = [self.rate * filament.state_count(self.old_state)
-                         for filament in filaments]
+        self._last_names = []
+        self._last_rs = []
+        for name, filament in filaments.iteritems():
+            self._last_names.append(name)
+            self._last_rs.append(self.rate * filament.state_count(
+                self.old_state))
         return sum(self._last_rs)
 
     def perform(self, time, filaments, concentrations, r):
         filament_index, remaining_r = rate_bisect.rate_bisect(r,
                 list(utils.running_total(self._last_rs)))
-        current_filament = filaments[filament_index]
+        name = self._last_names[filament_index]
+        current_filament = filaments[name]
 
         target_index = int(remaining_r / self.rate)
 

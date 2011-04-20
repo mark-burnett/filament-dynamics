@@ -13,31 +13,19 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from base_classes import Concentration as _Concentration
+from base_classes import Concentration
 
-class FixedConcentration(_Concentration):
-    __slots__ = ['value', 'data']
+class FixedConcentration(Concentration):
+    __slots__ = ['_value', 'data']
     def __init__(self, concentration=-1, **kwargs):
-        if concentration < 0:
-            raise ValueError('Negative concentrations not allowed.')
-        self.value = concentration
+        self._value = concentration
         _Concentration.__init__(self, **kwargs)
+    
+    def value(self, time):
+        return self._value
 
-    def add_monomer(self, time):
+    def add_monomer(self):
         pass
 
-    def remove_monomer(self, time):
-        pass
-
-
-class ZeroConcentration(_Concentration):
-    __slots__ = ['value', 'data']
-    def __init__(self, **kwargs):
-        self.value = 0
-        _Concentration.__init__(self, **kwargs)
-
-    def add_monomer(self, time):
-        pass
-
-    def remove_monomer(self, time):
+    def remove_monomer(self):
         pass

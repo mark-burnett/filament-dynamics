@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,28 +13,54 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
-
 from ..meta_classes import Registration
 
 from registry import measurement_registry
+
+
+def _datastore_factory():
+    return [], []
+
 
 class Measurement(object):
     __metaclass__ = Registration
     registry = measurement_registry
     skip_registration = True
 
-    __slots__ = ['label', 'sample_period']
-    def __init__(self, sample_period=None, label=None):
+    __slots__ = ['label']
+    def __init__(self, label=None):
         self.label = label
-        self.sample_period = sample_period
 
-    def store(self, time, value, filament):
-        measurements = filament.measurements[self.label]
-        if not measurements:
-            measurements.append([time, value])
-        last_time, last_value = measurements[-1]
-        if time <= last_time:
-            measurements[-1][1] = value
-        else:
-            measurements.append([time + self.sample_period, value])
+
+class FilamentMeasurement(Measurement):
+    skip_registration = True
+     __slots__ = ['_datastore']
+     def __init__(self, *args, **kwargs):
+         Measurement.__init__(self, *args, **kwargs)
+
+    def initialize(self, results):
+        self._datastore = collections.defaultdict(_datastore_factory)
+        results['filaments'][self.label] = self._datastore
+
+    def store(self, time, value, filament_name):
+        result_times, result_values = self._datastore[filament_name]
+        result_times.append(time)
+        result_values.append(state_count)
+
+
+class ConcentrationMeasurement(Measurement):
+     __slots__ = ['_datastore', '_data_times', '_data_values']
+     def __init__(self, *args, **kwargs):
+         Measurement.__init__(self, *args, **kwargs)
+
+    def initialize(self, results):
+        self._datastore = _datastore_factory()
+        self._data_times, self._data_values = self._datastore
+        results['concentrations'][self.label] = self._datastore
+
+    def store(self, time, value):
+        self._data_times.append(time)
+        self._data_values.append(state_count)
+
+    def perform(self, time, simulation_state):
+        self.store(time, simulation_state.concentrations[self.label])

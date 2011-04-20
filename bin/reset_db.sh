@@ -16,10 +16,10 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 echo 'Dropping old database.'
-mysqladmin -u aduser -p'filamentous' -f drop actin_dynamics
+mysqladmin -u aduser -p'filamentous' -f drop actin_dynamics2
 
 echo 'Creating new database.'
-mysqladmin -u aduser -p'filamentous' create actin_dynamics
+mysqladmin -u aduser -p'filamentous' create actin_dynamics2
 
 echo 'Creating tables.'
 bin/create_tables.py
