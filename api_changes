@@ -74,6 +74,9 @@ Postprocessing & data storage
     Objectives
         with/without Artbitrary normalization
 
+    Slicing
+        must slice against smallish number of parameters
+
 Output
     Export data for plotting in external program
         include code version info

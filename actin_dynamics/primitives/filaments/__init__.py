@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,9 +15,5 @@
 
 from registry import filament_factory_registry as registry
 
-from single_state import *
-from inert_filaments import *
-
-del single_state
-del inert_filaments
-del base_classes
+import single_state
+import inert_filaments

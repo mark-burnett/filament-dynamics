@@ -1,4 +1,4 @@
-#    Copyright (C) 2010-2011 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from registry import concentration_registry as registry
+from actin_dynamics.primitives.paramters import registry
 
-import fixed_concentration
-import fixed_reagent
+def make_parameter_definition(class_name=None, **kwargs):
+    try:
+        cls = registry[class_name]
+    except KeyError:
+        raise RuntimeError(
+            'Parameter definition type not available: class_name=%s, kwargs=%s',
+            class_name, kwargs)
+
+    return cls(**kwargs)

@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,8 +15,4 @@
 
 from registry import end_condition_registry as registry
 
-from duration import *
-
-del duration
-
-del base_classes
+import duration

@@ -17,4 +17,5 @@ from . import analysis
 from . import bindings
 from . import controllers
 from . import database
+from . import parameters
 from . import simulations
