@@ -53,25 +53,26 @@ Goals for paper 2
 
 
 Simulation strategy
-    transitions should be stateless
-    concentrations should only know their current state
-    measurements should do previous value interpolation
-        check that this is working
     cleanup/add numpy use where appropriate
 
     consider implementing loop in c++
         only after optimizing the filament itself
 
 Postprocessing & data storage
-    Timecourses
-        SEM
-        Histograms
-    Summary table quantities
+    Floats
         D
         j (elongation rate)
         Critical Concentration
-        Data fitting
-            with/without Artbitrary normalization
+
+    Timecourses
+        SEM
+        Histograms
+
+    State Distributions
+        observe this & record in a meaningful way
+
+    Objectives
+        with/without Artbitrary normalization
 
 Output
     Export data for plotting in external program
@@ -84,7 +85,3 @@ Database
             delete slicing_* tables for deleted sessions.
         verify cascades work as expected
             can't this be done in unit tests?
-
-Cleanup
-    choose standard namespace convention (_var or var)
-    fix primitives imports
