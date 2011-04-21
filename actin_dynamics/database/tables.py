@@ -21,54 +21,11 @@ from . import global_state
 
 MAX_NAME_LENGTH = 128
 MAX_POLY_LENGTH = 16
-MAX_TABLE_NAME_LENGTH  = 30
-MAX_COLUMN_NAME_LENGTH = 30
 MAX_LOG_MESSAGE_SIZE = 1024
 
 
-# The database has 3 major branches:  job control, configuration, and data
-# with session at the top of the whole hierarchy.
-# There are also a few tables dedicated to logging the application.
-
-
 # ---------------------------------------------------------------------
-# - Summary tables                                                    -
-# ---------------------------------------------------------------------
-# These tables contain no unique information.  Just for convenience.
-
-# This table maps objective_bind_id's to slice table names.
-slice_definition_table = schema.Table('slice_definition', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-# XXX This should be the primary key, but sqla doesn't like it..
-        schema.Column('objective_bind_id', schema.types.Integer,
-                      schema.ForeignKey('bind.id'),
-                      unique=True, nullable=False),
-        schema.Column('table_name', schema.types.String(MAX_TABLE_NAME_LENGTH),
-                      unique=True, nullable=False),
-        mysql_engine='InnoDB')
-
-# This table maps parameter names to column names
-slice_parameter_table = schema.Table('slice_parameter', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('slice_definition_id', schema.types.Integer,
-                      schema.ForeignKey('slice_definition.id'),
-                      nullable=False),
-        schema.Column('parameter_name', schema.types.String(MAX_NAME_LENGTH),
-                      nullable=False),
-        schema.Column('column_name',
-                      schema.types.String(MAX_COLUMN_NAME_LENGTH),
-                      unique=True, nullable=False),
-        mysql_engine='InnoDB')
-
-slice_mesh_table = schema.Table('slice_mesh', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('slice_parameter_id',
-                      schema.ForeignKey('slice_parameter.id'), nullable=False),
-        schema.Column('value', schema.types.Float),
-        mysql_engine='InnoDB')
-
-# ---------------------------------------------------------------------
-# - Logging tables                                                    -
+# - Logging                                                           -
 # ---------------------------------------------------------------------
 logging_table = schema.Table('logging', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
@@ -112,16 +69,7 @@ traceback_table = schema.Table('traceback', global_state.metadata,
 
 
 # ---------------------------------------------------------------------
-# - Top of the hierarchy                                              -
-# ---------------------------------------------------------------------
-session_table = schema.Table('session', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
-        mysql_engine='InnoDB')
-
-
-# ---------------------------------------------------------------------
-# - Job control branch                                                -
+# - Job control                                                       -
 # ---------------------------------------------------------------------
 # The purpose of the process table is purely provenance.
 process_table = schema.Table('process', global_state.metadata,
@@ -162,90 +110,39 @@ job_table = schema.Table('job', global_state.metadata,
 
 
 # ---------------------------------------------------------------------
-# - Configuration branch                                              -
+# - Parameter binding                                                 -
 # ---------------------------------------------------------------------
-
-# Parameters
-parameters_table = schema.Table('parameter', global_state.metadata,
-        schema.Column('id',    schema.types.Integer, primary_key=True),
-        schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
-        schema.Column('value', schema.types.Float),
-        schema.Column('type',  schema.types.String(MAX_POLY_LENGTH),
+binding_table = schema.Table('binding', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('module_name',  schema.types.String(MAX_POLY_LENGTH),
                       nullable=False, index=True),
-        mysql_engine='InnoDB')
-
-session_parameters_table = schema.Table('session_parameter',
-                                        global_state.metadata,
-        schema.Column('parameter_id', schema.ForeignKey('parameter.id'),
-                      primary_key=True),
-        schema.Column('session_id', schema.ForeignKey('session.id'),
+        schema.Column('class_name', schema.types.String(MAX_NAME_LENGTH),
                       nullable=False),
+        schema.Column('label', schema.types.String(MAX_NAME_LENGTH)),
         mysql_engine='InnoDB')
-
-schema.Index('session_parameters_unique_columns',
-             session_parameters_table.c.parameter_id,
-             session_parameters_table.c.session_id,
-             unique=True)
-
-experiment_parameters_table = schema.Table('experiment_parameter',
-                                           global_state.metadata,
-        schema.Column('parameter_id', schema.ForeignKey('parameter.id'),
-                      primary_key=True),
-        schema.Column('experiment_id', schema.ForeignKey('experiment.id'),
-                      nullable=False),
-        mysql_engine='InnoDB')
-
-schema.Index('experiment_parameters_unique_columns',
-             experiment_parameters_table.c.parameter_id,
-             experiment_parameters_table.c.experiment_id,
-             unique=True)
-
-run_parameters_table = schema.Table('run_parameter',
-                                    global_state.metadata,
-        schema.Column('parameter_id', schema.ForeignKey('parameter.id'),
-                      primary_key=True),
-        schema.Column('run_id', schema.ForeignKey('run.id'),
-                      nullable=False),
-        mysql_engine='InnoDB')
-
-schema.Index('run_parameters_unique_columns',
-             run_parameters_table.c.parameter_id,
-             run_parameters_table.c.run_id,
-             unique=True)
-
-objective_parameters_table = schema.Table('objective_parameter',
-                                          global_state.metadata,
-        schema.Column('parameter_id', schema.ForeignKey('parameter.id'),
-                      primary_key=True),
-        schema.Column('objective_id', schema.ForeignKey('objective.id'),
-                      nullable=False),
-        mysql_engine='InnoDB')
-
-schema.Index('objective_parameters_unique_columns',
-             objective_parameters_table.c.parameter_id,
-             objective_parameters_table.c.objective_id,
-             unique=True)
-
 
 # Bind arguments
 argument_table = schema.Table('argument', global_state.metadata,
         schema.Column('id',    schema.types.Integer, primary_key=True),
-        schema.Column('bind_id', schema.ForeignKey('bind.id'), nullable=False),
+        schema.Column('binding_id', schema.ForeignKey('binding.id'),
+                      nullable=False),
         schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
         schema.Column('type',  schema.types.String(MAX_POLY_LENGTH),
                       nullable=False, index=True),
         mysql_engine='InnoDB')
 
 schema.Index('argument_unique_columns',
-             argument_table.c.bind_id,
+             argument_table.c.binding_id,
              argument_table.c.name,
              unique=True)
+
 
 fixed_argument_table = schema.Table('fixed_argument', global_state.metadata,
         schema.Column('argument_id', schema.ForeignKey('argument.id'),
                       primary_key=True),
         schema.Column('value', schema.types.String(MAX_NAME_LENGTH)),
         mysql_engine='InnoDB')
+
 
 variable_argument_table = schema.Table('variable_argument',
                                        global_state.metadata,
@@ -257,21 +154,57 @@ variable_argument_table = schema.Table('variable_argument',
         mysql_engine='InnoDB')
 
 
-# Bindings (map strings/yaml repr to object factories)
-bind_table = schema.Table('bind', global_state.metadata,
+# Connect bindings to configuration.
+model_binding_table = schema.Table('model_binding', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('module_name',  schema.types.String(MAX_POLY_LENGTH),
-                      nullable=False, index=True),
-        schema.Column('class_name', schema.types.String(MAX_NAME_LENGTH),
+        schema.Column('binding_id', schema.ForeignKey('binding.id'),
+                      unique=True, nullable=False),
+        schema.Column('model_id', schema.ForeignKey('model.id'),
                       nullable=False),
-        schema.Column('label', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
+
+schema.Index('model_binding_unique_columns',
+             model_binding_table.c.model_id,
+             model_binding_table.c.binding_id,
+             unique=True)
+
+
+experiment_binding_table = schema.Table('experiment_binding',
+                                        global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('binding_id', schema.ForeignKey('binding.id'),
+                      unique=True, nullable=False),
+        schema.Column('experiment_id', schema.ForeignKey('experiment.id'),
+                      nullable=False),
+        mysql_engine='InnoDB')
+
+schema.Index('experiment_binding_unique_columns',
+             experiment_binding_table.c.experiment_id,
+             experiment_binding_table.c.binding_id,
+             unique=True)
+
+
+# ---------------------------------------------------------------------
+# - Configuration                                                     -
+# ---------------------------------------------------------------------
+
+# Model is the root of the tree
+model_table = schema.Table('model', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('session_id', schema.ForeignKey('session.id'),
+                      nullable=False),
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
+
+ranking_table = schema.Table('ranking', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('rank', schema.types.Integer),
         mysql_engine='InnoDB')
 
 
-# Experiment definitions
 experiment_table = schema.Table('experiment', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('session_id', schema.ForeignKey('session.id'),
+        schema.Column('model_id', schema.ForeignKey('model.id'),
                       nullable=False),
         schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
         mysql_engine='InnoDB')
@@ -282,59 +215,39 @@ schema.Index('experiment_unique_columns',
              unique=True)
 
 
-# Connects simulation, analysis, & objective primitives to experiment.
-# XXX Consider using multi-table inheritance for binds..
-#       It has the drawback that I would have double inheritance.
-experiment_bind_table = schema.Table('experiment_bind', global_state.metadata,
+data_table = schema.Table('experiment_table', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('bind_id', schema.ForeignKey('bind.id'),
-                      unique=True, nullable=False),
         schema.Column('experiment_id', schema.ForeignKey('experiment.id'),
                       nullable=False),
-        mysql_engine='InnoDB')
-
-schema.Index('experiment_bind_unique_columns',
-             experiment_bind_table.c.experiment_id,
-             experiment_bind_table.c.bind_id,
-             unique=True)
-
-
-objective_data_table = schema.Table('objective_data_entry',
-                                    global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('objective_bind_id', schema.ForeignKey('bind.id'),
-                      nullable=False),
-        schema.Column('abscissa', schema.types.Float),
-        schema.Column('ordinate', schema.types.Float),
-        schema.Column('error',    schema.types.Float),
-        mysql_engine='InnoDB')
-
-
-# Model definitions
-model_table = schema.Table('model', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('session_id', schema.ForeignKey('session.id'),
-                      nullable=False),
         schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('value', schema.types.PickleType),
         mysql_engine='InnoDB')
 
-# Connects simulation primitives to model.
-model_bind_table = schema.Table('model_bind', global_state.metadata,
+
+
+# ---------------------------------------------------------------------
+# - Results                                                           -
+# ---------------------------------------------------------------------
+paramter_set_table = schema.Table('parameter_set', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('bind_id', schema.ForeignKey('bind.id'),
-                      unique=True, nullable=False),
         schema.Column('model_id', schema.ForeignKey('model.id'),
                       nullable=False),
         mysql_engine='InnoDB')
 
 
-# ---------------------------------------------------------------------
-# - Data branch                                                       -
-# ---------------------------------------------------------------------
+parameters_table = schema.Table('parameter', global_state.metadata,
+        schema.Column('id',    schema.types.Integer, primary_key=True),
+        schema.Column('parameter_set_id',
+                      schema.ForeignKey('parameter_set.id'), nullable=False),
+        schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('value', schema.types.Float),
+        mysql_engine='InnoDB')
+
+
 run_table = schema.Table('run', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('model_id', schema.ForeignKey('model.id'),
-                      nullable=False),
+        schema.Column('parameter_set_id',
+                      schema.ForeignKey('parameter_set.id'), nullable=False),
         schema.Column('experiment_id', schema.ForeignKey('experiment.id'),
                       nullable=False),
         mysql_engine='InnoDB')
@@ -343,31 +256,20 @@ run_table = schema.Table('run', global_state.metadata,
 analysis_table = schema.Table('analysis', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('run_id', schema.ForeignKey('run.id'), nullable=False),
-        schema.Column('bind_id', schema.ForeignKey('bind.id')),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('binding_id', schema.ForeignKey('binding.id')),
+        schema.Column('value', schema.types.PickleType),
         mysql_engine='InnoDB')
 
 schema.Index('analysis_unique_columns',
              analysis_table.c.run_id,
-             analysis_table.c.name,
+             analysis_table.c.binding_id,
              unique=True)
-
-
-analysis_results_table = schema.Table('analysis_result',
-                                      global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('analysis_id', schema.ForeignKey('analysis.id'),
-                      nullable=False),
-        schema.Column('abscissa', schema.types.Float),
-        schema.Column('ordinate', schema.types.Float),
-        schema.Column('error',    schema.types.Float),
-        mysql_engine='InnoDB')
 
 
 objective_table = schema.Table('objective', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('run_id', schema.ForeignKey('run.id'), nullable=False),
-        schema.Column('objective_bind_id', schema.ForeignKey('bind.id'),
+        schema.Column('binding_id', schema.ForeignKey('binding.id'),
                       nullable=False),
         schema.Column('value', schema.types.Float),
         mysql_engine='InnoDB')
