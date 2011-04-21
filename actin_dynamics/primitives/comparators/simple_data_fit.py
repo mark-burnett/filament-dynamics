@@ -13,17 +13,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .base_classes import Objective as _Objective
+from .base_classes import Comparator
 
-from actin_dynamics.numerical import residuals as _residuals
-from actin_dynamics.numerical import interpolation as _interpolation
-from actin_dynamics.numerical import measurements as _measurements
-import itertools as _itertools
+from actin_dynamics.numerical import residuals
+from actin_dynamics.numerical import interpolation
+from actin_dynamics.numerical import measurements
+import itertools
 
 from actin_dynamics import logger
 log = logger.getLogger(__file__)
 
-class SimpleDataFit(_Objective):
+class TimecourseFit(Comparator):
     def __init__(self, measurement=None, residual_type=None,
                  interpolate_simulation=True, label=None,
                  scale_simulation_by=1):

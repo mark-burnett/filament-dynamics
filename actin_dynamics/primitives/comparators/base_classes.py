@@ -15,16 +15,13 @@
 
 from ..meta_classes import Registration
 
-from registry import objective_registry
+from registry import comparator_registry
 
-class Objective(object):
+class Comparator(object):
     __metaclass__ = Registration
-    registry = objective_registry
+    registry = comparator_registry
     skip_registration = True
 
     __slots__ = ['label']
     def __init__(self, label=None):
         self.label = label
-
-    def perform(self, run, result_factory):
-        pass

@@ -16,23 +16,24 @@
 import math
 import operator
 
-from . import base_classes as _base_classes
+from .base_classes import Analyst
 
-from . import utils
+from . import analyst_utils
 
 from actin_dynamics.numerical import interpolation, workalike, measurements
 
-from actin_dynamics import logger as _logger
+from actin_dynamics import logger
+log = logger.getLogger(__file__)
 
-_log = _logger.getLogger(__file__)
-
-class StandardErrorMean(_base_classes.Analysis):
+class StandardErrorMean(Analyst):
     def __init__(self, sample_period=None, stop_time=None,
                  interpolation_method=None, measurement_name=None,
                  measurement_type=None, label=None,
                  scale_by=1, add=0, subtract=0, **kwargs):
-        self.sample_period        = sample_period
+        self.start_time           = start_time
         self.stop_time            = stop_time
+        self.sample_period        = sample_period
+
         self.interpolation_method = interpolation_method
         self.measurement_name     = measurement_name
         self.measurement_type     = measurement_type
@@ -41,20 +42,21 @@ class StandardErrorMean(_base_classes.Analysis):
         self.add      = add
         self.subtract = subtract
 
-        _base_classes.Analysis.__init__(self, label=label, **kwargs)
+    def analyze(self, observations, analyses):
+        pass
 
     def perform(self, simulation_results, result_factory):
         # Grab and resample the chosen measurement.
-        raw_measurements = utils.get_measurement(simulation_results,
+        raw_measurements = analyst_utils.get_measurement(simulation_results,
                                                  self.measurement_name,
                                                  self.measurement_type)
         sample_times = workalike.arange(0, self.stop_time,
                                         self.sample_period)
         if not sample_times:
-            _log.error('Sample time length is 0.  ' +
-                       'Measurement name: %s, stop_time: %s, period %s.',
-                       self.measurement_name, self.stop_time,
-                       self.sample_period)
+            log.error('Sample time length is 0.  ' +
+                      'Measurement name: %s, stop_time: %s, period %s.',
+                      self.measurement_name, self.stop_time,
+                      self.sample_period)
         sampled_measurements = [interpolation.resample_measurement(
             rm, sample_times, method=self.interpolation_method)
                 for rm in raw_measurements]

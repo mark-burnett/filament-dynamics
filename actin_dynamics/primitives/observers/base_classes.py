@@ -62,5 +62,5 @@ class ConcentrationObserver(Observer):
         self._data_times.append(time)
         self._data_values.append(state_count)
 
-    def measure(self, time, simulation_state):
+    def observe(self, time, simulation_state):
         self.store(time, simulation_state.concentrations[self.label])

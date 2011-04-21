@@ -17,7 +17,7 @@ from base_classes import ObserverMeasurement
 
 class Length(ObserverMeasurement):
     __slots__ = []
-    def measure(self, time, simulation_state):
+    def observe(self, time, simulation_state):
         for name, filament in simulation_state.filaments.iteritems():
             length = len(filament)
             self.store(time, length, name)
@@ -28,7 +28,7 @@ class StateCount(ObserverMeasurement):
         self.state = state
         ObserverMeasurement.__init__(self, **kwargs)
 
-    def measure(self, time, simulation_state, results):
+    def observe(self, time, simulation_state, results):
         for name, filament in simulation_state.filaments.iteritems():
             state_count = filament.state_count(self.state)
             self.store(time, state_count, name)
@@ -39,7 +39,7 @@ class WeightedStateTotal(ObserverMeasurement):
         self.weights = weights
         ObserverMeasurement.__init__(self, label=label)
 
-    def measure(self, time, simulation_state):
+    def observe(self, time, simulation_state):
         for name, filament in simulation_state.filaments.iteritems():
             value = sum(filament.state_count(simulation_state) * weight
                         for state, weight in self.weights.iteritems())

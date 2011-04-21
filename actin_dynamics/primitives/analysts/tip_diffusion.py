@@ -15,16 +15,16 @@
 
 import numpy
 
-from . import base_classes as _base_classes
+from .import base_classes
 
-from . import utils
+from . import analyst_utils
 
 from actin_dynamics.numerical import interpolation, workalike, regression
 
-from actin_dynamics import logger as _logger
-_log = _logger.getLogger(__file__)
+from actin_dynamics import logger
+log = logger.getLogger(__file__)
 
-class FluctuationVariances(_base_classes.Analysis):
+class FluctuationVariances(Analyst):
     def __init__(self, start_time=None, stop_time=None, sample_period=None,
                  tau_min=None, tau_max=None,
                  interpolation_method=None,
@@ -41,7 +41,8 @@ class FluctuationVariances(_base_classes.Analysis):
         self.measurement_name     = measurement_name
         self.measurement_type     = measurement_type
 
-        _base_classes.Analysis.__init__(self, label=label)
+    def analyze(self, observations, analyses):
+        pass
 
     def perform(self, simulation_results, result_factory):
         fluctuations = self.get_fluctuations(simulation_results)
@@ -63,16 +64,16 @@ class FluctuationVariances(_base_classes.Analysis):
         return [_remove_velocity(sm) for sm in sampled_measurements]
 
     def get_sampled_measurements(self, simulation_results):
-        raw_measurements = utils.get_measurement(simulation_results,
+        raw_measurements = analyst_utils.get_measurement(simulation_results,
                                                  self.measurement_name,
                                                  self.measurement_type)
         sample_times = workalike.arange(0, self.stop_time,
                                         self.sample_period)
         if not sample_times:
-            _log.error('Sample time length is 0.  ' +
-                       'Measurement name: %s, stop_time: %s, period %s.',
-                       self.measurement_name, self.stop_time,
-                       self.sample_period)
+            log.error('Sample time length is 0.  ' +
+                      'Measurement name: %s, stop_time: %s, period %s.',
+                      self.measurement_name, self.stop_time,
+                      self.sample_period)
         return [interpolation.resample_measurement(
            rm, sample_times, method=self.interpolation_method)
                for rm in raw_measurements]
@@ -92,11 +93,11 @@ def _calculate_local_fluctuations(measurement, tau, sample_period):
     values = measurement[1]
     delta = int(tau / sample_period)
     if delta * sample_period != tau:
-        _log.error('tau not divisible by sample_period: %s / %s',
-                   tau, sample_period)
+        log.error('tau not divisible by sample_period: %s / %s',
+                  tau, sample_period)
 
     if len(values) < delta:
-        _log.error('Delta too large:  tau = %s, delta = %s, length = %s.',
-                    tau, delta, len(values))
+        log.error('Delta too large:  tau = %s, delta = %s, length = %s.',
+                   tau, delta, len(values))
 
     return list(values[delta:] - values[:-delta])
