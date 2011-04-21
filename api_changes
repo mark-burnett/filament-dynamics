@@ -1,62 +1,56 @@
-Goals for paper 2
-    global fitting
-        use continuous GA
-            dominance sorting
-            islands to promote diversitiy
-            use/improve fitpy
-                move fitpy to github
-            monitor convergence (of each island & objective)
-                visualize pca strengths for each objective
-                    (equvalent to high dimensioanl sensitivity)
+Global Fit
+    use continuous GA
+        dominance sorting
+        islands to promote diversitiy
+        use/improve fitpy
+            move fitpy to github
+        monitor convergence (of each island & objective)
+            visualize pca strengths for each objective
+                (equvalent to high dimensioanl sensitivity)
 
-        replace session with model
+    replace session with model
 
-        'parameter definition'
-            describes limits/distribution for parameters
-                distribution isn't strict, just for random mutations
+    'parameter definition'
+        describes limits/distribution for parameters
+            distribution isn't strict, just for random mutations
 
-        'parameter sets'
-            values of variable parameters
-            these are the values controlled by the GA/controller
-            each parameter set is associated with a "job"
-            this is the primary slicing table, columns like:
-                par_set_id, par_A, par_B, ..., obj_A, obj_B, ...
-                * unclear exactly how useful this is...probably prety useful
-            additional results can be linked in other tables via par_set_id
+    'parameter sets'
+        values of variable parameters
+        these are the values controlled by the GA/controller
+        each parameter set is associated with a "job"
+        this is the primary slicing table, columns like:
+            par_set_id, par_A, par_B, ..., obj_A, obj_B, ...
+            * unclear exactly how useful this is...probably prety useful
+        additional results can be linked in other tables via par_set_id
 
-        experiments
-            have their own fixed values
-            have their own parameter definitions
-                which are grabbed by the controller and fed into the whole shebang
+    experiments
+        have their own fixed values
+        have their own parameter definitions
+            which are grabbed by the controller and fed into the whole shebang
+
+    allow experiment analyses/slicables to be used as inputs
+        allows multi-stage simulations
+        allows key parameters to be calculated for a model (e.g. crit conc)
 
         'local blackboard' for experiment results
-            to be used as inputs to further simulation/analysis
-            this conveniently supports multi-stage sims like mitchison
+        sequence/list for experiments
 
-        need input files that accomodate this
-            validation code
-            unittests for validation code might not be a bad idea
-            have ./runtests.sh run input validation on all files
+    need input files that accomodate this
+        validation code
+        unittests for validation code might not be a bad idea
+        have ./runtests.sh run input validation on all files
 
-        need to be able to resume/calculate more points for a model
+    need to be able to resume/calculate more points for a model
+        should be possible, just try to get existing model before adding
 
-        able to add an objective to a model?
-            * messy, but seemingly useful
-
-    improve speed
-        c++ implementation of filament
-        consider c++ implementation of main loop
-
-    local meshes
-        start from previous best parameter set
-        generate a local mesh to show that we are actually at a minimum
+    able to add an objective to a model?
+        * messy, but seemingly useful
 
 
-Simulation strategy
-    cleanup/add numpy use where appropriate
+Optimization
+    c++ implementation of filament
+    consider c++ implementation of main loop
 
-    consider implementing loop in c++
-        only after optimizing the filament itself
 
 Postprocessing & data storage
     Floats
