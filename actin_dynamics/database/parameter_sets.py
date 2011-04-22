@@ -13,27 +13,27 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from sqlalchemy import orm
+from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables
 from . import parameters
 
-__all__ = ['Objective']
+__all__ = ['ParameterSet']
 
-class Objective(object):
-    def __init__(self, run=None, binding=None, value=None):
-        if run:
-            self.run = run
-        if binding:
-            self.binding = binding
-        if value is not None:
-            self.value = value
+class ParameterSet(object):
+    def __init__(self, model=None, parameters=None):
+        if model:
+            self.model = model
+        if parameters:
+            self.parameters = parameters
 
     def __repr__(self):
-        return "%s(id=%s, run_id=%s, binding_id=%s, value=%s)" % (
-            self.__class__.__name__, self.id, self.run_id, self.binding_id,
-            self.value)
+        return "%s(id=%s, model_id=%s)" % (
+            self.__class__.__name__, self.id, self.model_id)
 
+    parameters = _ap('_parameters', 'value', creator=parameters.Parameter)
 
-orm.mapper(Objective, tables.objective_table)
+orm.mapper(ParameterSet, tables.parameter_set_table, properties={
+    '_parameters', orm.relationship(parameters.Parameter,
+        collection_class=orm.collections.attribute_mapped_collection('name')})

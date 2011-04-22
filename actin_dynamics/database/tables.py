@@ -99,7 +99,7 @@ process_table = schema.Table('process', global_state.metadata,
 
 job_table = schema.Table('job', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('run_id', schema.ForeignKey('run.id'),
+        schema.Column('parameter_set_id', schema.ForeignKey('parameter_set.id'),
                       unique=True, nullable=False),
         schema.Column('creator_id', schema.ForeignKey('process.id'),
                       nullable=False),
@@ -191,14 +191,7 @@ schema.Index('experiment_binding_unique_columns',
 # Model is the root of the tree
 model_table = schema.Table('model', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('session_id', schema.ForeignKey('session.id'),
-                      nullable=False),
         schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
-        mysql_engine='InnoDB')
-
-ranking_table = schema.Table('ranking', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('rank', schema.types.Integer),
         mysql_engine='InnoDB')
 
 
@@ -210,19 +203,24 @@ experiment_table = schema.Table('experiment', global_state.metadata,
         mysql_engine='InnoDB')
 
 schema.Index('experiment_unique_columns',
-             experiment_table.c.session_id,
+             experiment_table.c.model_id,
              experiment_table.c.name,
              unique=True)
 
 
-data_table = schema.Table('experiment_table', global_state.metadata,
+data_table = schema.Table('data', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('experiment_id', schema.ForeignKey('experiment.id'),
                       nullable=False),
-        schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('name', schema.types.String(MAX_NAME_LENGTH),
+                      nullable=False, index=True),
         schema.Column('value', schema.types.PickleType),
         mysql_engine='InnoDB')
 
+schema.InnoDB('data_unique_columns',
+              data_table.c.experiment_id,
+              data_table.c.name,
+              unique=True)
 
 
 # ---------------------------------------------------------------------
@@ -235,7 +233,7 @@ paramter_set_table = schema.Table('parameter_set', global_state.metadata,
         mysql_engine='InnoDB')
 
 
-parameters_table = schema.Table('parameter', global_state.metadata,
+parameter_table = schema.Table('parameter', global_state.metadata,
         schema.Column('id',    schema.types.Integer, primary_key=True),
         schema.Column('parameter_set_id',
                       schema.ForeignKey('parameter_set.id'), nullable=False),
@@ -273,3 +271,8 @@ objective_table = schema.Table('objective', global_state.metadata,
                       nullable=False),
         schema.Column('value', schema.types.Float),
         mysql_engine='InnoDB')
+
+schema.Index('objective_unique_columns',
+             objective_table.c.run_id,
+             objective_table.c.binding_id,
+             unique=True)

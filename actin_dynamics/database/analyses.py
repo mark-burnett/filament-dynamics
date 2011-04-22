@@ -13,52 +13,24 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
+from sqlalchemy import orm
 
-from sqlalchemy import orm as _orm
-from sqlalchemy.ext.associationproxy import association_proxy as _ap
+from . import tables
 
-from . import tables as _tables
-from . import results as _results
-
+__all__ = ['Analysis']
 
 class Analysis(object):
-    def __init__(self, run=None, name=None, results=None, bind=None):
+    def __init__(self, run=None, value=None, binding=None):
         if run:
             self.run = run
-        if name:
-            self.name = name
-        if results:
-            self.results = results
-        if bind:
-            self.bind = bind
+        if value:
+            self.value = value
+        if binding:
+            self.binding = binding
 
     def __repr__(self):
-        return "%s(run=%s, name='%s', results=%s, bind_id=%s)" % (
-            self.__class__.__name__, self.run, self.name, self.results,
-            self.bind_id)
+        return "%s(run_id=%s, binding_id=%s)" % (
+            self.__class__.__name__, self.run_id, self.binding_id)
 
-    @property
-    def measurement(self):
-        times  = []
-        values = []
-        errors = []
-        for result in self.results:
-            times.append(result.abscissa)
-            values.append(result.ordinate)
-            errors.append(result.error)
 
-        return times, values, errors
-
-    @measurement.setter
-    def measurement(self, new_values):
-        self.results = []
-        for t, v, e in itertools.izip(*new_values):
-            self.results.append(_results.AnalysisResult(abscissa=t,
-                                                        ordinate=v,
-                                                        error=e))
-
-# Analysis should have binds
-_orm.mapper(Analysis, _tables.analysis_table, properties={
-    'results': _orm.relationship(_results.AnalysisResult, backref='analysis',
-                                 cascade='all,delete-orphan')})
+orm.mapper(Analysis, tables.analysis_table)

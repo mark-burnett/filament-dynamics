@@ -13,13 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from sqlalchemy import orm as _orm
-from . import tables as _tables
+from sqlalchemy import orm
+from . import tables
+
+__all__ = ['Argument', 'FixedArgument', 'VariableArgument']
 
 class Argument(object): pass
 
-_orm.mapper(Argument, _tables.argument_table,
-            polymorphic_on=_tables.argument_table.c.type)
+orm.mapper(Argument, tables.argument_table,
+           polymorphic_on=tables.argument_table.c.type)
 
 class FixedArgument(Argument):
     def __init__(self, name, value):
@@ -30,8 +32,8 @@ class FixedArgument(Argument):
         return '%s(name=%s, value=%s)' % (
                 self.__class__.__name__, self.name, self.value)
 
-_orm.mapper(FixedArgument, _tables.fixed_argument_table, inherits=Argument,
-            polymorphic_identity='fixed')
+orm.mapper(FixedArgument, tables.fixed_argument_table, inherits=Argument,
+           polymorphic_identity='fixed')
 
 class VariableArgument(Argument):
     def __init__(self, name, parameter_name):
@@ -42,5 +44,5 @@ class VariableArgument(Argument):
         return '%s(name=%s, parameter_name=%s)' % (
                 self.__class__.__name__, self.name, self.parameter_name)
 
-_orm.mapper(VariableArgument, _tables.variable_argument_table,
-            inherits=Argument, polymorphic_identity='variable')
+orm.mapper(VariableArgument, tables.variable_argument_table,
+           inherits=Argument, polymorphic_identity='variable')

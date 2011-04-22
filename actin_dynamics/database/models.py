@@ -13,37 +13,37 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from sqlalchemy import orm
 
-from sqlalchemy import orm as _orm
+from . import tables
+from . import bindings
+from . import parameter_sets
 
-from . import tables as _tables
-from . import binds as _binds
-from . import runs as _runs
-
+__all__ = ['Model']
 
 class Model(object):
     def __init__(self, name=None, session=None, concentrations=None,
                  transitions=None):
         if name:
             self.name = name
-        if session:
-            self.session = session
         if concentrations:
             self.concentrations = concentrations
         if transitions:
             self.transitions = transitions
 
     def __repr__(self):
-        return "%s(id=%s, name='%s', session_id=%s)" % (
-            self.__class__.__name__, self.id, self.name, self.session_id)
+        return "%s(id=%s, name=%r)" % (
+            self.__class__.__name__, self.id, self.name)
 
-_orm.mapper(Model, _tables.model_table, properties={
-    'runs': _orm.relationship(_runs.Run, backref='model'),
-    'concentrations': _orm.relationship(_binds.ConcentrationBind,
+orm.mapper(Model, tables.model_table, properties={
+    'parameter_sets': orm.relationship(parameter_sets.ParameterSet,
+        backref='model',
+        cascade='all,delete-orphan'),
+    'concentrations': orm.relationship(bindings.ConcentrationBinding,
         secondary=_tables.model_bind_table,
         cascade='all,delete-orphan',
         single_parent=True),
-    'transitions': _orm.relationship(_binds.TransitionBind,
-        secondary=_tables.model_bind_table,
+    'transitions': orm.relationship(bindings.TransitionBinding,
+        secondary=tables.model_bind_table,
         cascade='all,delete-orphan',
         single_parent=True)})

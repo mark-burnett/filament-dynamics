@@ -13,9 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from sqlalchemy import orm as _orm
+from sqlalchemy import orm
 
-from . import tables as _tables
+from . import tables
+
+__all__ = ['Parameter']
 
 class Parameter(object):
     def __init__(self, name, value):
@@ -26,42 +28,4 @@ class Parameter(object):
         return "%s(id=%s, name='%s', value=%s)" % (
                 self.__class__.__name__, self.id, self.name, self.value)
 
-_orm.mapper(Parameter, _tables.parameters_table,
-            polymorphic_on=_tables.parameters_table.c.type)
-
-
-class SessionParameter(Parameter):
-    def __init__(self, name=None, value=None, session=None):
-        if session:
-            self.session = session
-        Parameter.__init__(self, name=name, value=value)
-
-_orm.mapper(SessionParameter, _tables.session_parameters_table,
-            inherits=Parameter, polymorphic_identity='session')
-
-class ExperimentParameter(Parameter):
-    def __init__(self, name=None, value=None, experiment=None):
-        if experiment:
-            self.experiment = experiment
-        Parameter.__init__(self, name=name, value=value)
-
-_orm.mapper(ExperimentParameter, _tables.experiment_parameters_table,
-            inherits=Parameter, polymorphic_identity='experiment')
-
-class RunParameter(Parameter):
-    def __init__(self, name=None, value=None, run=None):
-        if run:
-            self.run = run
-        Parameter.__init__(self, name=name, value=value)
-
-_orm.mapper(RunParameter, _tables.run_parameters_table,
-            inherits=Parameter, polymorphic_identity='run')
-
-class ObjectiveParameter(Parameter):
-    def __init__(self, name=None, value=None, objective=None):
-        if objective:
-            self.objective = objective
-        Parameter.__init__(self, name=name, value=value)
-
-_orm.mapper(ObjectiveParameter, _tables.objective_parameters_table,
-            inherits=Parameter, polymorphic_identity='objective')
+orm.mapper(Parameter, tables.parameter_table)

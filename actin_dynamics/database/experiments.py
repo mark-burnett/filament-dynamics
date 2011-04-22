@@ -13,32 +13,28 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from sqlalchemy import orm as _orm
+from sqlalchemy import orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
-from . import tables as _tables
-from . import binds as _binds
-from . import parameters as _parameters
-from . import runs as _runs
+from . import tables
+from . import bindings
+from . import runs
 
+__all__ = ['Experiment']
 
 class Experiment(object):
-    def __init__(self,  name=None, session=None, parameters=None,
-                 filaments=None, measurements=None, end_conditions=None,
+    def __init__(self, name=None, model=None,
+                 filaments=None, observers=None, end_conditions=None,
                  concentrations=None, transitions=None,
-                 analysis_list=None, objective_list=None):
+                 analysts=None, discriminators=None):
         if name:
             self.name = name
-        if session:
-            self.session = session
-        if parameters:
-            self.parameters = parameters
-
+        if model:
+            self.model = model
         if filaments:
             self.filaments = filaments
-        if measurements:
-            self.measurements = measurements
+        if observers:
+            self.observers = observers
         if end_conditions:
             self.end_conditions = end_conditions
         if concentrations:
@@ -46,66 +42,50 @@ class Experiment(object):
         if transitions:
             self.transitions = transitions
 
-        if analysis_list:
-            self.analysis_list = analysis_list
-        if objective_list:
-            self.objective_list = objective_list
+        if analysts:
+            self.analysts = analysts
+        if discriminators:
+            self.discriminators = discriminators
 
     def __repr__(self):
-        return "%s(id=%s, name='%s', session_id=%s)" % (
-               self.__class__.__name__, self.id, self.name, self.session_id)
+        return "%s(id=%s, name=%r, model_id=%s)" % (
+               self.__class__.__name__, self.id, self.name, self.model_id)
 
-    parameters = _ap('_parameters', 'value',
-                     creator=_parameters.ExperimentParameter)
+    data = _ap('_data', 'value', creator=data.Data)
 
-    @property
-    def analyses(self):
-        return dict((b.label, b) for b in self.analysis_list)
-
-    @property
-    def objectives(self):
-        return dict((b.label, b) for b in self.objective_list)
-
-    @property
-    def all_parameters(self):
-        result = dict(self.parameters)
-        result.update(self.session.parameters)
-        return result
-
-_orm.mapper(Experiment, _tables.experiment_table, properties={
-    'filaments': _orm.relationship(_binds.FilamentBind,
-        secondary=_tables.experiment_bind_table,
+orm.mapper(Experiment, tables.experiment_table, properties={
+    'filaments': orm.relationship(bindings.FilamentBind,
+        secondary=tables.experiment_binding_table,
         cascade='all,delete-orphan',
         single_parent=True),
-    'measurements': _orm.relationship(_binds.MeasurementBind,
-        secondary=_tables.experiment_bind_table,
+    'end_conditions': orm.relationship(bindings.EndConditionBind,
+        secondary=tables.experiment_bind_table,
         cascade='all,delete-orphan',
         single_parent=True),
-    'end_conditions': _orm.relationship(_binds.EndConditionBind,
-        secondary=_tables.experiment_bind_table,
+    'concentrations': orm.relationship(bindings.ConcentrationBind,
+        secondary=tables.experiment_bind_table,
         cascade='all,delete-orphan',
         single_parent=True),
-    'concentrations': _orm.relationship(_binds.ConcentrationBind,
-        secondary=_tables.experiment_bind_table,
-        cascade='all,delete-orphan',
-        single_parent=True),
-    'transitions': _orm.relationship(_binds.TransitionBind,
-        secondary=_tables.experiment_bind_table,
+    'transitions': orm.relationship(bindings.TransitionBind,
+        secondary=tables.experiment_bind_table,
         cascade='all,delete-orphan',
         single_parent=True),
 
-    'analysis_list': _orm.relationship(_binds.AnalysisBind,
-        secondary=_tables.experiment_bind_table,
+    'observers': orm.relationship(bindings.ObserverBinding,
+        secondary=tables.experiment_bind_table,
         cascade='all,delete-orphan',
         single_parent=True),
-    'objective_list': _orm.relationship(_binds.ObjectiveBind,
-        secondary=_tables.experiment_bind_table,
+    'analysts': orm.relationship(bindings.AnalystBinding,
+        secondary=tables.experiment_bind_table,
+        cascade='all,delete-orphan',
+        single_parent=True),
+    'discriminators': orm.relationship(bindings.DiscriminatorBinding,
+        secondary=tables.experiment_bind_table,
         cascade='all,delete-orphan',
         single_parent=True),
 
-    'runs': _orm.relationship(_runs.Run, backref='experiment',
-        cascade='all,delete-orphan', single_parent=True),
-    '_parameters': _orm.relationship(_parameters.ExperimentParameter,
-        backref='experiment',
-        collection_class=_orm.collections.attribute_mapped_collection('name'),
-        cascade='all,delete-orphan')})
+    '_data': orm.relationship(data.Data,
+        collection_class=orm.collections.attribute_mapped_collection('name'),
+
+    'runs': orm.relationship(runs.Run, backref='experiment',
+        cascade='all,delete-orphan', single_parent=True)})

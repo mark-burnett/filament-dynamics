@@ -14,11 +14,13 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from sqlalchemy import orm as _orm
+from sqlalchemy import orm
 
-from . import tables as _tables
-from . import logs as _logs
-from . import jobs as _jobs
+from . import tables
+from . import logs
+from . import jobs
+
+__all__ = ['Process', 'WorkerProcess', 'ControllerProcess']
 
 class Process(object):
     def __init__(self, code_hash=None, code_modified=None,
@@ -57,23 +59,23 @@ class Process(object):
         (self.sysname, self.nodename, self.release, self.version,
                 self.machine) = new_value
 
-_process_mapper = _orm.mapper(Process, _tables.process_table,
-        polymorphic_on=_tables.process_table.c.type, properties={
-    'log_entries': _orm.relationship(_logs.DBLogRecord, backref='process',
+process_mapper = orm.mapper(Process, tables.process_table,
+        polymorphic_on=tables.process_table.c.type, properties={
+    'log_entries': orm.relationship(logs.DBLogRecord, backref='process',
         cascade='all')})
 
 class ControllerProcess(Process): pass
 
-_orm.mapper(ControllerProcess, inherits=_process_mapper, properties={
-    'jobs': _orm.relationship(_jobs.Job, backref='creator',
-        primaryjoin=_tables.job_table.c.creator_id==_tables.process_table.c.id,
+orm.mapper(ControllerProcess, inherits=process_mapper, properties={
+    'jobs': orm.relationship(jobs.Job, backref='creator',
+        primaryjoin=tables.job_table.c.creator_id==tables.process_table.c.id,
         cascade='all,delete-orphan')},
     polymorphic_identity='controller')
 
 class WorkerProcess(Process): pass
 
-_orm.mapper(WorkerProcess, inherits=_process_mapper, properties={
-    'jobs': _orm.relationship(_jobs.Job, backref='worker',
-        primaryjoin=_tables.job_table.c.worker_id==_tables.process_table.c.id,
+orm.mapper(WorkerProcess, inherits=_process_mapper, properties={
+    'jobs': orm.relationship(jobs.Job, backref='worker',
+        primaryjoin=tables.job_table.c.worker_id==tables.process_table.c.id,
         cascade='all,delete-orphan')},
     polymorphic_identity='worker')

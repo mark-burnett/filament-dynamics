@@ -19,7 +19,7 @@ from . import tables
 
 from .analyses import *
 from .arguments import *
-from .binds import *
+from .bindings import *
 from .experiments import *
 from .jobs import *
 from .logs import *
@@ -27,21 +27,16 @@ from .models import *
 from .objectives import *
 from .parameters import *
 from .processes import *
-from .results import *
 from .runs import *
-from .sessions import *
-from .slice import *
 
 del analyses
 del arguments
-del binds
+del bindings
 del experiments
 del jobs
 del logs
 del models
 del objectives
 del parameters
-del results
+del processes
 del runs
-del sessions
-del slice

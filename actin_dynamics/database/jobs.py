@@ -14,15 +14,17 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from sqlalchemy import orm as _orm
+from sqlalchemy import orm
 
-from . import tables as _tables
+from . import tables
+
+__all__ = ['Job']
 
 class Job(object):
-    def __init__(self, run=None, worker=None, creator=None,
+    def __init__(self, parameter_set=None, worker=None, creator=None,
                  start_time=None, stop_time=None):
-        if run:
-            self.run = run
+        if parameter_set:
+            self.parameter_set = parameter_set
         if worker:
             self.worker = worker
         if creator:
@@ -33,10 +35,10 @@ class Job(object):
             self.stop_time = stop_time
 
     def __repr__(self):
-        return ("%s(id=%s, run_id=%s, worker_id=%s, creator_id=%s, "
-                + "start_time='%s', stop-time='%s')"
-                % (self.__class__.__name__, self.id, self.run_id,
+        return ("%s(id=%s, parameter_set_id=%s, worker_id=%s, creator_id=%s, "
+                + "start_time='%s', stop_time='%s')"
+                % (self.__class__.__name__, self.id, self.parameter_set_id,
                    self.worker_id, self.creator_id,
                    self.start_time, self.stop_time))
 
-_orm.mapper(Job, _tables.job_table)
+orm.mapper(Job, tables.job_table)

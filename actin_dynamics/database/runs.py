@@ -14,84 +14,38 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from sqlalchemy import orm as _orm
-from sqlalchemy.ext.associationproxy import association_proxy as _ap
+from sqlalchemy import orm
 
-from . import tables as _tables
-from . import parameters as _parameters
-from . import analyses as _analyses
-from . import objectives as _objectives
-from . import jobs as _jobs
+from . import tables
+from . import analyses
+from . import objectives
+from . import jobs
 
+__all__ = ['Run']
 
 class Run(object):
-    def __init__(self, model=None, experiment=None, analyses=None,
-                 objectives=None, parameters=None, analysis_list=None):
-        if model:
-            self.model = model
+    def __init__(self, parameter_set=None, experiment=None, analyses=None,
+                 objectives=None, parameters=None):
+        if parameter_set:
+            self.parameter_set = parameter_set
         if experiment:
             self.experiment = experiment
+
         if analyses:
             self.analyses = analyses
         if objectives:
             self.objectives = objectives
-        if parameters:
-            self.parameters = parameters
-        if analysis_list:
-            self.analysis_list = analysis_list
 
     def __repr__(self):
         return "%s(id=%s, experiment_id=%s, model_id=%s, parameters=%s)" % (
             self.__class__.__name__, self.id, self.experiment_id, self.model_id,
             self.parameters)
 
-    parameters = _ap('_parameters', 'value', creator=_parameters.RunParameter)
-    analyses   = _ap('_analyses', 'measurement', creator=_analyses.Analysis)
 
-
-    @property
-    def all_parameters(self):
-        result = dict(self.parameters)
-        result.update(self.experiment.all_parameters)
-        return result
-
-    def _combine_binds(self, name):
-        return (getattr(self.experiment, name, []) +
-                getattr(self.model, name, []))
-
-    @property
-    def filaments(self):
-        return self._combine_binds('filaments')
-
-    @property
-    def transitions(self):
-        return self._combine_binds('transitions')
-
-    @property
-    def concentrations(self):
-        return self._combine_binds('concentrations')
-
-    @property
-    def end_conditions(self):
-        return self._combine_binds('end_conditions')
-
-    @property
-    def measurements(self):
-        return self._combine_binds('measurements')
-
-
-_orm.mapper(Run, _tables.run_table, properties={
-    '_parameters': _orm.relationship(_parameters.RunParameter,
-        backref='run',
-        collection_class=_orm.collections.attribute_mapped_collection('name'),
+orm.mapper(Run, tables.run_table, properties={
+    'analyses': orm.relationship(analyses.Analysis, backref='run',
         cascade='all,delete-orphan'),
-    '_analyses':   _orm.relationship(_analyses.Analysis,
-        collection_class=_orm.collections.attribute_mapped_collection(
-            'name'),
+    'objectives': orm.relationship(objectives.Objective, backref='run',
         cascade='all,delete-orphan'),
-    'analysis_list': _orm.relationship(_analyses.Analysis, backref='run',
-        cascade='all,delete-orphan'),
-    'objectives': _orm.relationship(_objectives.Objective, backref='run',
-        cascade='all,delete-orphan'),
-    'job': _orm.relationship(_jobs.Job, backref='run',
+    'job': orm.relationship(jobs.Job, backref='run',
         cascade='all,delete-orphan')})

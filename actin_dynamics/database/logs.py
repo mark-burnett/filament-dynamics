@@ -13,11 +13,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import datetime as _datetime
-import traceback as _traceback
+import datetime
+import traceback
 
-from sqlalchemy import orm as _orm
-from . import tables as _tables
+from sqlalchemy import orm
+from . import tables
+
+__all__ = ['DBLogRecord', 'DBException', 'DBTraceback']
 
 class DBTraceback(object):
     def __init__(self, filename=None, lineno=None, module=None, line=None):
@@ -35,7 +37,7 @@ class DBTraceback(object):
                 self.__class__.__name__, self.filename, self.lineno,
                 self.module, self.line)
 
-_orm.mapper(DBTraceback, _tables.traceback_table)
+orm.mapper(DBTraceback, tables.traceback_table)
 
 class DBException(object):
     def __init__(self, type=None, value=None, traceback=None, type_name=None,
@@ -52,15 +54,15 @@ class DBException(object):
 
         if traceback:
             self.traceback = []
-            for line in _traceback.extract_tb(traceback):
+            for line in traceback.extract_tb(traceback):
                 self.traceback.append(DBTraceback(*line))
 
     def __repr__(self):
         return "%s(type_name='%s', message='%s')" % (
                 self.__class__.__name__, self.type_name, self.message)
 
-_orm.mapper(DBException, _tables.exception_table, properties={
-    'traceback': _orm.relationship(DBTraceback, cascade='all,delete-orphan')})
+orm.mapper(DBException, tables.exception_table, properties={
+    'traceback': orm.relationship(DBTraceback, cascade='all,delete-orphan')})
 
 class DBLogRecord(object):
     def __init__(self, name=None, pathname=None, funcName=None, lineno=None,
@@ -109,7 +111,7 @@ class DBLogRecord(object):
         dblr.message   = log_record.getMessage()
         dblr.exception = log_record.exc_info
 
-        dblr.time      = _datetime.datetime.fromtimestamp(log_record.created)
+        dblr.time      = datetime.datetime.fromtimestamp(log_record.created)
 
         return dblr
 
@@ -122,6 +124,6 @@ class DBLogRecord(object):
         if value:
             self._exception = DBException(*value)
 
-_orm.mapper(DBLogRecord, _tables.logging_table, properties={
-    '_exception': _orm.relationship(DBException, uselist=False,
-                                    cascade='all,delete-orphan')})
+orm.mapper(DBLogRecord, tables.logging_table, properties={
+    '_exception': orm.relationship(DBException, uselist=False,
+                                   cascade='all,delete-orphan')})

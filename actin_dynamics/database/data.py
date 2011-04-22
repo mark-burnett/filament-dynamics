@@ -13,29 +13,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from sqlalchemy import orm
 
-from sqlalchemy import orm as _orm
+from . import tables
 
-from . import tables as _tables
+__all__ = ['Data']
 
-class _Data(object):
-    def __init__(self, abscissa=None, ordinate=None, error=None):
-        if abscissa is not None:
-            self.abscissa = abscissa
-        if ordinate is not None:
-            self.ordinate = ordinate
-        if error is not None:
-            self.error = error
+class Data(object):
+    def __init__(self, name=None, value=None):
+        if name:
+            self.name = name
+        if value:
+            self.value = value
 
     def __repr__(self):
-        return '%s(abscissa=%s, ordinate=%s, error=%s)' % (
-                self.__class__.__name__, self.abscissa, self.ordinate,
-                self.error)
+        return "%s(id=%s, name=%s)" %(
+                self.__class__.__name__, self.id, self.name)
 
-class AnalysisResult(_Data): pass
-
-_orm.mapper(AnalysisResult, _tables.analysis_results_table)
-
-class ObjectiveData(_Data): pass
-
-_orm.mapper(ObjectiveData, _tables.objective_data_table)
+orm.mapper(Experiment, tables.data_table)
