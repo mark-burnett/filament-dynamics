@@ -19,61 +19,61 @@ from actin_dynamics import database
 
 from unit_tests.database.base_test_cases import DBTestCase
 
-class TestBind(DBTestCase):
+class TestBinding(DBTestCase):
     def test_inheritance_for_cross_talk(self):
-        s = database.Session()
-        c = database.ConcentrationBind(class_name='test_class')
-        e = database.Experiment(session=s, concentrations=[c])
+        m = database.Model()
+        c = database.ConcentrationBinding(class_name='test_class')
+        e = database.Experiment(model=m, concentrations=[c])
 
         self.db_session.add(c)
         self.db_session.commit()
 
-        self.assertEqual(1, self.db_session.query(database.Bind).count())
+        self.assertEqual(1, self.db_session.query(database.Binding).count())
 
-        self.assertEqual(1, self.db_session.query(database.ConcentrationBind
+        self.assertEqual(1, self.db_session.query(database.ConcentrationBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.TransitionBind
+        self.assertEqual(0, self.db_session.query(database.TransitionBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.EndConditionBind
+        self.assertEqual(0, self.db_session.query(database.EndConditionBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.MeasurementBind
+        self.assertEqual(0, self.db_session.query(database.ObserverBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.FilamentBind
+        self.assertEqual(0, self.db_session.query(database.FilamentBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.AnalysisBind
+        self.assertEqual(0, self.db_session.query(database.AnalystBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.ObjectiveBind
+        self.assertEqual(0, self.db_session.query(database.DiscriminatorBinding
             ).count())
 
-        f = database.FilamentBind(class_name='test_class_2')
+        f = database.FilamentBinding(class_name='test_class_2')
         e.filaments.append(f)
         self.db_session.add(f)
         self.db_session.commit()
 
-        self.assertEqual(2, self.db_session.query(database.Bind).count())
+        self.assertEqual(2, self.db_session.query(database.Binding).count())
 
-        self.assertEqual(1, self.db_session.query(database.ConcentrationBind
+        self.assertEqual(1, self.db_session.query(database.ConcentrationBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.TransitionBind
+        self.assertEqual(0, self.db_session.query(database.TransitionBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.EndConditionBind
+        self.assertEqual(0, self.db_session.query(database.EndConditionBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.MeasurementBind
+        self.assertEqual(0, self.db_session.query(database.ObserverBinding
             ).count())
-        self.assertEqual(1, self.db_session.query(database.FilamentBind
+        self.assertEqual(1, self.db_session.query(database.FilamentBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.AnalysisBind
+        self.assertEqual(0, self.db_session.query(database.AnalystBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.ObjectiveBind
+        self.assertEqual(0, self.db_session.query(database.DiscriminatorBinding
             ).count())
 
     def test_fixed_arguments(self):
         test_data = {'test_arg_a': 'literal 1',
                      'test_arg_b': 3.2}
 
-        s = database.Session()
-        t = database.TransitionBind(class_name='trans_class')
-        e = database.Experiment(session=s, transitions=[t])
+        m = database.Model()
+        t = database.TransitionBinding(class_name='trans_class')
+        e = database.Experiment(model=m, transitions=[t])
         t.fixed_arguments = test_data
 
         self.db_session.add(t)
@@ -81,7 +81,7 @@ class TestBind(DBTestCase):
 
         del t
 
-        t2 = self.db_session.query(database.TransitionBind).first()
+        t2 = self.db_session.query(database.TransitionBinding).first()
         for arg, literal in test_data.iteritems():
             self.assertEqual(str(literal), t2.fixed_arguments[arg])
 
@@ -89,9 +89,9 @@ class TestBind(DBTestCase):
         test_data = {'test_arg_a': 'par_name_1',
                      'test_arg_b': 'par_name_2'}
 
-        s = database.Session()
-        t = database.TransitionBind(class_name='trans_class')
-        e = database.Experiment(session=s, transitions=[t])
+        m = database.Model()
+        t = database.TransitionBinding(class_name='trans_class')
+        e = database.Experiment(model=m, transitions=[t])
         t.variable_arguments = test_data
 
         self.db_session.add(t)
@@ -99,17 +99,17 @@ class TestBind(DBTestCase):
 
         del t
 
-        t2 = self.db_session.query(database.TransitionBind).first()
+        t2 = self.db_session.query(database.TransitionBinding).first()
         for arg, par_name in test_data.iteritems():
             self.assertEqual(par_name, t2.variable_arguments[arg])
 
-def TestObjectiveBind(DBTestCase):
+def TestObjectiveBinding(DBTestCase):
     def test_data(self):
         times = range(5)
         values = [t**2 for t in times]
         errors = [0.1 * v for v in values]
 
-        ob = database.ObjectiveBind()
+        ob = database.ObjectiveBinding()
         a.measurement = times, values, errors
 
         for i, result in enumerate(a.results):

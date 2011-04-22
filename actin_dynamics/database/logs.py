@@ -14,7 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import datetime
-import traceback
+import traceback as _traceback
 
 from sqlalchemy import orm
 from . import tables
@@ -54,7 +54,7 @@ class DBException(object):
 
         if traceback:
             self.traceback = []
-            for line in traceback.extract_tb(traceback):
+            for line in _traceback.extract_tb(traceback):
                 self.traceback.append(DBTraceback(*line))
 
     def __repr__(self):

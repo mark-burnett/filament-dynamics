@@ -22,16 +22,15 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestModel(DBTestCase):
     def setUp(self):
         DBTestCase.setUp(self)
-        self.session = database.Session('test session name')
 
-    def test_concentration_binds(self):
-        m = database.Model('test model name', session=self.session)
+    def test_concentration_bindings(self):
+        m = database.Model('test model name')
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
         variable_arguments = {'variable a': 'par name 1'}
 
-        cb = database.ConcentrationBind(class_name=class_name,
+        cb = database.ConcentrationBinding(class_name=class_name,
                 fixed_arguments=fixed_arguments,
                 variable_arguments=variable_arguments)
         m.concentrations.append(cb)
@@ -42,14 +41,14 @@ class TestModel(DBTestCase):
         m2 = self.db_session.query(database.Model).first()
         self.assertEqual(cb, m2.concentrations[0])
 
-    def test_transition_binds(self):
-        m = database.Model('test model name', session=self.session)
+    def test_transition_bindings(self):
+        m = database.Model('test model name')
 
         class_name = 'test_class_name'
         fixed_arguments = {'fixed a': 'literal 1'}
         variable_arguments = {'variable a': 'par name 1'}
 
-        cb = database.TransitionBind(class_name=class_name,
+        cb = database.TransitionBinding(class_name=class_name,
                 fixed_arguments=fixed_arguments,
                 variable_arguments=variable_arguments)
         m.transitions.append(cb)
@@ -60,17 +59,6 @@ class TestModel(DBTestCase):
         m2 = self.db_session.query(database.Model).first()
         self.assertEqual(cb, m2.transitions[0])
 
-    def test_session_relationship(self):
-
-        m = database.Model('test model name', session=self.session)
-
-        self.db_session.add(m)
-        self.db_session.commit()
-
-        m2 = self.db_session.query(database.Model).first()
-        self.assertEqual(m, m2)
-        self.assertEqual(self.session, m2.session)
-        self.assertTrue(m2.session.id >= 1)
 
 if '__main__' == __name__:
     unittest.main()

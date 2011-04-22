@@ -24,9 +24,9 @@ from . import objectives
 from . import analyses
 
 
-__all__ = ['AnalystBinding', 'ConcentrationBinding', 'DiscriminatorBinding',
-           'EndConditionBinding', 'FilamentBinding', 'ObserverBinding',
-           'TransitionBinding']
+__all__ = ['Binding', 'AnalystBinding', 'ConcentrationBinding',
+           'DiscriminatorBinding', 'EndConditionBinding', 'FilamentBinding',
+           'ObserverBinding', 'TransitionBinding']
 
 
 def _create_bind(key, value):

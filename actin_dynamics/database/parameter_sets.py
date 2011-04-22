@@ -17,7 +17,10 @@ from sqlalchemy import orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
 from . import tables
+
+from . import jobs
 from . import parameters
+from . import runs
 
 __all__ = ['ParameterSet']
 
@@ -36,4 +39,9 @@ class ParameterSet(object):
 
 orm.mapper(ParameterSet, tables.parameter_set_table, properties={
     '_parameters': orm.relationship(parameters.Parameter,
-        collection_class=orm.collections.attribute_mapped_collection('name'))})
+        backref='parameter_set',
+        collection_class=orm.collections.attribute_mapped_collection('name')),
+    'run': orm.relationship(runs.Run, backref='parameter_set',
+                            cascade='all,delete-orphan'),
+    'job': orm.relationship(jobs.Job, backref='parameter_set',
+                            cascade='all,delete-orphan')})

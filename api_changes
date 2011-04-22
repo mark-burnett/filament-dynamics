@@ -33,6 +33,12 @@ Optimization
 
 
 Postprocessing & data storage
+    Observations
+        float
+            -> simple timecourses
+        filament snapshot
+            -> state distributions
+
     Floats
         D
         j (elongation rate)

@@ -15,6 +15,8 @@
 
 import unittest
 
+import sqlalchemy
+
 from actin_dynamics import database
 
 from unit_tests.database.base_test_cases import DBTestCase
@@ -22,65 +24,42 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestParameter(DBTestCase):
     def setUp(self):
         DBTestCase.setUp(self)
-        self.session = database.Session()
 
-        self.objective_bind = database.ObjectiveBind(class_name='cls_name',
-                label='ob_label')
+        self.model = database.Model()
+        self.parameter_set = database.ParameterSet(model=self.model)
 
-        self.experiment = database.Experiment(session=self.session)
-        self.experiment.objective_list.append(self.objective_bind)
+    def test_manual_creation(self):
+        p1 = database.Parameter(name='hi', value=0.3,
+                parameter_set=self.parameter_set)
 
-        self.run = database.Run(experiment=self.experiment)
-        self.run.model_id = 0
-
-        self.objective = database.Objective(run=self.run,
-                bind=self.objective_bind)
-
-    def test_inheritance_for_cross_talk(self):
-        s = database.SessionParameter(name='hi', value=0.3, session=self.session)
-
-        self.db_session.add(s)
+        self.db_session.add(p1)
         self.db_session.commit()
 
-        self.assertEqual(1, self.db_session.query(database.Parameter
-            ).count())
+        self.assertEqual(0.3, self.parameter_set.parameters['hi'])
 
-        self.assertEqual(1, self.db_session.query(database.SessionParameter
-            ).count())
-        self.assertEqual(0, self.db_session.query(database.ExperimentParameter
-            ).count())
-        self.assertEqual(0, self.db_session.query(database.RunParameter
-            ).count())
-        self.assertEqual(0, self.db_session.query(database.ObjectiveParameter
-            ).count())
+    def test_duplicate_names(self):
+        p1 = database.Parameter(name='hi', value=0.3,
+                parameter_set=self.parameter_set)
+        p2 = database.Parameter(name='hi', value=3.6,
+                parameter_set=self.parameter_set)
 
-        o = database.ObjectiveParameter(name='bye', value=7.6,
-                objective=self.objective)
-        self.db_session.add(o)
+        self.db_session.add(p1)
+        self.db_session.add(p2)
+        self.assertRaises(sqlalchemy.exceptions.IntegrityError,
+                self.db_session.commit)
+
+    def test_dict_interface_assignment(self):
+        self.parameter_set.parameters['hi'] = 0.3
         self.db_session.commit()
 
-        self.assertEqual(2, self.db_session.query(database.Parameter
-            ).count())
+        self.assertEqual(0.3, self.parameter_set.parameters['hi'])
 
-        self.assertEqual(1, self.db_session.query(database.SessionParameter
-            ).count())
-        self.assertEqual(0, self.db_session.query(database.ExperimentParameter
-            ).count())
-        self.assertEqual(0, self.db_session.query(database.RunParameter
-            ).count())
-        self.assertEqual(1, self.db_session.query(database.ObjectiveParameter
-            ).count())
-
-    def test_repeated_name_assignment(self):
-        sp = database.SessionParameter(name='hi', value=0.3, session=self.session)
-
-        self.db_session.add(sp)
+    def test_dict_interface_reassignment(self):
+        self.test_dict_interface_assignment()
+        self.parameter_set.parameters['hi'] = 7.2
         self.db_session.commit()
 
-        rp = database.RunParameter(name='hi', value=2.6, run=self.run)
-
-        self.db_session.add(rp)
-        self.db_session.commit()
+        self.assertEqual(7.2, self.parameter_set.parameters['hi'])
 
 
 if '__main__' == __name__:

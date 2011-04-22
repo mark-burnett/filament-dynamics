@@ -20,9 +20,11 @@ from . import tables
 __all__ = ['Parameter']
 
 class Parameter(object):
-    def __init__(self, name, value):
+    def __init__(self, name, value, parameter_set=None):
         self.name  = name
         self.value = value
+        if parameter_set:
+            self.parameter_set = parameter_set
 
     def __repr__(self):
         return "%s(id=%s, name='%s', value=%s)" % (

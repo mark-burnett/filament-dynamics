@@ -114,7 +114,7 @@ job_table = schema.Table('job', global_state.metadata,
 # ---------------------------------------------------------------------
 binding_table = schema.Table('binding', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('module_name',  schema.types.String(MAX_POLY_LENGTH),
+        schema.Column('module_name', schema.types.String(MAX_POLY_LENGTH),
                       nullable=False, index=True),
         schema.Column('class_name', schema.types.String(MAX_NAME_LENGTH),
                       nullable=False),
@@ -123,7 +123,7 @@ binding_table = schema.Table('binding', global_state.metadata,
 
 # Bind arguments
 argument_table = schema.Table('argument', global_state.metadata,
-        schema.Column('id',    schema.types.Integer, primary_key=True),
+        schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('binding_id', schema.ForeignKey('binding.id'),
                       nullable=False),
         schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
@@ -234,13 +234,17 @@ parameter_set_table = schema.Table('parameter_set', global_state.metadata,
 
 
 parameter_table = schema.Table('parameter', global_state.metadata,
-        schema.Column('id',    schema.types.Integer, primary_key=True),
+        schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('parameter_set_id',
                       schema.ForeignKey('parameter_set.id'), nullable=False),
         schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
         schema.Column('value', schema.types.Float),
         mysql_engine='InnoDB')
 
+schema.Index('parameter_unique_columns',
+             parameter_table.c.parameter_set_id,
+             parameter_table.c.name,
+             unique=True)
 
 run_table = schema.Table('run', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
@@ -254,7 +258,8 @@ run_table = schema.Table('run', global_state.metadata,
 analysis_table = schema.Table('analysis', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('run_id', schema.ForeignKey('run.id'), nullable=False),
-        schema.Column('binding_id', schema.ForeignKey('binding.id')),
+        schema.Column('binding_id', schema.ForeignKey('binding.id'),
+                      nullable=False),
         schema.Column('value', schema.types.PickleType),
         mysql_engine='InnoDB')
 

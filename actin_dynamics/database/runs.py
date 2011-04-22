@@ -19,7 +19,6 @@ from sqlalchemy import orm
 from . import tables
 from . import analyses
 from . import objectives
-from . import jobs
 
 __all__ = ['Run']
 
@@ -46,6 +45,4 @@ orm.mapper(Run, tables.run_table, properties={
     'analyses': orm.relationship(analyses.Analysis, backref='run',
         cascade='all,delete-orphan'),
     'objectives': orm.relationship(objectives.Objective, backref='run',
-        cascade='all,delete-orphan'),
-    'job': orm.relationship(jobs.Job, backref='run',
         cascade='all,delete-orphan')})

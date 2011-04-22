@@ -21,14 +21,14 @@ from unit_tests.database.base_test_cases import DBTestCase
 
 class TestAnalysis(DBTestCase):
     def test_run_relationship(self):
-        s = database.Session()
-        m = database.Model(session=s)
-        e = database.Experiment(session=s)
-        r = database.Run(model=m, experiment=e)
+        m = database.Model()
+        ps = database.ParameterSet(model=m)
+        e = database.Experiment(model=m)
+        r = database.Run(parameter_set=ps, experiment=e)
 
-        ab = database.AnalysisBind(class_name='cls_name', label='lbl')
-        e.analysis_list.append(ab)
-        a = database.Analysis(run=r, bind=ab)
+        ab = database.AnalystBinding(class_name='cls_name', label='lbl')
+        e.analysts.append(ab)
+        a = database.Analysis(run=r, binding=ab)
 
         self.db_session.add(a)
         self.db_session.commit()
@@ -37,21 +37,6 @@ class TestAnalysis(DBTestCase):
         self.assertEqual(a, a2)
         self.assertEqual(r, a2.run)
         self.assertTrue(a2.run.id >= 1)
-
-    def test_measurements(self):
-        times = range(5)
-        values = [t**2 for t in times]
-        errors = [0.1 * v for v in values]
-
-        a = database.Analysis()
-        a.measurement = times, values, errors
-
-        for i, result in enumerate(a.results):
-            self.assertEqual(times[i], result.abscissa)
-            self.assertEqual(values[i], result.ordinate)
-            self.assertEqual(errors[i], result.error)
-
-        self.assertEqual((times, values, errors), a.measurement)
 
 
 if '__main__' == __name__:

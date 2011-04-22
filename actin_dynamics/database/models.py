@@ -16,7 +16,9 @@
 from sqlalchemy import orm
 
 from . import tables
+
 from . import bindings
+from . import experiments
 from . import parameter_sets
 
 __all__ = ['Model']
@@ -46,4 +48,6 @@ orm.mapper(Model, tables.model_table, properties={
     'transitions': orm.relationship(bindings.TransitionBinding,
         secondary=tables.model_binding_table,
         cascade='all,delete-orphan',
-        single_parent=True)})
+        single_parent=True),
+    'experiments': orm.relationship(experiments.Experiment, backref='model',
+        cascade='all,delete-orphan')})

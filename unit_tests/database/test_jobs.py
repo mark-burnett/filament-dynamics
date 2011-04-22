@@ -22,20 +22,18 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestJob(DBTestCase):
     def test_run_relationship(self):
         p = database.ControllerProcess()
-        s = database.Session()
-        e = database.Experiment(session=s)
-        r = database.Run(experiment=e)
-        r.model_id = 0
+        m = database.Model()
+        ps = database.ParameterSet(model=m)
 
-        j = database.Job(run=r, creator=p)
+        j = database.Job(parameter_set=ps, creator=p)
 
         self.db_session.add(j)
         self.db_session.commit()
 
         j2 = self.db_session.query(database.Job).first()
         self.assertEqual(j, j2)
-        self.assertEqual(r, j2.run)
-        self.assertTrue(j2.run.id >= 1)
+        self.assertEqual(ps, j2.parameter_set)
+        self.assertTrue(j2.parameter_set.id >= 1)
 
 
 if '__main__' == __name__:
