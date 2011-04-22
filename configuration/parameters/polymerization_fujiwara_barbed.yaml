@@ -1,8 +1,0 @@
-global_parameters:
-    barbed_atp_polymerization_rate:    11.6
-    barbed_adppi_polymerization_rate:   3.4
-    barbed_adp_polymerization_rate:     2.9
-
-    barbed_atp_depolymerization_rate:   1.4
-    barbed_adppi_depolymerization_rate: 0.2
-    barbed_adp_depolymerization_rate:   5.4

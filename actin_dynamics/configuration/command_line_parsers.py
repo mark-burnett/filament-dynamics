@@ -17,7 +17,7 @@ import argparse
 import datetime
 
 def _config(parser):
-    parser.add_argument('-c', '--config', default='general.ini',
+    parser.add_argument('-c', '--config', default='config.ini',
                         help='Configuration file name')
     return parser
 

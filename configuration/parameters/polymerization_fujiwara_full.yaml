@@ -1,3 +1,0 @@
-import:
-    - 'parameters/polymerization_fujiwara_barbed.yaml'
-    - 'parameters/polymerization_fujiwara_pointed.yaml'

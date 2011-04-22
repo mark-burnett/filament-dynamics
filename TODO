@@ -1,3 +1,8 @@
+1) Write some input files
+2) Write input file validation
+3) Fix primitives (consistent naming, unittests, etc)
+4) Write simple controller
+
 allow experiment analyses/slicables to be used as inputs for other experiments
     allows multi-stage simulations
     allows key parameters to be calculated for a model (e.g. crit conc)
