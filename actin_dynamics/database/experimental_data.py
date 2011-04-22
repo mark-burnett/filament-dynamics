@@ -30,4 +30,4 @@ class Data(object):
         return "%s(id=%s, name=%s)" %(
                 self.__class__.__name__, self.id, self.name)
 
-orm.mapper(Experiment, tables.data_table)
+orm.mapper(Data, tables.data_table)

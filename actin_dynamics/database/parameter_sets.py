@@ -35,5 +35,5 @@ class ParameterSet(object):
     parameters = _ap('_parameters', 'value', creator=parameters.Parameter)
 
 orm.mapper(ParameterSet, tables.parameter_set_table, properties={
-    '_parameters', orm.relationship(parameters.Parameter,
-        collection_class=orm.collections.attribute_mapped_collection('name')})
+    '_parameters': orm.relationship(parameters.Parameter,
+        collection_class=orm.collections.attribute_mapped_collection('name'))})

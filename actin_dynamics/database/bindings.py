@@ -59,7 +59,7 @@ class Binding(object):
                     creator=arguments.VariableArgument)
 
 orm.mapper(Binding, tables.binding_table,
-           polymorphic_on=tables.bind_table.c.module_name,
+           polymorphic_on=tables.binding_table.c.module_name,
            properties={
     '_fixed_arguments': orm.relationship(arguments.FixedArgument,
         collection_class=orm.collections.attribute_mapped_collection('name'),

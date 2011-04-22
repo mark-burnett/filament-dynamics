@@ -74,7 +74,7 @@ orm.mapper(ControllerProcess, inherits=process_mapper, properties={
 
 class WorkerProcess(Process): pass
 
-orm.mapper(WorkerProcess, inherits=_process_mapper, properties={
+orm.mapper(WorkerProcess, inherits=process_mapper, properties={
     'jobs': orm.relationship(jobs.Job, backref='worker',
         primaryjoin=tables.job_table.c.worker_id==tables.process_table.c.id,
         cascade='all,delete-orphan')},

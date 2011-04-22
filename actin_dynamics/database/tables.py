@@ -217,16 +217,16 @@ data_table = schema.Table('data', global_state.metadata,
         schema.Column('value', schema.types.PickleType),
         mysql_engine='InnoDB')
 
-schema.InnoDB('data_unique_columns',
-              data_table.c.experiment_id,
-              data_table.c.name,
-              unique=True)
+schema.Index('data_unique_columns',
+             data_table.c.experiment_id,
+             data_table.c.name,
+             unique=True)
 
 
 # ---------------------------------------------------------------------
 # - Results                                                           -
 # ---------------------------------------------------------------------
-paramter_set_table = schema.Table('parameter_set', global_state.metadata,
+parameter_set_table = schema.Table('parameter_set', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('model_id', schema.ForeignKey('model.id'),
                       nullable=False),

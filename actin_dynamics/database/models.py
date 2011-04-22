@@ -40,10 +40,10 @@ orm.mapper(Model, tables.model_table, properties={
         backref='model',
         cascade='all,delete-orphan'),
     'concentrations': orm.relationship(bindings.ConcentrationBinding,
-        secondary=_tables.model_bind_table,
+        secondary=tables.model_binding_table,
         cascade='all,delete-orphan',
         single_parent=True),
     'transitions': orm.relationship(bindings.TransitionBinding,
-        secondary=tables.model_bind_table,
+        secondary=tables.model_binding_table,
         cascade='all,delete-orphan',
         single_parent=True)})

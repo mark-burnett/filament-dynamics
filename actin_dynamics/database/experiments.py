@@ -19,6 +19,7 @@ from sqlalchemy.ext.associationproxy import association_proxy as _ap
 from . import tables
 from . import bindings
 from . import runs
+from . import experimental_data
 
 __all__ = ['Experiment']
 
@@ -51,41 +52,41 @@ class Experiment(object):
         return "%s(id=%s, name=%r, model_id=%s)" % (
                self.__class__.__name__, self.id, self.name, self.model_id)
 
-    data = _ap('_data', 'value', creator=data.Data)
+    data = _ap('_data', 'value', creator=experimental_data.Data)
 
 orm.mapper(Experiment, tables.experiment_table, properties={
-    'filaments': orm.relationship(bindings.FilamentBind,
+    'filaments': orm.relationship(bindings.FilamentBinding,
         secondary=tables.experiment_binding_table,
         cascade='all,delete-orphan',
         single_parent=True),
-    'end_conditions': orm.relationship(bindings.EndConditionBind,
-        secondary=tables.experiment_bind_table,
+    'end_conditions': orm.relationship(bindings.EndConditionBinding,
+        secondary=tables.experiment_binding_table,
         cascade='all,delete-orphan',
         single_parent=True),
-    'concentrations': orm.relationship(bindings.ConcentrationBind,
-        secondary=tables.experiment_bind_table,
+    'concentrations': orm.relationship(bindings.ConcentrationBinding,
+        secondary=tables.experiment_binding_table,
         cascade='all,delete-orphan',
         single_parent=True),
-    'transitions': orm.relationship(bindings.TransitionBind,
-        secondary=tables.experiment_bind_table,
+    'transitions': orm.relationship(bindings.TransitionBinding,
+        secondary=tables.experiment_binding_table,
         cascade='all,delete-orphan',
         single_parent=True),
 
     'observers': orm.relationship(bindings.ObserverBinding,
-        secondary=tables.experiment_bind_table,
+        secondary=tables.experiment_binding_table,
         cascade='all,delete-orphan',
         single_parent=True),
     'analysts': orm.relationship(bindings.AnalystBinding,
-        secondary=tables.experiment_bind_table,
+        secondary=tables.experiment_binding_table,
         cascade='all,delete-orphan',
         single_parent=True),
     'discriminators': orm.relationship(bindings.DiscriminatorBinding,
-        secondary=tables.experiment_bind_table,
+        secondary=tables.experiment_binding_table,
         cascade='all,delete-orphan',
         single_parent=True),
 
-    '_data': orm.relationship(data.Data,
-        collection_class=orm.collections.attribute_mapped_collection('name'),
+    '_data': orm.relationship(experimental_data.Data,
+        collection_class=orm.collections.attribute_mapped_collection('name')),
 
     'runs': orm.relationship(runs.Run, backref='experiment',
         cascade='all,delete-orphan', single_parent=True)})
