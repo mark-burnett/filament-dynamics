@@ -1,63 +1,11 @@
-goals
-    - what is the critical concentration data that we are trying to fit?
+allow experiment analyses/slicables to be used as inputs for other experiments
+    allows multi-stage simulations
+    allows key parameters to be calculated for a model (e.g. crit conc)
 
-    * check kinsim of melki paper
-        doesn't match..
-    * scale pi simulation to fit data
+    'local blackboard' for experiment results
+    sequence/list for experiments
 
-    - release rate/cooperativity data fit
-
-    - D vs [G-ATP-actin] for various rho_r's
-    - D vs [G-ATP-actin] for tip release
-
-
-optimization
-    + update measurements to use sample period
-    - update update standard error calculation to not interpolate
-        need to make sure everything gets converted to do proper
-        interpolation ahead of time first
-
-    implement filament as a c++ object
-        simple edge tracking may be fast enough this way
-
-    stop keeping every damn event
-        you're on the right track now using the sample period for measurements
-        need to extend it to concentrations
-
-consider
-    using symlinks for non-unique unlabeled/labeled config files files
-    reorganize top-level:  at least rename actin_dynamics to something
-
-
-visualizations for publication
-    pollard (ignore release -- just use best fit result from p & w)
-        fit ftc (brooks vs flat, assume brooks)
-            best fit slice
-            timecourses
-        fit adppi
-            best fit slices
-            contours
-            timecourses
-
-    p & w (ignore cleavage --just use best fit result from pollard)
-        only show cooperative model
-            fit ftc (choose brooks as better fit)
-                brooks vs flat
-                    best fit slices
-                timecourses
-            fit pi
-                best fit slices
-                contours
-                timecourses
-
-    fujiwara (does this cooperative model fit data)
-        simulated histograms vs data histograms (just show an example?)
-        histogram width vs time (shows we fit all the fujiwara data)
-        D vs concentration (vavylonis plot)
-            this is the predictive/directly comparable to other theory plot
-
-
-validation - high priority
+input validation
     need input validation for yaml files
         * important, because input bugs are tricky
         check for missing parameters
@@ -66,48 +14,59 @@ validation - high priority
         input code
         configuration building code
         factory code
+    have run_tests.sh run validation on all input files
 
-
-configuration - medium-high priority
-    allow more "global" like config, e.g. sesion binds or something.
-        think about pieper & wegner..3 experiments with only 2 differences.
-    validation for config files
-
-refactor analysis/objective stuff so that it is more general/less hacky
-
-process utils - low priority
-    list active processes
-    close processes
-    list # active jobs, awaiting jobs, etc. (general job status)
-    report run times for each job
-    estimate remaining run time from session start time # jobs complete, etc
-
-
-database - low priority
-    set appropriate cascades for deletes
-        it's going to be hard to keep the db clean without this
-
-
-sim.sh - low priority
-    integrate better log viewing options
-
-
-Do some vocab/docs - low priority
+Do some vocab/docs
     session
+    parameter set
     run
     job
     primitive
-    bind
-    analysis
-    objective
+    binding
+    observer -> observation
+    analyst -> analysis
+    discriminator -> objective
     simulation
     stage - just slang?
     ? slice
     ? projection
 
 
-controller process - very low priority
-    global fit mechanism
-        do some kind of coarse mesh/random to start
-        then start generating children
-        *** NOTE This is unlikely to be useful for the first paper.
+global fit controller
+    do some kind of coarse mesh/random to start
+    then start generating children interactively
+
+    use & improve fitpy
+        move to github
+
+    multi-objective GA
+        continuous time GA
+        dominance sorting
+        islands
+
+    monitor convergence
+    calculate parameter sensitivities
+        use to drive future mutations?
+
+Optimization
+    c++ implementation of filament
+    consider c++ implementation of main loop
+
+Output
+    Export data for plotting in external program
+        include code version info
+
+Database
+    cascading deletes (important for maintaining clean db)
+        special handling todo:
+            if process is not attached to jobs, delete it
+            delete slicing_* tables for deleted sessions.
+        verify cascades work as expected
+            can't this be done in unit tests?
+
+Job Control
+    add sentinel to end processes
+
+misc features
+    resume stopped sessions
+    add objectives/analyses to existing simulations

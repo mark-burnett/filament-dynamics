@@ -37,7 +37,7 @@ def get_job(process_id, db_session):
     except sqlalchemy.exceptions.OperationalError as oe:
         # 1213 is the sqlalchemy deadlock warning number.
         if 1213 == oe.orig[0]:
-            _log.warn('Deadlock while acquiring job %s.', job.id)
+            log.warn('Deadlock while acquiring job %s.', job.id)
             job = None
         else:
             raise
