@@ -1,0 +1,63 @@
+#    Copyright (C) 2011 Mark Burnett
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+filetype: component
+
+simulation_primitives:
+    transitions:
+        # Polymerization
+        pointed_atp_polymerization:
+            class_name: BarbedPolymerization
+            fixed_arguments:
+                state: ATP
+            variable_arguments:
+                rate: pointed_atp_polymerization_rate
+
+        pointed_adppi_polymerization:
+            class_name: BarbedPolymerization
+            fixed_arguments:
+                state: ADPPi
+            variable_arguments:
+                rate: pointed_adppi_polymerization_rate
+
+        pointed_adp_polymerization:
+            class_name: BarbedPolymerization
+            fixed_arguments:
+                state: ADP
+            variable_arguments:
+                rate: pointed_adp_polymerization_rate
+
+
+        # Depolymerization
+        pointed_atp_depolymerization:
+            class_name: BarbedDepolymerization
+            fixed_arguments:
+                state: ATP
+            variable_arguments:
+                rate: pointed_atp_depolymerization_rate
+
+        pointed_adppi_depolymerization:
+            class_name: BarbedDepolymerization
+            fixed_arguments:
+                state: ADPPi
+            variable_arguments:
+                rate: pointed_adppi_depolymerization_rate
+
+        pointed_adp_depolymerization:
+            class_name: BarbedDepolymerization
+            fixed_arguments:
+                state: ADP
+            variable_arguments:
+                rate: pointed_adp_depolymerization_rate
