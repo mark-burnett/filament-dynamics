@@ -1,0 +1,52 @@
+#    Copyright (C) 2011 Mark Burnett
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+filetype: parameter
+
+# Means and standard deviations are taken from Fujiwara 2007.
+
+variable_parameters:
+    # Barbed End
+    barbed_atp_depolymerization_rate:
+        class_name: GammaDistribution
+        mean: 1.4
+        standard_deviation: 0.8
+
+    barbed_adppi_depolymerization_rate:
+        class_name: GammaDistribution
+        mean: 0.2
+        standard_deviation: 0.1
+
+    barbed_adp_depolymerization_rate:
+        class_name: GammaDistribution
+        mean: 5.4
+        standard_deviation: 0.14
+
+
+    # Pointed End
+    pointed_atp_depolymerization_rate:
+        class_name: GammaDistribution
+        mean: 0.8
+        standard_deviation: 0.3
+
+    pointed_adppi_depolymerization_rate:
+        class_name: GammaDistribution
+        mean: 0.02
+        standard_deviation: 0.02
+
+    pointed_adp_depolymerization_rate:
+        class_name: GammaDistribution
+        mean: 0.25
+        standard_deviation: 0.04
