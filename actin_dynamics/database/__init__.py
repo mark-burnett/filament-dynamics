@@ -19,6 +19,7 @@ from . import tables
 
 from .analyses import *
 from .arguments import *
+from .behaviors import *
 from .bindings import *
 from .experiments import *
 from .jobs import *
@@ -29,9 +30,11 @@ from .parameter_sets import *
 from .parameters import *
 from .processes import *
 from .runs import *
+from .stages import *
 
 del analyses
 del arguments
+del behaviors
 del bindings
 del experiments
 del jobs
@@ -42,3 +45,4 @@ del parameter_sets
 del parameters
 del processes
 del runs
+del stages

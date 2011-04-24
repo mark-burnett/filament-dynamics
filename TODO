@@ -73,5 +73,7 @@ Job Control
     add sentinel to end processes
 
 misc features
+    various sample rates per observation
+        e.g. slower rate for capturing entire filament state
     resume stopped sessions
     add objectives/analyses to existing simulations

@@ -13,28 +13,27 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
+from sqlalchemy import orm
 
-from actin_dynamics import database
+from . import behaviors
+from . import runs
+from . import tables
 
-from unit_tests.database.base_test_cases import DBTestCase
+class Stage(object):
+    def __init__(self, experiment=None, behavior=None):
+        if experiment:
+            self.experiment = experiment
+        if behavior:
+            self.behavior = behavior
 
-class TestModel(DBTestCase):
-    def setUp(self):
-        DBTestCase.setUp(self)
-
-    def test_behavior_relationship(self):
-        m = database.Model(name='test model')
-        b = database.Behavior(model=m)
-
-        self.db_session.add(b)
-        self.db_session.commit()
-
-        b2 = self.db_session.query(database.Behavior).first()
-
-        self.assertEqual(m, b2.model)
+    def __repr__(self):
+        return "%s(id=%s, experiment_id=%s, behavior_id=%s)" % (
+               self.__class__.__name__, self.id, self.experiment_id,
+               self.behavior_id)
 
 
+orm.mapper(Stage, tables.stage_table, properties={
+    'behavior': orm.relationship(behaviors.Behavior,
+        backref=orm.backref('stage', uselist=False),
+        cascade='all', single_parent=True)})
 
-if '__main__' == __name__:
-    unittest.main()

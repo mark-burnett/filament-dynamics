@@ -15,26 +15,14 @@
 
 import unittest
 
-from actin_dynamics import database
-
 from unit_tests.database.base_test_cases import DBTestCase
 
-class TestModel(DBTestCase):
-    def setUp(self):
-        DBTestCase.setUp(self)
+class TestParameterSet(DBTestCase):
+    def test_not_written(self):
+        self.assertTrue(False, 'Missing tests.')
 
-    def test_behavior_relationship(self):
-        m = database.Model(name='test model')
-        b = database.Behavior(model=m)
-
-        self.db_session.add(b)
-        self.db_session.commit()
-
-        b2 = self.db_session.query(database.Behavior).first()
-
-        self.assertEqual(m, b2.model)
-
-
+    def test_model_relationship(self):
+        self.assertTrue(False, 'Test not written.')
 
 if '__main__' == __name__:
     unittest.main()

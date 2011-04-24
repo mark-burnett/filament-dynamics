@@ -24,8 +24,7 @@ class TestExperiment(DBTestCase):
         DBTestCase.setUp(self)
         self.model = database.Model('test model name')
 
-
-    def test_filament_bindings(self):
+    def test_filament_factory_relationship(self):
         e = database.Experiment('test expt name', model=self.model)
 
         class_name = 'test_class_name'
@@ -34,86 +33,25 @@ class TestExperiment(DBTestCase):
 
         fb = database.FilamentBinding(class_name=class_name,
                 fixed_arguments=fixed_arguments,
-                variable_arguments=variable_arguments)
-        e.filaments.append(fb)
+                variable_arguments=variable_arguments,
+                experiment=e)
 
         self.db_session.add(e)
         self.db_session.commit()
 
-        e2 = self.db_session.query(database.Experiment).first()
-        self.assertEqual(fb, e2.filaments[0])
+        fb = self.db_session.query(database.FilamentBinding).first()
+        self.assertEqual(e, fb.experiment)
 
-    def test_observer_bindings(self):
+    def test_behavior_relationship(self):
         e = database.Experiment('test expt name', model=self.model)
+        b = database.Behavior(experiment=e)
 
-        class_name = 'test_class_name'
-        fixed_arguments = {'fixed a': 'literal 1'}
-        variable_arguments = {'variable a': 'par name 1'}
-
-        cb = database.ObserverBinding(class_name=class_name,
-                fixed_arguments=fixed_arguments,
-                variable_arguments=variable_arguments)
-        e.observers.append(cb)
-
-        self.db_session.add(e)
+        self.db_session.add(b)
         self.db_session.commit()
 
-        e2 = self.db_session.query(database.Experiment).first()
-        self.assertEqual(cb, e2.observers[0])
+        b2 = self.db_session.query(database.Behavior).first()
 
-    def test_end_condition_bindings(self):
-        e = database.Experiment('test expt name', model=self.model)
-
-        class_name = 'test_class_name'
-        fixed_arguments = {'fixed a': 'literal 1'}
-        variable_arguments = {'variable a': 'par name 1'}
-
-        cb = database.EndConditionBinding(class_name=class_name,
-                fixed_arguments=fixed_arguments,
-                variable_arguments=variable_arguments)
-        e.end_conditions.append(cb)
-
-        self.db_session.add(e)
-        self.db_session.commit()
-
-        e2 = self.db_session.query(database.Experiment).first()
-        self.assertEqual(cb, e2.end_conditions[0])
-
-    def test_concentration_bindings(self):
-        e = database.Experiment('test expt name', model=self.model)
-
-        class_name = 'test_class_name'
-        fixed_arguments = {'fixed a': 'literal 1'}
-        variable_arguments = {'variable a': 'par name 1'}
-
-        cb = database.ConcentrationBinding(class_name=class_name,
-                fixed_arguments=fixed_arguments,
-                variable_arguments=variable_arguments)
-        e.concentrations.append(cb)
-
-        self.db_session.add(e)
-        self.db_session.commit()
-
-        e2 = self.db_session.query(database.Experiment).first()
-        self.assertEqual(cb, e2.concentrations[0])
-
-    def test_transition_bindings(self):
-        e = database.Experiment('test expt name', model=self.model)
-
-        class_name = 'test_class_name'
-        fixed_arguments = {'fixed a': 'literal 1'}
-        variable_arguments = {'variable a': 'par name 1'}
-
-        cb = database.TransitionBinding(class_name=class_name,
-                fixed_arguments=fixed_arguments,
-                variable_arguments=variable_arguments)
-        e.transitions.append(cb)
-
-        self.db_session.add(e)
-        self.db_session.commit()
-
-        e2 = self.db_session.query(database.Experiment).first()
-        self.assertEqual(cb, e2.transitions[0])
+        self.assertEqual(e, b2.experiment)
 
     def test_model_relationship(self):
         e = database.Experiment('test expt name', model=self.model)

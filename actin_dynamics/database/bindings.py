@@ -89,7 +89,12 @@ class EndConditionBinding(Binding): pass
 orm.mapper(EndConditionBinding, inherits=Binding,
            polymorphic_identity='end_conditions')
 
-class FilamentBinding(Binding): pass
+class FilamentBinding(Binding):
+    def __init__(self, experiment=None, *args, **kwargs):
+        if experiment:
+            self.experiment = experiment
+        Binding.__init__(self, *args, **kwargs)
+
 orm.mapper(FilamentBinding, inherits=Binding, polymorphic_identity='filaments')
 
 class ObserverBinding(Binding): pass

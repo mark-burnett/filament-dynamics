@@ -15,11 +15,10 @@
 
 from sqlalchemy import orm
 
-from . import tables
-
-from . import bindings
+from . import behaviors
 from . import experiments
 from . import parameter_sets
+from . import tables
 
 __all__ = ['Model']
 
@@ -41,13 +40,8 @@ orm.mapper(Model, tables.model_table, properties={
     'parameter_sets': orm.relationship(parameter_sets.ParameterSet,
         backref='model',
         cascade='all,delete-orphan'),
-    'concentrations': orm.relationship(bindings.ConcentrationBinding,
-        secondary=tables.model_binding_table,
-        cascade='all,delete-orphan',
-        single_parent=True),
-    'transitions': orm.relationship(bindings.TransitionBinding,
-        secondary=tables.model_binding_table,
-        cascade='all,delete-orphan',
-        single_parent=True),
+    'behavior': orm.relationship(behaviors.Behavior,
+        backref=orm.backref('model', uselist=False),
+        cascade='all', single_parent=True),
     'experiments': orm.relationship(experiments.Experiment, backref='model',
         cascade='all,delete-orphan')})

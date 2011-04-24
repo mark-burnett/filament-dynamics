@@ -16,32 +16,29 @@
 from sqlalchemy import orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
-from . import tables
+from . import behaviors
 from . import bindings
-from . import runs
 from . import experimental_data
+from . import runs
+from . import stages as _stages
+from . import tables
 
 __all__ = ['Experiment']
 
 class Experiment(object):
-    def __init__(self, name=None, model=None,
-                 filaments=None, observers=None, end_conditions=None,
-                 concentrations=None, transitions=None,
-                 analysts=None, discriminators=None):
+    def __init__(self, name=None, model=None, filament_factory=None,
+                 behavior=None, analysts=None, discriminators=None, stages=None):
         if name:
             self.name = name
         if model:
             self.model = model
-        if filaments:
-            self.filaments = filaments
-        if observers:
-            self.observers = observers
-        if end_conditions:
-            self.end_conditions = end_conditions
-        if concentrations:
-            self.concentrations = concentrations
-        if transitions:
-            self.transitions = transitions
+        if filament_factory:
+            self.filament_factory = filament_factory
+        if behavior:
+            self.behavior = behavior
+
+        if stages:
+            self.stages = stages
 
         if analysts:
             self.analysts = analysts
@@ -49,41 +46,30 @@ class Experiment(object):
             self.discriminators = discriminators
 
     def __repr__(self):
-        return "%s(id=%s, name=%r, model_id=%s)" % (
-               self.__class__.__name__, self.id, self.name, self.model_id)
+        return "%s(id=%s, name=%r, model_id=%s, behavior_id=%s)" % (
+               self.__class__.__name__, self.id, self.name, self.model_id,
+               self.behavior_id)
 
     data = _ap('_data', 'value', creator=experimental_data.Data)
 
 orm.mapper(Experiment, tables.experiment_table, properties={
-    'filaments': orm.relationship(bindings.FilamentBinding,
-        secondary=tables.experiment_binding_table,
-        cascade='all,delete-orphan',
-        single_parent=True),
-    'end_conditions': orm.relationship(bindings.EndConditionBinding,
-        secondary=tables.experiment_binding_table,
-        cascade='all,delete-orphan',
-        single_parent=True),
-    'concentrations': orm.relationship(bindings.ConcentrationBinding,
-        secondary=tables.experiment_binding_table,
-        cascade='all,delete-orphan',
-        single_parent=True),
-    'transitions': orm.relationship(bindings.TransitionBinding,
-        secondary=tables.experiment_binding_table,
-        cascade='all,delete-orphan',
-        single_parent=True),
+    'filament_factory': orm.relationship(bindings.FilamentBinding,
+        backref=orm.backref('experiment', uselist=False),
+        cascade='all,delete-orphan', single_parent=True),
 
-    'observers': orm.relationship(bindings.ObserverBinding,
-        secondary=tables.experiment_binding_table,
-        cascade='all,delete-orphan',
-        single_parent=True),
+    'behavior': orm.relationship(behaviors.Behavior,
+        backref=orm.backref('experiment', uselist=False),
+        cascade='all', single_parent=True),
+
     'analysts': orm.relationship(bindings.AnalystBinding,
         secondary=tables.experiment_binding_table,
-        cascade='all,delete-orphan',
-        single_parent=True),
+        cascade='all,delete-orphan', single_parent=True),
     'discriminators': orm.relationship(bindings.DiscriminatorBinding,
         secondary=tables.experiment_binding_table,
-        cascade='all,delete-orphan',
-        single_parent=True),
+        cascade='all,delete-orphan', single_parent=True),
+
+    'stages': orm.relationship(_stages.Stage, backref='experiment',
+        cascade='all,delete-orphan'),
 
     '_data': orm.relationship(experimental_data.Data,
         collection_class=orm.collections.attribute_mapped_collection('name')),
