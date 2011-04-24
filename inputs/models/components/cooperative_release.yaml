@@ -13,15 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-filetype: component
-
 simulation_primitives:
     transitions:
-        # Hydrolysis
-        cleavage:
-            class_name: RandomHydrolysis
+        release:
+            class_name: CooperativeHydrolysisWithByproduct
             fixed_arguments:
-                old_state: ATP
-                new_state: ADPPi
+                old_state: ADPPi
+                new_state: ADP
+                byproduct: Pi
             variable_arguments:
-                rate: cleavage_rate
+                rate:     release_rate
+                ADP:      release_cooperativity
+                Spectrin: release_cooperativity

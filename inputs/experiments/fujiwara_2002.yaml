@@ -1,0 +1,113 @@
+#    Copyright (C) 2011 Mark Burnett
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+experiments:
+    fujiwara_2002:
+        filament_factory:
+            class_name: SingleStateFixedLengthFromConcentrations
+            variable_arguments:
+                number: fujiwara_2002_number_of_filaments
+                concentration: fujiwara_2002_seed_concentration
+                filament_tip_concentration:
+                    fujiwara_2002_filament_tip_concentration
+            fixed_arguments:
+                state: ADP
+
+        stages:
+            - sample_period: fujiwara_2002_sample_period
+              concentrations:
+                ATP:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        initial_concentration:
+                            fujiwara_2002_initial_atp_concentration
+                        filament_tip_concentration:
+                            fujiwara_2002_filament_tip_concentration
+                        number: fujiwara_2002_number_of_filaments
+
+                ADPPi:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration:
+                            fujiwara_2002_filament_tip_concentration
+                        number: fujiwara_2002_number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+                ADP:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration:
+                            fujiwara_2002_filament_tip_concentration
+                        number: fujiwara_2002_number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+                Pi:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration:
+                            fujiwara_2002_filament_tip_concentration
+                        number: fujiwara_2002_number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+              end_conditions:
+                duration:
+                    class_name: Duration
+                    variable_arguments:
+                        duration: fujiwara_2002_duration
+
+
+              observers:
+                length:
+                    class_name: Length
+
+                concentrations:
+                    class_name: ConcentrationObserver
+
+        analysts:
+            - label: velocity
+              class_name: InstantaneousVelocity
+              fixed_arguments:
+                filament_observation: length
+
+            - label: velocity_autocorrelation_function
+              class_name: Autocorrelation
+              fixed_arguments:
+                filament_analysis: velocity
+
+            - label: D
+              class_name: TipDiffusion
+              fixed_arguments:
+                autocorrelation_function: velocity_autocorrelation_function
+
+            - label: factin
+              class_name: Factin
+              variable_arguments:
+                filament_tip_concentration:
+                    fujiwara_2002_filament_tip_concentration
+              fixed_arguments:
+                length: length
+            - label: concentrations
+              class_name: SaveConcentrations
+
+        fitting:
+            data:
+                bind_label:
+                    bind_definition
+            discriminators:
+                bind_label:
+                    bind_definition

@@ -13,51 +13,49 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-filetype: component
-
 simulation_primitives:
     transitions:
         # Polymerization
-        pointed_atp_polymerization:
+        barbed_atp_polymerization:
             class_name: BarbedPolymerization
             fixed_arguments:
                 state: ATP
             variable_arguments:
-                rate: pointed_atp_polymerization_rate
+                rate: barbed_atp_polymerization_rate
 
-        pointed_adppi_polymerization:
+        barbed_adppi_polymerization:
             class_name: BarbedPolymerization
             fixed_arguments:
                 state: ADPPi
             variable_arguments:
-                rate: pointed_adppi_polymerization_rate
+                rate: barbed_adppi_polymerization_rate
 
-        pointed_adp_polymerization:
+        barbed_adp_polymerization:
             class_name: BarbedPolymerization
             fixed_arguments:
                 state: ADP
             variable_arguments:
-                rate: pointed_adp_polymerization_rate
+                rate: barbed_adp_polymerization_rate
 
 
         # Depolymerization
-        pointed_atp_depolymerization:
+        barbed_atp_depolymerization:
             class_name: BarbedDepolymerization
             fixed_arguments:
                 state: ATP
             variable_arguments:
-                rate: pointed_atp_depolymerization_rate
+                rate: barbed_atp_depolymerization_rate
 
-        pointed_adppi_depolymerization:
+        barbed_adppi_depolymerization:
             class_name: BarbedDepolymerization
             fixed_arguments:
                 state: ADPPi
             variable_arguments:
-                rate: pointed_adppi_depolymerization_rate
+                rate: barbed_adppi_depolymerization_rate
 
-        pointed_adp_depolymerization:
+        barbed_adp_depolymerization:
             class_name: BarbedDepolymerization
             fixed_arguments:
                 state: ADP
             variable_arguments:
-                rate: pointed_adp_depolymerization_rate
+                rate: barbed_adp_depolymerization_rate

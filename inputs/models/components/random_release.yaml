@@ -13,14 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-filetype: component
-
 simulation_primitives:
     transitions:
-        tip_phosphate_release:
-            class_name: BarbedEndHydrolysis
-            variable_arguments:
-                rate: tip_phosphate_release
+        # Hydrolysis
+        release:
+            class_name: RandomHydrolysisWithByproduct
             fixed_arguments:
                 old_state: ADPPi
                 new_state: ADP
+                byproduct: Pi
+            variable_arguments:
+                rate: release_rate

@@ -13,9 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-filetype: model
-
 import:
-    - 'components/barbed_polymerization.yaml'
-    - 'components/cooperative_cleavage.yaml'
-    - 'components/random_release.yaml'
+    - 'models/components/barbed_polymerization.yaml'
+    - 'models/components/cooperative_cleavage.yaml'
+    - 'models/components/random_release.yaml'
