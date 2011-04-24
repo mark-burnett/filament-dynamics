@@ -15,14 +15,37 @@
 
 import unittest
 
+from actin_dynamics import database
+
 from unit_tests.database.base_test_cases import DBTestCase
 
 class TestParameterSet(DBTestCase):
-    def test_not_written(self):
-        self.assertTrue(False, 'Missing tests.')
+    def setUp(self):
+        DBTestCase.setUp(self)
+        self.model = database.Model('test model name')
+        self.parameter_set = database.ParameterSet(model=self.model)
 
     def test_model_relationship(self):
-        self.assertTrue(False, 'Test not written.')
+        self.assertEqual(self.parameter_set, self.model.parameter_sets[0])
+
+        self.db_session.add(self.parameter_set)
+        self.db_session.commit()
+
+        ps2 = self.db_session.query(database.ParameterSet).first()
+        self.assertEqual(self.model, ps2.model)
+
+    def test_dict_interface_assignment(self):
+        self.parameter_set.parameters['hi'] = 0.3
+        self.db_session.commit()
+
+        self.assertEqual(0.3, self.parameter_set.parameters['hi'])
+
+    def test_dict_interface_reassignment(self):
+        self.test_dict_interface_assignment()
+        self.parameter_set.parameters['hi'] = 7.2
+        self.db_session.commit()
+
+        self.assertEqual(7.2, self.parameter_set.parameters['hi'])
 
 if '__main__' == __name__:
     unittest.main()

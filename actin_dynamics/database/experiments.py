@@ -53,7 +53,7 @@ class Experiment(object):
     data = _ap('_data', 'value', creator=experimental_data.Data)
 
 orm.mapper(Experiment, tables.experiment_table, properties={
-    'filament_factory': orm.relationship(bindings.FilamentBinding,
+    'filament_factory': orm.relationship(bindings.FilamentFactoryBinding,
         backref=orm.backref('experiment', uselist=False),
         cascade='all,delete-orphan', single_parent=True),
 

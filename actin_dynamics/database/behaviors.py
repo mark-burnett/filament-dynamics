@@ -49,16 +49,20 @@ class Behavior(object):
 orm.mapper(Behavior, tables.behavior_table, properties={
     'concentrations': orm.relationship(bindings.ConcentrationBinding,
         secondary=tables.behavior_binding_table,
+        backref=orm.backref('behavior', uselist=False),
         cascade='all,delete-orphan', single_parent=True),
 
     'end_conditions': orm.relationship(bindings.EndConditionBinding,
         secondary=tables.behavior_binding_table,
+        backref=orm.backref('behavior', uselist=False),
         cascade='all,delete-orphan', single_parent=True),
 
     'observers': orm.relationship(bindings.ObserverBinding,
         secondary=tables.behavior_binding_table,
+        backref=orm.backref('behavior', uselist=False),
         cascade='all,delete-orphan', single_parent=True),
 
     'transitions': orm.relationship(bindings.TransitionBinding,
         secondary=tables.behavior_binding_table,
+        backref=orm.backref('behavior', uselist=False),
         cascade='all,delete-orphan', single_parent=True)})

@@ -48,19 +48,6 @@ class TestParameter(DBTestCase):
         self.assertRaises(sqlalchemy.exceptions.IntegrityError,
                 self.db_session.commit)
 
-    def test_dict_interface_assignment(self):
-        self.parameter_set.parameters['hi'] = 0.3
-        self.db_session.commit()
-
-        self.assertEqual(0.3, self.parameter_set.parameters['hi'])
-
-    def test_dict_interface_reassignment(self):
-        self.test_dict_interface_assignment()
-        self.parameter_set.parameters['hi'] = 7.2
-        self.db_session.commit()
-
-        self.assertEqual(7.2, self.parameter_set.parameters['hi'])
-
 
 if '__main__' == __name__:
     unittest.main()

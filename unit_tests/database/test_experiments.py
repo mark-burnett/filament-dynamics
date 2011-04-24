@@ -31,7 +31,7 @@ class TestExperiment(DBTestCase):
         fixed_arguments = {'fixed a': 'literal 1'}
         variable_arguments = {'variable a': 'par name 1'}
 
-        fb = database.FilamentBinding(class_name=class_name,
+        fb = database.FilamentFactoryBinding(class_name=class_name,
                 fixed_arguments=fixed_arguments,
                 variable_arguments=variable_arguments,
                 experiment=e)
@@ -39,7 +39,7 @@ class TestExperiment(DBTestCase):
         self.db_session.add(e)
         self.db_session.commit()
 
-        fb = self.db_session.query(database.FilamentBinding).first()
+        fb = self.db_session.query(database.FilamentFactoryBinding).first()
         self.assertEqual(e, fb.experiment)
 
     def test_behavior_relationship(self):

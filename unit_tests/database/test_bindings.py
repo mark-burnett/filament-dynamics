@@ -21,9 +21,11 @@ from unit_tests.database.base_test_cases import DBTestCase
 
 class TestBinding(DBTestCase):
     def test_inheritance_for_cross_talk(self):
+        b = database.Behavior()
+        c = database.ConcentrationBinding(class_name='test_class', behavior=b)
+
         m = database.Model()
-        c = database.ConcentrationBinding(class_name='test_class')
-        e = database.Experiment(model=m, concentrations=[c])
+        e = database.Experiment(model=m, behavior=b)
 
         self.db_session.add(c)
         self.db_session.commit()
@@ -38,15 +40,15 @@ class TestBinding(DBTestCase):
             ).count())
         self.assertEqual(0, self.db_session.query(database.ObserverBinding
             ).count())
-        self.assertEqual(0, self.db_session.query(database.FilamentBinding
+        self.assertEqual(0, self.db_session.query(database.FilamentFactoryBinding
             ).count())
         self.assertEqual(0, self.db_session.query(database.AnalystBinding
             ).count())
         self.assertEqual(0, self.db_session.query(database.DiscriminatorBinding
             ).count())
 
-        f = database.FilamentBinding(class_name='test_class_2')
-        e.filaments.append(f)
+        f = database.FilamentFactoryBinding(class_name='test_class_2')
+        e.filament_factory = f
         self.db_session.add(f)
         self.db_session.commit()
 
@@ -60,7 +62,7 @@ class TestBinding(DBTestCase):
             ).count())
         self.assertEqual(0, self.db_session.query(database.ObserverBinding
             ).count())
-        self.assertEqual(1, self.db_session.query(database.FilamentBinding
+        self.assertEqual(1, self.db_session.query(database.FilamentFactoryBinding
             ).count())
         self.assertEqual(0, self.db_session.query(database.AnalystBinding
             ).count())
@@ -71,9 +73,8 @@ class TestBinding(DBTestCase):
         test_data = {'test_arg_a': 'literal 1',
                      'test_arg_b': 3.2}
 
-        m = database.Model()
-        t = database.TransitionBinding(class_name='trans_class')
-        e = database.Experiment(model=m, transitions=[t])
+        b = database.Behavior()
+        t = database.TransitionBinding(class_name='trans_class', behavior=b)
         t.fixed_arguments = test_data
 
         self.db_session.add(t)
@@ -89,9 +90,8 @@ class TestBinding(DBTestCase):
         test_data = {'test_arg_a': 'par_name_1',
                      'test_arg_b': 'par_name_2'}
 
-        m = database.Model()
-        t = database.TransitionBinding(class_name='trans_class')
-        e = database.Experiment(model=m, transitions=[t])
+        b = database.Behavior()
+        t = database.TransitionBinding(class_name='trans_class', behavior=b)
         t.variable_arguments = test_data
 
         self.db_session.add(t)

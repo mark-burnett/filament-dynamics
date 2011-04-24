@@ -25,16 +25,12 @@ from . import analyses
 
 
 __all__ = ['Binding', 'AnalystBinding', 'ConcentrationBinding',
-           'DiscriminatorBinding', 'EndConditionBinding', 'FilamentBinding',
-           'ObserverBinding', 'TransitionBinding']
+           'DiscriminatorBinding', 'EndConditionBinding',
+           'FilamentFactoryBinding', 'ObserverBinding', 'TransitionBinding']
 
-
-def _create_bind(key, value):
-    value.label = key
-    return value
 
 class Binding(object):
-    def __init__(self, label=None, class_name=None,
+    def __init__(self, label=None, class_name=None, behavior=None,
                  fixed_arguments=None, variable_arguments=None):
         if label:
             self.label = label
@@ -44,6 +40,9 @@ class Binding(object):
             self.fixed_arguments = fixed_arguments
         if variable_arguments:
             self.variable_arguments = variable_arguments
+
+        if behavior:
+            self.behavior = behavior
 
     def __repr__(self):
         return ("%s(id=%s, label='%s', class_name='%s'," +
@@ -73,7 +72,7 @@ class AnalystBinding(Binding): pass
 orm.mapper(AnalystBinding, inherits=Binding, properties={
         'results': orm.relationship(analyses.Analysis,
             backref='binding', cascade='all,delete-orphan')},
-    polymorphic_identity='analyses')
+    polymorphic_identity='analysts')
 
 class ConcentrationBinding(Binding): pass
 orm.mapper(ConcentrationBinding, inherits=Binding,
@@ -89,13 +88,14 @@ class EndConditionBinding(Binding): pass
 orm.mapper(EndConditionBinding, inherits=Binding,
            polymorphic_identity='end_conditions')
 
-class FilamentBinding(Binding):
+class FilamentFactoryBinding(Binding):
     def __init__(self, experiment=None, *args, **kwargs):
         if experiment:
             self.experiment = experiment
         Binding.__init__(self, *args, **kwargs)
 
-orm.mapper(FilamentBinding, inherits=Binding, polymorphic_identity='filaments')
+orm.mapper(FilamentFactoryBinding, inherits=Binding,
+           polymorphic_identity='filament_factories')
 
 class ObserverBinding(Binding): pass
 orm.mapper(ObserverBinding, inherits=Binding, polymorphic_identity='observers')
