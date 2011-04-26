@@ -3,6 +3,7 @@
 3) Fix primitives (consistent naming, unittests, etc)
 4) Write simple controller
 
+
 allow experiment analyses/slicables to be used as inputs for other experiments
     allows multi-stage simulations
     allows key parameters to be calculated for a model (e.g. crit conc)
@@ -73,6 +74,9 @@ Job Control
     add sentinel to end processes
 
 misc features
+    consider implementing 'derived parameters'
+        e.g. simulation volume (could simplify input files)
+
     various sample rates per observation
         e.g. slower rate for capturing entire filament state
     resume stopped sessions

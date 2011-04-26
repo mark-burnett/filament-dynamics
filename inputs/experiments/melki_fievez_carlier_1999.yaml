@@ -14,21 +14,24 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 experiments:
-    blanchoin_pollard_2002:
+    melki_fievez_carlier_1999:
         filament_factory:
-            class_name: InertSeed
-            fixed_arguments:
-                state: Spectrin
+            class_name: SingleStateFixedLengthFromConcentrations
             variable_arguments:
-                number: blanchoin_pollard_2002_number_of_filaments
+                number: melki_fievez_carlier_1999_number_of_filaments
+                concentration: melki_fievez_carlier_1999_seed_concentration
+                filament_tip_concentration:
+                    melki_fievez_carlier_1999_filament_tip_concentration
+            fixed_arguments:
+                state: ADP
 
         stages:
-            - sample_period: blanchoin_pollard_2002_sample_period
+            - sample_period: melki_fievez_carlier_1999_sample_period
 
               transitions:
                 import:
-                    # NOTE Spectin seeds have Barbed poly/depoly only
                     - 'components/barbed_polymerization.yaml'
+                    - 'components/pointed_polymerization.yaml'
 
                     - 'components/pi_release_in_solution.yaml'
 
@@ -37,17 +40,17 @@ experiments:
                     class_name: FixedReagent
                     variable_arguments:
                         initial_concentration:
-                            blanchoin_pollard_2002_initial_atp_concentration
+                            melki_fievez_carlier_1999_initial_atp_concentration
                         filament_tip_concentration:
-                            blanchoin_pollard_2002_filament_tip_concentration
-                        number: blanchoin_pollard_2002_number_of_filaments
+                            melki_fievez_carlier_1999_filament_tip_concentration
+                        number: melki_fievez_carlier_1999_number_of_filaments
 
                 ADPPi:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration:
-                            blanchoin_pollard_2002_filament_tip_concentration
-                        number: blanchoin_pollard_2002_number_of_filaments
+                            melki_fievez_carlier_1999_filament_tip_concentration
+                        number: melki_fievez_carlier_1999_number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -55,8 +58,8 @@ experiments:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration:
-                            blanchoin_pollard_2002_filament_tip_concentration
-                        number: blanchoin_pollard_2002_number_of_filaments
+                            melki_fievez_carlier_1999_filament_tip_concentration
+                        number: melki_fievez_carlier_1999_number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -64,8 +67,8 @@ experiments:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration:
-                            blanchoin_pollard_2002_filament_tip_concentration
-                        number: blanchoin_pollard_2002_number_of_filaments
+                            melki_fievez_carlier_1999_filament_tip_concentration
+                        number: melki_fievez_carlier_1999_number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -73,13 +76,10 @@ experiments:
                 duration:
                     class_name: Duration
                     variable_arguments:
-                        duration: blanchoin_pollard_2002_duration
+                        duration: melki_fievez_carlier_1999_duration
 
 
               observers:
-                length:
-                    class_name: Length
-
                 concentrations:
                     class_name: ConcentrationObserver
 
@@ -99,6 +99,7 @@ experiments:
                     state: ADP
 
 
+
         analysts:
             - label: concentrations
               class_name: SaveConcentrations
@@ -108,7 +109,8 @@ experiments:
             - label: f_atp
               class_name: StandardErrorMean
               variable_arguments:
-                  scale_by: blanchoin_pollard_2002_filament_tip_concentration
+                scale_by:
+                    melki_fievez_carlier_1999_filament_tip_concentration
               fixed_arguments:
                   observation_name: f_atp
                   observation_type: filament
@@ -116,7 +118,8 @@ experiments:
             - label: f_adppi
               class_name: StandardErrorMean
               variable_arguments:
-                  scale_by: blanchoin_pollard_2002_filament_tip_concentration
+                scale_by:
+                    melki_fievez_carlier_1999_filament_tip_concentration
               fixed_arguments:
                   observation_name: f_adppi
                   observation_type: filament
@@ -124,7 +127,8 @@ experiments:
             - label: f_adp
               class_name: StandardErrorMean
               variable_arguments:
-                  scale_by: blanchoin_pollard_2002_filament_tip_concentration
+                scale_by:
+                    melki_fievez_carlier_1999_filament_tip_concentration
               fixed_arguments:
                   observation_name: f_adp
                   observation_type: filament
@@ -137,43 +141,38 @@ experiments:
                 f_adp:   1
 
 
-            - label: unnormalized_pyrene_intensity
-              class_name: SumAnalyses
-              variable_arguments:
-                f_atp:   pyrene_atp_weight
-                f_adppi: pyrene_adppi_weight
-                f_adp:   pyrene_adp_weight
-
-
         fitting:
             data:
-                f_adppi:
+                pi:
                     class_name: DatReader
                     fixed_arguments:
-                        filename: 'blanchoin_pollard_2002/adppi_concentration.dat'
+                        filename:
+                            'melki_fievez_carlier_1999/phosphate_concentration.dat'
 
-                pyrene_intensity:
+                f_actin:
                     class_name: DatReader
                     variable_arguments:
-                        sample_period: blanchoin_pollard_2002_sample_period
-                        xmax: blanchoin_pollard_2002_simulation_duration
+                        sample_period: melki_fievez_carlier_1999_sample_period
+                        xmax: melki_fievez_carlier_1999_simulation_duration
                     fixed_arguments:
                         xmin: 0
-                        filename: 'blanchoin_pollard_2002/fluorescence.dat'
+                        filename:
+                            'melki_fievez_carlier_1999/factin_concentration.dat'
                         interpolate_data: True
 
 
             discriminators:
-                blanchoin_pollard_2002_adppi_fit:
-                    class_name: SimpleDataComparison
+                melki_fievez_carlier_1999_pi_fit:
+                    class_name: ConcentrationDataComparison
                     fixed_arguments:
-                        analysis_name: f_adppi
-                        data_name:     f_adppi
+                        concentration_analysis: concentrations
+                        species:   Pi
+                        data_name: pi
                         residual_type: naked_chi_squared
 
-                blanchoin_pollard_2002_pyrene_fit:
-                    class_name: RenormalizingDataComparison
+                melki_fievez_carlier_1999_f_actin_fit:
+                    class_name: SimpleDataComparison
                     fixed_arguments:
-                        analysis_name: unnormalized_pyrene_intensity
-                        data_name:     pyrene_intensity
+                        analysis_name: f_actin
+                        data_name:     f_actin
                         residual_type: naked_chi_squared

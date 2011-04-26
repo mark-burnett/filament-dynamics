@@ -89,12 +89,67 @@ experiments:
                 concentrations:
                     class_name: ConcentrationObserver
 
+                filament_count:
+                    class_name: FilamentCounter
+
 
         analysts:
+            - label: concentrations
+              class_name: SaveConcentrations
+              fixed_parameters:
+                observation_name: concentrations
+
+            - label: f_atp
+              class_name: StandardErrorMean
+              variable_arguments:
+                  scale_by: fujiwara_2002_filament_tip_concentration
+              fixed_arguments:
+                  observation_name: f_atp
+                  observation_type: filament
+
+            - label: f_adppi
+              class_name: StandardErrorMean
+              variable_arguments:
+                  scale_by: fujiwara_2002_filament_tip_concentration
+              fixed_arguments:
+                  observation_name: f_adppi
+                  observation_type: filament
+
+            - label: f_adp
+              class_name: StandardErrorMean
+              variable_arguments:
+                  scale_by: fujiwara_2002_filament_tip_concentration
+              fixed_arguments:
+                  observation_name: f_adp
+                  observation_type: filament
+
+            - label: f_actin
+              class_name: SumAnalyses
+              fixed_arguments:
+                f_atp:   1
+                f_adppi: 1
+                f_adp:   1
+
+
+            - label: filament_count
+              class_name: SaveObservation
+              fixed_arguments:
+                observation_name: filament_count
+                observation_type: concentration
+
+
+            - label: filament_lengths
+              class_name: SaveObservation
+              fixed_arguments:
+                observation_name: length
+                observation_type: filament
+
             - label: velocity
               class_name: InstantaneousVelocity
               fixed_arguments:
                 filament_observation: length
+              variable_arguments:
+                start_time: fujiwara_2002_D_window_start
 
             - label: velocity_autocorrelation_function
               class_name: Autocorrelation
@@ -106,16 +161,19 @@ experiments:
               fixed_arguments:
                 autocorrelation_function: velocity_autocorrelation_function
 
-            - label: factin
-              class_name: Factin
-              variable_arguments:
-                filament_tip_concentration:
-                    fujiwara_2002_filament_tip_concentration
-              fixed_arguments:
-                length: length
 
-            - label: concentrations
-              class_name: SaveConcentrations
+            - label: length_fluctuations
+              class_name: LengthFluctuations
+              variable_arguments:
+                start_time: fujiwara_2002_D_window_start
+                tau_min: fujiwara_2002_sample_period
+                tau_max: fujiwara_2002_tau_max
+
+            - label: alternate_D
+              class_name: AlternateTipDiffusion
+              fixed_arguments:
+                fluctuation_analysis: length_fluctuations
+
 
         fitting:
             discriminators:

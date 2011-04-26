@@ -30,7 +30,7 @@ import:
     - 'parameters/fit/fast_tip_release.yaml'
     - 'parameters/fit/reversible_release.yaml'
 
-    # Secondary parameters that must be fit.
+    # Secondary parameters (fit and fixed).
     - 'parameters/secondary/fujiwara_2002.yaml'
     - 'parameters/secondary/blanchoin_pollard_2002.yaml'
     - 'parameters/secondary/melki_fievez_carlier_1996.yaml'
