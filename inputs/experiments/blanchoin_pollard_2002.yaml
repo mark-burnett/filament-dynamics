@@ -1,0 +1,160 @@
+#    Copyright (C) 2011 Mark Burnett
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+experiments:
+    blanchoin_pollard_2002:
+        filament_factory:
+            # XXX Inert filament (spectrin)
+            class_name: SingleStateFixedLengthFromConcentrations
+            variable_arguments:
+                number: blanchoin_pollard_2002_number_of_filaments
+                concentration: blanchoin_pollard_2002_seed_concentration
+                filament_tip_concentration:
+                    blanchoin_pollard_2002_filament_tip_concentration
+            fixed_arguments:
+                state: ADP
+
+        stages:
+            - sample_period: blanchoin_pollard_2002_sample_period
+              concentrations:
+                ATP:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        initial_concentration:
+                            blanchoin_pollard_2002_initial_atp_concentration
+                        filament_tip_concentration:
+                            blanchoin_pollard_2002_filament_tip_concentration
+                        number: blanchoin_pollard_2002_number_of_filaments
+
+                ADPPi:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration:
+                            blanchoin_pollard_2002_filament_tip_concentration
+                        number: blanchoin_pollard_2002_number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+                ADP:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration:
+                            blanchoin_pollard_2002_filament_tip_concentration
+                        number: blanchoin_pollard_2002_number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+                Pi:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration:
+                            blanchoin_pollard_2002_filament_tip_concentration
+                        number: blanchoin_pollard_2002_number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+              end_conditions:
+                duration:
+                    class_name: Duration
+                    variable_arguments:
+                        duration: fujiwara_2002_duration
+
+
+              observers:
+                length:
+                    class_name: Length
+
+                concentrations:
+                    class_name: ConcentrationObserver
+
+
+        analysts:
+            - label: concentrations
+              class_name: SaveConcentrations
+
+            - label: factin
+              class_name: StateCount
+              variable_arguments:
+                scale_by:
+                    blanchoin_pollard_2002_filament_tip_concentration
+              fixed_arguments:
+                ATP:   1
+                ADPPi: 1
+                ADP:   1
+
+            - label: unnormalized_pyrene_intensity
+              class_name: StateCount
+              variable_arguments:
+                ATP:   pyrene_atp_weight
+                ADPPi: pyrene_adppi_weight
+                ADP:   pyrene_adp_weight
+
+            - label: f_atp
+              class_name: StateCount
+              variable_arguments:
+                scale_by:
+                    blanchoin_pollard_2002_filament_tip_concentration
+              fixed_arguments:
+                ATP: 1
+
+            - label: f_adppi
+              class_name: StateCount
+              variable_arguments:
+                scale_by:
+                    blanchoin_pollard_2002_filament_tip_concentration
+              fixed_arguments:
+                ADPPi: 1
+
+            - label: f_adp
+              class_name: StateCount
+              variable_arguments:
+                scale_by:
+                    blanchoin_pollard_2002_filament_tip_concentration
+              fixed_arguments:
+                ADP: 1
+
+
+        fitting:
+            data:
+                f_adppi:
+                    class_name: DatReader
+                    fixed_arguments:
+                        filename: 'blanchoin_pollard_2002/adppi_concentration.dat'
+
+                pyrene_intensity:
+                    class_name: DatReader
+                    variable_arguments:
+                        sample_period: blanchoin_pollard_2002_sample_period
+                        xmax: blanchoin_pollard_2002_simulation_duration
+                    fixed_arguments:
+                        xmin: 0
+                        filename: 'blanchoin_pollard_2002/fluorescence.dat'
+                        interpolate_data: True
+
+
+            discriminators:
+                blanchoin_pollard_2002_adppi_fit:
+                    class_name: SimpleDataComparison
+                    fixed_arguments:
+                        analysis_name: f_adppi
+                        data_name:     f_adppi
+                        residual_type: naked_chi_squared
+
+                blanchoin_pollard_2002_pyrene_fit:
+                    class_name: RenormalizingDataComparison
+                    fixed_arguments:
+                        analysis_name: unnormalized_pyrene_intensity
+                        data_name:     pyrene_intensity
+                        residual_type: naked_chi_squared

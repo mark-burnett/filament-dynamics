@@ -88,6 +88,7 @@ experiments:
                 concentrations:
                     class_name: ConcentrationObserver
 
+
         analysts:
             - label: velocity
               class_name: InstantaneousVelocity
@@ -111,15 +112,15 @@ experiments:
                     fujiwara_2002_filament_tip_concentration
               fixed_arguments:
                 length: length
+
             - label: concentrations
               class_name: SaveConcentrations
 
         fitting:
             discriminators:
-                fujiwara_diffusion_fit:
-                    class_name: DiffusionCoefficientFit
-                    variable_arguments:
-                        expected_value: 28.7 # XXX Check value
+                fujiwara_2002_diffusion_fit:
+                    class_name: ScalarComparison
                     fixed_arguments:
                         analysis_name: D
+                        expected_value: 28.7 # XXX Check value
                         residual_type: naked_chi_squared
