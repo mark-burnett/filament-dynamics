@@ -111,7 +111,7 @@ experiments:
                   scale_by: blanchoin_pollard_2002_filament_tip_concentration
               fixed_arguments:
                   observation_name: f_atp
-                  observation_type: filament
+                  observation_type: multiple
 
             - label: f_adppi
               class_name: StandardErrorMean
@@ -119,7 +119,7 @@ experiments:
                   scale_by: blanchoin_pollard_2002_filament_tip_concentration
               fixed_arguments:
                   observation_name: f_adppi
-                  observation_type: filament
+                  observation_type: multiple
 
             - label: f_adp
               class_name: StandardErrorMean
@@ -127,7 +127,7 @@ experiments:
                   scale_by: blanchoin_pollard_2002_filament_tip_concentration
               fixed_arguments:
                   observation_name: f_adp
-                  observation_type: filament
+                  observation_type: multiple
 
             - label: f_actin
               class_name: SumAnalyses

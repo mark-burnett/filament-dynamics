@@ -14,19 +14,20 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 experiments:
-    fujiwara_2002:
+    mitchison_2008:
         filament_factory:
             class_name: SingleStateFixedLengthFromConcentrations
             variable_arguments:
-                number: fujiwara_2002_number_of_filaments
-                concentration: fujiwara_2002_seed_concentration
+                number: mitchison_2008_number_of_filaments
+                concentration: mitchison_2008_seed_concentration
                 filament_tip_concentration:
-                    fujiwara_2002_filament_tip_concentration
+                    mitchison_2008_filament_tip_concentration
             fixed_arguments:
                 state: ADP
 
         stages:
-            - sample_period: fujiwara_2002_sample_period
+            # Polymerization Stage
+            - sample_period: mitchison_2008_polymerization_sample_period
 
               transitions:
                 import:
@@ -42,17 +43,17 @@ experiments:
                     class_name: FixedReagent
                     variable_arguments:
                         initial_concentration:
-                            fujiwara_2002_initial_atp_concentration
+                            mitchison_2008_polymerization_initial_atp_concentration
                         filament_tip_concentration:
-                            fujiwara_2002_filament_tip_concentration
-                        number: fujiwara_2002_number_of_filaments
+                            mitchison_2008_filament_tip_concentration
+                        number: mitchison_2008_number_of_filaments
 
                 ADPPi:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration:
-                            fujiwara_2002_filament_tip_concentration
-                        number: fujiwara_2002_number_of_filaments
+                            mitchison_2008_filament_tip_concentration
+                        number: mitchison_2008_number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -60,8 +61,8 @@ experiments:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration:
-                            fujiwara_2002_filament_tip_concentration
-                        number: fujiwara_2002_number_of_filaments
+                            mitchison_2008_filament_tip_concentration
+                        number: mitchison_2008_number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -69,8 +70,8 @@ experiments:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration:
-                            fujiwara_2002_filament_tip_concentration
-                        number: fujiwara_2002_number_of_filaments
+                            mitchison_2008_filament_tip_concentration
+                        number: mitchison_2008_number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -79,8 +80,62 @@ experiments:
                 duration:
                     class_name: Duration
                     variable_arguments:
-                        duration: fujiwara_2002_duration
+                        duration: mitchison_2008_polymerization_duration
 
+
+            # Depolymerization Stage
+            - sample_period: mitchison_2008_depolymerization_sample_period
+              transitions:
+                import:
+                    - 'components/barbed_polymerization.yaml'
+                    - 'components/pointed_polymerization.yaml'
+                    - 'components/nucleotide_exchange.yaml'
+
+                    - 'components/pi_release_in_solution.yaml'
+
+
+              concentrations:
+                ATP:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration:
+                            mitchison_2008_filament_tip_concentration
+                        number: mitchison_2008_number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+                ADPPi:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration:
+                            mitchison_2008_filament_tip_concentration
+                        number: mitchison_2008_number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+                ADP:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration:
+                            mitchison_2008_filament_tip_concentration
+                        number: mitchison_2008_number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+                Pi:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration:
+                            mitchison_2008_filament_tip_concentration
+                        number: mitchison_2008_number_of_filaments
+                    fixed_arguments:
+                        initial_concentration: 0
+
+              end_conditions:
+                duration:
+                    class_name: Duration
+                    variable_arguments:
+                        duration: mitchison_2008_depolymerization_duration
 
               observers:
                 length:
@@ -117,7 +172,7 @@ experiments:
             - label: f_atp
               class_name: StandardErrorMean
               variable_arguments:
-                  scale_by: fujiwara_2002_filament_tip_concentration
+                  scale_by: mitchison_2008_filament_tip_concentration
               fixed_arguments:
                   observation_name: f_atp
                   observation_type: multiple
@@ -125,7 +180,7 @@ experiments:
             - label: f_adppi
               class_name: StandardErrorMean
               variable_arguments:
-                  scale_by: fujiwara_2002_filament_tip_concentration
+                  scale_by: mitchison_2008_filament_tip_concentration
               fixed_arguments:
                   observation_name: f_adppi
                   observation_type: multiple
@@ -133,7 +188,7 @@ experiments:
             - label: f_adp
               class_name: StandardErrorMean
               variable_arguments:
-                  scale_by: fujiwara_2002_filament_tip_concentration
+                  scale_by: mitchison_2008_filament_tip_concentration
               fixed_arguments:
                   observation_name: f_adp
                   observation_type: multiple
@@ -157,42 +212,21 @@ experiments:
               fixed_arguments:
                 observation_name: length
 
+
             - label: velocity
               class_name: InstantaneousVelocity
               fixed_arguments:
                 filament_observation: length
+
+            - label: fractional_stability
+              class_name: ThresholdFractionalStability
+              fixed_arguments:
+                filament_observation: length
+                velocity_analysis: velocity
               variable_arguments:
-                start_time: fujiwara_2002_D_window_start
-
-            - label: velocity_autocorrelation_function
-              class_name: Autocorrelation
-              fixed_arguments:
-                filament_analysis: velocity
-
-            - label: D
-              class_name: TipDiffusion
-              fixed_arguments:
-                autocorrelation_function: velocity_autocorrelation_function
-
-
-            - label: length_fluctuations
-              class_name: LengthFluctuations
-              variable_arguments:
-                start_time: fujiwara_2002_D_window_start
-                tau_min: fujiwara_2002_sample_period
-                tau_max: fujiwara_2002_tau_max
-
-            - label: alternate_D
-              class_name: AlternateTipDiffusion
-              fixed_arguments:
-                fluctuation_analysis: length_fluctuations
+                threshold: mitchison_2008_stability_threshold
 
 
         fitting:
+            data:
             discriminators:
-                fujiwara_2002_diffusion_fit:
-                    class_name: ScalarComparison
-                    fixed_arguments:
-                        analysis_name: D
-                        expected_value: 28.7 # XXX Check value
-                        residual_type: naked_chi_squared
