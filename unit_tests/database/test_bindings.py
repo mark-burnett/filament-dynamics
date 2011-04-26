@@ -21,11 +21,10 @@ from unit_tests.database.base_test_cases import DBTestCase
 
 class TestBinding(DBTestCase):
     def test_inheritance_for_cross_talk(self):
-        b = database.Behavior()
-        c = database.ConcentrationBinding(class_name='test_class', behavior=b)
-
         m = database.Model()
-        e = database.Experiment(model=m, behavior=b)
+        e = database.Experiment(model=m)
+        s = database.Stage(experiment=e)
+        c = database.ConcentrationBinding(class_name='test_class', stage=s)
 
         self.db_session.add(c)
         self.db_session.commit()
@@ -73,8 +72,10 @@ class TestBinding(DBTestCase):
         test_data = {'test_arg_a': 'literal 1',
                      'test_arg_b': 3.2}
 
-        b = database.Behavior()
-        t = database.TransitionBinding(class_name='trans_class', behavior=b)
+        m = database.Model()
+        e = database.Experiment(model=m)
+        s = database.Stage(experiment=e)
+        t = database.TransitionBinding(class_name='trans_class', stage=s)
         t.fixed_arguments = test_data
 
         self.db_session.add(t)
@@ -90,8 +91,10 @@ class TestBinding(DBTestCase):
         test_data = {'test_arg_a': 'par_name_1',
                      'test_arg_b': 'par_name_2'}
 
-        b = database.Behavior()
-        t = database.TransitionBinding(class_name='trans_class', behavior=b)
+        m = database.Model()
+        e = database.Experiment(model=m)
+        s = database.Stage(experiment=e)
+        t = database.TransitionBinding(class_name='trans_class', stage=s)
         t.variable_arguments = test_data
 
         self.db_session.add(t)

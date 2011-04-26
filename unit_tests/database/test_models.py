@@ -22,18 +22,13 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestModel(DBTestCase):
     def setUp(self):
         DBTestCase.setUp(self)
+        self.model = database.Model(name='test model')
 
-    def test_behavior_relationship(self):
-        m = database.Model(name='test model')
-        b = database.Behavior(model=m)
+    def test_fixed_parameters(self):
+        test_values = {'parA': 1.2, 'parB': 3.6}
+        self.model.fixed_parameters = test_values
 
-        self.db_session.add(b)
-        self.db_session.commit()
-
-        b2 = self.db_session.query(database.Behavior).first()
-
-        self.assertEqual(m, b2.model)
-
+        self.assertEqual(test_values, self.model.fixed_parameters)
 
 
 if '__main__' == __name__:

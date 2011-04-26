@@ -14,17 +14,18 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from sqlalchemy import orm
+from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
-from . import behaviors
 from . import experiments
 from . import parameter_sets
+from . import parameters
 from . import tables
 
 __all__ = ['Model']
 
 class Model(object):
     def __init__(self, name=None, session=None, concentrations=None,
-                 transitions=None):
+                 transitions=None, fixed_parameters=None):
         if name:
             self.name = name
         if concentrations:
@@ -32,16 +33,23 @@ class Model(object):
         if transitions:
             self.transitions = transitions
 
+        # Provide an empty parameter set by defualt.
+        if fixed_parameters:
+            self.fixed_parameters = fixed_parameters
+
     def __repr__(self):
         return "%s(id=%s, name=%r)" % (
             self.__class__.__name__, self.id, self.name)
 
+    fixed_parameters = _ap('_fixed_parameters', 'value',
+                           creator=parameters.FixedParameter)
+
+
 orm.mapper(Model, tables.model_table, properties={
     'parameter_sets': orm.relationship(parameter_sets.ParameterSet,
-        backref='model',
-        cascade='all,delete-orphan'),
-    'behavior': orm.relationship(behaviors.Behavior,
-        backref=orm.backref('model', uselist=False),
-        cascade='all', single_parent=True),
-    'experiments': orm.relationship(experiments.Experiment, backref='model',
-        cascade='all,delete-orphan')})
+        backref='model', cascade='all,delete-orphan'),
+    'experiments': orm.relationship(experiments.Experiment,
+        backref='model', cascade='all,delete-orphan'),
+    '_fixed_parameters': orm.relationship(parameters.FixedParameter,
+        collection_class=orm.collections.attribute_mapped_collection('name'),
+        backref='model', cascade='all,delete-orphan')})

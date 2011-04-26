@@ -19,15 +19,15 @@ from actin_dynamics import database
 
 from unit_tests.database.base_test_cases import DBTestCase
 
-class TestExperiment(DBTestCase):
+class TestStage(DBTestCase):
     def setUp(self):
         DBTestCase.setUp(self)
         self.model = database.Model('test model')
         self.experiment = database.Experiment('test expt', model=self.model)
+        self.stage = database.Stage(experiment=self.experiment)
 
     def test_experiment_relationship(self):
-        s = database.Stage(experiment=self.experiment)
-        self.assertEqual(self.experiment.stages[0], s)
+        self.assertEqual(self.experiment.stages[0], self.stage)
 
         s2 = database.Stage(experiment=self.experiment)
         self.assertEqual(self.experiment.stages[1], s2)
@@ -36,18 +36,71 @@ class TestExperiment(DBTestCase):
         self.db_session.commit()
 
         e = self.db_session.query(database.Experiment).first()
-        self.assertEqual([s, s2], e.stages)
+        self.assertEqual([self.stage, s2], e.stages)
 
-    def test_behavior_relationship(self):
-        s = database.Stage(experiment=self.experiment)
-        b = database.Behavior(stage=s)
+    def test_observer_bindings(self):
+        class_name = 'test_class_name'
+        fixed_arguments = {'fixed a': 'literal 1'}
+        variable_arguments = {'variable a': 'par name 1'}
 
-        self.db_session.add(b)
+        cb = database.ObserverBinding(class_name=class_name,
+                fixed_arguments=fixed_arguments,
+                variable_arguments=variable_arguments)
+        self.stage.observers.append(cb)
+
+        self.db_session.add(cb)
         self.db_session.commit()
 
-        b2 = self.db_session.query(database.Behavior).first()
+        s2 = self.db_session.query(database.Stage).first()
+        self.assertEqual(cb, s2.observers[0])
 
-        self.assertEqual(s, b2.stage)
+    def test_end_condition_bindings(self):
+        class_name = 'test_class_name'
+        fixed_arguments = {'fixed a': 'literal 1'}
+        variable_arguments = {'variable a': 'par name 1'}
+
+        cb = database.EndConditionBinding(class_name=class_name,
+                fixed_arguments=fixed_arguments,
+                variable_arguments=variable_arguments)
+        self.stage.end_conditions.append(cb)
+
+        self.db_session.add(cb)
+        self.db_session.commit()
+
+        s2 = self.db_session.query(database.Stage).first()
+        self.assertEqual(cb, s2.end_conditions[0])
+
+    def test_concentration_bindings(self):
+        class_name = 'test_class_name'
+        fixed_arguments = {'fixed a': 'literal 1'}
+        variable_arguments = {'variable a': 'par name 1'}
+
+        cb = database.ConcentrationBinding(class_name=class_name,
+                fixed_arguments=fixed_arguments,
+                variable_arguments=variable_arguments)
+        self.stage.concentrations.append(cb)
+
+        self.db_session.add(cb)
+        self.db_session.commit()
+
+        s2 = self.db_session.query(database.Stage).first()
+        self.assertEqual(cb, s2.concentrations[0])
+
+    def test_transition_bindings(self):
+        class_name = 'test_class_name'
+        fixed_arguments = {'fixed a': 'literal 1'}
+        variable_arguments = {'variable a': 'par name 1'}
+
+        cb = database.TransitionBinding(class_name=class_name,
+                fixed_arguments=fixed_arguments,
+                variable_arguments=variable_arguments)
+        self.stage.transitions.append(cb)
+
+        self.db_session.add(cb)
+        self.db_session.commit()
+
+        s2 = self.db_session.query(database.Stage).first()
+        self.assertEqual(cb, s2.transitions[0])
 
 
 if '__main__' == __name__:

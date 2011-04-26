@@ -19,7 +19,6 @@ from . import tables
 
 from .analyses import *
 from .arguments import *
-from .behaviors import *
 from .bindings import *
 from .experiments import *
 from .jobs import *
@@ -34,7 +33,6 @@ from .stages import *
 
 del analyses
 del arguments
-del behaviors
 del bindings
 del experiments
 del jobs

@@ -22,7 +22,9 @@ from unit_tests.database.base_test_cases import DBTestCase
 class TestParameterSet(DBTestCase):
     def setUp(self):
         DBTestCase.setUp(self)
+        self.fixed_parameters = {'fpA': 1.2, 'fpB': -2.3}
         self.model = database.Model('test model name')
+        self.model.fixed_parameters = self.fixed_parameters
         self.parameter_set = database.ParameterSet(model=self.model)
 
     def test_model_relationship(self):
@@ -34,18 +36,30 @@ class TestParameterSet(DBTestCase):
         ps2 = self.db_session.query(database.ParameterSet).first()
         self.assertEqual(self.model, ps2.model)
 
-    def test_dict_interface_assignment(self):
-        self.parameter_set.parameters['hi'] = 0.3
+    def test_variable_parameters_assignment(self):
+        self.parameter_set.variable_parameters['hi'] = 0.3
         self.db_session.commit()
 
-        self.assertEqual(0.3, self.parameter_set.parameters['hi'])
+        self.assertEqual(0.3, self.parameter_set.variable_parameters['hi'])
 
-    def test_dict_interface_reassignment(self):
-        self.test_dict_interface_assignment()
-        self.parameter_set.parameters['hi'] = 7.2
+    def test_variable_parameters_reassignment(self):
+        self.test_variable_parameters_assignment()
+        self.parameter_set.variable_parameters['hi'] = 7.2
         self.db_session.commit()
 
-        self.assertEqual(7.2, self.parameter_set.parameters['hi'])
+        self.assertEqual(7.2, self.parameter_set.variable_parameters['hi'])
+
+    def test_fixed_parameters(self):
+        self.assertEqual(self.fixed_parameters,
+                         self.parameter_set.fixed_parameters)
+
+    def test_all_parameters(self):
+        var_pars = {'vpA': 20.3, 'vpB': 11.7}
+        self.parameter_set.variable_parameters = var_pars
+
+        total_pars = dict(var_pars)
+        total_pars.update(self.fixed_parameters)
+        self.assertEqual(total_pars, self.parameter_set.all_parameters)
 
 if '__main__' == __name__:
     unittest.main()

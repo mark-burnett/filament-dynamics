@@ -15,25 +15,38 @@
 
 from sqlalchemy import orm
 
-from . import behaviors
-from . import runs
+from . import bindings
 from . import tables
 
+__all__ = ['Stage']
+
 class Stage(object):
-    def __init__(self, experiment=None, behavior=None):
+    def __init__(self, experiment=None):
         if experiment:
             self.experiment = experiment
-        if behavior:
-            self.behavior = behavior
 
     def __repr__(self):
-        return "%s(id=%s, experiment_id=%s, behavior_id=%s)" % (
-               self.__class__.__name__, self.id, self.experiment_id,
-               self.behavior_id)
+        return "%s(id=%s, experiment_id=%s)" % (
+               self.__class__.__name__, self.id, self.experiment_id)
 
 
 orm.mapper(Stage, tables.stage_table, properties={
-    'behavior': orm.relationship(behaviors.Behavior,
+    'concentrations': orm.relationship(bindings.ConcentrationBinding,
+        secondary=tables.stage_binding_table,
         backref=orm.backref('stage', uselist=False),
-        cascade='all', single_parent=True)})
+        cascade='all,delete-orphan', single_parent=True),
 
+    'end_conditions': orm.relationship(bindings.EndConditionBinding,
+        secondary=tables.stage_binding_table,
+        backref=orm.backref('stage', uselist=False),
+        cascade='all,delete-orphan', single_parent=True),
+
+    'observers': orm.relationship(bindings.ObserverBinding,
+        secondary=tables.stage_binding_table,
+        backref=orm.backref('stage', uselist=False),
+        cascade='all,delete-orphan', single_parent=True),
+
+    'transitions': orm.relationship(bindings.TransitionBinding,
+        secondary=tables.stage_binding_table,
+        backref=orm.backref('stage', uselist=False),
+        cascade='all,delete-orphan', single_parent=True)})

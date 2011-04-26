@@ -121,19 +121,6 @@ binding_table = schema.Table('binding', global_state.metadata,
         schema.Column('label', schema.types.String(MAX_NAME_LENGTH)),
         mysql_engine='InnoDB')
 
-behavior_table = schema.Table('behavior', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        mysql_engine='InnoDB')
-
-behavior_binding_table = schema.Table('behavior_binding', global_state.metadata,
-#        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('binding_id', schema.ForeignKey('binding.id'),
-                      primary_key=True),
-#                      unique=True, nullable=False),
-        schema.Column('behavior_id', schema.ForeignKey('behavior.id'),
-                      nullable=False),
-        mysql_engine='InnoDB')
-
 
 # Bind arguments
 argument_table = schema.Table('argument', global_state.metadata,
@@ -169,6 +156,13 @@ variable_argument_table = schema.Table('variable_argument',
 
 
 # Connect bindings to configuration.
+stage_binding_table = schema.Table('stage_binding', global_state.metadata,
+        schema.Column('binding_id', schema.ForeignKey('binding.id'),
+                      primary_key=True),
+        schema.Column('stage_id', schema.ForeignKey('stage.id'),
+                      nullable=False),
+        mysql_engine='InnoDB')
+
 experiment_binding_table = schema.Table('experiment_binding',
                                         global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
@@ -188,12 +182,26 @@ schema.Index('experiment_binding_unique_columns',
 # - Configuration                                                     -
 # ---------------------------------------------------------------------
 
+parameter_table = schema.Table('parameter', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('type', schema.types.String(MAX_POLY_LENGTH),
+                      nullable=False, index=True),
+        # XXX Index parameter names/values?
+        schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
+        schema.Column('value', schema.types.Float),
+        mysql_engine='InnoDB')
+
 # Model is the root of the tree
 model_table = schema.Table('model', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('behavior_id', schema.ForeignKey('behavior.id'),
-                      unique=True),
         schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
+        mysql_engine='InnoDB')
+
+fixed_parameter_table = schema.Table('fixed_parameter', global_state.metadata,
+        schema.Column('parameter_id', schema.ForeignKey('parameter.id'),
+            primary_key=True),
+        schema.Column('model_id', schema.ForeignKey('model.id'),
+                      nullable=False),
         mysql_engine='InnoDB')
 
 
@@ -203,8 +211,6 @@ experiment_table = schema.Table('experiment', global_state.metadata,
         schema.Column('model_id', schema.ForeignKey('model.id'),
                       nullable=False),
         schema.Column('filament_factory_id', schema.ForeignKey('binding.id'),
-                      unique=True),
-        schema.Column('behavior_id', schema.ForeignKey('behavior.id'),
                       unique=True),
         schema.Column('name', schema.types.String(MAX_NAME_LENGTH)),
         mysql_engine='InnoDB')
@@ -218,8 +224,6 @@ stage_table = schema.Table('stage', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('experiment_id', schema.ForeignKey('experiment.id'),
                       nullable=False),
-        schema.Column('behavior_id', schema.ForeignKey('behavior.id'),
-                      unique=True),
         mysql_engine='InnoDB')
 
 data_table = schema.Table('data', global_state.metadata,
@@ -247,18 +251,14 @@ parameter_set_table = schema.Table('parameter_set', global_state.metadata,
         mysql_engine='InnoDB')
 
 
-parameter_table = schema.Table('parameter', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('parameter_set_id',
-                      schema.ForeignKey('parameter_set.id'), nullable=False),
-        schema.Column('name',  schema.types.String(MAX_NAME_LENGTH)),
-        schema.Column('value', schema.types.Float),
+variable_parameter_table = schema.Table('variable_parameter',
+            global_state.metadata,
+        schema.Column('parameter_id', schema.ForeignKey('parameter.id'),
+            primary_key=True),
+        schema.Column('parameter_set_id', schema.ForeignKey('parameter_set.id'),
+                      nullable=False),
         mysql_engine='InnoDB')
 
-schema.Index('parameter_unique_columns',
-             parameter_table.c.parameter_set_id,
-             parameter_table.c.name,
-             unique=True)
 
 run_table = schema.Table('run', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),

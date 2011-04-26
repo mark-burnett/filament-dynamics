@@ -16,7 +16,6 @@
 from sqlalchemy import orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
-from . import behaviors
 from . import bindings
 from . import experimental_data
 from . import runs
@@ -27,15 +26,13 @@ __all__ = ['Experiment']
 
 class Experiment(object):
     def __init__(self, name=None, model=None, filament_factory=None,
-                 behavior=None, analysts=None, discriminators=None, stages=None):
+                 analysts=None, discriminators=None, stages=None):
         if name:
             self.name = name
         if model:
             self.model = model
         if filament_factory:
             self.filament_factory = filament_factory
-        if behavior:
-            self.behavior = behavior
 
         if stages:
             self.stages = stages
@@ -46,9 +43,9 @@ class Experiment(object):
             self.discriminators = discriminators
 
     def __repr__(self):
-        return "%s(id=%s, name=%r, model_id=%s, behavior_id=%s)" % (
+        return "%s(id=%s, name=%r, model_id=%s, stages=%s)" % (
                self.__class__.__name__, self.id, self.name, self.model_id,
-               self.behavior_id)
+               self.stages)
 
     data = _ap('_data', 'value', creator=experimental_data.Data)
 
@@ -56,10 +53,6 @@ orm.mapper(Experiment, tables.experiment_table, properties={
     'filament_factory': orm.relationship(bindings.FilamentFactoryBinding,
         backref=orm.backref('experiment', uselist=False),
         cascade='all,delete-orphan', single_parent=True),
-
-    'behavior': orm.relationship(behaviors.Behavior,
-        backref=orm.backref('experiment', uselist=False),
-        cascade='all', single_parent=True),
 
     'analysts': orm.relationship(bindings.AnalystBinding,
         secondary=tables.experiment_binding_table,

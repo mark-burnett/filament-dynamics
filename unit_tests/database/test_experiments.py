@@ -42,16 +42,16 @@ class TestExperiment(DBTestCase):
         fb = self.db_session.query(database.FilamentFactoryBinding).first()
         self.assertEqual(e, fb.experiment)
 
-    def test_behavior_relationship(self):
+    def test_stage_relationship(self):
         e = database.Experiment('test expt name', model=self.model)
-        b = database.Behavior(experiment=e)
+        s = database.Stage(experiment=e)
 
-        self.db_session.add(b)
+        self.db_session.add(s)
         self.db_session.commit()
 
-        b2 = self.db_session.query(database.Behavior).first()
+        s2 = self.db_session.query(database.Stage).first()
 
-        self.assertEqual(e, b2.experiment)
+        self.assertEqual(e, s2.experiment)
 
     def test_model_relationship(self):
         e = database.Experiment('test expt name', model=self.model)

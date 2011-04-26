@@ -17,17 +17,37 @@ from sqlalchemy import orm
 
 from . import tables
 
-__all__ = ['Parameter']
+__all__ = ['VariableParameter', 'FixedParameter', 'Parameter']
 
 class Parameter(object):
-    def __init__(self, name, value, parameter_set=None):
-        self.name  = name
+    def __init__(self, name, value):
+        self.name = name
         self.value = value
-        if parameter_set:
-            self.parameter_set = parameter_set
 
     def __repr__(self):
         return "%s(id=%s, name='%s', value=%s)" % (
                 self.__class__.__name__, self.id, self.name, self.value)
 
-orm.mapper(Parameter, tables.parameter_table)
+orm.mapper(Parameter, tables.parameter_table,
+           polymorphic_on=tables.parameter_table.c.type)
+
+
+
+class FixedParameter(Parameter):
+    def __init__(self, name, value, model=None):
+        if model:
+            self.model = model
+        Parameter.__init__(self, name, value)
+
+orm.mapper(FixedParameter, tables.fixed_parameter_table, inherits=Parameter,
+           polymorphic_identity='fixed')
+
+
+class VariableParameter(Parameter):
+    def __init__(self, name, value, parameter_set=None):
+        if parameter_set:
+            self.parameter_set = parameter_set
+        Parameter.__init__(self, name, value)
+
+orm.mapper(VariableParameter, tables.variable_parameter_table,
+           inherits=Parameter, polymorphic_identity='variable')

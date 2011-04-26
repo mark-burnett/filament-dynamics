@@ -18,10 +18,10 @@ import itertools as _itertools
 from sqlalchemy import orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
-from . import tables
+from . import analyses
 from . import arguments
 from . import objectives
-from . import analyses
+from . import tables
 
 
 __all__ = ['Binding', 'AnalystBinding', 'ConcentrationBinding',
@@ -30,7 +30,7 @@ __all__ = ['Binding', 'AnalystBinding', 'ConcentrationBinding',
 
 
 class Binding(object):
-    def __init__(self, label=None, class_name=None, behavior=None,
+    def __init__(self, label=None, class_name=None, stage=None,
                  fixed_arguments=None, variable_arguments=None):
         if label:
             self.label = label
@@ -41,8 +41,8 @@ class Binding(object):
         if variable_arguments:
             self.variable_arguments = variable_arguments
 
-        if behavior:
-            self.behavior = behavior
+        if stage:
+            self.stage = stage
 
     def __repr__(self):
         return ("%s(id=%s, label='%s', class_name='%s'," +

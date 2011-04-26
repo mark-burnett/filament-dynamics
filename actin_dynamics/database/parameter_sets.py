@@ -35,12 +35,24 @@ class ParameterSet(object):
         return "%s(id=%s, model_id=%s)" % (
             self.__class__.__name__, self.id, self.model_id)
 
-    parameters = _ap('_parameters', 'value', creator=parameters.Parameter)
+    variable_parameters = _ap('_variable_parameters', 'value',
+                              creator=parameters.VariableParameter)
+
+    @property
+    def fixed_parameters(self):
+        return self.model.fixed_parameters
+
+    @property
+    def all_parameters(self):
+        result = self.fixed_parameters
+        result.update(self.variable_parameters)
+        return result
+
 
 orm.mapper(ParameterSet, tables.parameter_set_table, properties={
-    '_parameters': orm.relationship(parameters.Parameter,
-        backref='parameter_set',
-        collection_class=orm.collections.attribute_mapped_collection('name')),
+    '_variable_parameters': orm.relationship(parameters.VariableParameter,
+        collection_class=orm.collections.attribute_mapped_collection('name'),
+        backref='parameter_set', cascade='all,delete-orphan'),
     'run': orm.relationship(runs.Run, backref='parameter_set',
                             cascade='all,delete-orphan'),
     'job': orm.relationship(jobs.Job, backref='parameter_set',
