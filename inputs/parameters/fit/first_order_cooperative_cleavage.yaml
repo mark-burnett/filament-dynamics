@@ -19,7 +19,12 @@ variable_parameters:
         mean: 0.3
         standard_deviation: 0.2
 
-    cleavage_cooperativity:
+    pointed_cleavage_cooperativity:
+        class_name: GammaDistribution
+        mean: 10
+        standard_deviation: 100
+
+    barbed_cleavage_cooperativity:
         class_name: GammaDistribution
         mean: 10
         standard_deviation: 100

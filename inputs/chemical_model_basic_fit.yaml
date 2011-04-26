@@ -23,20 +23,35 @@ import:
     - 'experiments/fujiwara_2002.yaml'
     - 'experiments/blanchoin_pollard_2002.yaml'
     - 'experiments/melki_fievez_carlier_1996.yaml'
+    - 'experiments/mitchison_2008.yaml'
 
     # Key parameters to fit.
     - 'parameters/fit/first_order_cleavage.yaml'
     - 'parameters/fit/first_order_release.yaml'
-    - 'parameters/fit/fast_tip_release.yaml'
+    - 'parameters/fit/tip_release.yaml'
     - 'parameters/fit/reversible_release.yaml'
 
     # Secondary parameters (fit and fixed).
     - 'parameters/secondary/fujiwara_2002.yaml'
     - 'parameters/secondary/blanchoin_pollard_2002.yaml'
     - 'parameters/secondary/melki_fievez_carlier_1996.yaml'
+    - 'parameters/secondary/mitchison_2008.yaml'
 
     # Fixed physical parameters.
     - 'parameters/fixed/fujiwara_polymerization.yaml'
     - 'parameters/fixed/fujiwara_depolymerization.yaml'
     - 'parameters/fixed/selden_nucleotide_exchange.yaml'
     - 'parameters/fixed/brooks_pyrene_coefficients.yaml'
+
+fixed_parameters:
+    fujiwara_2002_number_of_filaments:   3
+    fujiwara_2002_number_of_simulations: 10
+
+    blanchoin_pollard_2002_number_of_filaments:   3
+    blanchoin_pollard_2002_number_of_simulations: 10
+
+    melki_fievez_carlier_1999_number_of_filaments:   3
+    melki_fievez_carlier_1999_number_of_simulations: 10
+
+    mitchison_2008_number_of_filaments:   3
+    mitchison_2008_number_of_simulations: 10

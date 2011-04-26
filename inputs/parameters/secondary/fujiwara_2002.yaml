@@ -13,6 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+fixed_parameters:
+    fujiwara_2002_seed_concentration: 0.01
+    fujiwara_2002_initial_atp_concentration: 0.3
+
+    fujiwara_2002_D_window_start: 3600
+    fujiwara_2002_tau_max: 1200
+
+    fujiwara_2002_simulation_duration: 5400
+
 
 variable_parameters:
     fujiwara_2002_filament_tip_concentration:

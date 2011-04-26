@@ -13,18 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+fixed_parameters:
+    melki_fievez_carlier_1999_initial_atp_concentration: 30
+    melki_fievez_carlier_1999_seed_concentration: 6
+
+    melki_fievez_carlier_1999_duration: 2500
+
+
 variable_parameters:
-    release_rate:
+    melki_fievez_carlier_1999_filament_tip_concentration:
         class_name: GammaDistribution
-        mean: 0.003
-        standard_deviation: 0.002
-
-    pointed_release_cooperativity:
-        class_name: GammaDistribution
-        mean: 10
-        standard_deviation: 100
-
-    barbed_release_cooperativity:
-        class_name: GammaDistribution
-        mean: 10
-        standard_deviation: 100
+        mean: 0.0001
+        standard_deviation: 0.00003

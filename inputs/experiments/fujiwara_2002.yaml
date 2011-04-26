@@ -15,6 +15,8 @@
 
 experiments:
     fujiwara_2002:
+        number_of_simulations: fujiwara_2002_number_of_simulations
+
         filament_factory:
             class_name: SingleStateFixedLengthFromConcentrations
             variable_arguments:
