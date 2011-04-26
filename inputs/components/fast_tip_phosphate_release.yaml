@@ -13,10 +13,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-tip_phosphate_release:
+barbed_tip_phosphate_release:
     class_name: BarbedEndHydrolysis
     variable_arguments:
-        rate: tip_phosphate_release
+        rate: barbed_tip_phosphate_release
+    fixed_arguments:
+        old_state: ADPPi
+        new_state: ADP
+
+pointed_tip_phosphate_release:
+    class_name: PointedEndHydrolysis
+    variable_arguments:
+        rate: pointed_tip_phosphate_release
     fixed_arguments:
         old_state: ADPPi
         new_state: ADP

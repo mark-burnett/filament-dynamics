@@ -17,5 +17,5 @@ model_transitions:
     import:
         - 'components/first_order_cooperative_cleavage.yaml'
         - 'components/first_order_cooperative_release.yaml'
-        - 'components/fast_tip_release.yaml'
+        - 'components/fast_tip_phosphate_release.yaml'
         - 'components/reversible_relase.yaml'

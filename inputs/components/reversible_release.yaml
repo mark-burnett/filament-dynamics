@@ -14,28 +14,10 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 reverse_release:
-    class_name: ReverseRelease
+    class_name: ReverseHydrolysis
     fixed_arguments:
         old_state: ADP
         new_state: ADPPi
         concentration: Pi
     variable_arguments:
-        rate: reverse_release_rate
-
-barbed_tip_reverse_release:
-    class_name: BarbedTipReverseRelease
-    fixed_arguments:
-        old_state: ADP
-        new_state: ADPPi
-        concentration: Pi
-    variable_arguments:
-        rate: barbed_tip_reverse_release_rate
-
-pointed_tip_reverse_release:
-    class_name: PointedTipReverseRelease
-    fixed_arguments:
-        old_state: ADP
-        new_state: ADPPi
-        concentration: Pi
-    variable_arguments:
-        rate: pointed_tip_reverse_release_rate
+        rate: reversible_release_rate
