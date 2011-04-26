@@ -51,14 +51,17 @@ class Experiment(object):
 
 orm.mapper(Experiment, tables.experiment_table, properties={
     'filament_factory': orm.relationship(bindings.FilamentFactoryBinding,
+        secondary=tables.experiment_binding_table, uselist=False,
         backref=orm.backref('experiment', uselist=False),
         cascade='all,delete-orphan', single_parent=True),
 
     'analysts': orm.relationship(bindings.AnalystBinding,
         secondary=tables.experiment_binding_table,
+        backref=orm.backref('experiment', uselist=False),
         cascade='all,delete-orphan', single_parent=True),
     'discriminators': orm.relationship(bindings.DiscriminatorBinding,
         secondary=tables.experiment_binding_table,
+        backref=orm.backref('experiment', uselist=False),
         cascade='all,delete-orphan', single_parent=True),
 
     'stages': orm.relationship(_stages.Stage, backref='experiment',

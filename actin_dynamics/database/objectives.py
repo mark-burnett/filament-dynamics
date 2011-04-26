@@ -22,18 +22,18 @@ from . import parameters
 __all__ = ['Objective']
 
 class Objective(object):
-    def __init__(self, run=None, binding=None, value=None):
-        if run:
-            self.run = run
+    def __init__(self, parameter_set=None, binding=None, value=None):
+        if parameter_set:
+            self.parameter_set = parameter_set
         if binding:
             self.binding = binding
         if value is not None:
             self.value = value
 
     def __repr__(self):
-        return "%s(id=%s, run_id=%s, binding_id=%s, value=%s)" % (
-            self.__class__.__name__, self.id, self.run_id, self.binding_id,
-            self.value)
+        return "%s(id=%s, parameter_set_id=%s, binding_id=%s, value=%s)" % (
+            self.__class__.__name__, self.id, self.parameter_set_id,
+            self.binding_id, self.value)
 
 
 orm.mapper(Objective, tables.objective_table)

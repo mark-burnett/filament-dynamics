@@ -28,6 +28,13 @@ experiments:
 
         stages:
             - sample_period: blanchoin_pollard_2002_sample_period
+
+              transitions:
+                import:
+                    - 'components/barbed_polymerization.yaml'
+
+                    - 'components/pi_release_in_solution.yaml'
+
               concentrations:
                 ATP:
                     class_name: FixedReagent
@@ -79,51 +86,48 @@ experiments:
                 concentrations:
                     class_name: ConcentrationObserver
 
+                f_atp:
+                  class_name: StateCount
+                  variable_arguments:
+                    scale_by:
+                        blanchoin_pollard_2002_filament_tip_concentration
+                  fixed_arguments:
+                    ATP: 1
+
+                f_adppi:
+                  class_name: StateCount
+                  variable_arguments:
+                    scale_by:
+                        blanchoin_pollard_2002_filament_tip_concentration
+                  fixed_arguments:
+                    ADPPi: 1
+
+                f_adp:
+                  class_name: StateCount
+                  variable_arguments:
+                    scale_by:
+                        blanchoin_pollard_2002_filament_tip_concentration
+                  fixed_arguments:
+                    ADP: 1
+
 
         analysts:
             - label: concentrations
               class_name: SaveConcentrations
 
-            - label: factin
-              class_name: StateCount
-              variable_arguments:
-                scale_by:
-                    blanchoin_pollard_2002_filament_tip_concentration
+            - label: blanchoin_pollard_2002_f_actin
+              class_name: ObservationSum
               fixed_arguments:
-                ATP:   1
-                ADPPi: 1
-                ADP:   1
+                f_atp:   1
+                f_adppi: 1
+                f_adp:   1
 
-            - label: unnormalized_pyrene_intensity
-              class_name: StateCount
+            - label: blanchoin_pollard_2002_unnormalized_pyrene_intensity
+              class_name: ObservationSum
               variable_arguments:
-                ATP:   pyrene_atp_weight
-                ADPPi: pyrene_adppi_weight
-                ADP:   pyrene_adp_weight
-
-            - label: f_atp
-              class_name: StateCount
-              variable_arguments:
-                scale_by:
-                    blanchoin_pollard_2002_filament_tip_concentration
-              fixed_arguments:
-                ATP: 1
-
-            - label: f_adppi
-              class_name: StateCount
-              variable_arguments:
-                scale_by:
-                    blanchoin_pollard_2002_filament_tip_concentration
-              fixed_arguments:
-                ADPPi: 1
-
-            - label: f_adp
-              class_name: StateCount
-              variable_arguments:
-                scale_by:
-                    blanchoin_pollard_2002_filament_tip_concentration
-              fixed_arguments:
-                ADP: 1
+                f_atp:   pyrene_atp_weight
+                f_adppi: pyrene_adppi_weight
+                f_adp:   pyrene_adp_weight
 
 
         fitting:

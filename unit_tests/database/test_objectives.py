@@ -19,25 +19,26 @@ from actin_dynamics import database
 
 from unit_tests.database.base_test_cases import DBTestCase
 
-class TestModel(DBTestCase):
+class TestObjective(DBTestCase):
     def setUp(self):
         DBTestCase.setUp(self)
-        self.model = database.Model(name='test model')
+        self.model = database.Model()
+        self.parameter_set = database.ParameterSet(model=self.model)
 
-    def test_fixed_parameters(self):
-        test_values = {'parA': 1.2, 'parB': 3.6}
-        self.model.fixed_parameters = test_values
+        self.experiment = database.Experiment(model=self.model)
+        self.discriminator_binding = (
+                database.DiscriminatorBinding(label='discriminator_label',
+                    class_name='test class name', experiment=self.experiment))
+        self.objective = database.Objective(
+                parameter_set=self.parameter_set,
+                binding=self.discriminator_binding)
 
-        self.assertEqual(test_values, self.model.fixed_parameters)
-
-    def test_transition_bindings(self):
-        t = database.TransitionBinding(label='test label', class_name='cls',
-                model=self.model)
-        self.db_session.add(t)
+        self.db_session.add(self.model)
         self.db_session.commit()
 
-        self.assertEqual(self.model.transitions[0], t)
+    def test_binding_relationship(self):
+        self.assertTrue(False)
 
-
-if '__main__' == __name__:
-    unittest.main()
+    def test_parameter_set_relationship(self):
+        o = self.db_session.query(database.Objective).first()
+        self.assertEqual(o.parameter_set, self.parameter_set)

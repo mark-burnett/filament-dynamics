@@ -30,8 +30,9 @@ __all__ = ['Binding', 'AnalystBinding', 'ConcentrationBinding',
 
 
 class Binding(object):
-    def __init__(self, label=None, class_name=None, stage=None,
-                 fixed_arguments=None, variable_arguments=None):
+    def __init__(self, label=None, class_name=None,
+                 fixed_arguments=None, variable_arguments=None,
+                 model=None, experiment=None, stage=None):
         if label:
             self.label = label
         if class_name:
@@ -41,6 +42,10 @@ class Binding(object):
         if variable_arguments:
             self.variable_arguments = variable_arguments
 
+        if model:
+            self.model = model
+        if experiment:
+            self.experiment = experiment
         if stage:
             self.stage = stage
 

@@ -156,13 +156,6 @@ variable_argument_table = schema.Table('variable_argument',
 
 
 # Connect bindings to configuration.
-stage_binding_table = schema.Table('stage_binding', global_state.metadata,
-        schema.Column('binding_id', schema.ForeignKey('binding.id'),
-                      primary_key=True),
-        schema.Column('stage_id', schema.ForeignKey('stage.id'),
-                      nullable=False),
-        mysql_engine='InnoDB')
-
 experiment_binding_table = schema.Table('experiment_binding',
                                         global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
@@ -176,6 +169,33 @@ schema.Index('experiment_binding_unique_columns',
              experiment_binding_table.c.experiment_id,
              experiment_binding_table.c.binding_id,
              unique=True)
+
+
+model_binding_table = schema.Table('model_binding', global_state.metadata,
+        schema.Column('binding_id', schema.ForeignKey('binding.id'),
+                      primary_key=True),
+        schema.Column('model_id', schema.ForeignKey('model.id'),
+                      nullable=False),
+        mysql_engine='InnoDB')
+
+schema.Index('model_binding_unique_columns',
+             model_binding_table.c.model_id,
+             model_binding_table.c.binding_id,
+             unique=True)
+
+
+stage_binding_table = schema.Table('stage_binding', global_state.metadata,
+        schema.Column('binding_id', schema.ForeignKey('binding.id'),
+                      primary_key=True),
+        schema.Column('stage_id', schema.ForeignKey('stage.id'),
+                      nullable=False),
+        mysql_engine='InnoDB')
+
+schema.Index('stage_binding_unique_columns',
+             stage_binding_table.c.stage_id,
+             stage_binding_table.c.binding_id,
+             unique=True)
+
 
 
 # ---------------------------------------------------------------------
@@ -260,6 +280,21 @@ variable_parameter_table = schema.Table('variable_parameter',
         mysql_engine='InnoDB')
 
 
+objective_table = schema.Table('objective', global_state.metadata,
+        schema.Column('id', schema.types.Integer, primary_key=True),
+        schema.Column('parameter_set_id', schema.ForeignKey('parameter_set.id'),
+                      nullable=False),
+        schema.Column('binding_id', schema.ForeignKey('binding.id'),
+                      nullable=False),
+        schema.Column('value', schema.types.Float),
+        mysql_engine='InnoDB')
+
+schema.Index('objective_unique_columns',
+             objective_table.c.parameter_set_id,
+             objective_table.c.binding_id,
+             unique=True)
+
+
 run_table = schema.Table('run', global_state.metadata,
         schema.Column('id', schema.types.Integer, primary_key=True),
         schema.Column('parameter_set_id',
@@ -280,18 +315,4 @@ analysis_table = schema.Table('analysis', global_state.metadata,
 schema.Index('analysis_unique_columns',
              analysis_table.c.run_id,
              analysis_table.c.binding_id,
-             unique=True)
-
-
-objective_table = schema.Table('objective', global_state.metadata,
-        schema.Column('id', schema.types.Integer, primary_key=True),
-        schema.Column('run_id', schema.ForeignKey('run.id'), nullable=False),
-        schema.Column('binding_id', schema.ForeignKey('binding.id'),
-                      nullable=False),
-        schema.Column('value', schema.types.Float),
-        mysql_engine='InnoDB')
-
-schema.Index('objective_unique_columns',
-             objective_table.c.run_id,
-             objective_table.c.binding_id,
              unique=True)

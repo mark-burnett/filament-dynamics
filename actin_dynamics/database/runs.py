@@ -16,15 +16,13 @@
 
 from sqlalchemy import orm
 
-from . import tables
 from . import analyses
-from . import objectives
+from . import tables
 
 __all__ = ['Run']
 
 class Run(object):
-    def __init__(self, parameter_set=None, experiment=None, analyses=None,
-                 objectives=None, parameters=None):
+    def __init__(self, parameter_set=None, experiment=None, analyses=None):
         if parameter_set:
             self.parameter_set = parameter_set
         if experiment:
@@ -32,17 +30,13 @@ class Run(object):
 
         if analyses:
             self.analyses = analyses
-        if objectives:
-            self.objectives = objectives
 
     def __repr__(self):
-        return "%s(id=%s, experiment_id=%s, model_id=%s, parameters=%s)" % (
-            self.__class__.__name__, self.id, self.experiment_id, self.model_id,
-            self.parameters)
+        return "%s(id=%s, parameter_set_id=%s, experiment_id=%s)" % (
+            self.__class__.__name__, self.id, self.parameter_set_id,
+            self.experiment_id)
 
 
 orm.mapper(Run, tables.run_table, properties={
     'analyses': orm.relationship(analyses.Analysis, backref='run',
-        cascade='all,delete-orphan'),
-    'objectives': orm.relationship(objectives.Objective, backref='run',
         cascade='all,delete-orphan')})

@@ -16,6 +16,7 @@
 from sqlalchemy import orm
 from sqlalchemy.ext.associationproxy import association_proxy as _ap
 
+from . import bindings
 from . import experiments
 from . import parameter_sets
 from . import parameters
@@ -50,6 +51,12 @@ orm.mapper(Model, tables.model_table, properties={
         backref='model', cascade='all,delete-orphan'),
     'experiments': orm.relationship(experiments.Experiment,
         backref='model', cascade='all,delete-orphan'),
+
+    'transitions': orm.relationship(bindings.TransitionBinding,
+        secondary=tables.model_binding_table,
+        backref=orm.backref('model', uselist=False),
+        cascade='all,delete-orphan', single_parent=True),
+
     '_fixed_parameters': orm.relationship(parameters.FixedParameter,
         collection_class=orm.collections.attribute_mapped_collection('name'),
         backref='model', cascade='all,delete-orphan')})

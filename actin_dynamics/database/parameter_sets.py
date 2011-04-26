@@ -19,6 +19,7 @@ from sqlalchemy.ext.associationproxy import association_proxy as _ap
 from . import tables
 
 from . import jobs
+from . import objectives
 from . import parameters
 from . import runs
 
@@ -55,5 +56,8 @@ orm.mapper(ParameterSet, tables.parameter_set_table, properties={
         backref='parameter_set', cascade='all,delete-orphan'),
     'run': orm.relationship(runs.Run, backref='parameter_set',
                             cascade='all,delete-orphan'),
+    'objectives': orm.relationship(objectives.Objective,
+                                   backref='parameter_set',
+                                   cascade='all,delete-orphan'),
     'job': orm.relationship(jobs.Job, backref='parameter_set',
                             cascade='all,delete-orphan')})

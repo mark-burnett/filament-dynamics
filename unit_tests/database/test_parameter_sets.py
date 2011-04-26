@@ -61,5 +61,6 @@ class TestParameterSet(DBTestCase):
         total_pars.update(self.fixed_parameters)
         self.assertEqual(total_pars, self.parameter_set.all_parameters)
 
+
 if '__main__' == __name__:
     unittest.main()
