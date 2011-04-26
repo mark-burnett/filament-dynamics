@@ -13,7 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import:
-    - 'models/components/barbed_polymerization.yaml'
-    - 'models/components/cooperative_cleavage.yaml'
-    - 'models/components/random_release.yaml'
+# Hydrolysis
+cleavage:
+    class_name: CooperativeHydrolysis
+    fixed_arguments:
+        old_state: ATP
+        new_state: ADPPi
+    variable_arguments:
+        rate:     cleavage_rate
+        ADPPi:    cleavage_cooperativity
+        ADP:      cleavage_cooperativity
+        Spectrin: cleavage_cooperativity

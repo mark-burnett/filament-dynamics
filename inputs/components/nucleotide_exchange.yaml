@@ -13,15 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-simulation_primitives:
-    transitions:
-        release:
-            class_name: CooperativeHydrolysisWithByproduct
-            fixed_arguments:
-                old_state: ADPPi
-                new_state: ADP
-                byproduct: Pi
-            variable_arguments:
-                rate:     release_rate
-                ADP:      release_cooperativity
-                Spectrin: release_cooperativity
+nucleotide_exchange:
+    class_name: ConcentrationChangePerSubunit
+    variable_arguments:
+        rate: nucleotide_exchange_rate
+    fixed_arguments:
+        old_state: ADP
+        new_state: ATP

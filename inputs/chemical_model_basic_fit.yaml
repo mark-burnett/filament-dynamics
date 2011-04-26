@@ -13,11 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-name: 'Chemical model, basic fit.'
+name: 'Chemical model, basic fit'
 
 import:
     # Model file
-    - 'models/cooperative_cooperative_full.yaml'
+    - 'models/chemical.yaml'
 
     # Experiments to run
     - 'experiments/fujiwara_2002.yaml'
@@ -25,8 +25,10 @@ import:
     - 'experiments/melki_fievez_carlier_1996.yaml'
 
     # Key parameters to fit.
-    - 'parameters/fit_cleavage.yaml'
-    - 'parameters/fit_release.yaml'
+    - 'parameters/fit/first_order_cleavage.yaml'
+    - 'parameters/fit/first_order_release.yaml'
+    - 'parameters/fit/fast_tip_release.yaml'
+    - 'parameters/fit/reversible_release.yaml'
 
     # Secondary parameters that must be fit.
     - 'parameters/secondary/fujiwara_2002.yaml'
@@ -34,5 +36,7 @@ import:
     - 'parameters/secondary/melki_fievez_carlier_1996.yaml'
 
     # Fixed physical parameters.
-    - 'parameters/fujiwara_polymerization.yaml'
-    - 'parameters/fujiwara_depolymerization.yaml'
+    - 'parameters/fixed/fujiwara_polymerization.yaml'
+    - 'parameters/fixed/fujiwara_depolymerization.yaml'
+    - 'parameters/fixed/selden_nucleotide_exchange.yaml'
+    - 'parameters/fixed/brooks_pyrene_coefficients.yaml'

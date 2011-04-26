@@ -13,16 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-simulation_primitives:
-    transitions:
-        # Hydrolysis
-        cleavage:
-            class_name: CooperativeHydrolysis
-            fixed_arguments:
-                old_state: ATP
-                new_state: ADPPi
-            variable_arguments:
-                rate:     cleavage_rate
-                ADPPi:    cleavage_cooperativity
-                ADP:      cleavage_cooperativity
-                Spectrin: cleavage_cooperativity
+tip_phosphate_release:
+    class_name: BarbedEndHydrolysis
+    variable_arguments:
+        rate: tip_phosphate_release
+    fixed_arguments:
+        old_state: ADPPi
+        new_state: ADP

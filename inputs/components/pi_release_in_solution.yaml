@@ -13,8 +13,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import:
-    - 'models/components/barbed_polymerization.yaml'
-    - 'models/components/cooperative_cleavage.yaml'
-    - 'models/components/random_release.yaml'
-    - 'models/components/pointed_polymerization.yaml'
+pi_release_in_solution:
+    class_name: ConcentrationChangeWithByproduct
+    variable_arguments:
+        rate: solution_pi_release_rate
+    fixed_arguments:
+        old_state: ADPPi
+        new_state: ADP
+        byproduct: Pi
+

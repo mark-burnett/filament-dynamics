@@ -13,7 +13,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import:
-    - 'models/components/cooperative_cleavage.yaml'
-    - 'models/components/random_release.yaml'
-    - 'models/components/pointed_polymerization.yaml'
+release:
+    class_name: CooperativeHydrolysisWithByproduct
+    fixed_arguments:
+        old_state: ADPPi
+        new_state: ADP
+        byproduct: Pi
+    variable_arguments:
+        rate:     release_rate
+        ADP:      release_cooperativity
+        Spectrin: release_cooperativity
