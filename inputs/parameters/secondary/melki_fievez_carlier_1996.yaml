@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import yaml
+fixed_parameters:
+    melki_fievez_carlier_1996_initial_atp_concentration: 30
+    melki_fievez_carlier_1996_seed_concentration: 6
 
-def parse_object_graph_file(obj_file):
-    return yaml.load(obj_file)
+    melki_fievez_carlier_1996_duration: 2500
+
+
+variable_parameters:
+    melki_fievez_carlier_1996_filament_tip_concentration:
+        class_name: GammaDistribution
+        mean: 0.0001
+        standard_deviation: 0.00003

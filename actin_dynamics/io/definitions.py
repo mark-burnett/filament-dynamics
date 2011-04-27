@@ -21,25 +21,49 @@ from .. import logger
 log = logger.getLogger(__file__)
 
 def load_definition(filename, source_directory=None):
-    if not source_directory:
-        source_directory, junk = os.path.split(filename)
+    definition = read_definition(filename)
+    return expand_imports(definition, source_directory=source_directory)
 
+
+def read_definition(filename):
     results = None
     log.debug("Loading definition from '%s'.", filename)
     try:
         with open(filename) as f:
             results = yaml.load(f)
     except IOError:
-        log.exception("Definition file '%s' not loaded.", filename)
-        sys.exit()
-
-    imports = results.get('import', [])
-    for import_filename in imports:
-        results = merge_dicts(results, load_definition(
-            os.path.join(source_directory, import_filename),
-            source_directory=source_directory))
+        log.critical("Definition file '%s' not loaded.", filename)
+        raise
 
     return results
+
+def expand_imports(data, source_directory=None):
+    '''
+    Recursively search and expand import statements in input files.
+    '''
+    # Top level
+    import_filenames = data.pop('import', [])
+    for import_filename in import_filenames:
+        try:
+            local_definition = read_definition(os.path.join(source_directory,
+                import_filename))
+        except IOError:
+            log.critical('Failure importing from file %s.', from_file)
+            raise
+
+        data = merge_dicts(data, local_definition)
+
+    # Immediate Children
+    for name, child in data.iteritems():
+        if isinstance(child, dict):
+            data[name] = expand_imports(child,
+                    source_directory=source_directory)
+        elif isinstance(child, list):
+            for i, element in enumerate(child):
+                child[i] = expand_imports(element,
+                        source_directory=source_directory)
+
+    return data
 
 def merge_dicts(a, b):
     keys = set(a.keys()).union(set(b.keys()))
@@ -55,3 +79,6 @@ def merge_dicts(a, b):
                 result[key] = merge_dicts(a[key], b[key])
 
     return result
+
+def validate_definition(definition):
+    return False
