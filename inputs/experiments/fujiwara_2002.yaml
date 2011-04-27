@@ -81,7 +81,7 @@ experiments:
                 duration:
                     class_name: Duration
                     variable_arguments:
-                        duration: fujiwara_2002_duration
+                        duration: fujiwara_2002_simulation_duration
 
 
               observers:

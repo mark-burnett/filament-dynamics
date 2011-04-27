@@ -45,7 +45,7 @@ experiments:
                     class_name: FixedReagent
                     variable_arguments:
                         initial_concentration:
-                            mitchison_2008_polymerization_initial_atp_concentration
+                            mitchison_2008_initial_atp_concentration
                         filament_tip_concentration:
                             mitchison_2008_filament_tip_concentration
                         number: mitchison_2008_number_of_filaments
@@ -82,7 +82,7 @@ experiments:
                 duration:
                     class_name: RandomDuration
                     variable_arguments:
-                        max_duration: mitchison_2008_polymerization_duration
+                        max_duration: mitchison_2008_max_polymerization_duration
 
 
             # Depolymerization Stage

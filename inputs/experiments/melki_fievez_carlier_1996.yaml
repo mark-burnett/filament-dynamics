@@ -78,7 +78,7 @@ experiments:
                 duration:
                     class_name: Duration
                     variable_arguments:
-                        duration: melki_fievez_carlier_1996_duration
+                        duration: melki_fievez_carlier_1996_simulation_duration
 
 
               observers:

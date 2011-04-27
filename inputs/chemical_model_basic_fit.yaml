@@ -55,3 +55,5 @@ fixed_parameters:
 
     mitchison_2008_number_of_filaments:   3
     mitchison_2008_number_of_simulations: 10
+
+    solution_pi_release_rate: 10000

@@ -75,7 +75,7 @@ experiments:
                 duration:
                     class_name: Duration
                     variable_arguments:
-                        duration: blanchoin_pollard_2002_duration
+                        duration: blanchoin_pollard_2002_simulation_duration
 
 
               observers:
@@ -167,7 +167,7 @@ experiments:
 
             discriminators:
                 blanchoin_pollard_2002_adppi_fit:
-                    class_name: SimpleDataComparison
+                    class_name: InterpolatedDataComparison
                     fixed_arguments:
                         analysis_name: f_adppi
                         data_name:     f_adppi

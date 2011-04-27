@@ -16,12 +16,12 @@
 # Means and standard deviations are taken from Fujiwara 2007.
 
 variable_parameters:
-    barbed_tip_release_rate:
+    barbed_tip_phosphate_release_rate:
         class_name: GammaDistribution
         mean: 2
         standard_deviation: 2
 
-    pointed_tip_release_rate:
+    pointed_tip_phosphate_release_rate:
         class_name: GammaDistribution
         mean: 2
         standard_deviation: 2

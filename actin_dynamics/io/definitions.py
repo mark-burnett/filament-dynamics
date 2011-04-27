@@ -21,11 +21,22 @@ from .. import logger
 log = logger.getLogger(__file__)
 
 def load_definition(filename, source_directory=None):
-    definition = read_definition(filename)
-    return expand_imports(definition, source_directory=source_directory)
+    definition = _read_definition(filename)
+    return _expand_imports(definition, source_directory=source_directory)
 
 
-def read_definition(filename):
+def validate_definition(definition):
+    valid_structure  = _validate_structure(definition)
+    valid_bindings   = _validate_bindings(definition)
+    valid_parameters = _validate_parameters(definition)
+
+    log.debug('Input file validation: structure=%s, bindings=%s, parameters=%s',
+            valid_structure, valid_bindings, valid_parameters)
+
+    return valid_structure and valid_bindings and valid_parameters
+
+
+def _read_definition(filename):
     results = None
     log.debug("Loading definition from '%s'.", filename)
     try:
@@ -37,7 +48,7 @@ def read_definition(filename):
 
     return results
 
-def expand_imports(data, source_directory=None):
+def _expand_imports(data, source_directory=None):
     '''
     Recursively search and expand import statements in input files.
     '''
@@ -45,27 +56,27 @@ def expand_imports(data, source_directory=None):
     import_filenames = data.pop('import', [])
     for import_filename in import_filenames:
         try:
-            local_definition = read_definition(os.path.join(source_directory,
+            local_definition = _read_definition(os.path.join(source_directory,
                 import_filename))
         except IOError:
             log.critical('Failure importing from file %s.', from_file)
             raise
 
-        data = merge_dicts(data, local_definition)
+        data = _merge_dicts(data, local_definition)
 
     # Immediate Children
     for name, child in data.iteritems():
         if isinstance(child, dict):
-            data[name] = expand_imports(child,
+            data[name] = _expand_imports(child,
                     source_directory=source_directory)
         elif isinstance(child, list):
             for i, element in enumerate(child):
-                child[i] = expand_imports(element,
+                child[i] = _expand_imports(element,
                         source_directory=source_directory)
 
     return data
 
-def merge_dicts(a, b):
+def _merge_dicts(a, b):
     keys = set(a.keys()).union(set(b.keys()))
 
     result = {}
@@ -76,9 +87,54 @@ def merge_dicts(a, b):
             elif key not in b:
                 result[key] = a[key]
             else: # key in both
-                result[key] = merge_dicts(a[key], b[key])
+                result[key] = _merge_dicts(a[key], b[key])
 
     return result
 
-def validate_definition(definition):
+
+def _validate_structure(definition):
+    '''
+    Validate overall structure.
+    '''
     return False
+
+
+def _validate_bindings(definition):
+    '''
+    Validate binding class names.
+    '''
+    return False
+
+
+def _validate_parameters(definition):
+    '''
+    Make sure we can find every parameter we use.
+    '''
+    expected_parameter_names = set()
+    _search_variable_arguments(definition, expected_parameter_names)
+
+    available_parameter_names = set(
+            definition.get('fixed_parameters', {}).keys() +
+            definition.get('variable_parameters', {}).keys())
+    missing_parameter_names = expected_parameter_names - available_parameter_names
+
+    extra_parameter_names = available_parameter_names - expected_parameter_names
+    if extra_parameter_names:
+        log.debug('Extra parameter names: %s', extra_parameter_names)
+
+    if missing_parameter_names:
+        log.error('Missing parameters: %s', missing_parameter_names)
+        return False
+    return True
+
+def _search_variable_arguments(definition, result_set):
+    var_args = definition.get('variable_arguments', {})
+    for name in var_args.values():
+        result_set.add(name)
+
+    for name, child in definition.iteritems():
+        if isinstance(child, dict):
+            _search_variable_arguments(child, result_set)
+        elif isinstance(child, list):
+            for element in child:
+                _search_variable_arguments(element, result_set)

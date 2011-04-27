@@ -16,7 +16,8 @@
 fixed_parameters:
     blanchoin_pollard_2002_initial_atp_concentration: 6
 
-    blanchoin_pollard_2002_duration: 40
+    blanchoin_pollard_2002_simulation_duration: 40
+    blanchoin_pollard_2002_sample_period: 0.1
 
 
 variable_parameters:

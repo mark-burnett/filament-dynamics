@@ -16,7 +16,7 @@
 barbed_tip_phosphate_release:
     class_name: BarbedEndHydrolysis
     variable_arguments:
-        rate: barbed_tip_phosphate_release
+        rate: barbed_tip_phosphate_release_rate
     fixed_arguments:
         old_state: ADPPi
         new_state: ADP
@@ -24,7 +24,7 @@ barbed_tip_phosphate_release:
 pointed_tip_phosphate_release:
     class_name: PointedEndHydrolysis
     variable_arguments:
-        rate: pointed_tip_phosphate_release
+        rate: pointed_tip_phosphate_release_rate
     fixed_arguments:
         old_state: ADPPi
         new_state: ADP

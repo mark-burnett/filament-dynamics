@@ -17,7 +17,8 @@ fixed_parameters:
     melki_fievez_carlier_1996_initial_atp_concentration: 30
     melki_fievez_carlier_1996_seed_concentration: 6
 
-    melki_fievez_carlier_1996_duration: 2500
+    melki_fievez_carlier_1996_simulation_duration: 2500
+    melki_fievez_carlier_1996_sample_period: 5
 
 
 variable_parameters:

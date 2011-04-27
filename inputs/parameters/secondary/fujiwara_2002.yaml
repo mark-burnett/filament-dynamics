@@ -22,6 +22,9 @@ fixed_parameters:
 
     fujiwara_2002_simulation_duration: 5400
 
+    # We require a fast sample rate for the velocity
+    fujiwara_2002_sample_period: 0.1
+
 
 variable_parameters:
     fujiwara_2002_filament_tip_concentration:
