@@ -20,7 +20,8 @@ fixed_parameters:
     mitchison_2008_max_polymerization_duration: 60
     mitchison_2008_depolymerization_duration: 3000
 
-    mitchison_2008_sample_period: 1
+    mitchison_2008_polymerization_sample_period: 1
+    mitchison_2008_depolymerization_sample_period: 1
 
     # XXX Get the right numbers
     mitchison_2008_stability_threshold: 1 # 1 monomer per second

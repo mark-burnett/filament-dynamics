@@ -13,13 +13,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import analyses
+import analysts
 import concentrations
+import discriminators
 import end_conditions
 import observers
-import filaments
+import filament_factories
 import file_readers
-import objectives
 import transitions
 
 del meta_classes

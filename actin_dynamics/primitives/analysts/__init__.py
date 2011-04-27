@@ -13,7 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from registry import analysis_registry as registry
+from registry import analyst_registry as registry
 
-import standard_error_of_mean
-import tip_diffusion
+#import standard_error_of_mean
+#import tip_diffusion

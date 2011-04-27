@@ -1,4 +1,4 @@
-1) Write some input files
+1) Write some input files - check
 2) Write input file validation
 3) Fix primitives (consistent naming, unittests, etc)
 4) Write simple controller

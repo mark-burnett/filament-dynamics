@@ -1,4 +1,4 @@
-#    Copyright (C) 2010-2011 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,9 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from registry import comparator_registry as registry
+from ..meta_classes import Registration
 
-import simple_data_fit
-import renormalized_fit
-import diffusion_coefficient
-import elongation_rate
+from registry import discriminator_registry
+
+class Discriminator(object):
+    __metaclass__ = Registration
+    registry = discriminator_registry
+    skip_registration = True
+
+    __slots__ = ['label']
+    def __init__(self, label=None):
+        self.label = label
