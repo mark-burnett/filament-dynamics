@@ -18,7 +18,6 @@ import unittest
 import numpy
 
 import actin_dynamics.io.data
-import actin_dynamics.io.object_graph
 from actin_dynamics import io
 
 import yaml
@@ -84,7 +83,7 @@ class TestKinsim(unittest.TestCase):
 
     def test_vs_kinsim(self):
         for og_file, par_file, k_file in self.data_sets:
-            og   = io.object_graph.parse_object_graph_file(open(og_file))
+            og   = yaml.load(open(og_file))
             parameters = yaml.load(open(par_file))
 
             raw_results = []
