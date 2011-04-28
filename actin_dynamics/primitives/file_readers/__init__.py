@@ -15,4 +15,4 @@
 
 from registry import file_reader_registry as registry
 
-import dat_files
+#import dat_files

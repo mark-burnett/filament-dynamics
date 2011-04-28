@@ -20,6 +20,7 @@ import end_conditions
 import observers
 import filament_factories
 import file_readers
+import parameters
 import transitions
 
-del meta_classes
+#del meta_classes

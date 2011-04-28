@@ -109,6 +109,11 @@ def _validate_bindings(definition, verbose=False):
     if missing_mt:
         map(missing_class_names['transitions'].add, missing_mt)
 
+    missing_pars = _check_definition(definition.get('variable_parameters', {}),
+                                     module_name='parameters')
+    if missing_pars:
+        map(missing_class_names['parameters'].add, missing_pars)
+
     for expt_name, experiment in definition.get('experiments', {}).iteritems():
         # filament factory
         # XXX restructure primitives directory to match
