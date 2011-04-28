@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -27,9 +27,6 @@ class FixedConcentrationTest(unittest.TestCase):
     def test_negative_FixedConcentration(self):
         self.assertRaises(ValueError, fixed_concentration.FixedConcentration, -0.5)
 
-#    def test_ZeroConcentration(self):
-#        zc = concentrations.ZeroConcentration()
-#        self.assertEqual(0, zc.value)
 
 if '__main__' == __name__:
     unittest.main()

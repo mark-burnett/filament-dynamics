@@ -13,9 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from base_classes import Concentration as _Concentration
+from base_classes import Concentration
 
-class FixedReagent(_Concentration):
+class FixedReagent(Concentration):
     __slots__ = ['_value', 'monomer_count', 'concentration_per_monomer']
     def __init__(self, initial_concentration=-1,
                  filament_tip_concentration=-1,
@@ -28,7 +28,7 @@ class FixedReagent(_Concentration):
 
         self._value = self.concentration_per_monomer * self.monomer_count
 
-        _Concentration.__init__(self, label=label)
+        Concentration.__init__(self, label=label)
 
     def value(self, time):
         return self._value
