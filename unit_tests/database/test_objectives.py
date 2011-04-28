@@ -36,9 +36,6 @@ class TestObjective(DBTestCase):
         self.db_session.add(self.model)
         self.db_session.commit()
 
-    def test_binding_relationship(self):
-        self.assertTrue(False)
-
     def test_parameter_set_relationship(self):
         o = self.db_session.query(database.Objective).first()
         self.assertEqual(o.parameter_set, self.parameter_set)
