@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,9 +17,11 @@ from base_classes import Concentration
 
 class FixedConcentration(Concentration):
     __slots__ = ['_value', 'data']
-    def __init__(self, concentration=-1, **kwargs):
-        self._value = concentration
-        _Concentration.__init__(self, **kwargs)
+    def __init__(self, concentration=None, **kwargs):
+        if concentration < 0:
+            raise ValueError('Negative concentrations are nonsense.')
+        self._value = float(concentration)
+        Concentration.__init__(self, **kwargs)
     
     def value(self, time):
         return self._value
