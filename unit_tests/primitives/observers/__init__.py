@@ -1,4 +1,4 @@
-#    Copyright (C) 2010-2011 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -12,20 +12,3 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-class MockConcentration(object):
-    __slots__ = ['count', 'value_access_count', '_value']
-    def __init__(self, count=0, value=0):
-        self.count = count
-        self.value_access_count = 0
-        self._value = value
-
-    def value(self, time):
-        self.value_access_count += 1
-        return self._value
-
-    def add_monomer(self, time):
-        self.count += 1
-
-    def remove_monomer(self, time):
-        self.count -= 1

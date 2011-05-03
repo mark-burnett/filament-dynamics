@@ -49,5 +49,6 @@ class FixedReagentTest(unittest.TestCase):
         self.assertEqual((original_monomer_count-2) * concentration_per_monomer,
                           fr.value(None))
 
+
 if '__main__' == __name__:
     unittest.main()
