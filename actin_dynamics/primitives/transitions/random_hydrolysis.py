@@ -19,11 +19,11 @@ from .base_classes import Transition
 from . import mixins
 
 class RandomHydrolysis(Transition):
-    __slots__ = ['old_state', 'rate', 'new_state', '_last_rs', '_last_names']
-    def __init__(self, old_state=None, rate=None, new_state=None, label=None):
-        self.old_state = old_state
+    __slots__ = ['old_species', 'rate', 'new_species', '_last_rs', '_last_names']
+    def __init__(self, old_species=None, rate=None, new_species=None, label=None):
+        self.old_species = old_species
         self.rate      = rate
-        self.new_state = new_state
+        self.new_species = new_species
 
         Transition.__init__(self, label=label)
 
@@ -32,8 +32,8 @@ class RandomHydrolysis(Transition):
         self._last_rs = []
         for name, filament in filaments.iteritems():
             self._last_names.append(name)
-            self._last_rs.append(self.rate * filament.state_count(
-                self.old_state))
+            self._last_rs.append(self.rate * filament.species_count(
+                self.old_species))
         return sum(self._last_rs)
 
     def perform(self, time, filaments, concentrations, r):
@@ -44,9 +44,9 @@ class RandomHydrolysis(Transition):
 
         target_index = int(remaining_r / self.rate)
 
-        state_index = current_filament.state_index(self.old_state, target_index)
+        species_index = current_filament.species_index(self.old_species, target_index)
 
-        current_filament[state_index] = self.new_state
+        current_filament[species_index] = self.new_species
 
 
 RandomHydrolysisWithByproduct = mixins.add_byproduct(RandomHydrolysis)

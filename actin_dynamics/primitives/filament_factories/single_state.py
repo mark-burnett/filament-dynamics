@@ -24,20 +24,19 @@ __all__ = ['SingleStateFixedLength', 'SingleStateFixedLengthFromConcentrations',
         'NormalDistribution']
 
 class SingleStateFixedLength(FilamentFactory):
-    def __init__(self, state=None, length=None, number=None, label=None):
-        self.state = state
+    def __init__(self, species=None, length=None, number=None, label=None):
+        self.species = species
         self.length = int(length)
         self.number = int(number)
 
         FilamentFactory.__init__(self, label=label)
 
     def create(self):
-        return [Filament(itertools.repeat(self.state, self.length))
+        return [Filament(itertools.repeat(self.species, self.length))
                 for i in xrange(self.number)]
 
 class SingleStateFixedLengthFromConcentrations(SingleStateFixedLength):
-    def __init__(self, state=None, concentration=None,
-                 filament_tip_concentration=None, number=None, label=None):
+    def __init__(self, concentration=None, filament_tip_concentration=None,
+                 *args, **kwargs):
         length = int(concentration / filament_tip_concentration)
-        SingleStateFixedLength.__init__(self, state=state, length=length,
-                                        number=number, label=label)
+        SingleStateFixedLength.__init__(self, length=length, *args, **kwargs)

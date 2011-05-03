@@ -17,20 +17,20 @@ from base_classes import Transition
 from . import mixins
 
 class ConcentrationChange(Transition):
-    __slots__ = ['old_state', 'rate', 'new_state']
-    def __init__(self, old_state=None, rate=None, new_state=None, label=None):
-        self.old_state = old_state
+    __slots__ = ['old_species', 'rate', 'new_species']
+    def __init__(self, old_species=None, rate=None, new_species=None, label=None):
+        self.old_species = old_species
         self.rate      = rate
-        self.new_state = new_state
+        self.new_species = new_species
 
         Transition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
-        return self.rate * concentrations[self.old_state].value
+        return self.rate * concentrations[self.old_species].value
 
     def perform(self, time, filaments, concentrations, r):
-        concentrations[self.old_state].remove_monomer(time)
-        concentrations[self.new_state].add_monomer(time)
+        concentrations[self.old_species].remove_monomer(time)
+        concentrations[self.new_species].add_monomer(time)
 
 
 ConcentrationChangeWithByproduct = mixins.add_byproduct(ConcentrationChange)

@@ -19,42 +19,42 @@ from actin_dynamics.numerical import rate_bisect, utils
 
 class FixedRate(Transition):
     skip_registration = True
-    __slots__ = ['state', 'rate', 'check_index', '_last_rs',
+    __slots__ = ['species', 'rate', 'check_index', '_last_rs',
                  '_last_names', '_shrink_function_name']
-    def __init__(self, check_index=None, state=None, rate=None, label=None):
+    def __init__(self, check_index=None, species=None, rate=None, label=None):
         """
-        state - state to depolymerize
+        species - species to depolymerize
         rate  - depolymerization rate (constant)
         """
-        self.state       = state
+        self.species     = species
         self.rate        = rate
         self.check_index = check_index
 
         Transition.__init__(self, label=label)
 
-    def R(self, filaments, concentrations):
+    def R(self, state):
         self._last_names = []
         self._last_rs = []
-        for name, filament in filaments.iteritems():
+        for name, filament in state.filaments.iteritems():
             self._last_names.append(name)
-            if self.state == filament[self.check_index]:
+            if self.species == filament[self.check_index]:
                 self._last_rs.append(self.rate)
             else:
                 self._last_rs.append(0)
         return sum(self._last_rs)
 
 
-    def perform(self, time, filaments, concentrations, r):
+    def perform(self, time, state, r):
         filament_index, remaining_r = rate_bisect.rate_bisect(r,
                 list(utils.running_total(self._last_rs)))
         name = self._last_names[filament_index]
-        current_filament = filaments[name]
+        current_filament = state.filaments[name]
 
         getattr(current_filament, self._shrink_function_name)()
         if not len(current_filament):
             del filaments[name]
 
-        concentrations[self.state].add_monomer(time)
+        state.concentrations[self.species].add_monomer(time)
 
 
 class BarbedDepolymerization(FixedRate):

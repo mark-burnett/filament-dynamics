@@ -20,20 +20,20 @@ from . import mixins
 
 
 class VectorialHydrolysis(Transition):
-    __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'new_state',
+    __slots__ = ['old_species', 'pointed_neighbor', 'rate', 'new_species',
                  '_last_rs']
-    def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
-                 new_state=None, label=None):
-        self.old_state        = old_state
+    def __init__(self, old_species=None, pointed_neighbor=None, rate=None,
+                 new_species=None, label=None):
+        self.old_species        = old_species
         self.pointed_neighbor = pointed_neighbor
         self.rate             = rate
-        self.new_state        = new_state
+        self.new_species        = new_species
 
         Transition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
         self._last_rs = [self.rate * filament.boundary_count(
-                             self.old_state, self.pointed_neighbor)
+                             self.old_species, self.pointed_neighbor)
                          for filament in filaments]
         return sum(self._last_rs)
 
@@ -43,9 +43,9 @@ class VectorialHydrolysis(Transition):
         current_filament = filaments[filament_index]
 
         target_index = int(remaining_r / self.rate)
-        state_index = current_filament.boundary_index(self.old_state,
+        species_index = current_filament.boundary_index(self.old_species,
                                                       self.pointed_neighbor,
                                                       target_index)
-        current_filament[state_index] = self.new_state
+        current_filament[species_index] = self.new_species
 
 VectorialHydrolysisWithByproduct = mixins.add_byproduct(VectorialHydrolysis)

@@ -16,25 +16,25 @@
 from base_classes import Transition
 
 class EndHydrolysis(Transition):
-    __slots__ = ['old_state', 'rate', 'new_state', 'index', '_last_R']
-    def __init__(self, index=None, old_state=None, rate=None,
-                 new_state=None, label=None):
+    __slots__ = ['old_species', 'rate', 'new_species', 'index', '_last_R']
+    def __init__(self, index=None, old_species=None, rate=None,
+                 new_species=None, label=None):
         self.index     = int(index)
-        self.old_state = old_state
+        self.old_species = old_species
         self.rate      = float(rate)
-        self.new_state = new_state
+        self.new_species = new_species
 
         Transition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
-        num_filaments = sum(self.old_state == f[self.index] for f in filaments)
+        num_filaments = sum(self.old_species == f[self.index] for f in filaments)
         self._last_R = self.rate * num_filaments
         return self._last_R
 
     def perform(self, time, filaments, concentrations, r):
         filament_index = int(r / self._last_R)
         current_filament = filaments[filament_index]
-        current_filament[self.index] = self.new_state
+        current_filament[self.index] = self.new_species
 
 
 class BarbedEndHydrolysis(EndHydrolysis):

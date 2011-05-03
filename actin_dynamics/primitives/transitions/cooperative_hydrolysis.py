@@ -21,13 +21,13 @@ from .base_classes import Transition
 from . import mixins
 
 class CooperativeHydrolysis(Transition):
-    __slots__ = ['old_state', 'pointed_neighbors', 'rate', 'new_state',
+    __slots__ = ['old_species', 'pointed_neighbors', 'rate', 'new_species',
                  'boundary_rates', '_last_brs', '_last_rrs', '_last_RR']
-    def __init__(self, old_state=None, rate=None, new_state=None, label=None,
+    def __init__(self, old_species=None, rate=None, new_species=None, label=None,
                  **cooperativities):
-        self.old_state        = old_state
+        self.old_species        = old_species
         self.rate             = rate
-        self.new_state        = new_state
+        self.new_species        = new_species
 
         for c in cooperativities.itervalues():
             assert c >= 1
@@ -43,19 +43,19 @@ class CooperativeHydrolysis(Transition):
         return (sum(self._boundary_rates(filaments)) +
                 self._random_rate(filaments))
 
-    def _state_boundary_rates(self, filament):
-        return [filament.boundary_count(self.old_state, pn) *
+    def _species_boundary_rates(self, filament):
+        return [filament.boundary_count(self.old_species, pn) *
                     self.boundary_rates[pn]
                 for pn in self.pointed_neighbors]
 
     def _boundary_rates(self, filaments):
         self._last_brs = []
         for filament in filaments:
-            self._last_brs.append(sum(self._state_boundary_rates(filament)))
+            self._last_brs.append(sum(self._species_boundary_rates(filament)))
         return self._last_brs
 
     def _random_rate(self, filaments):
-        self._last_rrs = [self.rate * filament.state_count(self.old_state)
+        self._last_rrs = [self.rate * filament.species_count(self.old_species)
                          for filament in filaments]
         self._last_RR = sum(self._last_rrs)
         return self._last_RR
@@ -75,9 +75,9 @@ class CooperativeHydrolysis(Transition):
         current_filament = filaments[filament_index]
         target_index = int(remaining_r / self.rate)
 
-        state_index = current_filament.state_index(self.old_state, target_index)
+        species_index = current_filament.species_index(self.old_species, target_index)
 
-        current_filament[state_index] = self.new_state
+        current_filament[species_index] = self.new_species
 
 
     def _perform_boundary(self, time, filaments, r):
@@ -85,18 +85,18 @@ class CooperativeHydrolysis(Transition):
                 list(utils.running_total(self._last_brs)))
         current_filament = filaments[filament_index]
 
-        self._perform_boundary_state(time, current_filament, remaining_r)
+        self._perform_boundary_species(time, current_filament, remaining_r)
 
-    def _perform_boundary_state(self, time, filament, r):
-        state_index, remaining_r = rate_bisect.rate_bisect(r,
-                list(utils.running_total(self._state_boundary_rates(filament))))
+    def _perform_boundary_species(self, time, filament, r):
+        species_index, remaining_r = rate_bisect.rate_bisect(r,
+                list(utils.running_total(self._species_boundary_rates(filament))))
 
-        pointed_neighbor = self.pointed_neighbors[state_index]
+        pointed_neighbor = self.pointed_neighbors[species_index]
         target_index = int(remaining_r / self.boundary_rates[pointed_neighbor])
-        state_index = filament.boundary_index(self.old_state,
+        species_index = filament.boundary_index(self.old_species,
                                               pointed_neighbor,
                                               target_index)
-        filament[state_index] = self.new_state
+        filament[species_index] = self.new_species
 
 
 CooperativeHydrolysisWithByproduct = mixins.add_byproduct(CooperativeHydrolysis)

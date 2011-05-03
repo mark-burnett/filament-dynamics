@@ -17,30 +17,31 @@ from base_classes import Transition
 
 class FixedRate(Transition):
     skip_registration = True
-    __slots__ = ['rate', 'state', '_last_R']
-    def __init__(self, state=None, rate=None, label=None):
+    __slots__ = ['rate', 'species', '_last_R', '_grow_function_name']
+    def __init__(self, species=None, rate=None, label=None):
         """
-        'state' that are added to the barbed end of the filament.
+        'species' that are added to the barbed end of the filament.
         'rate' is the number per second per concentration of
         """
-        self.state = state
-        self.rate  = rate
+        self.species = species
+        self.rate    = rate
 
         Transition.__init__(self, label=label)
 
 
-    def R(self, filaments, concentrations):
-        value = self.rate * concentrations[self.state].value
-        self._last_R = value * len(filaments)
+    def R(self, species):
+        value = self.rate * species.concentrations[self.species].value
+        self._last_R = value * len(species.filaments)
         return self._last_R
 
 
-    def perform(self, time, filaments, concentrations, r):
-        current_filament = filaments.values()[filament_index]
+    def perform(self, time, state, r):
+        filament_index = int(r / self._last_R)
+        current_filament = state.filaments.values()[filament_index]
 
         getattr(current_filament, self._grow_function_name)()
 
-        concentrations[self.state].remove_monomer(time)
+        state.concentrations[self.species].remove_monomer(time)
 
 
 class BarbedPolymerization(FixedRate):
@@ -48,11 +49,11 @@ class BarbedPolymerization(FixedRate):
     __slots__ = []
     def __init__(self, **kwargs):
         self._grow_function_name = 'grow_barbed_end'
-        FixedRate.__init__(self, **kwargs)
+        FixedRate.__init__(self, *args, **kwargs)
 
 class PointedPolymerization(FixedRate):
     'Simple polymerization at the barbed end.'
     __slots__ = []
     def __init__(self, **kwargs):
         self._grow_function_name = 'grow_pointed_end'
-        FixedRate.__init__(self, **kwargs)
+        FixedRate.__init__(self, *args, **kwargs)

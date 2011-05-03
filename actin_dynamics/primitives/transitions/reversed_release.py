@@ -19,20 +19,20 @@ from .base_classes import Transition
 from . import mixins
 
 class ReverseRelease(Transition):
-    __slots__ = ['old_state', 'rate', 'concentration', 'new_state',
+    __slots__ = ['old_species', 'rate', 'concentration', 'new_species',
                  '_last_rs']
-    def __init__(self, old_state=None, rate=None, new_state=None,
+    def __init__(self, old_species=None, rate=None, new_species=None,
                  concentration=None, label=None):
-        self.old_state = old_state
+        self.old_species = old_species
         self.rate      = rate
-        self.new_state = new_state
+        self.new_species = new_species
         self.concentration = concentration
 
         Transition.__init__(self, label=label)
 
     def R(self, filaments, concentrations):
         r = self.rate * concentrations[self.concentration].value
-        self._last_rs = [r * filament.state_count(self.old_state)
+        self._last_rs = [r * filament.species_count(self.old_species)
                 for filament in filaments]
         return sum(self._last_rs)
 
@@ -42,7 +42,7 @@ class ReverseRelease(Transition):
         current_filament = filaments[filament_index]
 
         target_index = int(remaining_r / self.rate)
-        state_index = current_filament.state_index(self.old_state, target_index)
+        species_index = current_filament.species_index(self.old_species, target_index)
 
-        current_filament[state_index] = self.new_state
+        current_filament[species_index] = self.new_species
         concentrations[self.concentration].remove_monomer(time)
