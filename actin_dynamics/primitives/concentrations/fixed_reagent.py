@@ -16,27 +16,30 @@
 from base_classes import Concentration
 
 class FixedReagent(Concentration):
-    __slots__ = ['_value', 'monomer_count', 'concentration_per_monomer']
+    __slots__ = ['_value', '_monomer_count', 'concentration_per_monomer']
     def __init__(self, initial_concentration=-1,
                  filament_tip_concentration=-1,
                  number=None, label=None, sample_period=None):
         initial_concentration = float(initial_concentration)
 
-        self.monomer_count = int(number * initial_concentration
+        self._monomer_count = int(number * initial_concentration
                               / filament_tip_concentration)
         self.concentration_per_monomer = (filament_tip_concentration / number)
 
-        self._value = self.concentration_per_monomer * self.monomer_count
+        self._value = self.concentration_per_monomer * self._monomer_count
 
         Concentration.__init__(self, label=label)
 
     def value(self, time):
         return self._value
 
+    def monomer_count(self, time):
+        return self._monomer_count
+
     def add_monomer(self):
-        self.monomer_count += 1
-        self._value = self.concentration_per_monomer * self.monomer_count
+        self._monomer_count += 1
+        self._value = self.concentration_per_monomer * self._monomer_count
 
     def remove_monomer(self):
-        self.monomer_count -= 1
-        self._value = self.concentration_per_monomer * self.monomer_count
+        self._monomer_count -= 1
+        self._value = self.concentration_per_monomer * self._monomer_count

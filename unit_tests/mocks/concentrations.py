@@ -14,18 +14,26 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class MockConcentration(object):
-    __slots__ = ['count', 'value_access_count', '_value']
     def __init__(self, count=0, value=0):
-        self.count = count
+        self._count = count
         self.value_access_count = 0
+        self.monomer_access_count = 0
         self._value = value
 
     def value(self, time):
         self.value_access_count += 1
         return self._value
 
+    @property
+    def count(self):
+        return self.monomer_count(None)
+
+    def monomer_count(self, time):
+        self.monomer_access_count += 1
+        return self._count
+
     def add_monomer(self, time):
-        self.count += 1
+        self._count += 1
 
     def remove_monomer(self, time):
-        self.count -= 1
+        self._count -= 1

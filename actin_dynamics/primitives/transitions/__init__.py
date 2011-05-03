@@ -15,7 +15,7 @@
 
 from registry import transition_registry as registry
 
-#import concentration_changes
+import concentration_changes
 #import cooperative_hydrolysis
 import depolymerization
 import polymerization

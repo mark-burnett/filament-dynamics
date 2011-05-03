@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,20 +17,26 @@ from base_classes import Transition
 from . import mixins
 
 class ConcentrationChange(Transition):
-    __slots__ = ['old_species', 'rate', 'new_species']
-    def __init__(self, old_species=None, rate=None, new_species=None, label=None):
+    __slots__ = ['old_species', 'rate', 'new_species', '_last_R']
+    def __init__(self, old_species=None, rate=None, new_species=None,
+                 *args, **kwargs):
         self.old_species = old_species
-        self.rate      = rate
         self.new_species = new_species
+        self.rate = rate
 
-        Transition.__init__(self, label=label)
+        Transition.__init__(self, *args, **kwargs)
 
-    def R(self, filaments, concentrations):
-        return self.rate * concentrations[self.old_species].value
+    def R(self, time, state):
+        self._last_R = (self.rate
+                * state.concentrations[self.old_species].monomer_count(time))
+        return self._last_R
 
-    def perform(self, time, filaments, concentrations, r):
-        concentrations[self.old_species].remove_monomer(time)
-        concentrations[self.new_species].add_monomer(time)
+    def perform(self, time, state, r):
+        if self._last_R:
+            state.concentrations[self.old_species].remove_monomer(time)
+            state.concentrations[self.new_species].add_monomer(time)
+        else:
+            raise IndexError('No monomers to remove.')
 
 
 ConcentrationChangeWithByproduct = mixins.add_byproduct(ConcentrationChange)
