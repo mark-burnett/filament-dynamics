@@ -27,10 +27,10 @@ class ConcentrationChangeTest(unittest.TestCase):
         self.concentrations[1] = MockConcentration(value=10)
         self.concentrations[2] = MockConcentration(value=20)
 
-        self.normal_one = ConcentrationChange(old_state=1, new_state=2, rate=3)
-        self.normal_two = ConcentrationChange(old_state=2, new_state=3, rate=2)
+        self.normal_one = ConcentrationChange(old_species=1, new_species=2, rate=3)
+        self.normal_two = ConcentrationChange(old_species=2, new_species=3, rate=2)
 
-        self.missing = ConcentrationChange(old_state=3, new_state=4, rate=1)
+        self.missing = ConcentrationChange(old_species=3, new_species=4, rate=1)
 
     def test_normal_rates(self):
         self.assertEqual(self.normal_one.R(None, self.concentrations), 30)
@@ -66,13 +66,13 @@ class ConcentrationChangeWithByproductTest(unittest.TestCase):
         self.concentrations[1] = MockConcentration(value=10)
         self.concentrations[2] = MockConcentration(value=20)
 
-        self.normal_one = ConcentrationChangeWithByproduct(old_state=1,
-                new_state=2, byproduct=11, rate=3)
-        self.normal_two = ConcentrationChangeWithByproduct(old_state=2,
-                new_state=3, byproduct=12, rate=2)
+        self.normal_one = ConcentrationChangeWithByproduct(old_species=1,
+                new_species=2, byproduct=11, rate=3)
+        self.normal_two = ConcentrationChangeWithByproduct(old_species=2,
+                new_species=3, byproduct=12, rate=2)
 
-        self.missing = ConcentrationChangeWithByproduct(old_state=3,
-                new_state=4, byproduct=13, rate=1)
+        self.missing = ConcentrationChangeWithByproduct(old_species=3,
+                new_species=4, byproduct=13, rate=1)
 
     def test_normal_rates(self):
         self.assertEqual(self.normal_one.R(None, self.concentrations), 30)

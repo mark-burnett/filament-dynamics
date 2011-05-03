@@ -17,7 +17,7 @@ import unittest
 from collections import defaultdict
 
 from unit_tests.mocks.concentrations import MockConcentration
-from actin_dynamics.state.single_strand_filaments import Filament
+from actin_dynamics.species.single_strand_filaments import Filament
 
 from actin_dynamics.primitives.transitions.depolymerization import BarbedDepolymerization
 
@@ -26,8 +26,8 @@ class BarbedDepolymerizationSingleFilament(unittest.TestCase):
         self.filament = Filament([None, 1, 2, 1])
         self.concentrations = defaultdict(MockConcentration)
 
-        self.depoly_one = BarbedDepolymerization(state=1, rate=1)
-        self.depoly_two = BarbedDepolymerization(state=2, rate=2)
+        self.depoly_one = BarbedDepolymerization(species=1, rate=1)
+        self.depoly_two = BarbedDepolymerization(species=2, rate=2)
 
     def test_rates(self):
         self.assertEqual(self.depoly_one.R([self.filament], None), 1)

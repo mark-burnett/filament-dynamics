@@ -47,7 +47,7 @@ class LengthObserverTest(unittest.TestCase):
 
 class StateCountObserverTest(unittest.TestCase):
     def setUp(self):
-        self.o = filaments.StateCount(label='sc label', state=1)
+        self.o = filaments.StateCount(label='sc label', species=1)
         self.results = {}
         self.o.initialize(self.results)
 

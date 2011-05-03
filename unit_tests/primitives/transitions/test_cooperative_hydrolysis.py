@@ -18,7 +18,7 @@ from collections import defaultdict
 
 from actin_dynamics.primitives.transitions.cooperative_hydrolysis import *
 
-from actin_dynamics.state.single_strand_filaments import Filament
+from actin_dynamics.species.single_strand_filaments import Filament
 
 from unit_tests.mocks.concentrations import MockConcentration
 
@@ -26,15 +26,15 @@ from unit_tests.mocks.concentrations import MockConcentration
 class CooperativeHydrolysisTest(unittest.TestCase):
     def setUp(self):
         self.strand = Filament(['a', 'b', 'c', 'a', 'b', 'c', 'a'])
-        self.normal_one = CooperativeHydrolysis(old_state='a',
-                rate=3, new_state='b', c=2)
-        self.normal_two = CooperativeHydrolysis(old_state='b',
-                rate=2, new_state='c', a=3)
-        self.normal_three = CooperativeHydrolysis(old_state='a',
-                rate=4, new_state='b', b=3)
+        self.normal_one = CooperativeHydrolysis(old_species='a',
+                rate=3, new_species='b', c=2)
+        self.normal_two = CooperativeHydrolysis(old_species='b',
+                rate=2, new_species='c', a=3)
+        self.normal_three = CooperativeHydrolysis(old_species='a',
+                rate=4, new_species='b', b=3)
 
-        self.missing = CooperativeHydrolysis(old_state='d',
-                rate=7, new_state=8, e=1.5)
+        self.missing = CooperativeHydrolysis(old_species='d',
+                rate=7, new_species=8, e=1.5)
 
     def test_normal_rates(self):
         self.assertEqual(self.normal_one.R([self.strand],   None), 15)

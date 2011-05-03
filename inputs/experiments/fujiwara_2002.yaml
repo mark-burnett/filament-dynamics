@@ -18,7 +18,7 @@ experiments:
         number_of_simulations: fujiwara_2002_number_of_simulations
 
         filament_factory:
-            class_name: SingleStateFixedLengthFromConcentrations
+            class_name: SingleSpeciesFixedLengthFromConcentrations
             variable_arguments:
                 number: fujiwara_2002_number_of_filaments
                 concentration: fujiwara_2002_seed_concentration
@@ -95,17 +95,17 @@ experiments:
                     class_name: FilamentCounter
 
                 f_atp:
-                  class_name: StateCount
+                  class_name: SpeciesCounter
                   fixed_arguments:
                     species: ATP
 
                 f_adppi:
-                  class_name: StateCount
+                  class_name: SpeciesCounter
                   fixed_arguments:
                     species: ADPPi
 
                 f_adp:
-                  class_name: StateCount
+                  class_name: SpeciesCounter
                   fixed_arguments:
                     species: ADP
 

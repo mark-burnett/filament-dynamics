@@ -19,7 +19,7 @@ from collections import defaultdict
 
 from actin_dynamics.primitives.transitions.polymerization import BarbedPolymerization
 
-from actin_dynamics.state.single_strand_filaments import Filament
+from actin_dynamics.species.single_strand_filaments import Filament
 
 from unit_tests.mocks.concentrations import MockConcentration
 
@@ -31,8 +31,8 @@ class BarbedPolymerizationSingleFilament(unittest.TestCase):
         self.concentrations[1] = MockConcentration(value=3)
         self.concentrations[2] = MockConcentration(value=7)
 
-        self.poly_one = BarbedPolymerization(state=1, rate=1)
-        self.poly_two = BarbedPolymerization(state=2, rate=2)
+        self.poly_one = BarbedPolymerization(species=1, rate=1)
+        self.poly_two = BarbedPolymerization(species=2, rate=2)
 
     def test_rates(self):
         self.assertEqual(self.poly_one.R([self.filament], self.concentrations), 3)

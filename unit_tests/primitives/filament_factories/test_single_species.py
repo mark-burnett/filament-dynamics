@@ -15,12 +15,12 @@
 
 import unittest
 
-from actin_dynamics.primitives.filament_factories import single_state
+from actin_dynamics.primitives.filament_factories import single_species
 
-class SingleStateFixedLengthTest(unittest.TestCase):
+class SingleSpeciesFixedLengthTest(unittest.TestCase):
     def setUp(self):
-        self.filament_factory = single_state.SingleStateFixedLength(
-                state='a', length=3, number=7)
+        self.filament_factory = single_species.SingleSpeciesFixedLength(
+                species='a', length=3, number=7)
 
     def test_create(self):
         filaments = self.filament_factory.create()

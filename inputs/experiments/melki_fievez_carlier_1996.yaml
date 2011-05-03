@@ -18,7 +18,7 @@ experiments:
         number_of_simulations: melki_fievez_carlier_1996_number_of_simulations
 
         filament_factory:
-            class_name: SingleStateFixedLengthFromConcentrations
+            class_name: SingleSpeciesFixedLengthFromConcentrations
             variable_arguments:
                 number: melki_fievez_carlier_1996_number_of_filaments
                 concentration: melki_fievez_carlier_1996_seed_concentration
@@ -86,17 +86,17 @@ experiments:
                     class_name: ConcentrationObserver
 
                 f_atp:
-                  class_name: StateCount
+                  class_name: SpeciesCounter
                   fixed_arguments:
                     species: ATP
 
                 f_adppi:
-                  class_name: StateCount
+                  class_name: SpeciesCounter
                   fixed_arguments:
                     species: ADPPi
 
                 f_adp:
-                  class_name: StateCount
+                  class_name: SpeciesCounter
                   fixed_arguments:
                     species: ADP
 

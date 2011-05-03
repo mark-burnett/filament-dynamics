@@ -17,7 +17,7 @@ import unittest
 from collections import defaultdict
 
 from actin_dynamics.primitives.transitions.vectorial_hydrolysis import *
-from actin_dynamics.state.single_strand_filaments import Filament
+from actin_dynamics.species.single_strand_filaments import Filament
 
 from unit_tests.mocks.concentrations import MockConcentration
 
@@ -26,12 +26,12 @@ class VectorialHydrolysisSingleFilamentTest(unittest.TestCase):
     def setUp(self):
         self.filament = Filament([1, 2, 3, 1, 2, 3, 1])
 
-        self.normal_one = VectorialHydrolysis(old_state=1, pointed_neighbor=3,
-                                              new_state=2, rate=3)
-        self.normal_two = VectorialHydrolysis(old_state=2, pointed_neighbor=1,
-                                              new_state=3, rate=2)
-        self.missing    = VectorialHydrolysis(old_state=1, pointed_neighbor=2,
-                                              new_state=7, rate=1)
+        self.normal_one = VectorialHydrolysis(old_species=1, pointed_neighbor=3,
+                                              new_species=2, rate=3)
+        self.normal_two = VectorialHydrolysis(old_species=2, pointed_neighbor=1,
+                                              new_species=3, rate=2)
+        self.missing    = VectorialHydrolysis(old_species=1, pointed_neighbor=2,
+                                              new_species=7, rate=1)
 
     def test_normal_rates(self):
         self.assertEqual(self.normal_one.R([self.filament], None), 6)
@@ -62,12 +62,12 @@ class VectorialHydrolysisMultipleFilamentTest(unittest.TestCase):
                           Filament([2, 3, 1, 2, 3, 1, 2]),
                           Filament([3, 2, 1, 3, 2, 1, 3])]
 
-        self.normal_one = VectorialHydrolysis(old_state=1, pointed_neighbor=3,
-                                              new_state=2, rate=3)
-        self.normal_two = VectorialHydrolysis(old_state=2, pointed_neighbor=1,
-                                              new_state=3, rate=2)
-        self.missing    = VectorialHydrolysis(old_state=1, pointed_neighbor=2,
-                                              new_state=7, rate=1)
+        self.normal_one = VectorialHydrolysis(old_species=1, pointed_neighbor=3,
+                                              new_species=2, rate=3)
+        self.normal_two = VectorialHydrolysis(old_species=2, pointed_neighbor=1,
+                                              new_species=3, rate=2)
+        self.missing    = VectorialHydrolysis(old_species=1, pointed_neighbor=2,
+                                              new_species=7, rate=1)
 
     def test_normal_rates(self):
         self.assertEqual(self.normal_one.R(self.filaments, None), 12)
@@ -102,17 +102,17 @@ class VectorialHydrolysisWithByproductSingleFilamentTest(unittest.TestCase):
         self.filament = Filament([1, 2, 3, 1, 2, 3, 1])
         self.concentrations = defaultdict(MockConcentration)
 
-        self.normal_one = VectorialHydrolysisWithByproduct(old_state=1,
+        self.normal_one = VectorialHydrolysisWithByproduct(old_species=1,
                                                            pointed_neighbor=3,
-                                                           new_state=2, rate=3,
+                                                           new_species=2, rate=3,
                                                            byproduct=11)
-        self.normal_two = VectorialHydrolysisWithByproduct(old_state=2,
+        self.normal_two = VectorialHydrolysisWithByproduct(old_species=2,
                                                            pointed_neighbor=1,
-                                                           new_state=3, rate=2,
+                                                           new_species=3, rate=2,
                                                            byproduct=12)
-        self.missing    = VectorialHydrolysisWithByproduct(old_state=1,
+        self.missing    = VectorialHydrolysisWithByproduct(old_species=1,
                                                            pointed_neighbor=2,
-                                                           new_state=7, rate=1,
+                                                           new_species=7, rate=1,
                                                            byproduct=17)
 
     def test_normal_rates(self):

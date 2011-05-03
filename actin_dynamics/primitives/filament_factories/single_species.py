@@ -20,10 +20,10 @@ from base_classes import FilamentFactory
 
 from actin_dynamics.state.single_strand_filaments import Filament
 
-__all__ = ['SingleStateFixedLength', 'SingleStateFixedLengthFromConcentrations',
+__all__ = ['SingleSpeciesFixedLength', 'SingleSpeciesFixedLengthFromConcentrations',
         'NormalDistribution']
 
-class SingleStateFixedLength(FilamentFactory):
+class SingleSpeciesFixedLength(FilamentFactory):
     def __init__(self, species=None, length=None, number=None, label=None):
         self.species = species
         self.length = int(length)
@@ -35,8 +35,8 @@ class SingleStateFixedLength(FilamentFactory):
         return [Filament(itertools.repeat(self.species, self.length))
                 for i in xrange(self.number)]
 
-class SingleStateFixedLengthFromConcentrations(SingleStateFixedLength):
+class SingleSpeciesFixedLengthFromConcentrations(SingleSpeciesFixedLength):
     def __init__(self, concentration=None, filament_tip_concentration=None,
                  *args, **kwargs):
         length = int(concentration / filament_tip_concentration)
-        SingleStateFixedLength.__init__(self, length=length, *args, **kwargs)
+        SingleSpeciesFixedLength.__init__(self, length=length, *args, **kwargs)

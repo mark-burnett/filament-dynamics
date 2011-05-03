@@ -18,7 +18,7 @@ experiments:
         number_of_simulations: blanchoin_pollard_2002_number_of_simulations
 
         filament_factory:
-            class_name: SingleStateFixedLength
+            class_name: SingleSpeciesFixedLength
             fixed_arguments:
                 species: Spectrin
                 length:  1
@@ -87,17 +87,17 @@ experiments:
                     class_name: ConcentrationObserver
 
                 f_atp:
-                  class_name: StateCount
+                  class_name: SpeciesCounter
                   fixed_arguments:
                     species: ATP
 
                 f_adppi:
-                  class_name: StateCount
+                  class_name: SpeciesCounter
                   fixed_arguments:
                     species: ADPPi
 
                 f_adp:
-                  class_name: StateCount
+                  class_name: SpeciesCounter
                   fixed_arguments:
                     species: ADP
 

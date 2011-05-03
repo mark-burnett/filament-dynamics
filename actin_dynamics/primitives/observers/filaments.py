@@ -15,7 +15,7 @@
 
 from .base_classes import Observer
 
-__all__ = ['Length', 'StateCount', 'WeightedStateTotal', 'FilamentCounter']
+__all__ = ['Length', 'SpeciesCount', 'WeightedSpeciesTotal', 'FilamentCounter']
 
 class Length(Observer):
     __slots__ = []
@@ -24,7 +24,7 @@ class Length(Observer):
             length = len(filament)
             self.store(time, length, key=name)
 
-class StateCount(Observer):
+class SpeciesCounter(Observer):
     __slots__ = ['state']
     def __init__(self, state=None, *args, **kwargs):
         self.state = state
@@ -36,17 +36,17 @@ class StateCount(Observer):
             state_count = filament.count(self.state)
             self.store(time, state_count, key=name)
 
-class WeightedStateTotal(Observer):
-    __slots__ = ['weights']
-    def __init__(self, label=None, *args, **weights):
-        self.weights = weights
-        Observer.__init__(self, label=label, *args)
-
-    def observe(self, time, simulation_state):
-        for name, filament in simulation_state.filaments.iteritems():
-            value = sum(filament.count(state) * weight
-                        for state, weight in self.weights.iteritems())
-            self.store(time, value, key=name)
+#class WeightedSpeciesTotal(Observer):
+#    __slots__ = ['weights']
+#    def __init__(self, label=None, *args, **weights):
+#        self.weights = weights
+#        Observer.__init__(self, label=label, *args)
+#
+#    def observe(self, time, simulation_state):
+#        for name, filament in simulation_state.filaments.iteritems():
+#            value = sum(filament.count(state) * weight
+#                        for state, weight in self.weights.iteritems())
+#            self.store(time, value, key=name)
 
 class FilamentCounter(Observer):
     __slots__ = []
