@@ -20,7 +20,8 @@ experiments:
         filament_factory:
             class_name: SingleStateFixedLength
             fixed_arguments:
-                state: Spectrin
+                species: Spectrin
+                length:  1
             variable_arguments:
                 number: blanchoin_pollard_2002_number_of_filaments
 
@@ -88,17 +89,17 @@ experiments:
                 f_atp:
                   class_name: StateCount
                   fixed_arguments:
-                    state: ATP
+                    species: ATP
 
                 f_adppi:
                   class_name: StateCount
                   fixed_arguments:
-                    state: ADPPi
+                    species: ADPPi
 
                 f_adp:
                   class_name: StateCount
                   fixed_arguments:
-                    state: ADP
+                    species: ADP
 
 
         analysts:

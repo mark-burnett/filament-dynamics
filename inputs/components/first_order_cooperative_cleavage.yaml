@@ -17,10 +17,10 @@
 cleavage:
     class_name: FirstOrderCooperativeHydrolysis
     fixed_arguments:
-        old_state: ATP
-        new_state: ADPPi
+        old_species: ATP
+        new_species: ADPPi
 
-        # States
+        # Species
         ADPPi:    both
         ADP:      both
         Spectrin: both

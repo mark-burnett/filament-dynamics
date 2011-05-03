@@ -16,11 +16,11 @@
 release:
     class_name: FirstOrderCooperativeHydrolysisWithByproduct
     fixed_arguments:
-        old_state: ADPPi
-        new_state: ADP
+        old_species: ADPPi
+        new_species: ADP
         byproduct: Pi
 
-        # States
+        # Species
         ADP:      both
         Spectrin: both
 

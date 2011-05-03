@@ -18,5 +18,5 @@ nucleotide_exchange:
     variable_arguments:
         rate: nucleotide_exchange_rate
     fixed_arguments:
-        old_state: ADP
-        new_state: ATP
+        old_species: ADP
+        new_species: ATP

@@ -17,21 +17,21 @@
 pointed_atp_polymerization:
     class_name: BarbedPolymerization
     fixed_arguments:
-        state: ATP
+        species: ATP
     variable_arguments:
         rate: pointed_atp_polymerization_rate
 
 pointed_adppi_polymerization:
     class_name: BarbedPolymerization
     fixed_arguments:
-        state: ADPPi
+        species: ADPPi
     variable_arguments:
         rate: pointed_adppi_polymerization_rate
 
 pointed_adp_polymerization:
     class_name: BarbedPolymerization
     fixed_arguments:
-        state: ADP
+        species: ADP
     variable_arguments:
         rate: pointed_adp_polymerization_rate
 
@@ -40,20 +40,20 @@ pointed_adp_polymerization:
 pointed_atp_depolymerization:
     class_name: BarbedDepolymerization
     fixed_arguments:
-        state: ATP
+        species: ATP
     variable_arguments:
         rate: pointed_atp_depolymerization_rate
 
 pointed_adppi_depolymerization:
     class_name: BarbedDepolymerization
     fixed_arguments:
-        state: ADPPi
+        species: ADPPi
     variable_arguments:
         rate: pointed_adppi_depolymerization_rate
 
 pointed_adp_depolymerization:
     class_name: BarbedDepolymerization
     fixed_arguments:
-        state: ADP
+        species: ADP
     variable_arguments:
         rate: pointed_adp_depolymerization_rate

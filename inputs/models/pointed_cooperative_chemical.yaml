@@ -13,8 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import:
-    - 'models/components/barbed_polymerization.yaml'
-    - 'models/components/cooperative_cleavage.yaml'
-    - 'models/components/cooperative_release.yaml'
-    - 'models/components/pointed_polymerization.yaml'
+model_transitions:
+    import:
+        - 'components/pointed_cooperative_cleavage.yaml'
+        - 'components/pointed_cooperative_release.yaml'

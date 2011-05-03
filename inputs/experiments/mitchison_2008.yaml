@@ -25,7 +25,7 @@ experiments:
                 filament_tip_concentration:
                     mitchison_2008_filament_tip_concentration
             fixed_arguments:
-                state: ADP
+                species: ADP
 
         stages:
             # Polymerization Stage
@@ -152,17 +152,17 @@ experiments:
                 f_atp:
                   class_name: StateCount
                   fixed_arguments:
-                    state: ATP
+                    species: ATP
 
                 f_adppi:
                   class_name: StateCount
                   fixed_arguments:
-                    state: ADPPi
+                    species: ADPPi
 
                 f_adp:
                   class_name: StateCount
                   fixed_arguments:
-                    state: ADP
+                    species: ADP
 
 
         analysts:

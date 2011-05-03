@@ -16,8 +16,8 @@
 reverse_release:
     class_name: ReverseHydrolysis
     fixed_arguments:
-        old_state: ADP
-        new_state: ADPPi
+        old_species: ADP
+        new_species: ADPPi
         concentration: Pi
     variable_arguments:
         rate: reversible_release_rate

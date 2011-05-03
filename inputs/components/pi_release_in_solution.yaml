@@ -18,7 +18,7 @@ pi_release_in_solution:
     variable_arguments:
         rate: solution_pi_release_rate
     fixed_arguments:
-        old_state: ADPPi
-        new_state: ADP
+        old_species: ADPPi
+        new_species: ADP
         byproduct: Pi
 

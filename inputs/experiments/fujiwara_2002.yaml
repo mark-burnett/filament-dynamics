@@ -25,7 +25,7 @@ experiments:
                 filament_tip_concentration:
                     fujiwara_2002_filament_tip_concentration
             fixed_arguments:
-                state: ADP
+                species: ADP
 
         stages:
             - sample_period: fujiwara_2002_sample_period
@@ -97,17 +97,17 @@ experiments:
                 f_atp:
                   class_name: StateCount
                   fixed_arguments:
-                    state: ATP
+                    species: ATP
 
                 f_adppi:
                   class_name: StateCount
                   fixed_arguments:
-                    state: ADPPi
+                    species: ADPPi
 
                 f_adp:
                   class_name: StateCount
                   fixed_arguments:
-                    state: ADP
+                    species: ADP
 
 
         analysts:
