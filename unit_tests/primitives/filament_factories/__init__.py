@@ -12,16 +12,3 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-import unittest
-
-from actin_dynamics.primitives.filaments.base_classes import FilamentFactory
-
-class FilamentFactoryBase(unittest.TestCase):
-    def test_exists(self):
-        # There is no functionality to test, but we need to be able to
-        #  successfully import FilamentFactory.
-        pass
-
-if '__main__' == __name__:
-    unittest.main()
