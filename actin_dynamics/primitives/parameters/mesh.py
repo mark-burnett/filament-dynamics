@@ -15,9 +15,10 @@
 
 from .base_classes import Parameter
 
-def mesh_generator(lower_bound, upper_bound, step_size):
+def mesh_generator(lower_bound, upper_bound, step_size, error=1e-3):
+    epsilon = error * step_size
     value = lower_bound
-    while value <= upper_bound:
+    while value <= upper_bound + epsilon:
         yield value
         value += step_size
 

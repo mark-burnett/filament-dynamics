@@ -34,9 +34,9 @@ class ConcentrationObserverTest(unittest.TestCase):
                 self.results['concentrations']['test species'])
 
     def test_observe(self):
-        ss = simulation_strategy.SimulationState
-        ss.concentrations = {'speciesA': MockConcentration(value=3),
-                             'speciesB': MockConcentration(value=2)}
+        ss = simulation_strategy.SimulationState(filaments=None,
+                concentrations={'speciesA': MockConcentration(value=3),
+                                'speciesB': MockConcentration(value=2)})
 
         self.co.observe(7.2, ss)
 

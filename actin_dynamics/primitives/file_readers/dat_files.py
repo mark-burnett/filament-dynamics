@@ -13,25 +13,27 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from os import path as _ospath
-import csv as _csv
+import os
+import csv
 
-from .base_classes import FileReader as _FileReader
+from .base_classes import FileReader
 
-from actin_dynamics.numerical import interpolation as _interpolation
-from actin_dynamics.numerical import workalike as _workalike
-from actin_dynamics.io import comments as _comments
+from actin_dynamics.numerical import interpolation
+from actin_dynamics.numerical import workalike
+from actin_dynamics.io import comments
 
-class _DatDialect(_csv.Dialect):
+__all__ = ['DatReader']
+
+class _DatDialect(csv.Dialect):
     delimiter = ' '
     quotechar = '"'
     doublequote = True
     skipinitialspace = True
     lineterminator = '\r\n'
-    quoting = _csv.QUOTE_NONNUMERIC
+    quoting = csv.QUOTE_NONNUMERIC
 
 
-class DatReader(_FileReader):
+class DatReader(FileReader):
     def __init__(self, xmin=None, xmax=None, sample_period=None,
                  filename=None, base_directory='experimental_data',
                  interpolate_data=False, label=None):
@@ -43,12 +45,12 @@ class DatReader(_FileReader):
         self.filename = filename
         self.base_directory = base_directory
 
-        _FileReader.__init__(self, label=label)
+        FileReader.__init__(self, label=label)
 
     def run(self):
-        full_filename = _ospath.join(self.base_directory, self.filename)
-        f = _comments.CommentFilter.from_filename(full_filename)
-        reader = _csv.reader(f, dialect=_DatDialect)
+        full_filename = os.path.join(self.base_directory, self.filename)
+        f = comments.CommentFilter.from_filename(full_filename)
+        reader = csv.reader(f, dialect=_DatDialect)
 
         results = []
         for row in reader:
@@ -59,6 +61,6 @@ class DatReader(_FileReader):
         if not self.interpolate_data:
             return raw_results
 
-        sample_times = _workalike.arange(self.xmin, self.xmax,
+        sample_times = workalike.arange(self.xmin, self.xmax,
                                          self.sample_period)
-        return _interpolation.resample_measurement(raw_results, sample_times)
+        return interpolation.resample_measurement(raw_results, sample_times)

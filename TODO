@@ -28,21 +28,24 @@ Do some vocab/docs
     ? projection
 
 
-global fit controller
-    do some kind of coarse mesh/random to start
-    then start generating children interactively
+controller primitives
+    mesh controller
 
-    use & improve fitpy
-        move to github
+    global fit controller
+        do some kind of coarse mesh/random to start
+        then start generating children interactively
 
-    multi-objective GA
-        continuous time GA
-        dominance sorting
-        islands
+        use & improve fitpy
+            move to github
 
-    monitor convergence
-    calculate parameter sensitivities
-        use to drive future mutations?
+        multi-objective GA
+            continuous time GA
+            dominance sorting
+            islands
+
+        monitor convergence
+        calculate parameter sensitivities
+            use to drive future mutations?
 
 Optimization
     c++ implementation of filament
@@ -63,12 +66,6 @@ Database
 Job Control
     add sentinel to end processes
 
-allow experiment analyses/slicables to be used as inputs for other experiments
-    allows multi-stage simulations
-    allows key parameters to be calculated for a model (e.g. crit conc)
-
-    'local blackboard' for experiment results
-    sequence/list for experiments
 
 misc features
     consider implementing 'derived parameters'
@@ -78,3 +75,12 @@ misc features
         e.g. slower rate for capturing entire filament state
     resume stopped sessions
     add objectives/analyses to existing simulations
+
+
+seemingly unimportant ideas
+    allow experiment analyses/slicables to be used as inputs for other experiments
+        allows multi-stage simulations
+        allows key parameters to be calculated for a model (e.g. crit conc)
+
+        'local blackboard' for experiment results
+        sequence/list for experiments

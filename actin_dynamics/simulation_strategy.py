@@ -71,7 +71,7 @@ class Simulation(object):
             # This provides causal measurements
             if time + dt > next_measurement_time:
                 for observer in self.observers:
-                    observer.measure(next_measurement_time, self.state)
+                    observer.observe(next_measurement_time, self.state)
                 next_measurement_time += self.sample_period
             time = time + dt
 

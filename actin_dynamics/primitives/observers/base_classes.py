@@ -13,13 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import collections
+
 from ..meta_classes import Registration
 
 from registry import observer_registry
-
-
-def _datastore_factory():
-    return [], []
 
 
 class Observer(object):
@@ -32,17 +30,18 @@ class Observer(object):
         self.label = label
 
 
+def _datastore_factory():
+    return [], []
+
 class FilamentObserver(Observer):
     skip_registration = True
     __slots__ = ['_datastore']
-    def __init__(self, *args, **kwargs):
-        Observer.__init__(self, *args, **kwargs)
 
     def initialize(self, results):
         self._datastore = collections.defaultdict(_datastore_factory)
         results['filaments'][self.label] = self._datastore
 
     def store(self, time, value, filament_name):
-        result_times, result_values = self._datastore[filament_name]
-        result_times.append(time)
-        result_values.append(state_count)
+        times, values = self._datastore[filament_name]
+        times.append(time)
+        values.append(value)
