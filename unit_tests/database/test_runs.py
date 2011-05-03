@@ -66,9 +66,6 @@ class TestRun(DBTestCase):
         self.assertTrue(r2.analyses[0].id >= 1)
         self.assertTrue(r2.analyses[1].id >= 1)
 
-    def test_analyses_relationship(self):
-        self.assertTrue(False, 'Test not written.')
-
 
 if '__main__' == __name__:
     unittest.main()
