@@ -9,13 +9,17 @@ Overview
     Write fitting controller
     Write two-strand primitives
 
+NOTE
+    change Filament interface so it provides count/find/list behavior
+        then change tests to not use Filament objects where possible
 
 controllers
     should be primitives & instantiated by factories
 
 
 input validation
-    check for unrecognized keys (like 'model' instead of 'models')
+    overall structure check
+        eg, look for unrecognized keys (like 'model' instead of 'models')
     unit testing opportunities
         input code
         configuration building code
@@ -23,7 +27,9 @@ input validation
     have run_tests.sh run validation on all input files
 
 Do some vocab/docs
-    session
+    species
+    model
+    experiment
     parameter set
     run
     job
@@ -33,7 +39,7 @@ Do some vocab/docs
     analyst -> analysis
     discriminator -> objective
     simulation
-    stage - just slang?
+    stage
     ? slice
     ? projection
 

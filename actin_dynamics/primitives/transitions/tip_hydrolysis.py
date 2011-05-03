@@ -16,7 +16,8 @@
 from base_classes import Transition
 
 class EndHydrolysis(Transition):
-    __slots__ = ['old_species', 'rate', 'new_species', 'index', '_last_R']
+    __slots__ = ['old_species', 'rate', 'new_species', 'index',
+                 '_last_filaments']
     def __init__(self, index=None, old_species=None, rate=None,
                  new_species=None, label=None):
         self.index     = int(index)
@@ -26,14 +27,18 @@ class EndHydrolysis(Transition):
 
         Transition.__init__(self, label=label)
 
-    def R(self, filaments, concentrations):
-        num_filaments = sum(self.old_species == f[self.index] for f in filaments)
-        self._last_R = self.rate * num_filaments
-        return self._last_R
+    def R(self, time, state):
+        self._last_filaments = []
+        for name, filament in state.filaments.iteritems():
+            if self.old_species == filament[self.index]:
+                self._last_filaments.append(filament)
+        return self.rate * len(self._last_filaments)
 
-    def perform(self, time, filaments, concentrations, r):
-        filament_index = int(r / self._last_R)
-        current_filament = filaments[filament_index]
+    def get_current_filament(self, r):
+        return self._last_filaments[int(r / self.rate)]
+
+    def perform(self, time, state, r):
+        current_filament = self.get_current_filament(r)
         current_filament[self.index] = self.new_species
 
 

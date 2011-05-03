@@ -20,6 +20,6 @@ from registry import transition_registry as registry
 import depolymerization
 import polymerization
 #import random_hydrolysis
-#import tip_hydrolysis
+import tip_hydrolysis
 #import vectorial_hydrolysis
-#import reversed_release
+import reverse_hydrolysis

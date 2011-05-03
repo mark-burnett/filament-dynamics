@@ -24,7 +24,7 @@ from actin_dynamics import simulation_strategy
 
 from unit_tests.mocks.concentrations import MockConcentration
 
-class BarbedDepolymerizationSingleFilament(unittest.TestCase):
+class BarbedDepolymerizationTest(unittest.TestCase):
     def setUp(self):
         self.filaments = {
                 'A': single_strand_filaments.Filament([None, 1, 2, 1]),
@@ -53,12 +53,16 @@ class BarbedDepolymerizationSingleFilament(unittest.TestCase):
         self.assertEqual(list(self.filaments['B']), [None, 0, 2, 1])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 1)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 2)
+        self.assertEqual(self.concentrations[1].count, 1)
+        self.assertEqual(self.concentrations[2].count, 0)
 
         self.depoly_one.perform(None, self.simulation_state, 0)
         self.assertEqual(list(self.filaments['A']), [None, 1, 2])
         self.assertEqual(list(self.filaments['B']), [None, 0, 2])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 0)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 4)
+        self.assertEqual(self.concentrations[1].count, 2)
+        self.assertEqual(self.concentrations[2].count, 0)
 
     def test_perform_second_filament(self):
         self.test_rates() # Calculate rates to initiate caching.
@@ -69,12 +73,16 @@ class BarbedDepolymerizationSingleFilament(unittest.TestCase):
         self.assertEqual(list(self.filaments['B']), [None, 0, 2])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 1)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 2)
+        self.assertEqual(self.concentrations[1].count, 1)
+        self.assertEqual(self.concentrations[2].count, 0)
 
         self.depoly_one.perform(None, self.simulation_state, 0.1)
         self.assertEqual(list(self.filaments['A']), [None, 1, 2])
         self.assertEqual(list(self.filaments['B']), [None, 0, 2])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 0)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 4)
+        self.assertEqual(self.concentrations[1].count, 2)
+        self.assertEqual(self.concentrations[2].count, 0)
 
     def test_perform_second_filament_edge_case(self):
         self.test_rates() # Calculate rates to initiate caching.
@@ -85,15 +93,19 @@ class BarbedDepolymerizationSingleFilament(unittest.TestCase):
         self.assertEqual(list(self.filaments['B']), [None, 0, 2])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 1)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 2)
+        self.assertEqual(self.concentrations[1].count, 1)
+        self.assertEqual(self.concentrations[2].count, 0)
 
         self.depoly_one.perform(None, self.simulation_state, 0)
         self.assertEqual(list(self.filaments['A']), [None, 1, 2])
         self.assertEqual(list(self.filaments['B']), [None, 0, 2])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 0)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 4)
+        self.assertEqual(self.concentrations[1].count, 2)
+        self.assertEqual(self.concentrations[2].count, 0)
 
 
-class PointedDepolymerizationSingleFilament(unittest.TestCase):
+class PointedDepolymerizationTest(unittest.TestCase):
     def setUp(self):
         self.filaments = {
                 'A': single_strand_filaments.Filament([1, 2, 1, None]),
@@ -122,12 +134,16 @@ class PointedDepolymerizationSingleFilament(unittest.TestCase):
         self.assertEqual(list(self.filaments['B']), [1, 2, 0, None])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 1)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 2)
+        self.assertEqual(self.concentrations[1].count, 1)
+        self.assertEqual(self.concentrations[2].count, 0)
 
         self.depoly_one.perform(None, self.simulation_state, 0)
         self.assertEqual(list(self.filaments['A']), [2, 1, None])
         self.assertEqual(list(self.filaments['B']), [2, 0, None])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 0)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 4)
+        self.assertEqual(self.concentrations[1].count, 2)
+        self.assertEqual(self.concentrations[2].count, 0)
 
     def test_perform_second_filament(self):
         self.test_rates() # Calculate rates to initiate caching.
@@ -138,12 +154,16 @@ class PointedDepolymerizationSingleFilament(unittest.TestCase):
         self.assertEqual(list(self.filaments['B']), [2, 0, None])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 1)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 2)
+        self.assertEqual(self.concentrations[1].count, 1)
+        self.assertEqual(self.concentrations[2].count, 0)
 
         self.depoly_one.perform(None, self.simulation_state, 0.1)
         self.assertEqual(list(self.filaments['A']), [2, 1, None])
         self.assertEqual(list(self.filaments['B']), [2, 0, None])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 0)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 4)
+        self.assertEqual(self.concentrations[1].count, 2)
+        self.assertEqual(self.concentrations[2].count, 0)
 
     def test_perform_second_filament_edge_case(self):
         self.test_rates() # Calculate rates to initiate caching.
@@ -154,12 +174,16 @@ class PointedDepolymerizationSingleFilament(unittest.TestCase):
         self.assertEqual(list(self.filaments['B']), [2, 0, None])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 1)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 2)
+        self.assertEqual(self.concentrations[1].count, 1)
+        self.assertEqual(self.concentrations[2].count, 0)
 
         self.depoly_one.perform(None, self.simulation_state, 0)
         self.assertEqual(list(self.filaments['A']), [2, 1, None])
         self.assertEqual(list(self.filaments['B']), [2, 0, None])
         self.assertEqual(self.depoly_one.R(None, self.simulation_state), 0)
         self.assertEqual(self.depoly_two.R(None, self.simulation_state), 4)
+        self.assertEqual(self.concentrations[1].count, 2)
+        self.assertEqual(self.concentrations[2].count, 0)
 
 
 if '__main__' == __name__:
