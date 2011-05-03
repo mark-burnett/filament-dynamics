@@ -22,7 +22,7 @@ from actin_dynamics import simulation_strategy
 class LengthObserverTest(unittest.TestCase):
     def setUp(self):
         self.o = filaments.Length(label='test label')
-        self.results = {'filaments': {}}
+        self.results = {}
         self.o.initialize(self.results)
 
     def test_observe(self):
@@ -31,24 +31,24 @@ class LengthObserverTest(unittest.TestCase):
                            'filamentB': range(3)})
 
         self.o.observe(3.1, ss)
-        self.assertEqual(self.results['filaments']['test label']['filamentA'],
+        self.assertEqual(self.results['test label']['filamentA'],
                          ([3.1], [10]))
-        self.assertEqual(self.results['filaments']['test label']['filamentB'],
+        self.assertEqual(self.results['test label']['filamentB'],
                          ([3.1], [3]))
 
         ss.filaments['filamentA'].pop()
 
         self.o.observe(6.7, ss)
-        self.assertEqual(self.results['filaments']['test label']['filamentA'],
+        self.assertEqual(self.results['test label']['filamentA'],
                          ([3.1, 6.7], [10, 9]))
-        self.assertEqual(self.results['filaments']['test label']['filamentB'],
+        self.assertEqual(self.results['test label']['filamentB'],
                          ([3.1, 6.7], [3, 3]))
 
 
 class StateCountObserverTest(unittest.TestCase):
     def setUp(self):
         self.o = filaments.StateCount(label='sc label', state=1)
-        self.results = {'filaments': {}}
+        self.results = {}
         self.o.initialize(self.results)
 
     def test_observe(self):
@@ -57,9 +57,9 @@ class StateCountObserverTest(unittest.TestCase):
                            'filamentB': [2, 1, 1, 2, 3, 1]})
 
         self.o.observe(3.1, ss)
-        self.assertEqual(self.results['filaments']['sc label']['filamentA'],
+        self.assertEqual(self.results['sc label']['filamentA'],
                          ([3.1], [4]))
-        self.assertEqual(self.results['filaments']['sc label']['filamentB'],
+        self.assertEqual(self.results['sc label']['filamentB'],
                          ([3.1], [3]))
 
         ss.filaments['filamentA'][0]  = 2
@@ -67,9 +67,9 @@ class StateCountObserverTest(unittest.TestCase):
         ss.filaments['filamentB'][3]  = 1
 
         self.o.observe(6.7, ss)
-        self.assertEqual(self.results['filaments']['sc label']['filamentA'],
+        self.assertEqual(self.results['sc label']['filamentA'],
                          ([3.1, 6.7], [4, 2]))
-        self.assertEqual(self.results['filaments']['sc label']['filamentB'],
+        self.assertEqual(self.results['sc label']['filamentB'],
                          ([3.1, 6.7], [3, 4]))
 
 
@@ -77,7 +77,7 @@ class WeightedStateTotal(unittest.TestCase):
     def setUp(self):
         self.o = filaments.WeightedStateTotal(label='sc label',
                 a=1, b=2, c=3)
-        self.results = {'filaments': {}}
+        self.results = {}
         self.o.initialize(self.results)
 
     def test_observe(self):
@@ -86,18 +86,18 @@ class WeightedStateTotal(unittest.TestCase):
                            'filamentB': ['b', 'a', 'a', 'b', 'c', 'a']})
 
         self.o.observe(3.1, ss)
-        self.assertEqual(self.results['filaments']['sc label']['filamentA'],
+        self.assertEqual(self.results['sc label']['filamentA'],
                          ([3.1], [11]))
-        self.assertEqual(self.results['filaments']['sc label']['filamentB'],
+        self.assertEqual(self.results['sc label']['filamentB'],
                          ([3.1], [10]))
 
         ss.filaments['filamentA'][1] = 'c'
         ss.filaments['filamentB'][3] = 'a'
 
         self.o.observe(6.7, ss)
-        self.assertEqual(self.results['filaments']['sc label']['filamentA'],
+        self.assertEqual(self.results['sc label']['filamentA'],
                          ([3.1, 6.7], [11, 13]))
-        self.assertEqual(self.results['filaments']['sc label']['filamentB'],
+        self.assertEqual(self.results['sc label']['filamentB'],
                          ([3.1, 6.7], [10, 9]))
 
 

@@ -28,10 +28,10 @@ class ConcentrationObserverTest(unittest.TestCase):
         self.co.initialize(self.results)
 
     def test_initialize(self):
-        self.assertTrue(isinstance(self.results['concentrations'], dict))
+        self.assertTrue(isinstance(self.results['test_label'], dict))
         # Verify results is a defaultdict
         self.assertEqual(([], []),
-                self.results['concentrations']['test species'])
+                self.results['test_label']['test species'])
 
     def test_observe(self):
         ss = simulation_strategy.SimulationState(filaments=None,
@@ -44,10 +44,10 @@ class ConcentrationObserverTest(unittest.TestCase):
             self.assertEqual(1, conc_obj.value_access_count)
 
         self.assertEqual(([7.2], [3]),
-                self.results['concentrations']['speciesA'])
+                self.results['test_label']['speciesA'])
 
         self.assertEqual(([7.2], [2]),
-                self.results['concentrations']['speciesB'])
+                self.results['test_label']['speciesB'])
 
 
         self.co.observe(13.6, ss)
@@ -56,10 +56,10 @@ class ConcentrationObserverTest(unittest.TestCase):
             self.assertEqual(2, conc_obj.value_access_count)
 
         self.assertEqual(([7.2, 13.6], [3, 3]),
-                self.results['concentrations']['speciesA'])
+                self.results['test_label']['speciesA'])
 
         self.assertEqual(([7.2, 13.6], [2, 2]),
-                self.results['concentrations']['speciesB'])
+                self.results['test_label']['speciesB'])
 
 
 

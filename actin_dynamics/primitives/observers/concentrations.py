@@ -18,21 +18,11 @@ import collections
 from .base_classes import Observer
 
 
-def _datastore_factory():
-    return [], []
-
-
 class ConcentrationObserver(Observer):
     __slots__ = ['_datastore']
     def __init__(self, *args, **kwargs):
         Observer.__init__(self, *args, **kwargs)
 
-    def initialize(self, results):
-        self._datastore = collections.defaultdict(_datastore_factory)
-        results['concentrations'] = self._datastore
-
     def observe(self, time, simulation_state):
         for name, conc_obj in simulation_state.concentrations.iteritems():
-            times, values = self._datastore[name]
-            times.append(time)
-            values.append(conc_obj.value(time))
+            self.store(time, conc_obj.value(time), key=name)

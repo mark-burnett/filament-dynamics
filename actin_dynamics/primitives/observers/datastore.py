@@ -13,26 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
+import collections
 
-from actin_dynamics.primitives.observers import base_classes
-from actin_dynamics import simulation_strategy
+def timecourse_factory():
+    return [], []
 
-
-class ObserverTest(unittest.TestCase):
-    def setUp(self):
-        self.o = base_classes.Observer(label='test label')
-        self.results = {}
-        self.o.initialize(self.results)
-
-    def test_initialize(self):
-        self.assertTrue(isinstance(self.results['test label'], dict))
-
-    def test_store(self):
-        self.o.store('time1', 'value1', 'filamentA')
-        self.assertEqual(self.results['test label']['filamentA'],
-                (['time1'], ['value1']))
+def keyed_timecourse_factory():
+    return collections.defaultdict(timecourse_factory)
 
 
-if '__main__' == __name__:
-    unittest.main()
+factories = {'timecourse': timecourse_factory,
+             'keyed_timecourse': keyed_timecourse_factory}
