@@ -45,3 +45,11 @@ class WeightedStateTotal(Observer):
             value = sum(filament.count(state) * weight
                         for state, weight in self.weights.iteritems())
             self.store(time, value, key=name)
+
+class FilamentCounter(Observer):
+    __slots__ = []
+    def __init__(self, *args, **kwargs):
+        Observer.__init__(self, datastore_type='timecourse', *args, **kwargs)
+
+    def observe(self, time, simulation_state):
+        self.store(time, len(simulation_state.filaments))

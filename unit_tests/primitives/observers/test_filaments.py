@@ -73,7 +73,7 @@ class StateCountObserverTest(unittest.TestCase):
                          ([3.1, 6.7], [3, 4]))
 
 
-class WeightedStateTotal(unittest.TestCase):
+class WeightedStateTotalTest(unittest.TestCase):
     def setUp(self):
         self.o = filaments.WeightedStateTotal(label='sc label',
                 a=1, b=2, c=3)
@@ -99,6 +99,33 @@ class WeightedStateTotal(unittest.TestCase):
                          ([3.1, 6.7], [11, 13]))
         self.assertEqual(self.results['sc label']['filamentB'],
                          ([3.1, 6.7], [10, 9]))
+
+class FilamentCounterTest(unittest.TestCase):
+    def setUp(self):
+        self.o = filaments.FilamentCounter(label='filament count')
+        self.results = {}
+        self.o.initialize(self.results)
+
+    def test_observe(self):
+        ss = simulation_strategy.SimulationState(concentrations=None,
+                filaments={'filamentA': range(3),
+                           'filamentB': range(2),
+                           'filamentC': range(4)})
+        self.o.observe(3.1, ss)
+        self.assertEqual(self.results['filament count'],
+            ([3.1], [3]))
+
+        ss.filaments['filamentD'] = range(7)
+        self.o.observe(6.7, ss)
+        self.assertEqual(self.results['filament count'],
+                         ([3.1, 6.7], [3, 4]))
+
+        del ss.filaments['filamentA']
+        del ss.filaments['filamentC']
+        self.o.observe(8.3, ss)
+        self.assertEqual(self.results['filament count'],
+                         ([3.1, 6.7, 8.3], [3, 4, 2]))
+
 
 
 if '__main__' == __name__:
