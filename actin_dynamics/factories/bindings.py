@@ -15,43 +15,33 @@
 
 from actin_dynamics import primitives
 
-def db_single(bind, parameters):
-    registry = getattr(primitives, bind.module_name).registry
-    cls = registry[bind.class_name]
 
-    kwargs = dict((local_name, parameters[global_name])
-          for local_name, global_name in bind.variable_arguments.iteritems())
+def instantiate_from_db(binding=None, parameters={}):
+    return instantiate_from_dict(parameters=parameters,
+                                 **binding.to_dict())
 
-    kwargs['label'] = bind.label
-    kwargs.update(bind.fixed_arguments)
-
-    return cls(**kwargs)
-
-def db_multiple(binds, parameters):
-    results = []
-    for b in binds:
-        results.append(db_single(b, parameters))
-    return results
+def instantiate_multiple_from_db(bindings, parameters):
+    f = lambda b: from_db(b, parameters)
+    return map(f, bindings)
 
 
-def dict_single(object_dict, parameters, label, registry):
-    cls = registry[object_dict['class_name']]
+def instantiate_from_dict(parameters=None, module_name=None, label=None,
+        class_name=None, fixed_arguments=None, variable_arguments=None):
+    cls = getattr(primitives, module_name).registry['class_name']
 
     kwargs = {}
-    for argument_name, parameter_name in object_dict.get('variable_arguments',
-                                             {}).iteritems():
+    for argument_name, parameter_name in variable_arguments.iteritems():
         kwargs[argument_name] = parameters[parameter_name]
 
     kwargs['label'] = label
 
-    fixed_pars = object_dict.get('fixed_arguments', {})
-    kwargs.update(fixed_pars)
+    kwargs.update(fixed_arguments)
 
     return cls(**kwargs)
 
-def dict_multiple(binds, parameters, registry):
+def instantiate_multiple_from_dict(object_dicts, parameters={}):
     results = []
-    for label, object_dict in binds.iteritems():
-        results.append(dict_single(object_dict, parameters, label, registry))
-
+    for label, obj in object_dicts.iteritems():
+        results.append(instantiate_from_dict(parameters=parameters,
+                                             label=label, **obj))
     return results

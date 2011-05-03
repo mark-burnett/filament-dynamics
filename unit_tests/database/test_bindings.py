@@ -20,6 +20,32 @@ from actin_dynamics import database
 from unit_tests.database.base_test_cases import DBTestCase
 
 class TestBinding(DBTestCase):
+    def test_to_dict(self):
+        var_data = {u'test_arg_a': u'par_name_1',
+                    u'test_arg_b': u'par_name_2'}
+        fixed_data = {u'test_arg_c': u'3.6'}
+
+        m = database.Model()
+        e = database.Experiment(model=m)
+        s = database.Stage(experiment=e)
+
+        t = database.TransitionBinding(label='mylabel',
+                class_name='trans_class', stage=s)
+        t.variable_arguments = var_data
+        t.fixed_arguments = fixed_data
+
+        self.db_session.add(t)
+        self.db_session.commit()
+
+        expected_dict = {u'mylabel': {
+                             u'module_name': u'transitions',
+                             u'class_name': u'trans_class',
+                             u'fixed_arguments': fixed_data,
+                             u'variable_arguments': var_data}}
+
+        self.assertEqual(expected_dict, t.to_dict())
+
+
     def test_inheritance_for_cross_talk(self):
         m = database.Model()
         e = database.Experiment(model=m)

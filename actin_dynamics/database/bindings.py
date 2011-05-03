@@ -57,10 +57,17 @@ class Binding(object):
                 dict(self.fixed_arguments),
                 dict(self.variable_arguments))
 
+    def to_dict(self):
+        return {self.label: {'class_name': self.class_name,
+                             'fixed_arguments': self.fixed_arguments,
+                             'variable_arguments': self.variable_arguments,
+                             'module_name': self.module_name}}
+
     fixed_arguments = _ap('_fixed_arguments', 'value',
                           creator=arguments.FixedArgument)
     variable_arguments = _ap('_variable_arguments', 'parameter_name',
                     creator=arguments.VariableArgument)
+
 
 orm.mapper(Binding, tables.binding_table,
            polymorphic_on=tables.binding_table.c.module_name,

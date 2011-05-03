@@ -1,4 +1,4 @@
-#    Copyright (C) 2010-2011 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,8 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import analysis
-from . import bindings
-from . import controllers
-from . import database
-from . import simulations
+import unittest
+
+from actin_dynamics.factories import bindings
+
+class TestBindingFactory(unittest.TestCase):
+    def test_instantiate_from_dict(self):
+        self.assertTrue(False)
+
+
+if '__main__' == __name__:
+    unittest.main()

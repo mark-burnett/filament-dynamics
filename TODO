@@ -1,7 +1,17 @@
-1) Write some input files - check
-2) Write input file validation - check
-3) Fix primitives (consistent naming, unittests, etc)
-4) Write simple controller
+Overview
+    x Write some input files
+    x Write input file validation
+    Fix primitives (consistent naming, unittests, etc)
+    Write new primitives
+    Update factory code & run support
+    Write a simple mesh simulation file
+    Update mesh controller
+    Write fitting controller
+    Write two-strand primitives
+
+
+controllers
+    should be primitives & instantiated by factories
 
 
 input validation
