@@ -16,17 +16,20 @@
 import itertools
 import random
 
-from base_classes import FilamentFactory as _FilamentFactory
+from base_classes import FilamentFactory
 
 from actin_dynamics.state.single_strand_filaments import Filament
 
-class SingleStateFixedLength(_FilamentFactory):
+__all__ = ['SingleStateFixedLength', 'SingleStateFixedLengthFromConcentrations',
+        'NormalDistribution']
+
+class SingleStateFixedLength(FilamentFactory):
     def __init__(self, state=None, length=None, number=None, label=None):
         self.state = state
         self.length = int(length)
         self.number = int(number)
 
-        _FilamentFactory.__init__(self, label=label)
+        FilamentFactory.__init__(self, label=label)
 
     def create(self):
         return [Filament(itertools.repeat(self.state, self.length))
@@ -38,19 +41,3 @@ class SingleStateFixedLengthFromConcentrations(SingleStateFixedLength):
         length = int(concentration / filament_tip_concentration)
         SingleStateFixedLength.__init__(self, state=state, length=length,
                                         number=number, label=label)
-
-
-class NormalDistribution(_FilamentFactory):
-    def __init__(self, mean=None, standard_deviation=None,
-                 state=None, number=None, label=None):
-        self.mean = mean
-        self.standard_deviation = standard_deviation
-        self.state = state
-        self.number = number
-
-        _FilamentFactory.__init__(self, label=label)
-
-    def create(self):
-        return [Filament(itertools.repeat(self.state,
-                    int(random.normalvariate(self.mean, self.standard_deviation))))
-                for i in xrange(int(self.number))]

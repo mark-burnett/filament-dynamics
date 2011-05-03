@@ -13,14 +13,22 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from base_classes import FilamentFactory as _FilamentFactory
+import unittest
 
-from actin_dynamics.state.single_strand_filaments import Filament
+from actin_dynamics.primitives.filament_factories import single_state
 
-class InertFilament(_FilamentFactory):
-    def __init__(self, state=None, label=None):
-        self.state = state
-        _FilamentFactory.__init__(self, label=label)
+class SingleStateFixedLengthTest(unittest.TestCase):
+    def setUp(self):
+        self.filament_factory = single_state.SingleStateFixedLength(
+                state='a', length=3, number=7)
 
-    def create(self):
-        return [Filament([state]) for i in xrange(self.number)]
+    def test_create(self):
+        filaments = self.filament_factory.create()
+
+        self.assertEqual(7, len(filaments))
+        for f in filaments:
+            self.assertEqual(['a', 'a', 'a'], list(f))
+
+
+if '__main__' == __name__:
+    unittest.main()

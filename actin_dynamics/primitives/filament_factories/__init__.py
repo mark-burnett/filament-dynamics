@@ -15,5 +15,4 @@
 
 from registry import filament_factory_registry as registry
 
-#import single_state
-#import inert_filaments
+import single_state

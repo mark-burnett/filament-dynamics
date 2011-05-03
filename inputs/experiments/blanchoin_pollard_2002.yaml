@@ -18,7 +18,7 @@ experiments:
         number_of_simulations: blanchoin_pollard_2002_number_of_simulations
 
         filament_factory:
-            class_name: InertSeed
+            class_name: SingleStateFixedLength
             fixed_arguments:
                 state: Spectrin
             variable_arguments:
