@@ -21,7 +21,8 @@ class FixedRate(Transition):
     skip_registration = True
     __slots__ = ['species', 'rate', 'check_index', '_last_rs',
                  '_last_names', '_shrink_function_name']
-    def __init__(self, check_index=None, species=None, rate=None, label=None):
+    def __init__(self, check_index=None, species=None, rate=None,
+                 *args, **kwargs):
         """
         species - species to depolymerize
         rate  - depolymerization rate (constant)
@@ -30,9 +31,9 @@ class FixedRate(Transition):
         self.rate        = rate
         self.check_index = check_index
 
-        Transition.__init__(self, label=label)
+        Transition.__init__(self, *args, **kwargs)
 
-    def R(self, state):
+    def R(self, time, state):
         self._last_names = []
         self._last_rs = []
         for name, filament in state.filaments.iteritems():
@@ -59,12 +60,12 @@ class FixedRate(Transition):
 
 class BarbedDepolymerization(FixedRate):
     __slots__ = []
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self._shrink_function_name = 'shrink_barbed_end'
-        FixedRate.__init__(self, check_index=-1, **kwargs)
+        FixedRate.__init__(self, check_index=-1, *args, **kwargs)
 
 class PointedDepolymerization(FixedRate):
     __slots__ = []
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self._shrink_function_name = 'shrink_pointed_end'
-        FixedRate.__init__(self, check_index=0, **kwargs)
+        FixedRate.__init__(self, check_index=0, *args, **kwargs)

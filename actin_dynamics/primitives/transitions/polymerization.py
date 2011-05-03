@@ -13,12 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import math
+
 from base_classes import Transition
 
 class FixedRate(Transition):
     skip_registration = True
     __slots__ = ['rate', 'species', '_last_R', '_grow_function_name']
-    def __init__(self, species=None, rate=None, label=None):
+    def __init__(self, species=None, rate=None, *args, **kwargs):
         """
         'species' that are added to the barbed end of the filament.
         'rate' is the number per second per concentration of
@@ -26,20 +28,22 @@ class FixedRate(Transition):
         self.species = species
         self.rate    = rate
 
-        Transition.__init__(self, label=label)
+        Transition.__init__(self, *args, **kwargs)
 
 
-    def R(self, species):
-        value = self.rate * species.concentrations[self.species].value
-        self._last_R = value * len(species.filaments)
+    def R(self, time, state):
+        value = self.rate * state.concentrations[self.species].value(time)
+        self._last_R = float(value * len(state.filaments))
         return self._last_R
 
+    def get_current_filament(self, state, r):
+        bin_size = self._last_R / len(state.filaments)
+        filament_index = int(r / bin_size)
+        return state.filaments.values()[filament_index]
 
     def perform(self, time, state, r):
-        filament_index = int(r / self._last_R)
-        current_filament = state.filaments.values()[filament_index]
-
-        getattr(current_filament, self._grow_function_name)()
+        current_filament = self.get_current_filament(state, r)
+        getattr(current_filament, self._grow_function_name)(self.species)
 
         state.concentrations[self.species].remove_monomer(time)
 
@@ -47,13 +51,13 @@ class FixedRate(Transition):
 class BarbedPolymerization(FixedRate):
     'Simple polymerization at the barbed end.'
     __slots__ = []
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self._grow_function_name = 'grow_barbed_end'
         FixedRate.__init__(self, *args, **kwargs)
 
 class PointedPolymerization(FixedRate):
     'Simple polymerization at the barbed end.'
     __slots__ = []
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self._grow_function_name = 'grow_pointed_end'
         FixedRate.__init__(self, *args, **kwargs)
