@@ -17,11 +17,11 @@
     This module contains various end conditions for the simulations.
 """
 
-from base_classes import EndCondition as _EndCondition
+from base_classes import EndCondition
 
 import random
 
-class Duration(_EndCondition):
+class Duration(EndCondition):
     'End simulation after duration seconds.'
 
     __slots__ = ['duration']
@@ -29,7 +29,7 @@ class Duration(_EndCondition):
         if duration is None or duration <= 0:
             raise ValueError('Illegal duration.')
         self.duration = duration
-        _EndCondition.__init__(self, label=label)
+        EndCondition.__init__(self, label=label)
 
     def __call__(self, time, state):
         result = time > self.duration
@@ -38,8 +38,12 @@ class Duration(_EndCondition):
 class RandomDuration(Duration):
     'End simulation after 0 to max_duration seconds.'
 
-    __slots__ = ['duration']
-    def __init__(self, max_duration=None):
+    __slots__ = []
+    def __init__(self, max_duration=None, min_duration=0, label=None):
         if max_duration is None or max_duration <= 0:
             raise ValueError('Illegal max_duration.')
-        self.duration = random.uniform(0, max_duration)
+        if min_duration < 0:
+            raise ValueError('Illegal min_duration.')
+
+        Duration.__init__(self, label=label,
+                duration=random.uniform(min_duration, max_duration))

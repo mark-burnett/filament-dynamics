@@ -15,46 +15,46 @@
 
 import unittest
 
-from actin_dynamics.primitives import end_conditions
+from actin_dynamics.primitives.end_conditions import duration
 
 class DurationTest(unittest.TestCase):
     def test_normal_duration(self):
-        d = end_conditions.Duration(17)
-        self.assertFalse(d(0,  None, None))
-        self.assertFalse(d(5,  None, None))
-        self.assertFalse(d(16, None, None))
-        self.assertFalse(d(17, None, None))
-        self.assertTrue(d( 18, None, None))
-        self.assertTrue(d(131, None, None))
+        d = duration.Duration(17)
+        self.assertFalse(d(0,  None))
+        self.assertFalse(d(5,  None))
+        self.assertFalse(d(16, None))
+        self.assertFalse(d(17, None))
+        self.assertTrue(d( 18, None))
+        self.assertTrue(d(131, None))
     
     def test_zero_duration(self):
-        self.assertRaises(ValueError, end_conditions.Duration, 0)
+        self.assertRaises(ValueError, duration.Duration, 0)
 
     def test_negative_duration(self):
-        self.assertRaises(ValueError, end_conditions.Duration, -1)
-        self.assertRaises(ValueError, end_conditions.Duration, -17)
+        self.assertRaises(ValueError, duration.Duration, -1)
+        self.assertRaises(ValueError, duration.Duration, -17)
 
 class RandomDurationTest(unittest.TestCase):
     def test_normal_duration(self):
         durations = [20, 6, 107, 85.0]
         for d in durations:
-            rd = end_conditions.RandomDuration(d)
+            rd = duration.RandomDuration(d)
             self.assertTrue(rd.duration < d)
 
             cd = rd.duration
-            self.assertFalse(rd(cd - 1, None, None))
-            self.assertTrue( rd(cd + 1, None, None))
-            self.assertFalse(rd(float(cd)/2, None, None))
-            self.assertTrue( rd(float(cd)*2, None, None))
+            self.assertFalse(rd(cd - 1,      None))
+            self.assertTrue( rd(cd + 1,      None))
+            self.assertFalse(rd(float(cd)/2, None))
+            self.assertTrue( rd(float(cd)*2, None))
 
-            self.assertTrue(rd(d, None, None))
+            self.assertTrue(rd(d, None))
 
     def test_zero_duration(self):
-        self.assertRaises(ValueError, end_conditions.RandomDuration, 0)
+        self.assertRaises(ValueError, duration.RandomDuration, 0)
 
     def test_negative_duration(self):
-        self.assertRaises(ValueError, end_conditions.RandomDuration, -1)
-        self.assertRaises(ValueError, end_conditions.RandomDuration, -17)
+        self.assertRaises(ValueError, duration.RandomDuration, -1)
+        self.assertRaises(ValueError, duration.RandomDuration, -17)
 
 if '__main__' == __name__:
     unittest.main()
