@@ -24,6 +24,7 @@ from actin_dynamics import simulation_strategy
 
 from unit_tests.mocks.concentrations import MockConcentration
 
+
 class BarbedPolymerizationSingleFilament(unittest.TestCase):
     def setUp(self):
         self.filaments = {
@@ -70,9 +71,51 @@ class BarbedPolymerizationSingleFilament(unittest.TestCase):
         # Validate rates after some transitions.
         self.test_rates()
 
-#class PointedPolymerization(unittest.TestCase):
-#    def test_write_me_please(self):
-#        self.assertTrue(False)
+class PointedPolymerizationSingleFilament(unittest.TestCase):
+    def setUp(self):
+        self.filaments = {
+                'A': single_strand_filaments.Filament([None, None, None]),
+                'B': single_strand_filaments.Filament([None, None, None])}
+
+        self.concentrations = collections.defaultdict(MockConcentration)
+        self.concentrations[1] = MockConcentration(value=3)
+        self.concentrations[2] = MockConcentration(value=7)
+
+        self.simulation_state = simulation_strategy.SimulationState(
+                concentrations=self.concentrations, filaments=self.filaments)
+
+        self.poly_one = polymerization.PointedPolymerization(species=1, rate=1)
+        self.poly_two = polymerization.PointedPolymerization(species=2, rate=2)
+
+    def test_rates(self):
+        self.assertEqual(self.poly_one.R(None, self.simulation_state), 6)
+        self.assertEqual(self.poly_two.R(None, self.simulation_state), 28)
+
+    def test_perform(self):
+        self.test_rates()
+        self.poly_one.perform(None, self.simulation_state, 0)
+        self.assertEqual(list(self.filaments['A']), [1, None, None, None])
+
+        self.poly_two.perform(None, self.simulation_state, 0)
+        self.assertEqual(list(self.filaments['A']), [2, 1, None, None, None])
+
+        self.poly_one.perform(None, self.simulation_state, 0)
+        self.assertEqual(list(self.filaments['A']), [1, 2, 1, None, None, None])
+
+        self.poly_two.perform(None, self.simulation_state, 14)
+        self.assertEqual(list(self.filaments['B']), [2, None, None, None])
+
+        self.poly_one.perform(None, self.simulation_state, 0.36)
+        self.assertEqual(list(self.filaments['A']), [1, 1, 2, 1, None, None, None])
+
+        self.poly_one.perform(None, self.simulation_state, 4.1)
+        self.assertEqual(list(self.filaments['B']), [1, 2, None, None, None])
+
+        self.assertRaises(IndexError, self.poly_two.perform,
+                None, self.simulation_state, 28)
+
+        # Validate rates after some transitions.
+        self.test_rates()
 
 if '__main__' == __name__:
     unittest.main()
