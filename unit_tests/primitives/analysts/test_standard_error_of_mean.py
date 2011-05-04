@@ -62,7 +62,7 @@ class KeyedStandardErrorMeanTest(unittest.TestCase):
         self.expected_result = {'A': (range(3), [2, 1, 0], [0, 0, 0]),
                                 'B': (range(2), [1, 0], [0, 0])}
 
-    def test_stuff(self):
+    def test_analyze(self):
         analyst = standard_error_of_mean.KeyedStandardErrorMean(
                 source_name='my name', source_type='observation',
                 label='test label')

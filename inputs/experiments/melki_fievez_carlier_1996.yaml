@@ -106,7 +106,7 @@ experiments:
               class_name: KeyedStandardErrorMean
               fixed_parameters:
                 source_name: concentrations
-                  source_type: observation
+                source_type: observation
 
             - label: f_atp
               class_name: StandardErrorMean
