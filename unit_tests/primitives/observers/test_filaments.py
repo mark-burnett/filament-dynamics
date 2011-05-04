@@ -45,9 +45,9 @@ class LengthObserverTest(unittest.TestCase):
                          ([3.1, 6.7], [3, 3]))
 
 
-class StateCountObserverTest(unittest.TestCase):
+class SpeciesCountObserverTest(unittest.TestCase):
     def setUp(self):
-        self.o = filaments.StateCount(label='sc label', species=1)
+        self.o = filaments.SpeciesCounter(label='sc label', species=1)
         self.results = {}
         self.o.initialize(self.results)
 
@@ -73,9 +73,9 @@ class StateCountObserverTest(unittest.TestCase):
                          ([3.1, 6.7], [3, 4]))
 
 
-class WeightedStateTotalTest(unittest.TestCase):
+class WeightedSpeciesTotalTest(unittest.TestCase):
     def setUp(self):
-        self.o = filaments.WeightedStateTotal(label='sc label',
+        self.o = filaments.WeightedSpeciesTotal(label='sc label',
                 a=1, b=2, c=3)
         self.results = {}
         self.o.initialize(self.results)

@@ -14,29 +14,32 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from collections import defaultdict
+import collections
 
-from actin_dynamics.primitives.transitions.mixins import *
-from actin_dynamics.species.single_strand_filaments import Filament
+from actin_dynamics.primitives.transitions import mixins
+from actin_dynamics.state import single_strand_filaments
+
+from actin_dynamics import simulation_strategy
 
 from unit_tests.mocks.concentrations import MockConcentration
 
 
 class ByproductMixinTest(unittest.TestCase):
     def setUp(self):
-        self.strand = Filament([1, 2, 3, 1, 2, 3, 1])
-        self.concentrations = defaultdict(MockConcentration)
+        self.concentrations = collections.defaultdict(MockConcentration)
+        self.simulation_state = simulation_strategy.SimulationState(
+                concentrations=self.concentrations, filaments=None)
 
-        self.mixin = WithByproduct(byproduct=11)
+        self.mixin = mixins.WithByproduct(byproduct=11)
 
     def test_normal_perform(self):
-        self.mixin.perform(None, self.strand, self.concentrations, None)
+        self.mixin.perform(None, self.simulation_state, None)
         self.assertEqual(self.concentrations[11].count, 1)
 
-        self.mixin.perform(None, self.strand, self.concentrations, None)
+        self.mixin.perform(None, self.simulation_state, None)
         self.assertEqual(self.concentrations[11].count, 2)
 
-        self.mixin.perform(None, self.strand, self.concentrations, None)
+        self.mixin.perform(None, self.simulation_state, None)
         self.assertEqual(self.concentrations[11].count, 3)
 
 

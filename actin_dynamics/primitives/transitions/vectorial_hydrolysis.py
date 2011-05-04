@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,26 +21,29 @@ from . import mixins
 
 class VectorialHydrolysis(Transition):
     __slots__ = ['old_species', 'pointed_neighbor', 'rate', 'new_species',
-                 '_last_rs']
+                 '_last_rs', '_last_filaments']
     def __init__(self, old_species=None, pointed_neighbor=None, rate=None,
-                 new_species=None, label=None):
-        self.old_species        = old_species
+                 new_species=None, *args, **kwargs):
+        self.old_species  = old_species
+        self.new_species  = new_species
         self.pointed_neighbor = pointed_neighbor
-        self.rate             = rate
-        self.new_species        = new_species
+        self.rate = rate
 
-        Transition.__init__(self, label=label)
+        Transition.__init__(self, *args, **kwargs)
 
-    def R(self, filaments, concentrations):
-        self._last_rs = [self.rate * filament.boundary_count(
-                             self.old_species, self.pointed_neighbor)
-                         for filament in filaments]
+    def R(self, time, state):
+        self._last_filaments = []
+        self._last_rs = []
+        for filament in state.filaments.itervalues():
+            self._last_filaments.append(filament)
+            self._last_rs.append(self.rate * filament.boundary_count(
+                self.old_species, self.pointed_neighbor))
         return sum(self._last_rs)
 
-    def perform(self, time, filaments, concentrations, r):
+    def perform(self, time, state, r):
         filament_index, remaining_r = rate_bisect.rate_bisect(r,
                 list(utils.running_total(self._last_rs)))
-        current_filament = filaments[filament_index]
+        current_filament = self._last_filaments[filament_index]
 
         target_index = int(remaining_r / self.rate)
         species_index = current_filament.boundary_index(self.old_species,

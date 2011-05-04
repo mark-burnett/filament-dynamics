@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -14,125 +14,80 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from collections import defaultdict
+import collections
 
-from actin_dynamics.primitives.transitions.random_hydrolysis import *
-from actin_dynamics.species.single_strand_filaments import Filament
+from actin_dynamics.primitives.transitions import random_hydrolysis
+from actin_dynamics.state.single_strand_filaments import Filament
 
 from unit_tests.mocks.concentrations import MockConcentration
 
+from actin_dynamics import simulation_strategy
 
-class RandomHydrolysisSingleFilamentTest(unittest.TestCase):
+
+class RandomHydrolysisTest(unittest.TestCase):
     def setUp(self):
-        self.filament = Filament([1, 2, 3, 1, 2, 3, 1])
-        self.transition_one  = RandomHydrolysis(old_species=1, new_species=2,
-                                                rate=3)
-        self.transition_two  = RandomHydrolysis(old_species=2, new_species=3,
-                                                rate=2)
-        self.transition_four = RandomHydrolysis(old_species=4, new_species=5,
-                                                rate=1)
+        self.filaments = {'A': Filament([1, 2, 3, 1, 2, 3, 1]),
+                          'B': Filament([3, 1, 2, 3, 1, 2, 3])}
+        self.simulation_state = simulation_strategy.SimulationState(
+                concentrations=None, filaments=self.filaments)
+
+        self.transition_one  = random_hydrolysis.RandomHydrolysis(
+                old_species=1, new_species=2, rate=3)
+        self.transition_two  = random_hydrolysis.RandomHydrolysis(
+                old_species=2, new_species=3, rate=2)
+        self.transition_four = random_hydrolysis.RandomHydrolysis(
+                old_species=4, new_species=5, rate=1)
 
     def test_normal_rates(self):
-        self.assertEqual(self.transition_one.R([self.filament], None), 9)
-        self.assertEqual(self.transition_two.R([self.filament], None), 4)
+        self.assertEqual(self.transition_one.R(None, self.simulation_state), 15)
+        self.assertEqual(self.transition_two.R(None, self.simulation_state),  8)
 
     def test_missing_rates(self):
-        self.assertEqual(self.transition_four.R([self.filament], None), 0)
-
-    def test_perform_normal(self):
-        self.test_normal_rates()
-        self.transition_one.perform(None, [self.filament], None, 0)
-        self.assertEqual(self.transition_one.R([self.filament], None), 6)
-        self.assertEqual(self.transition_two.R([self.filament], None), 6)
-
-        self.transition_one.perform(None, [self.filament], None, 5.9)
-        self.assertEqual(self.transition_one.R([self.filament], None), 3)
-        self.assertEqual(self.transition_two.R([self.filament], None), 8)
-
-        self.transition_two.perform(None, [self.filament], None, 1)
-        self.assertEqual(self.transition_two.R([self.filament], None), 6)
-
-    def test_perform_missing(self):
-        self.test_missing_rates()
-        self.assertRaises(IndexError, self.transition_four.perform,
-                          None, [self.filament], None, 0)
+        self.assertEqual(self.transition_four.R(None, self.simulation_state), 0)
 
 
-class RandomHydrolysisMultipleFilamentTest(unittest.TestCase):
-    def setUp(self):
-        self.filaments = [Filament([1, 2, 3, 1, 2, 3, 1]),
-                          Filament([2, 3, 1, 2, 3, 1, 2]),
-                          Filament([3, 2, 1, 4, 2, 1, 3])]
-        self.transition_one  = RandomHydrolysis(old_species=1, new_species=2,
-                                                rate=3)
-        self.transition_two  = RandomHydrolysis(old_species=2, new_species=3,
-                                                rate=2)
-        self.transition_four = RandomHydrolysis(old_species=4, new_species=5,
-                                                rate=1)
+    def test_perform_first_filament_first_element(self):
+        self.transition_two.R(None, self.simulation_state)
+        self.transition_two.perform(None, self.simulation_state, 0)
+        self.assertEqual(list(self.filaments['A']), [1, 3, 3, 1, 2, 3, 1])
+        self.assertEqual(list(self.filaments['B']), [3, 1, 2, 3, 1, 2, 3])
 
-    def test_normal_rates(self):
-        self.assertEqual(self.transition_one.R(self.filaments, None), 21)
-        self.assertEqual(self.transition_two.R(self.filaments, None), 14)
+    def test_perform_first_filament_second_element(self):
+        self.transition_two.R(None, self.simulation_state)
+        self.transition_two.perform(None, self.simulation_state, 2.3)
+        self.assertEqual(list(self.filaments['A']), [1, 2, 3, 1, 3, 3, 1])
+        self.assertEqual(list(self.filaments['B']), [3, 1, 2, 3, 1, 2, 3])
 
-    def test_missing_rates(self):
-        self.assertEqual(self.transition_four.R(self.filaments, None), 1)
-
-    def test_perform_normal(self):
-        self.test_normal_rates()
-        self.transition_one.perform(None, self.filaments, None, 0)
-        self.assertEqual(self.transition_one.R(self.filaments, None), 18)
-        self.assertEqual(self.transition_two.R(self.filaments, None), 16)
-
-        self.transition_one.perform(None, self.filaments, None, 0)
-        self.assertEqual(self.transition_one.R(self.filaments, None), 15)
-        self.assertEqual(self.transition_two.R(self.filaments, None), 18)
-
-        self.transition_one.perform(None, self.filaments, None, 0)
-        self.assertEqual(self.transition_one.R(self.filaments, None), 12)
-        self.assertEqual(self.transition_two.R(self.filaments, None), 20)
+    def test_perform_first_filament_second_element_edge(self):
+        self.transition_two.R(None, self.simulation_state)
+        self.transition_two.perform(None, self.simulation_state, 2)
+        self.assertEqual(list(self.filaments['A']), [1, 2, 3, 1, 3, 3, 1])
+        self.assertEqual(list(self.filaments['B']), [3, 1, 2, 3, 1, 2, 3])
 
 
-class RandomHydrolysisWithByproductSingleFilamentTest(unittest.TestCase):
-    def setUp(self):
-        self.filament = Filament([1, 2, 3, 1, 2, 3, 1])
-        self.concentrations = defaultdict(MockConcentration)
-        self.transition_one = RandomHydrolysisWithByproduct(old_species=1,
-                new_species=2, byproduct=11, rate=3)
-        self.transition_two = RandomHydrolysisWithByproduct(old_species=2,
-                new_species=3, byproduct=12, rate=2)
-        self.transition_four = RandomHydrolysisWithByproduct(old_species=4,
-                new_species=5, byproduct=14, rate=1)
+    def test_perform_second_filament_first_element(self):
+        self.transition_two.R(None, self.simulation_state)
+        self.transition_two.perform(None, self.simulation_state, 4.1)
+        self.assertEqual(list(self.filaments['A']), [1, 2, 3, 1, 2, 3, 1])
+        self.assertEqual(list(self.filaments['B']), [3, 1, 3, 3, 1, 2, 3])
 
-    def test_normal_rates(self):
-        self.assertEqual(self.transition_one.R([self.filament], None), 9)
-        self.assertEqual(self.transition_two.R([self.filament], None), 4)
+    def test_perform_second_filament_edge_first_element(self):
+        self.transition_two.R(None, self.simulation_state)
+        self.transition_two.perform(None, self.simulation_state, 4)
+        self.assertEqual(list(self.filaments['A']), [1, 2, 3, 1, 2, 3, 1])
+        self.assertEqual(list(self.filaments['B']), [3, 1, 3, 3, 1, 2, 3])
 
-    def test_missing_rates(self):
-        self.assertEqual(self.transition_four.R([self.filament], None), 0)
+    def test_perform_second_filament_second_element(self):
+        self.transition_two.R(None, self.simulation_state)
+        self.transition_two.perform(None, self.simulation_state, 6.3)
+        self.assertEqual(list(self.filaments['A']), [1, 2, 3, 1, 2, 3, 1])
+        self.assertEqual(list(self.filaments['B']), [3, 1, 2, 3, 1, 3, 3])
 
-    def test_perform_normal(self):
-        self.test_normal_rates()
-        self.transition_one.perform(None, [self.filament], self.concentrations, 0)
-        self.assertEqual(self.transition_one.R([self.filament], None), 6)
-        self.assertEqual(self.transition_two.R([self.filament], None), 6)
-        self.assertEqual(self.concentrations[11].count, 1)
-
-        self.transition_one.perform(None, [self.filament], self.concentrations, 5.9)
-        self.assertEqual(self.transition_one.R([self.filament],
-                         self.concentrations), 3)
-        self.assertEqual(self.transition_two.R([self.filament], None), 8)
-        self.assertEqual(self.concentrations[11].count, 2)
-
-        self.transition_two.perform(None, [self.filament], self.concentrations, 1)
-        self.assertEqual(self.transition_two.R([self.filament], None), 6)
-        self.assertEqual(self.concentrations[11].count, 2)
-        self.assertEqual(self.concentrations[12].count, 1)
-
-    def test_perform_missing(self):
-        self.test_missing_rates()
-        self.assertRaises(IndexError, self.transition_four.perform,
-                          None, [self.filament], self.concentrations, 0)
-        self.assertEqual(self.concentrations[14].count, 0)
+    def test_perform_second_filament_second_element_edge(self):
+        self.transition_two.R(None, self.simulation_state)
+        self.transition_two.perform(None, self.simulation_state, 6)
+        self.assertEqual(list(self.filaments['A']), [1, 2, 3, 1, 2, 3, 1])
+        self.assertEqual(list(self.filaments['B']), [3, 1, 2, 3, 1, 3, 3])
 
 
 if '__main__' == __name__:

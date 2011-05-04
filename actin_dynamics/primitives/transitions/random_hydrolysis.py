@@ -19,33 +19,34 @@ from .base_classes import Transition
 from . import mixins
 
 class RandomHydrolysis(Transition):
-    __slots__ = ['old_species', 'rate', 'new_species', '_last_rs', '_last_names']
-    def __init__(self, old_species=None, rate=None, new_species=None, label=None):
+    __slots__ = ['old_species', 'rate', 'new_species', '_last_rs',
+                 '_last_filaments']
+    def __init__(self, old_species=None, rate=None, new_species=None,
+                 *args, **kwargs):
         self.old_species = old_species
         self.rate      = rate
         self.new_species = new_species
 
-        Transition.__init__(self, label=label)
+        Transition.__init__(self, *args, **kwargs)
 
-    def R(self, filaments, concentrations):
-        self._last_names = []
+    def R(self, time, state):
+        self._last_filaments = []
         self._last_rs = []
-        for name, filament in filaments.iteritems():
-            self._last_names.append(name)
-            self._last_rs.append(self.rate * filament.species_count(
+        for filament in state.filaments.itervalues():
+            self._last_filaments.append(filament)
+            self._last_rs.append(self.rate * filament.state_count(
                 self.old_species))
         return sum(self._last_rs)
 
-    def perform(self, time, filaments, concentrations, r):
+    def perform(self, time, state, r):
         filament_index, remaining_r = rate_bisect.rate_bisect(r,
                 list(utils.running_total(self._last_rs)))
-        name = self._last_names[filament_index]
-        current_filament = filaments[name]
+        current_filament = self._last_filaments[filament_index]
 
         target_index = int(remaining_r / self.rate)
 
-        species_index = current_filament.species_index(self.old_species, target_index)
-
+        species_index = current_filament.state_index(self.old_species,
+                                                     target_index)
         current_filament[species_index] = self.new_species
 
 

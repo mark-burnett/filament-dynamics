@@ -19,7 +19,7 @@ import concentration_changes
 #import cooperative_hydrolysis
 import depolymerization
 import polymerization
-#import random_hydrolysis
+import random_hydrolysis
 import tip_hydrolysis
-#import vectorial_hydrolysis
+import vectorial_hydrolysis
 import reverse_hydrolysis
