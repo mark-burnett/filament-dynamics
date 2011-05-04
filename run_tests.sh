@@ -18,6 +18,7 @@
 
 # Configurable options
 UNIT_TEST_COMMAND=bin/run_unit_tests.sh
+TEST_COVERAGE_COMMAND=bin/run_coverage.sh
 INTEGRATION_TEST_COMMAND=bin/run_integration_tests.sh
 
 DEFAULT_RUN_UNIT_TESTS=true
@@ -25,6 +26,7 @@ DEFAULT_RUN_INTEGRATION_TESTS=false
 
 # Below this point is real code, not options.
 RUN_UNIT_TESTS=false
+RUN_TEST_COVERAGE=false
 RUN_INTEGRATION_TESTS=false
 ARGUMENTS_RECEIVED=false
 
@@ -32,6 +34,7 @@ display_args() {
     echo "Options:"
     echo
     echo "    -u    Run unit tests."
+    echo "    -c    Check unit test coverage."
     echo "    -i    Run integration tests."
     echo
     echo "    -h    Print this message."
@@ -44,17 +47,26 @@ run_unit_tests() {
     echo
 }
 
+run_test_coverage() {
+    echo "Running test coverage"
+    $TEST_COVERAGE_COMMAND
+    echo
+}
+
 run_integration_tests() {
     echo "Running integration tests..."
     $INTEGRATION_TEST_COMMAND
     echo
 }
 
-while getopts "uih" FLAG; do
+while getopts "ucih" FLAG; do
     case $FLAG in
         "u")
             ARGUMENTS_RECEIVED=true
             RUN_UNIT_TESTS=true;;
+        "c")
+            ARGUMENTS_RECEIVED=true
+            RUN_TEST_COVERAGE=true;;
         "i")
             ARGUMENTS_RECEIVED=true
             RUN_INTEGRATION_TESTS=true;;
@@ -68,12 +80,16 @@ echo "Running automated tests."
 echo
 
 if $ARGUMENTS_RECEIVED; then
-    if $RUN_UNIT_TESTS; then
-        run_unit_tests
-    fi
+    if $RUN_TEST_COVERAGE; then
+        run_test_coverage
+    else
+        if $RUN_UNIT_TESTS; then
+            run_unit_tests
+        fi
 
-    if $RUN_INTEGRATION_TESTS; then
-        run_integration_tests
+        if $RUN_INTEGRATION_TESTS; then
+            run_integration_tests
+        fi
     fi
 else
     if $DEFAULT_RUN_UNIT_TESTS; then
