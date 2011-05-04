@@ -112,9 +112,10 @@ experiments:
 
         analysts:
             - label: concentrations
-              class_name: SaveObservation
+              class_name: KeyedStandardErrorMean
               fixed_parameters:
-                observation_name: concentrations
+                source_name: concentrations
+                  source_type: observation
 
             - label: f_atp
               class_name: StandardErrorMean
