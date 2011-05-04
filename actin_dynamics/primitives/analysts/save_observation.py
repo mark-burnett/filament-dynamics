@@ -13,15 +13,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..meta_classes import Registration
+from .base_classes import Analyst
 
-from registry import analyst_registry
+from actin_dynamics import database
 
-class Analyst(object):
-    __metaclass__ = Registration
-    registry = analyst_registry
-    skip_registration = True
+class SaveObservation(Analyst):
+    def __init__(self, observation_name=None, *args, **kwargs):
+        self.observation_name = observation_name
+        Analyst.__init__(self, *args, **kwargs)
 
-    __slots__ = ['label']
-    def __init__(self, label=None):
-        self.label = label
+    def perform(self, observations, analyses):
+        # NOTE run_support needs to attach run & binding to this result
+        return database.Analysis(value=observations[self.observation_name])

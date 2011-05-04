@@ -103,7 +103,7 @@ experiments:
 
         analysts:
             - label: concentrations
-              class_name: SaveConcentrations
+              class_name: SaveObservation
               fixed_parameters:
                 observation_name: concentrations
 

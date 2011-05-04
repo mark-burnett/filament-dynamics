@@ -13,15 +13,22 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..meta_classes import Registration
+import unittest
 
-from registry import analyst_registry
+from actin_dynamics.primitives.analysts import save_observation
 
-class Analyst(object):
-    __metaclass__ = Registration
-    registry = analyst_registry
-    skip_registration = True
+from actin_dynamics import database
 
-    __slots__ = ['label']
-    def __init__(self, label=None):
-        self.label = label
+class SaveObservationTest(unittest.TestCase):
+    def test_perform(self):
+        observations = {'my observation': 'my data'}
+        analyst = save_observation.SaveObservation(
+                observation_name='my observation')
+
+        analysis = analyst.perform(observations, None)
+        self.assertTrue(isinstance(analysis, database.Analysis))
+        self.assertEqual('my data', analysis.value)
+
+
+if '__main__' == __name__:
+    unittest.main()

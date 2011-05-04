@@ -12,16 +12,3 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-from ..meta_classes import Registration
-
-from registry import analyst_registry
-
-class Analyst(object):
-    __metaclass__ = Registration
-    registry = analyst_registry
-    skip_registration = True
-
-    __slots__ = ['label']
-    def __init__(self, label=None):
-        self.label = label
