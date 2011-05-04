@@ -15,5 +15,6 @@
 
 from registry import analyst_registry as registry
 
-#import standard_error_of_mean
+import save_observation
+import standard_error_of_mean
 #import tip_diffusion
