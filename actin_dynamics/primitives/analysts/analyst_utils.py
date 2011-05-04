@@ -13,11 +13,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import bisect
 import math
 
 from actin_dynamics.numerical import workalike
+
 
 def flatten_data(raw_data):
     flat_data = []
@@ -28,6 +28,7 @@ def flatten_data(raw_data):
             flat_data.append(rd)
     return flat_data
 
+
 def collate_data(raw_data):
     flat_data = flatten_data(raw_data)
     times = get_times(flat_data)
@@ -35,6 +36,7 @@ def collate_data(raw_data):
     for t in times:
         values.append(get_values_at_time(flat_data, t))
     return times, values
+
 
 def get_times(flat_data):
     smallest_time, largest_time, sample_period = get_time_bounds(flat_data)
@@ -56,6 +58,7 @@ def get_time_bounds(flat_data):
             largest_time = times[-1]
     return smallest_time, largest_time, sample_period
 
+
 def get_values_at_time(flat_data, time):
     results = []
     for times, values in flat_data:
@@ -65,6 +68,7 @@ def get_values_at_time(flat_data, time):
         except IndexError:
             pass
     return results
+
 
 def standard_error_of_mean(collated_data, scale_by=1, add=0):
     means = []

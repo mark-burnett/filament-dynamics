@@ -1,4 +1,4 @@
-#    Copyright (C) 2010-2011 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,9 +13,20 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from registry import analyst_registry as registry
+from .base_classes import Analyst
 
-import save_observation
-import standard_error_of_mean
-import sum_analyses
-#import tip_diffusion
+from actin_dynamics import database
+from actin_dynamics.numerical import measurements
+
+class SumAnalyses(Analyst):
+    def __init__(self, label=None, **weights):
+        self.weights = weights
+        Analyst.__init__(self, label=label)
+
+    def analyze(self, observations, analyses):
+        weighted_measurements = []
+        for name, weight in self.weights.iteritems():
+            weighted_measurements.append(
+                    measurements.scale(analyses[name].value, weight))
+        result = measurements.add(weighted_measurements)
+        return database.Analysis(value=result)
