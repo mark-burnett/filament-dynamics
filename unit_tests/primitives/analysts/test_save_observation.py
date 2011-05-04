@@ -20,12 +20,12 @@ from actin_dynamics.primitives.analysts import save_observation
 from actin_dynamics import database
 
 class SaveObservationTest(unittest.TestCase):
-    def test_perform(self):
+    def test_analyze(self):
         observations = {'my observation': 'my data'}
         analyst = save_observation.SaveObservation(
                 observation_name='my observation')
 
-        analysis = analyst.perform(observations, None)
+        analysis = analyst.analyze(observations, None)
         self.assertTrue(isinstance(analysis, database.Analysis))
         self.assertEqual('my data', analysis.value)
 

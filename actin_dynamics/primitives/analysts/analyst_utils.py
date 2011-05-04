@@ -13,22 +13,52 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def get_measurement(simulation_results, name, measurement_type):
-    if 'filament' == measurement_type:
-        iterator = iter_filaments(simulation_results)
-        measurement_key = 'measurements'
-    else:
-        iterator = simulation_results
-        measurement_key = 'concentrations'
+import bisect
+from actin_dynamics.numerical import workalike
 
+def flatten_data(raw_data):
+    flat_data = []
+    for rd in raw_data:
+        if isinstance(rd, dict):
+            flat_data.extend(rd.itervalues())
+        else:
+            flat_data.append(rd)
+    return flat_data
+
+def collate_data(raw_data):
+    flat_data = flatten_data(raw_data)
+    times = get_times(flat_data)
+    values = []
+    for t in times:
+        values.append(get_values_at_time(flat_data, t))
+    return times, values
+
+def get_times(flat_data):
+    smallest_time, largest_time, sample_period = get_time_bounds(flat_data)
+    return workalike.arange(smallest_time, largest_time + float(sample_period)/2,
+            sample_period)
+
+def get_time_bounds(flat_data):
+    smallest_time = None
+    largest_time = None
+    sample_period = None
+    for times, values in flat_data:
+        if smallest_time is None:
+            smallest_time = times[0]
+            largest_time = times[-1]
+            sample_period = times[1] - times[0]
+        elif smallest_time > times[0]:
+            smallest_time = times[0]
+        elif largest_time < times[-1]:
+            largest_time = times[-1]
+    return smallest_time, largest_time, sample_period
+
+def get_values_at_time(flat_data, time):
     results = []
-    for item in iterator:
-        results.append(item[measurement_key][name])
+    for times, values in flat_data:
+        index = bisect.bisect_left(times, time)
+        try:
+            results.append(values[index])
+        except IndexError:
+            pass
     return results
-
-
-def iter_filaments(simulation_results):
-    for simulation in simulation_results:
-        for filament in simulation['filaments']:
-            yield filament
-

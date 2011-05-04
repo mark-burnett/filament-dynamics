@@ -22,6 +22,6 @@ class SaveObservation(Analyst):
         self.observation_name = observation_name
         Analyst.__init__(self, *args, **kwargs)
 
-    def perform(self, observations, analyses):
+    def analyze(self, observations, analyses):
         # NOTE run_support needs to attach run & binding to this result
         return database.Analysis(value=observations[self.observation_name])
