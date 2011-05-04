@@ -13,7 +13,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 import bisect
+import math
+
 from actin_dynamics.numerical import workalike
 
 def flatten_data(raw_data):
@@ -62,3 +65,17 @@ def get_values_at_time(flat_data, time):
         except IndexError:
             pass
     return results
+
+def standard_error_of_mean(collated_data, scale_by=1, add=0):
+    means = []
+    errors = []
+    for values in collated_data:
+        length = len(values)
+        sqrt_N = math.sqrt(length)
+
+        adjusted_values = [float(v) * scale_by for v in values]
+        mean = sum(adjusted_values) / length
+        error = workalike.std(adjusted_values, mean) / sqrt_N
+        means.append(mean + add)
+        errors.append(error)
+    return means, errors

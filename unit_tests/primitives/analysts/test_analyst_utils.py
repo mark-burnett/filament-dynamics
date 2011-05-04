@@ -62,5 +62,30 @@ class CollateDataTest(unittest.TestCase):
                 analyst_utils.collate_data(self.raw_data))
 
 
+class SEMTest(unittest.TestCase):
+    def setUp(self):
+        self.collated_data = [[2, 1, 1, 2], [1, 0, 0, 1], [0, 0]]
+
+    def test_noscale_noadd(self):
+        means = [1.5, 0.5, 0]
+        errors = [0.25, 0.25, 0]
+        self.assertEqual((means, errors),
+                analyst_utils.standard_error_of_mean(self.collated_data))
+
+    def test_scale_noadd(self):
+        means = [3, 1, 0]
+        errors = [0.5, 0.5, 0]
+        self.assertEqual((means, errors),
+                analyst_utils.standard_error_of_mean(self.collated_data,
+                    scale_by=2))
+
+    def test_scale_add(self):
+        means = [4, 2, 1]
+        errors = [0.5, 0.5, 0]
+        self.assertEqual((means, errors),
+                analyst_utils.standard_error_of_mean(self.collated_data,
+                    scale_by=2, add=1))
+
+
 if '__main__' == __name__:
     unittest.main()
