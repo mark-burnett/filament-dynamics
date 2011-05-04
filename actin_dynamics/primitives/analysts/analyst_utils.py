@@ -83,3 +83,12 @@ def standard_error_of_mean(collated_data, scale_by=1, add=0):
         means.append(mean + add)
         errors.append(error)
     return means, errors
+
+def choose_source(observations, analyses, source_type):
+    if 'observation' == source_type.lower():
+        source = observations
+    elif 'analyses' == source_type.lower():
+        source = analyses
+    else:
+        raise RuntimeError('Unknown source type %r.' % source_type)
+    return source

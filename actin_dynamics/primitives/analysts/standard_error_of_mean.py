@@ -19,7 +19,7 @@ from actin_dynamics import database
 
 from . import analyst_utils
 
-from actin_dynamics.numerical import workalike, measurements
+from actin_dynamics.numerical import workalike, measurements, transform
 
 from actin_dynamics import logger
 log = logger.getLogger(__file__)
@@ -37,7 +37,8 @@ class StandardErrorMean(Analyst):
         Analyst.__init__(self, *args, **kwargs)
 
     def analyze(self, observations, analyses):
-        source = _choose_source(observations, analyses, self.source_type)
+        source = analyst_utils.choose_source(observations, analyses,
+                self.source_type)
         raw_data = source[self.source_name]
 
         times, collated_data = analyst_utils.collate_data(raw_data)
@@ -63,9 +64,11 @@ class KeyedStandardErrorMean(Analyst):
         Analyst.__init__(self, *args, **kwargs)
 
     def analyze(self, observations, analyses):
-        source = _choose_source(observations, analyses, self.source_type)
+        source = analyst_utils.choose_source(observations, analyses,
+                self.source_type)
+        keyed_data = transform.key_transform(source[self.source_name])
         results = {}
-        for name, raw_data in source[self.source_name].iteritems():
+        for name, raw_data in keyed_data.iteritems():
             times, collated_data = analyst_utils.collate_data(raw_data)
 
             values, errors = analyst_utils.standard_error_of_mean(
@@ -74,13 +77,3 @@ class KeyedStandardErrorMean(Analyst):
             results[name] = (times, values, errors)
 
         return database.Analysis(value=results)
-
-
-def _choose_source(observations, analyses, source_type):
-    if 'observation' == source_type.lower():
-        source = observations
-    elif 'analyses' == source_type.lower():
-        source = analyses
-    else:
-        raise RuntimeError('Unknown source type %r.' % source_type)
-    return source

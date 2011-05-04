@@ -161,9 +161,10 @@ experiments:
                 observation_name: length
 
             - label: velocity
-              class_name: InstantaneousVelocity
+              class_name: KeyedDerivative
               fixed_arguments:
-                filament_observation: length
+                source_name: length
+                source_type: observation
               variable_arguments:
                 start_time: fujiwara_2002_D_window_start
 
