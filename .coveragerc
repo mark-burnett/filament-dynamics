@@ -1,0 +1,3 @@
+[run]
+source = actin_dynamics
+omit = actin_dynamics/visualization/*
