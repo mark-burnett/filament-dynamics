@@ -165,13 +165,13 @@ experiments:
               fixed_arguments:
                 source_name: length
                 source_type: observation
-              variable_arguments:
-                start_time: fujiwara_2002_D_window_start
 
             - label: velocity_autocorrelation_function
               class_name: Autocorrelation
               fixed_arguments:
-                filament_analysis: velocity
+                source_name: velocity
+                source_type: analysis
+                start_time: fujiwara_2002_D_window_start
 
             - label: D
               class_name: TipDiffusion

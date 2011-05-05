@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2010-2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,3 +21,18 @@ def running_total(values):
     for v in values:
         total += v
         yield total
+
+class RunningStats(object):
+    __slots__ = ['value', 'count']
+    def __init__(self):
+        self.value = 0.0
+        self.count = 0
+
+    @property
+    def mean(self):
+        return self.value / self.count
+
+    def append(self, iterable):
+        for val in iterable:
+            self.value += val
+            self.count += 1

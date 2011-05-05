@@ -28,5 +28,20 @@ class RunningTotalTest(unittest.TestCase):
         for a, d in zip(answers, test_data):
             self.assertEqual(a, list(utils.running_total(d)))
 
+class RunningStatsTest(unittest.TestCase):
+    def test_running_stats(self):
+        test_data = [range(10),
+                     range(4),
+                     range(20)]
+        a2 = float(sum(range(10)) + sum(range(4))) / 14
+        a3 = float(sum(range(10)) + sum(range(4)) + sum(range(20))) / 34
+        answers = [4.5, a2, a3]
+
+        stats = utils.RunningStats()
+        for a, d in zip(answers, test_data):
+            stats.append(d)
+            self.assertEqual(a, stats.mean)
+
+
 if '__main__' == __name__:
     unittest.main()

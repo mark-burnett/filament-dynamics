@@ -15,6 +15,8 @@
 
 import unittest
 
+import math
+
 from actin_dynamics.primitives.analysts import standard_error_of_mean
 
 from actin_dynamics import database
@@ -56,11 +58,15 @@ class StandardErrorMeanTest(unittest.TestCase):
 
 class KeyedStandardErrorMeanTest(unittest.TestCase):
     def setUp(self):
-        self.data = {'my name':
-                        {'A': [[range(3), list(reversed(range(3)))]],
-                         'B': [[range(2), list(reversed(range(2)))]]}}
-        self.expected_result = {'A': (range(3), [2, 1, 0], [0, 0, 0]),
-                                'B': (range(2), [1, 0], [0, 0])}
+        self.data = {'my name': [
+                        {'A': [range(3), [2, 1, 0]],
+                         'B': [range(2), [1, 0]]},
+                        {'A': [range(3), [2, 1, 3]],
+                         'C': [range(4), [4, 1, 2, 3]]}]}
+        err = math.sqrt(1.5**2 * 2) / 2
+        self.expected_result = {'A': (range(3), [2, 1, 1.5], [0, 0, err]),
+                                'B': (range(2), [1, 0], [0, 0]),
+                                'C': (range(4), [4, 1, 2, 3], [0, 0, 0, 0])}
 
     def test_analyze(self):
         analyst = standard_error_of_mean.KeyedStandardErrorMean(

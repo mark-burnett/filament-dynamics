@@ -22,12 +22,9 @@ from actin_dynamics import database
 from actin_dynamics.numerical import transform
 
 class KeyedDerivative(Analyst):
-    def __init__(self, source_name=None, source_type=None,
-                 start_time=None, stop_time=None, *args, **kwargs):
+    def __init__(self, source_name=None, source_type=None, *args, **kwargs):
         self.source_name = source_name
         self.source_type = source_type
-        self.start_time = start_time
-        self.stop_time = stop_time
 
         Analyst.__init__(self, *args, **kwargs)
 
