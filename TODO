@@ -9,6 +9,18 @@ Overview
     Write fitting controller
     Write two-strand primitives
 
+
+Analyst actions
+    aggregate
+
+    keyed variants
+    collate (on times/indices)
+
+    stats
+    sem
+    correlation
+
+
 NOTE
     change Filament interface so it provides count/find/list behavior
         then change tests to not use Filament objects where possible
@@ -30,6 +42,7 @@ Do some vocab/docs
     species
     model
     experiment
+    stage
     parameter set
     run
     job
@@ -38,8 +51,7 @@ Do some vocab/docs
     observer -> observation
     analyst -> analysis
     discriminator -> objective
-    simulation
-    stage
+    ? simulation
     ? slice
     ? projection
 

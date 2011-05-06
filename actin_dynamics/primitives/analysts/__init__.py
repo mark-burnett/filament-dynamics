@@ -15,6 +15,7 @@
 
 from registry import analyst_registry as registry
 
+import autocorrelation
 import derivative
 import save_observation
 import standard_error_of_mean

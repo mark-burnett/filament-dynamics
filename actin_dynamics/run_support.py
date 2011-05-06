@@ -33,10 +33,13 @@ def run_job(job, db_session):
         simulation = factories.simulations.make_run(run)
         results.append(simulation.run())
 
+    # XXX collate observations so they are keyed on obs_name
+
     for analysis in run.experiment.analysis_list:
         log.debug('Analysing job %s: %s.', job.id, analysis.label)
         a = factories.bindings.db_single(analysis, run.all_parameters)
         analysis_result = a.perform(results, factories.analysis.make_result)
+        # XXX also attach binding to result
         analysis_result.run = run
         db_session.add(analysis_result)
 

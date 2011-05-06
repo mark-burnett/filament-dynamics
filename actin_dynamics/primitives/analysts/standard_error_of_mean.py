@@ -26,7 +26,7 @@ log = logger.getLogger(__file__)
 
 class StandardErrorMean(Analyst):
     def __init__(self, source_name=None, source_type=None,
-                 scale_by=1, add=0, subtract=0, *args, **kwargs):
+                 scale_by=None, add=0, subtract=0, *args, **kwargs):
         self.source_name = source_name
         self.source_type = source_type
 
@@ -44,7 +44,7 @@ class StandardErrorMean(Analyst):
         times, collated_data = analyst_utils.collate_data(raw_data)
 
         # XXX Create real measurement type? - maybe not right now
-        values, errors = analyst_utils.standard_error_of_mean(
+        values, errors = analyst_utils.collated_standard_error_of_mean(
                 collated_data, scale_by=self.scale_by,
                 add=self.add - self.subtract)
 
@@ -53,7 +53,7 @@ class StandardErrorMean(Analyst):
 
 class KeyedStandardErrorMean(Analyst):
     def __init__(self, source_name=None, source_type=None,
-                 scale_by=1, add=0, subtract=0, *args, **kwargs):
+                 scale_by=None, add=0, subtract=0, *args, **kwargs):
         self.source_name = source_name
         self.source_type = source_type
 
@@ -71,7 +71,7 @@ class KeyedStandardErrorMean(Analyst):
         for name, raw_data in keyed_data.iteritems():
             times, collated_data = analyst_utils.collate_data(raw_data)
 
-            values, errors = analyst_utils.standard_error_of_mean(
+            values, errors = analyst_utils.collated_standard_error_of_mean(
                     collated_data, scale_by=self.scale_by,
                     add=self.add - self.subtract)
             results[name] = (times, values, errors)

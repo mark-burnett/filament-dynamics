@@ -16,7 +16,7 @@
 import bisect
 import math
 
-from actin_dynamics.numerical import workalike
+import numpy
 
 
 def flatten_data(raw_data):
@@ -40,8 +40,8 @@ def collate_data(raw_data):
 
 def get_times(flat_data):
     smallest_time, largest_time, sample_period = get_time_bounds(flat_data)
-    return workalike.arange(smallest_time, largest_time + float(sample_period)/2,
-            sample_period)
+    return list(numpy.arange(smallest_time,
+        largest_time + float(sample_period)/2, sample_period))
 
 def get_time_bounds(flat_data):
     smallest_time = None
@@ -70,19 +70,36 @@ def get_values_at_time(flat_data, time):
     return results
 
 
-def standard_error_of_mean(collated_data, scale_by=1, add=0):
+def collated_standard_error_of_mean(collated_data, scale_by=None, add=0):
+    '''
+    Compute the standard error of the mean for collated data.
+    '''
     means = []
     errors = []
     for values in collated_data:
-        length = len(values)
-        sqrt_N = math.sqrt(length)
-
-        adjusted_values = [float(v) * scale_by for v in values]
-        mean = sum(adjusted_values) / length
-        error = workalike.std(adjusted_values, mean) / sqrt_N
-        means.append(mean + add)
+        mean, error = standard_error_of_mean(values, scale_by=scale_by, add=add)
+        means.append(mean)
         errors.append(error)
     return means, errors
+
+def standard_error_of_mean(values, scale_by=None, add=0):
+    '''
+    Compute the mean and the standard error of the mean for values.
+    '''
+    length = len(values)
+    sqrt_N = math.sqrt(length)
+
+    if scale_by:
+        adjusted_values = [v * scale_by for v in values]
+    else:
+        adjusted_values = values
+
+    mean = numpy.mean(adjusted_values)
+    error = numpy.std(adjusted_values) / sqrt_N
+
+    if add:
+        mean += add
+    return mean, error
 
 
 def choose_source(observations, analyses, source_type):

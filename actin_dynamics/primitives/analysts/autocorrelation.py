@@ -54,7 +54,7 @@ class Autocorrelation(Analyst):
                     measurement, self.start_time, self.stop_time)
             sample_period = times[1] - times[0]
             values = numpy.array(values)
-            stats.append(values)
+            stats.append(values**2)
             for delta, cv in enumerate(correlation_values):
                 ae = list(_autocorrelation_element(values, delta))
                 cv.extend(ae)

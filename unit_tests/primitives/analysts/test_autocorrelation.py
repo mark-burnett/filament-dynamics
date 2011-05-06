@@ -44,6 +44,7 @@ class AutocorrelationTest(unittest.TestCase):
         v0 = analysis.value[1][0]
         e0 = analysis.value[2][0]
         self.assertEqual(t0, 0)
+        self.assertAlmostEqual(1, v0)
         self.assertTrue(1 + 2*e0 > v0, 'v0 = %s, e0 = %s' % (v0, e0))
         self.assertTrue(1 - 2*e0 < v0, 'v0 = %s, e0 = %s' % (v0, e0))
 
