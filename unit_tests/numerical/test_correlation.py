@@ -43,7 +43,27 @@ class AutocorrelationTest(unittest.TestCase):
             self.assertTrue(1 > v)
 
         # Actual equality check.
-        self.assertEqual(expected, result)
+        self.assertEqual(result, expected)
+
+    def test_matches_correlation(self):
+        values = [1, 2, 1, 0, 2, 1, 2, 0]
+        corr_result = list(correlation.correlation(values, values))
+        acor_result = list(correlation.autocorrelation(values))
+
+        self.assertEqual(corr_result, acor_result)
+
+class CorrelationTest(unittest.TestCase):
+    def test_shortest_first(self):
+        self.assertTrue(False)
+
+    def test_longest_first(self):
+        self.assertTrue(False)
+
+    def test_not_full(self):
+        self.assertTrue(False)
+
+    def test_full(self):
+        self.assertTrue(False)
 
 
 if '__main__' == __name__:

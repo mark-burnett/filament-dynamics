@@ -20,7 +20,7 @@ import numpy
 
 def collection_stats(value_collection):
     all_vals = numpy.fromiter(itertools.chain(*value_collection),
-            dtype='double')
+            dtype=float)
     mean = numpy.mean(all_vals)
     std = numpy.std(all_vals)
     return mean, std
@@ -52,17 +52,66 @@ def autocorrelation(values, mean=None, std=None):
     '''
     Perform a proper statistical autocorrelation.
     '''
-    values = numpy.array(values, dtype=float)
+    values, std = _groom_corr_values(values, mean=mean, std=std)
 
-    if not mean:
-        mean = numpy.mean(values)
-    if not std:
-        std = numpy.std(values)
-
-    values = values - mean
-
-    length = len(values)
-    result = [sum(values**2)/length]
+    result = [numpy.mean(values**2)]
     for i in xrange(1, len(values)):
-        result.append((values[i:]*values[:-i]).sum()/(length - i))
+        result.append(numpy.mean(values[i:]*values[:-i]))
     return numpy.array(result) / std**2
+
+
+def correlation(a, b, a_mean=None, a_std=None, b_mean=None, b_std=None,
+        full=True):
+    '''
+    Perform a proper statistical correlation.
+
+    parameters:
+        means & stds:  if none, these will be computed
+        full:  if true, will return the full correlation, even with small overlap
+    '''
+    a, a_std = _groom_corr_values(a, mean=a_mean, std=a_std)
+    b, b_std = _groom_corr_values(b, mean=b_mean, std=b_std)
+
+    stdproduct = a_std * b_std
+
+    a_length = len(a)
+    b_length = len(b)
+
+    # Make sure a is the longest sequence.
+    if b_length > a_length:
+        a, b = b, a
+        a_length, b_length = b_length, a_length
+
+    maxlength = a_length
+    minlength = b_length
+
+    # k_crit is the index at which we no longer have full overlap
+    k_crit = maxlength - minlength + 1
+    result = []
+    # Fully overlapping portion
+    for k in xrange(k_crit):
+        aslice = a[k:k + minlength]
+        bslice = b[:minlength]
+        result.append(numpy.mean(aslice * bslice))
+
+    if full:
+        # Partially overlapping portion
+        for k in xrange(k_crit, maxlength):
+            overlap = minlength - (k - k_crit) - 1
+            aslice = a[k:k + overlap]
+            bslice = b[:overlap]
+            result.append(numpy.mean(aslice * bslice))
+
+    return numpy.array(result) / stdproduct
+
+
+def _groom_corr_values(values, mean=None, std=None):
+    '''
+    Subtracts mean from values, and makes sure we're using the right std.
+    '''
+    values = numpy.array(values, dtype=float)
+    if mean is None:
+        mean = numpy.mean(values)
+    if std is None:
+        std = numpy.std(values)
+    return values - mean, std
