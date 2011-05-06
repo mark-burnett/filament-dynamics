@@ -34,11 +34,6 @@ class AutocorrelationTest(unittest.TestCase):
                       'B': (b_times, b_values),
                       'C': (c_times, c_values)}}
 
-        times = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-        means = []
-        errors = []
-        self.expected_result = (range(3), means, errors)
-
     def test_analyze_analyses(self):
         analyst = autocorrelation.Autocorrelation(
                 source_name='my name', source_type='analyses',
@@ -51,8 +46,9 @@ class AutocorrelationTest(unittest.TestCase):
         self.assertEqual(t0, 0)
         self.assertTrue(1 + 2*e0 > v0, 'v0 = %s, e0 = %s' % (v0, e0))
         self.assertTrue(1 - 2*e0 < v0, 'v0 = %s, e0 = %s' % (v0, e0))
-#        self.assertAlmostEqual(1, analysis.value[1][0])
-#        self.assertEqual(self.expected_result, analysis.value)
+
+    def test_better(self):
+        self.assertTrue(False, 'seriously, this needs attention')
 
 
 if '__main__' == __name__:

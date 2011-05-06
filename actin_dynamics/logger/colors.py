@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+CLEAR  = None
 WHITE  = None
 BLACK  = 30
 RED    = 31
@@ -26,26 +27,30 @@ GREY   = 37
 
 ESCAPE_SEQUENCE = '\033['
 
-def make_sequence(foreground=WHITE, background=BLACK, bold=False):
+def make_sequence(foreground=None, background=None, bold=False):
     if foreground:
         if bold:
-            fg_identifier = ';1;%s' % foreground
+            fg_sequence = '%s1;%sm' % (ESCAPE_SEQUENCE, foreground)
         else:
-            fg_identifier = ';%s' % foreground
+            fg_sequence = '%s%sm' % (ESCAPE_SEQUENCE, foreground)
     else:
         if bold:
-            fg_identifier = ';1'
+            fg_sequence = '%s1m' % ESCAPE_SEQUENCE
         else:
-            fg_identifier = ''
+            fg_sequence = ''
 
-    bg_identifier = str(background + 10)
-    return "%s%s%sm" % (ESCAPE_SEQUENCE, bg_identifier, fg_identifier)
+    if background:
+        bg_sequence = '%s%sm' % (ESCAPE_SEQUENCE, (background + 10))
+    else:
+        bg_sequence = ''
+
+    return '%s%s' % (bg_sequence, fg_sequence)
 
 def clear():
     return '%sm' % ESCAPE_SEQUENCE
 
 
-def wrap(text, foreground=WHITE, background=BLACK, bold=False, close={}):
+def wrap(text, foreground=None, background=None, bold=False, close={}):
     return "%s%s%s%s%s" % (clear(),
                          make_sequence(foreground=foreground,
                                        background=background, bold=bold),
