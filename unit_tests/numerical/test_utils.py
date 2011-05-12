@@ -15,6 +15,8 @@
 
 import unittest
 
+import numpy
+
 from actin_dynamics.numerical import utils
 
 class RunningTotalTest(unittest.TestCase):
@@ -28,20 +30,19 @@ class RunningTotalTest(unittest.TestCase):
         for a, d in zip(answers, test_data):
             self.assertEqual(a, list(utils.running_total(d)))
 
+
 class RunningStatsTest(unittest.TestCase):
     def test_running_stats(self):
-        test_data = [range(10),
-                     range(4),
-                     range(20)]
-        a2 = float(sum(range(10)) + sum(range(4))) / 14
-        a3 = float(sum(range(10)) + sum(range(4)) + sum(range(20))) / 34
-        answers = [4.5, a2, a3]
+        l = 100
+        test_data = range(l)
+        test_means = [numpy.mean(test_data[:i]) for i in xrange(1, l + 1)]
+        test_stds = [numpy.std(test_data[:i]) for i in xrange(1, l + 1)]
 
-        stats = utils.RunningStats()
-        for a, d in zip(answers, test_data):
-            stats.append(d)
-            self.assertEqual(a, stats.mean)
-
+        for (mean, std), expected_mean, expected_std in zip(
+                utils.running_stats(test_data), test_means, test_stds):
+            self.assertAlmostEqual(mean, expected_mean)
+            self.assertAlmostEqual(std, expected_std)
+        
 
 if '__main__' == __name__:
     unittest.main()

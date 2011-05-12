@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import math
+
 def running_total(values):
     """
     Generator that calculates a running total of a sequence.
@@ -22,17 +24,15 @@ def running_total(values):
         total += v
         yield total
 
-class RunningStats(object):
-    __slots__ = ['value', 'count']
-    def __init__(self):
-        self.value = 0.0
-        self.count = 0
-
-    @property
-    def mean(self):
-        return self.value / self.count
-
-    def append(self, iterable):
-        for val in iterable:
-            self.value += val
-            self.count += 1
+def running_stats(iterable):
+    iterable = iter(iterable)
+    mean = 0
+    variance = 0
+    for i, value in enumerate(iterable):
+        if i:
+            ratio = i / float(i + 1)
+        else:
+            ratio = 1
+        variance += ratio * (value - mean)**2
+        mean += float(value - mean) / (i + 1)
+        yield mean, math.sqrt(variance / (i + 1))
