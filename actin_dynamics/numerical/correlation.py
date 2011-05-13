@@ -17,12 +17,12 @@ import itertools
 
 import numpy
 
+from . import utils
 
-def collection_stats(value_collection):
-    all_vals = numpy.fromiter(itertools.chain(*value_collection),
-            dtype=float)
-    mean = numpy.mean(all_vals)
-    std = numpy.std(all_vals)
+
+def collection_stats(collection):
+    for mean, std in utils.running_stats(itertools.chain(*collection)):
+        pass
     return mean, std
 
 
@@ -33,17 +33,11 @@ def aggregate_autocorrelation(sample_period, value_collection):
             autocorrelation(values, mean=big_mean, std=big_std)
             for values in value_collection]
 
-    maxlen = max(map(len, correlation_collection))
-    collated_correlations = []
-    for i in xrange(maxlen):
-        local_correlations = []
-        collated_correlations.append(local_correlations)
-        for correlations in correlation_collection:
-            if i < len(correlations):
-                local_correlations.append(correlations[i])
-
+    maxlen = max(itertools.imap(len, correlation_collection))
     taus = numpy.arange(maxlen) * sample_period
-    means = [numpy.mean(acs) for acs in collated_correlations]
+
+    collated_correlations = collate.collate_on_indices(correlation_collection)
+    means = [numpy.mean(cc) for cc in collated_correlations]
 
     return taus, means
 

@@ -19,10 +19,8 @@ from actin_dynamics import database
 
 from . import analyst_utils
 
-from actin_dynamics.numerical import workalike, measurements, transform
+from actin_dynamics.numerical import measurements, transform, sem, collate
 
-from actin_dynamics import logger
-log = logger.getLogger(__file__)
 
 class StandardErrorMean(Analyst):
     def __init__(self, source_name=None, source_type=None,
@@ -41,10 +39,10 @@ class StandardErrorMean(Analyst):
                 self.source_type)
         raw_data = source[self.source_name]
 
-        times, collated_data = analyst_utils.collate_data(raw_data)
+        times, collated_data = collate.collate_on_times(raw_data)
 
         # XXX Create real measurement type? - maybe not right now
-        values, errors = analyst_utils.collated_standard_error_of_mean(
+        values, errors = collated_standard_error_of_mean(
                 collated_data, scale_by=self.scale_by,
                 add=self.add - self.subtract)
 
@@ -69,11 +67,25 @@ class KeyedStandardErrorMean(Analyst):
         keyed_data = transform.key_transform(source[self.source_name])
         results = {}
         for name, raw_data in keyed_data.iteritems():
-            times, collated_data = analyst_utils.collate_data(raw_data)
+            times, collated_data = collate.collate_on_times(raw_data)
 
-            values, errors = analyst_utils.collated_standard_error_of_mean(
+            values, errors = collated_standard_error_of_mean(
                     collated_data, scale_by=self.scale_by,
                     add=self.add - self.subtract)
             results[name] = (times, values, errors)
 
         return database.Analysis(value=results)
+
+
+def collated_standard_error_of_mean(collated_data, scale_by=None, add=0):
+    '''
+    Compute the standard error of the mean for collated data.
+    '''
+    means = []
+    errors = []
+    for values in collated_data:
+        mean, error = sem.standard_error_of_mean(values,
+                scale_by=scale_by, add=add)
+        means.append(mean)
+        errors.append(error)
+    return means, errors

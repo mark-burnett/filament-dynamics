@@ -18,7 +18,7 @@ from collections import defaultdict
 
 from actin_dynamics.primitives.transitions.cooperative_hydrolysis import *
 
-from actin_dynamics.species.single_strand_filaments import Filament
+from actin_dynamics.state.single_strand_filaments import Filament
 
 from unit_tests.mocks.concentrations import MockConcentration
 

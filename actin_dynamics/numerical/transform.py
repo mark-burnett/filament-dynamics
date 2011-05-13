@@ -15,6 +15,15 @@
 
 import collections
 
+def flatten_data(raw_data):
+    flat_data = []
+    for rd in raw_data:
+        if isinstance(rd, dict):
+            flat_data.extend(rd.itervalues())
+        else:
+            flat_data.append(rd)
+    return flat_data
+
 def key_transform(list_of_dicts):
     results = collections.defaultdict(list)
     for element in list_of_dicts:
