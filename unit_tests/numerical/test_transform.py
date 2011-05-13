@@ -28,6 +28,21 @@ class KeyTransformTest(unittest.TestCase):
         self.assertEqual(expected_result, transform.key_transform(test_data))
 
 
+class FlattenDataTest(unittest.TestCase):
+    def setUp(self):
+        self.raw_data = [{'A': range(3), 'B': range(2)},
+                         {'C': range(2), 'D': range(3)}]
+        self.flat_data = [range(3), range(2), range(2), range(3)]
+
+    def test_already_flat(self):
+        self.assertEqual(self.flat_data,
+                transform.flatten_data(self.flat_data))
+
+    def test_flatten(self):
+        self.assertEqual(self.flat_data,
+                transform.flatten_data(self.raw_data))
+
+
 if '__main__' == __name__:
     unittest.main()
 

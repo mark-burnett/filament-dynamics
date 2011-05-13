@@ -22,7 +22,7 @@ from .base_classes import Analyst
 from . import analyst_utils
 
 from actin_dynamics import database
-from actin_dynamics.numerical import measurements, utils
+from actin_dynamics.numerical import measurements #, utils
 
 class Autocorrelation(Analyst):
     '''
@@ -48,13 +48,13 @@ class Autocorrelation(Analyst):
                 data.itervalues())
         taus = numpy.arange(longest_sequence_length - 1) * sample_period
         correlation_values = [[] for tau in taus]
-        stats = utils.RunningStats()
+#        stats = utils.RunningStats()
         for measurement in data.itervalues():
             times, values = measurements.time_slice(
                     measurement, self.start_time, self.stop_time)
             sample_period = times[1] - times[0]
             values = numpy.array(values)
-            stats.append(values**2)
+#            stats.append(values**2)
             for delta, cv in enumerate(correlation_values):
                 ae = list(_autocorrelation_element(values, delta))
                 cv.extend(ae)
@@ -63,6 +63,7 @@ class Autocorrelation(Analyst):
 
         return database.Analysis(value=(taus, means, errors))
 
+# XXX Name collision on measurements
 def _get_longest_sequence_length(measurements):
     longest = 0
     for times, values in measurements:
