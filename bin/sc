@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-sloccount actin_dynamics unit_tests integration_tests bin sim.sh run_tests.sh
+cloc actin_dynamics unit_tests integration_tests bin inputs sim.sh run_tests.sh || sloccount actin_dynamics unit_tests integration_tests bin sim.sh run_tests.sh

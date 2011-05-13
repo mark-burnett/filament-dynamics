@@ -48,4 +48,3 @@ class CollateDataTest(unittest.TestCase):
 
 if '__main__' == __name__:
     unittest.main()
-

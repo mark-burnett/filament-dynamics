@@ -52,18 +52,39 @@ class AutocorrelationTest(unittest.TestCase):
 
         self.assertEqual(corr_result, acor_result)
 
+
 class CorrelationTest(unittest.TestCase):
-    def test_shortest_first(self):
-        self.assertTrue(False)
+    def setUp(self):
+        self.short = [1, 2]
+        self.long = [1, 2, 4]
+        self.expected_full = [0.40089186286863659, 0.80178372573727319,
+                -1.3363062095621219]
+        self.expected_not_full = [0.40089186286863659, 0.80178372573727319]
 
-    def test_longest_first(self):
-        self.assertTrue(False)
+    def test_full_shortest_first(self):
+        result = correlation.correlation(self.short, self.long)
+        self.assertEqual(len(self.expected_full), len(result))
+        for r, e in zip(result, self.expected_full):
+            self.assertAlmostEqual(r, e)
 
-    def test_not_full(self):
-        self.assertTrue(False)
+    def test_full_longest_first(self):
+        result = correlation.correlation(self.long, self.short)
+        self.assertEqual(len(self.expected_full), len(result))
+        for r, e in zip(result, self.expected_full):
+            self.assertAlmostEqual(r, e)
 
-    def test_full(self):
-        self.assertTrue(False)
+    def test_not_full_shortest_first(self):
+        result = correlation.correlation(self.short, self.long, full=False)
+        self.assertEqual(len(self.expected_not_full), len(result))
+        for r, e in zip(result, self.expected_not_full):
+            self.assertAlmostEqual(r, e)
+
+    def test_not_full_longest_first(self):
+        result = correlation.correlation(self.long, self.short, full=False)
+        self.assertEqual(len(self.expected_not_full), len(result))
+        for r, e in zip(result, self.expected_not_full):
+            self.assertAlmostEqual(r, e)
+
 
 
 if '__main__' == __name__:
