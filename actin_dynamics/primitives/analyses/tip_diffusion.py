@@ -30,12 +30,16 @@ class FluctuationVariances(_base_classes.Analysis):
                  interpolation_method=None,
                  measurement_name='length', measurement_type='filament',
                  label=None):
-        self.start_time           = float(start_time)
-        self.stop_time            = float(stop_time)
-        self.sample_period        = float(sample_period)
+        self.start_time    = float(start_time)
+        self.stop_time     = float(stop_time)
+        self.sample_period = float(sample_period)
 
-        self.tau_min              = float(tau_min)
-        self.tau_max              = float(tau_max)
+        if tau_min:
+            self.tau_min = float(tau_min)
+        else:
+            self.tau_min = self.sample_period
+
+        self.tau_max = float(tau_max)
 
         self.interpolation_method = interpolation_method
         self.measurement_name     = measurement_name
@@ -45,14 +49,15 @@ class FluctuationVariances(_base_classes.Analysis):
 
     def perform(self, simulation_results, result_factory):
         fluctuations = self.get_fluctuations(simulation_results)
-        taus = range(self.tau_min, self.tau_max + self.sample_period/2,
-                     self.sample_period)
+        taus = workalike.arange(self.tau_min,
+                                self.tau_max + self.sample_period/2,
+                                self.sample_period)
         variances = []
-        for tau in taus:
+        for delta, tau in enumerate(taus):
             local_fluctuations = []
             for measurement in fluctuations:
                 local_fluctuations.extend(_calculate_local_fluctuations(
-                    measurement, tau, self.sample_period))
+                    measurement, delta, self.sample_period))
             variances.append(numpy.var(local_fluctuations))
 
         errors = [0 for tau in taus]
@@ -66,7 +71,7 @@ class FluctuationVariances(_base_classes.Analysis):
         raw_measurements = utils.get_measurement(simulation_results,
                                                  self.measurement_name,
                                                  self.measurement_type)
-        sample_times = workalike.arange(0, self.stop_time,
+        sample_times = workalike.arange(self.start_time, self.stop_time,
                                         self.sample_period)
         if not sample_times:
             _log.error('Sample time length is 0.  ' +
@@ -87,16 +92,19 @@ def _remove_velocity(measurement):
 
     return times, values - (slope * times + intercept)
 
-def _calculate_local_fluctuations(measurement, tau, sample_period):
+def _calculate_local_fluctuations(measurement, delta, sample_period):
     results = []
     values = measurement[1]
-    delta = int(tau / sample_period)
-    if delta * sample_period != tau:
-        _log.error('tau not divisible by sample_period: %s / %s',
-                   tau, sample_period)
+#    delta = int(tau / sample_period)
+#    if delta * sample_period != tau:
+#        _log.error('tau not divisible by sample_period: %s / %s',
+#                   tau, sample_period)
 
     if len(values) < delta:
         _log.error('Delta too large:  tau = %s, delta = %s, length = %s.',
                     tau, delta, len(values))
 
-    return list(values[delta:] - values[:-delta])
+    if delta:
+        return list(values[delta:] - values[:-delta])
+    else:
+        return [0.0 for v in values]

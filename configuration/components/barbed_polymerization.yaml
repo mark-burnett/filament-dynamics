@@ -8,6 +8,13 @@ models:
             variable_arguments:
                 rate: barbed_atp_polymerization_rate
 
+        barbed_adppi_polymerization_bulk:
+            class_name: BarbedPolymerization
+            fixed_arguments:
+                state: ADPPi_bulk
+            variable_arguments:
+                rate: barbed_adppi_polymerization_rate
+
         barbed_adppi_polymerization:
             class_name: BarbedPolymerization
             fixed_arguments:

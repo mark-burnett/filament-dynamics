@@ -93,7 +93,9 @@ def best_timecourse(session, theme=None, **extra_pars):
     if not theme:
         theme = themes.Theme()
 
-    analyses = objective.run.analyses
+    run = objective.run
+    parameters = run.all_parameters
+    analyses = run.analyses
 
     measurements.line(analyses['factin'], label='[F-actin] - Simulated',
                       **theme('factin_dark', 'simulation_line'))
@@ -102,7 +104,10 @@ def best_timecourse(session, theme=None, **extra_pars):
 
     measurements.line(analyses['Pi'], label='[Pi] - Simulated',
                       **theme('pi_dark', 'simulation_line'))
-    measurements.line(ob_pi.measurement, label='[Pi] - Data',
+    last_data_value = ob_pi.measurement[1][-1]
+    scaled_pi = numerical.measurements.scale(ob_pi.measurement,
+            analyses['Pi'][1][-1] / last_data_value)
+    measurements.line(scaled_pi, label='[Pi] - Data',
                       **theme('pi_light', 'data_line'))
 
     pylab.xlim(0, 2500)
@@ -111,8 +116,13 @@ def best_timecourse(session, theme=None, **extra_pars):
     pylab.ylabel('Concentration (uM)')
 
     pylab.title('Rho_r = %s, r_r = %s, ftc = %s' %(
-                best_pars['release_cooperativity'],
-                best_pars['release_rate'],
-                best_pars['filament_tip_concentration']))
+                parameters['release_cooperativity'],
+                parameters['release_rate'],
+                parameters['filament_tip_concentration']))
+
+#    pylab.title('r_tip = %s, r_r = %s, ftc = %s' %(
+#                best_pars['tip_phosphate_release'],
+#                best_pars['release_rate'],
+#                best_pars['filament_tip_concentration']))
 
     pylab.legend(loc=4)

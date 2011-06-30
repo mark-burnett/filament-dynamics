@@ -1,0 +1,32 @@
+name: 'Flipped FTC Control (NH Copoly) - rho = 10000, nh = 10%'
+
+import:
+    - 'experiments/nh_poly.yaml'
+    - 'models/random_cooperative_full.yaml'
+    - 'models/nh_polymerization.yaml'
+    - 'parameters/polymerization_flipped_fujiwara_barbed.yaml'
+    - 'parameters/polymerization_flipped_fujiwara_pointed.yaml'
+
+experiments:
+    nh_poly:
+        parameters:
+            number_of_simulations: 50
+            number_of_filaments:   2
+
+            fraction_nh_atp: 0.1
+
+            cleavage_rate: 0.198
+            release_rate: 0.000162
+            release_cooperativity: 10000
+
+            initial_concentration: 30
+
+
+parameter_specifications:
+    nh_poly:
+        simulation:
+            filament_tip_concentration:
+                lower_bound: 0.001
+                upper_bound: 0.01
+                mesh_type: linear
+                num_points: 12

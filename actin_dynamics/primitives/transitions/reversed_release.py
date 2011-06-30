@@ -33,11 +33,77 @@ class ReverseRelease(_FilamentTransition):
                 for filament in filaments]
 
     def perform(self, time, filaments, concentrations, filament_index, r):
-        target_index = int(r / self.rate)
+        last_r = self.rate * concentrations[self.concentration].value
+        target_index = int(r / last_r)
         current_filament = filaments[filament_index]
         state_index = current_filament.state_index(self.old_state, target_index)
 
         current_filament[state_index] = self.new_state
+        concentrations[self.concentration].remove_monomer(time)
+
+        _FilamentTransition.perform(self, time, filaments, concentrations,
+                                    filament_index, r)
+
+class BarbedTipReverseRelease(_FilamentTransition):
+    __slots__ = ['old_state', 'rate', 'concentration', 'new_state']
+    def __init__(self, old_state=None, rate=None, new_state=None,
+                 concentration=None, label=None):
+        self.old_state = old_state
+        self.rate      = rate
+        self.new_state = new_state
+        self.concentration = concentration
+
+        _FilamentTransition.__init__(self, label=label)
+
+    def R(self, filaments, concentrations):
+        r = self.rate * concentrations[self.concentration].value
+        result = []
+        for filament in filaments:
+            if self.old_state == filament[-1]:
+                result.append(r)
+            else:
+                result.append(0)
+        return result
+
+    def perform(self, time, filaments, concentrations, filament_index, r):
+        last_r = self.rate * concentrations[self.concentration].value
+        target_index = int(r / last_r)
+        current_filament = filaments[filament_index]
+
+        current_filament[-1] = self.new_state
+        concentrations[self.concentration].remove_monomer(time)
+
+        _FilamentTransition.perform(self, time, filaments, concentrations,
+                                    filament_index, r)
+
+
+class PointedTipReverseRelease(_FilamentTransition):
+    __slots__ = ['old_state', 'rate', 'concentration', 'new_state']
+    def __init__(self, old_state=None, rate=None, new_state=None,
+                 concentration=None, label=None):
+        self.old_state = old_state
+        self.rate      = rate
+        self.new_state = new_state
+        self.concentration = concentration
+
+        _FilamentTransition.__init__(self, label=label)
+
+    def R(self, filaments, concentrations):
+        r = self.rate * concentrations[self.concentration].value
+        result = []
+        for filament in filaments:
+            if self.old_state == filament[0]:
+                result.append(r)
+            else:
+                result.append(0)
+        return result
+
+    def perform(self, time, filaments, concentrations, filament_index, r):
+        last_r = self.rate * concentrations[self.concentration].value
+        target_index = int(r / last_r)
+        current_filament = filaments[filament_index]
+
+        current_filament[0] = self.new_state
         concentrations[self.concentration].remove_monomer(time)
 
         _FilamentTransition.perform(self, time, filaments, concentrations,

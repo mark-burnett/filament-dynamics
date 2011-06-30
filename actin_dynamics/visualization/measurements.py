@@ -23,9 +23,11 @@ def bar(measurement, color='black', **kwargs):
               **kwargs)
 
 def line(measurement, color='black', linestyle='solid',
-         line_alpha=1, fill_alpha=0.5, **kwargs):
+         line_alpha=1, fill_alpha=0.5, x_scale=None, **kwargs):
     bounds = get_bounds(measurement)
     times, values = measurement[:2]
+    if x_scale:
+        times = [t * x_scale for t in times]
 
     if bounds:
         pylab.fill_between(times, bounds[0], bounds[1],

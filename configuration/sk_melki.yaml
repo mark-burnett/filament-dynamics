@@ -1,0 +1,33 @@
+name: 'Two state Melki 1996, rho = 1'
+
+import:
+    - 'experiments/melki_fievez_carlier_1996.yaml'
+    - 'models/random_two_state.yaml'
+    - 'parameters/stukalin_kolomeisky.yaml'
+
+global_parameters:
+    number_of_simulations: 10
+    number_of_filaments:   2
+
+    sample_period: 10
+
+parameter_specifications:
+    melki_fievez_carlier_1996:
+        simulation:
+            hydrolysis_rate:
+                lower_bound: 0.0001
+                upper_bound: 0.3
+                mesh_type:   log
+                num_points:  41
+
+            cooperativity:
+                lower_bound: 1
+                upper_bound: 1
+                mesh_type:   linear
+                num_points:  1
+
+            filament_tip_concentration:
+                lower_bound: 0.001
+                upper_bound: 0.010
+                mesh_type:   linear
+                num_points:  11

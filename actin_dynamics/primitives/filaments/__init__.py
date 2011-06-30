@@ -17,6 +17,7 @@ from registry import filament_factory_registry as registry
 
 from single_state import *
 from inert_filaments import *
+from salted import *
 
 del single_state
 del inert_filaments

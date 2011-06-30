@@ -20,4 +20,6 @@ from renormalized_fit import *
 from diffusion_coefficient import *
 from elongation_rate import *
 
+import tau
+
 del base_classes

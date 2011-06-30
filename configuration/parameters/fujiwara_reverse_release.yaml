@@ -1,0 +1,4 @@
+global_parameters:
+    reverse_release_rate: 0.000002
+    barbed_tip_reverse_release_rate: 0.001
+    pointed_tip_reverse_release_rate: 0.003

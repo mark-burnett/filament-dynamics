@@ -24,8 +24,8 @@ class ConcentrationChangeTest(unittest.TestCase):
     def setUp(self):
         self.concentrations = defaultdict(MockConcentration)
 
-        self.concentrations[1] = MockConcentration(value=10)
-        self.concentrations[2] = MockConcentration(value=20)
+        self.concentrations[1] = MockConcentration(value=10, count=10)
+        self.concentrations[2] = MockConcentration(value=20, count=20)
 
         self.normal_one = ConcentrationChange(old_state=1, new_state=2, rate=3)
         self.normal_two = ConcentrationChange(old_state=2, new_state=3, rate=2)
@@ -41,16 +41,16 @@ class ConcentrationChangeTest(unittest.TestCase):
 
     def test_normal_perform(self):
         self.normal_one.perform(None, None, self.concentrations, None, None)
-        self.assertEqual(self.concentrations[1].count, -1)
-        self.assertEqual(self.concentrations[2].count,  1)
+        self.assertEqual(self.concentrations[1].count,  9)
+        self.assertEqual(self.concentrations[2].count, 21)
 
         self.normal_one.perform(None, None, self.concentrations, None, None)
-        self.assertEqual(self.concentrations[1].count, -2)
-        self.assertEqual(self.concentrations[2].count,  2)
+        self.assertEqual(self.concentrations[1].count,  8)
+        self.assertEqual(self.concentrations[2].count, 22)
 
         self.normal_two.perform(None, None, self.concentrations, None, None)
-        self.assertEqual(self.concentrations[1].count, -2)
-        self.assertEqual(self.concentrations[2].count,  1)
+        self.assertEqual(self.concentrations[1].count,  8)
+        self.assertEqual(self.concentrations[2].count, 21)
         self.assertEqual(self.concentrations[3].count,  1)
 
     def test_missing_perform(self):
@@ -63,8 +63,8 @@ class ConcentrationChangeWithByproductTest(unittest.TestCase):
     def setUp(self):
         self.concentrations = defaultdict(MockConcentration)
 
-        self.concentrations[1] = MockConcentration(value=10)
-        self.concentrations[2] = MockConcentration(value=20)
+        self.concentrations[1] = MockConcentration(value=10, count=10)
+        self.concentrations[2] = MockConcentration(value=20, count=20)
 
         self.normal_one = ConcentrationChangeWithByproduct(old_state=1,
                 new_state=2, byproduct=11, rate=3)
@@ -83,20 +83,20 @@ class ConcentrationChangeWithByproductTest(unittest.TestCase):
 
     def test_normal_perform(self):
         self.normal_one.perform(None, None, self.concentrations, None, None)
-        self.assertEqual(self.concentrations[1].count, -1)
-        self.assertEqual(self.concentrations[2].count,  1)
-        self.assertEqual(self.concentrations[11].count, 1)
+        self.assertEqual(self.concentrations[1].count,   9)
+        self.assertEqual(self.concentrations[2].count,  21)
+        self.assertEqual(self.concentrations[11].count,  1)
 
         self.normal_one.perform(None, None, self.concentrations, None, None)
-        self.assertEqual(self.concentrations[1].count, -2)
-        self.assertEqual(self.concentrations[2].count,  2)
-        self.assertEqual(self.concentrations[11].count, 2)
+        self.assertEqual(self.concentrations[1].count,   8)
+        self.assertEqual(self.concentrations[2].count,  22)
+        self.assertEqual(self.concentrations[11].count,  2)
 
         self.normal_two.perform(None, None, self.concentrations, None, None)
-        self.assertEqual(self.concentrations[1].count, -2)
-        self.assertEqual(self.concentrations[2].count,  1)
-        self.assertEqual(self.concentrations[3].count,  1)
-        self.assertEqual(self.concentrations[12].count, 1)
+        self.assertEqual(self.concentrations[1].count,   8)
+        self.assertEqual(self.concentrations[2].count,  21)
+        self.assertEqual(self.concentrations[3].count,   1)
+        self.assertEqual(self.concentrations[12].count,  1)
 
     def test_missing_perform(self):
         self.missing.perform(None, None, self.concentrations, None, None)

@@ -62,3 +62,38 @@ class StateCountSum(_Measurement):
             state_count  = filament.state_count(self.base_state)
             state_count += filament.state_count(self.prefix + self.base_state)
             self.store(time, state_count, filament)
+
+class StateDistributionMean(_Measurement):
+    __slots__ = ['state']
+    def __init__(self, state=None, **kwargs):
+        self.state = state
+        _Measurement.__init__(self, **kwargs)
+
+    def perform(self, time, filaments):
+        for filament in filaments:
+            value = float(filament.state_distribution_mean(self.state))
+            self.store(time, value, filament)
+
+class StateDistributionSTD(_Measurement):
+    __slots__ = ['state']
+    def __init__(self, state=None, **kwargs):
+        self.state = state
+        _Measurement.__init__(self, **kwargs)
+
+    def perform(self, time, filaments):
+        for filament in filaments:
+            value = float(filament.state_distribution_std(self.state))
+            self.store(time, value, filament)
+
+class TipState(_Measurement):
+    __slots__ = ['state_translation']
+    def __init__(self, label=None, sample_period=None,
+                 **state_translation):
+        self.state_translation = state_translation
+        _Measurement.__init__(self, label=label,
+                sample_period=sample_period)
+
+    def perform(self, time, filaments):
+        for filament in filaments:
+            value = self.state_translation[filament[-1]]
+            self.store(time, value, filament)

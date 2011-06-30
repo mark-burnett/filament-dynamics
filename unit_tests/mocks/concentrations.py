@@ -21,6 +21,10 @@ class MockConcentration(object):
         self._value = value
 
     @property
+    def monomer_count(self):
+        return self.count
+
+    @property
     def value(self):
         self.value_access_count += 1
         return self._value

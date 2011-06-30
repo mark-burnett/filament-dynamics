@@ -1,14 +1,16 @@
-name: 'Fujiwara Tip Diffusion - Standard Random Model'
+name: 'Full Experiment - Standard Random Model - 10000 exchange rate'
 
 import:
     - 'experiments/fujiwara_2002.yaml'
     - 'models/random_random_full.yaml'
     - 'parameters/polymerization_fujiwara_full.yaml'
-    - 'parameters/nucleotide_exchange.yaml'
+#    - 'parameters/nucleotide_exchange.yaml'
 
 global_parameters:
     number_of_simulations: 20
     number_of_filaments:   2
+
+    nucleotide_exchange_rate: 10000
 
     solution_pi_release_rate: 10000
 
@@ -18,20 +20,18 @@ global_parameters:
     sample_period:        30
 
     expected_diffusion_coefficient: 28.6
-    histogram_start_time: 900
-    histogram_bin_size:   74.07 # This is about 0.2 um in monomers
 
 parameter_specifications:
     fujiwara_2002:
         simulation:
             cleavage_rate:
-                lower_bound: 0.198
-                upper_bound: 0.198
+                lower_bound: 0.3
+                upper_bound: 0.3
                 mesh_type:   linear
                 num_points:  1
 
             release_rate:
-                lower_bound: 0.00182
-                upper_bound: 0.00182
+                lower_bound: 0.003
+                upper_bound: 0.003
                 mesh_type:   linear
                 num_points:  1

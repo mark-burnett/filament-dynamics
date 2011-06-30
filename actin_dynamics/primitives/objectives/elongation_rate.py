@@ -13,23 +13,26 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import numpy
+
 from .base_classes import Objective as _Objective
 
 from actin_dynamics.numerical import measurements
 
 class ElongationRate(_Objective):
     def __init__(self, sample_period=None, label=None):
-        self.sample_period = sample_period
+        self.sample_period = float(sample_period)
 
         _Objective.__init__(self, label=label)
 
     def perform(self, run, target):
         length = run.analyses['length']
-        target.value = measurements.derivative(length)[-1]
+        velocity = measurements.derivative(length)
+        target.value = numpy.mean(velocity[-50:])
 
 class SquaredElongationRate(_Objective):
     def __init__(self, sample_period=None, label=None):
-        self.sample_period = sample_period
+        self.sample_period = float(sample_period)
 
         _Objective.__init__(self, label=label)
 

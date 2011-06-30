@@ -16,6 +16,8 @@
 import itertools
 import collections
 
+import numpy
+
 def _ddict_factory():
     # XXX Consider making these (ordered) sets instead of lists (performance).
     return collections.defaultdict(list)
@@ -78,6 +80,25 @@ class Filament(object):
     def boundary_count(self, barbed_state, pointed_state):
         return len(self.relative_boundary_indices[barbed_state][pointed_state])
 
+
+    def state_distribution(self, state):
+        length = len(self)
+        return [length - self.relative_shift - i
+                for i in self.relative_state_indices[state]]
+
+    def state_distribution_std(self, state):
+        dist = self.state_distribution(state)
+        if len(dist):
+            return float(numpy.std(dist))
+        else:
+            return float(len(self))
+
+    def state_distribution_mean(self, state):
+        dist = self.state_distribution(state)
+        if len(dist):
+            return float(numpy.mean(dist))
+        else:
+            return len(self) / 2.0
 
     def state_index(self, state, target_index):
         relative_index = self.relative_state_indices[state][target_index]

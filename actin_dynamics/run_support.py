@@ -16,7 +16,6 @@
 from sqlalchemy import schema
 
 from . import factories
-from . import logger
 
 from . import database
 

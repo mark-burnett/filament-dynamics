@@ -47,3 +47,17 @@ def fit_zero_line(x_mesh, y_mesh, residual=residuals.naked_chi_squared):
 
     fit_results = fmin(fit_func, guess, disp=False, full_output=True)
     return fit_results[0][0]
+
+def fit_exponential(x_mesh, y_mesh, residual=residuals.naked_chi_squared):
+    x = numpy.array(x_mesh)
+    y = numpy.array(y_mesh)
+
+    guess = numpy.array([100, 1])
+
+    def fit_func(args):
+        tau, magnitude = args
+        exponential = magnitude * (1 - numpy.exp(-x / tau))
+        return residual([None, y], [None, exponential])
+
+    fit_results = fmin(fit_func, guess, disp=False, full_output=True)
+    return fit_results[0][0], fit_results[0][1]

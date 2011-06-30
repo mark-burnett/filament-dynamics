@@ -19,8 +19,13 @@ class FixedReagent(_Concentration):
     __slots__ = ['value', 'monomer_count', 'concentration_per_monomer']
     def __init__(self, initial_concentration=-1,
                  filament_tip_concentration=-1,
+                 scale_concentration=1,
+                 subtract_fraction=0,
                  number=None, label=None, sample_period=None):
         initial_concentration = float(initial_concentration)
+        initial_concentration = initial_concentration * float(scale_concentration)
+        initial_concentration = initial_concentration * (
+                1 - float(subtract_fraction))
         if initial_concentration < 0:
             raise ValueError('Negative concentrations not allowed.')
         if filament_tip_concentration < 0:

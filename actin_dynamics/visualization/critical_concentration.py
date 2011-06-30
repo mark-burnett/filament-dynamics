@@ -14,14 +14,91 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pylab
+import numpy
 
 from . import measurements
 from . import slicing
 
 from actin_dynamics.numerical.zero_crossings import zero_crossings
 
+
+def fluctuation_report(run):
+    # Print Summary Values
+    print 'D', run.objectives[0].value
+    # D (both ways), tip state fractions, average elongation rate
+    # effective veloctiy @ tip state
+
+    sample_period = run.all_parameters['sample_period']
+    # Plots
+    # individual filament lengths, velocities (tip states?)
+
+    # tip state autocorrelations
+    pylab.figure()
+    measurements.line(run.analyses['atp_autocorrelation'], color='red',
+            label='ATP Autocorrelation')
+    measurements.line(run.analyses['adppi_autocorrelation'], color='green',
+            label='ADPPi Autocorrelation')
+    measurements.line(run.analyses['adp_autocorrelation'], color='blue',
+            label='ADP Autocorrelation')
+    pylab.xlim(0, 5)
+    pylab.ylim(-1, 1)
+    pylab.legend()
+
+    # threshold velocity autocorrelations
+    pylab.figure()
+    measurements.line(run.analyses['tau_plus_autocorrelation'], color='blue',
+            label='Positive Velocity Autocorrelation')
+    measurements.line(run.analyses['tau_minus_autocorrelation'], color='green',
+            label='Negative Velocity Autocorrelation')
+    pylab.xlim(0, 5)
+    pylab.ylim(-1, 1)
+    pylab.legend()
+
+
+
+def D_vs_concentration(session, cc_scale=False, **kwargs):
+    e = session.get_experiment('critical_concentration')
+    D_ob = e.objectives['final_diffusion_coefficient']
+    D_s = slicing.Slicer.from_objective_bind(D_ob)
+
+    Ds, name, concentration_mesh = D_s.minimum_values('atp_concentration')
+
+    j_ob = e.objectives['final_elongation_rate']
+    j_s = slicing.Slicer.from_objective_bind(j_ob)
+
+    js, name, concentration_mesh = j_s.minimum_values('atp_concentration')
+
+    concentration_mesh = concentration_mesh[0]
+
+    if cc_scale:
+        cc = zero_crossings(concentration_mesh, js)[0]
+        concentration_mesh = numpy.array(concentration_mesh) / cc
+        print 'cc =', cc
+
+    pylab.figure()
+    pylab.subplot(2,1,1)
+    measurements.line((concentration_mesh, Ds), **kwargs)
+    if cc_scale:
+        pylab.axvline(x=1, color='black')
+    pylab.ylabel('Tip Diffusion Coefficient (mon**2 /s)')
+
+    pylab.subplot(2,1,2)
+    zero_concentrations = [concentration_mesh[0], concentration_mesh[-1]]
+    zero_values = [0, 0]
+
+    measurements.line((zero_concentrations, zero_values))
+    measurements.line((concentration_mesh, js), **kwargs)
+    if cc_scale:
+        pylab.axvline(x=1, color='black')
+    pylab.ylabel('Elongation Rate (mon /s )')
+
+    if cc_scale:
+        pylab.xlabel('[G-ATP-actin] (critical concentrations)')
+    else:
+        pylab.xlabel('[G-ATP-actin] (uM)')
+
 def elongation_rate_vs_conc(session, **kwargs):
-    ob = session.get_experiment('critical_concentration').objectives['elongation_rate']
+    ob = session.get_experiment('critical_concentration').objectives['final_elongation_rate']
 
     s = slicing.Slicer.from_objective_bind(ob)
 

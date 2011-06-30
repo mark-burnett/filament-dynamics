@@ -14,11 +14,14 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #import pollard
-import slicing
-import pieper_wegner
-import measurements
-import fujiwara
-import melki
-import critical_concentration
+from . import collate
+from . import slicing
+from . import pieper_wegner
+from . import measurements
+from . import fujiwara
+from . import melki
+from . import critical_concentration
 
-import new_pollard
+from . import nh
+
+from . import new_pollard

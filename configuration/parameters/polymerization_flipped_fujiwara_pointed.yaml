@@ -1,0 +1,8 @@
+global_parameters:
+    pointed_atp_polymerization_rate:    11.6
+    pointed_adppi_polymerization_rate:   3.4
+    pointed_adp_polymerization_rate:     2.9
+
+    pointed_atp_depolymerization_rate:   1.4
+    pointed_adppi_depolymerization_rate: 0.2
+    pointed_adp_depolymerization_rate:   5.4

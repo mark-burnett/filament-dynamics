@@ -23,7 +23,6 @@ from . import utils
 from actin_dynamics.numerical import interpolation, workalike, measurements
 
 from actin_dynamics import logger as _logger
-
 _log = _logger.getLogger(__file__)
 
 class StandardErrorMean(_base_classes.Analysis):
@@ -31,15 +30,15 @@ class StandardErrorMean(_base_classes.Analysis):
                  interpolation_method=None, measurement_name=None,
                  measurement_type=None, label=None,
                  scale_by=1, add=0, subtract=0, **kwargs):
-        self.sample_period        = sample_period
-        self.stop_time            = stop_time
+        self.sample_period        = float(sample_period)
+        self.stop_time            = float(stop_time)
         self.interpolation_method = interpolation_method
         self.measurement_name     = measurement_name
         self.measurement_type     = measurement_type
 
-        self.scale_by = scale_by
-        self.add      = add
-        self.subtract = subtract
+        self.scale_by = float(scale_by)
+        self.add      = float(add)
+        self.subtract = float(subtract)
 
         _base_classes.Analysis.__init__(self, label=label, **kwargs)
 

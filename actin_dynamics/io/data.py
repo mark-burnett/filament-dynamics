@@ -25,6 +25,14 @@ class DataThiefDialect(csv.Dialect):
     lineterminator = '\r\n'
     quoting = csv.QUOTE_NONNUMERIC
 
+class DatDialect(csv.Dialect):
+    delimiter = ' '
+    quotechar = '"'
+    doublequote = True
+    skipinitialspace = True
+    lineterminator = '\n'
+    quoting = csv.QUOTE_NONNUMERIC
+
 def load_data(filename):
     results = []
     f = comments.CommentFilter.from_filename(filename)
