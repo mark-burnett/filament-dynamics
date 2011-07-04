@@ -21,11 +21,12 @@ class FixedReagent(_Concentration):
                  filament_tip_concentration=-1,
                  scale_concentration=1,
                  subtract_fraction=0,
+                 second_subtract_fraction=0,
                  number=None, label=None, sample_period=None):
         initial_concentration = float(initial_concentration)
         initial_concentration = initial_concentration * float(scale_concentration)
         initial_concentration = initial_concentration * (
-                1 - float(subtract_fraction))
+                1 - float(subtract_fraction + second_subtract_fraction))
         if initial_concentration < 0:
             raise ValueError('Negative concentrations not allowed.')
         if filament_tip_concentration < 0:

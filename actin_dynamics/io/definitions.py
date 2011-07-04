@@ -22,27 +22,33 @@ log = logger.getLogger(__file__)
 
 def load_definition(filename, source_directory=None):
     if not source_directory:
-        source_directory, junk = os.path.split(filename)
+        source_directory, partial_filename = os.path.split(filename)
+        full_filename = filename
+    else:
+        full_filename = os.path.join(source_directory, filename)
 
     results = None
     log.debug("Loading definition from '%s'.", filename)
     try:
-        with open(filename) as f:
+        with open(full_filename) as f:
             results = yaml.load(f)
     except IOError:
-        log.exception("Definition file '%s' not loaded.", filename)
+        log.exception("Definition file '%s' not loaded.", full_filename)
         sys.exit()
 
     imports = results.get('import', [])
     for import_filename in imports:
         results = merge_dicts(results, load_definition(
-            os.path.join(source_directory, import_filename),
-            source_directory=source_directory))
+            import_filename, source_directory=source_directory))
 
     return results
 
 def merge_dicts(a, b):
-    keys = set(a.keys()).union(set(b.keys()))
+    try:
+        keys = set(a.keys()).union(set(b.keys()))
+    except AttributeError:
+        log.exception('Error merging input files.  Perhaps you have duplicated a parameter entry?')
+        raise
 
     result = {}
     for key in keys:

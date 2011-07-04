@@ -1,0 +1,5 @@
+name: 'ADP (fixed 5) + NH Copoly - rho = 10'
+
+import:
+    - 'adp_nh_poly/adp_fixed_5.yaml'
+    - 'melki_pyrene_fit_pars/rho_r_10.yaml'
