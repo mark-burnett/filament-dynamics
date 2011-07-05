@@ -22,7 +22,8 @@ log = logger.getLogger(__file__)
 
 def load_definition(filename, source_directory=None):
     if not source_directory:
-        source_directory, partial_filename = os.path.split(filename)
+        source_directory, partial_filename = _backward_path_split(filename)
+#        source_directory, partial_filename = os.path.split(filename)
         full_filename = filename
     else:
         full_filename = os.path.join(source_directory, filename)
@@ -42,6 +43,21 @@ def load_definition(filename, source_directory=None):
             import_filename, source_directory=source_directory))
 
     return results
+
+
+def _backward_path_split(filename):
+    left, right = os.path.split(filename)
+    left_result = left
+    right_result = right
+
+    while left:
+        left, right = os.path.split(left)
+        if left:
+            left_result = left
+            right_result = os.path.join(right, right_result)
+
+    return left_result, right_result
+
 
 def merge_dicts(a, b):
     try:
