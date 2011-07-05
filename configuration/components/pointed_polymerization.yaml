@@ -8,12 +8,12 @@ models:
             variable_arguments:
                 rate: pointed_atp_polymerization_rate
 
-        pointed_adppi_polymerization_bulk:
-            class_name: PointedPolymerization
-            fixed_arguments:
-                state: ADPPi_bulk
-            variable_arguments:
-                rate: pointed_adppi_polymerization_rate
+#        pointed_adppi_polymerization_bulk:
+#            class_name: PointedPolymerization
+#            fixed_arguments:
+#                state: ADPPi_bulk
+#            variable_arguments:
+#                rate: pointed_adppi_polymerization_rate
 
         pointed_adppi_polymerization:
             class_name: PointedPolymerization
