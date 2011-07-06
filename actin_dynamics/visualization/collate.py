@@ -47,7 +47,7 @@ def _simple_collate(db_session, ids, x_name, y_name,
     accumulated_results = []
     for session in _loop_sessions(db_session, ids):
         experiment = session.experiments[experiment_index]
-        accumulated_results.append((experiment.parameters[column_name],
+        accumulated_results.append((experiment.all_parameters[column_name],
             _get_xy(db_session, experiment, x_name, y_name)))
     accumulated_results.sort()
 
