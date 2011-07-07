@@ -106,8 +106,11 @@ def pi(session):
 #    measurements.line((meshes[0], y))
 
 def timecourse(run):
+    print 'ro'
+#    print run.objectives
+    print [(i, o.bind.label) for i, o in enumerate(run.objectives)]
     tau = run.objectives[0].value
-    magnitude = run.objectives[1].value
+    magnitude = run.objectives[2].value
     ftc = run.all_parameters['filament_tip_concentration']
     print 'Tau =', tau
     print 'Magnitude =', magnitude
@@ -118,7 +121,7 @@ def timecourse(run):
     measurements.line(pi, label='Simulated [Pi]', color='red')
     x = numpy.array(pi[0])
     y = magnitude * (1 - numpy.exp(-x / tau))
-    measurements.line((x,y), label='Tau = %s' % tau, color='blue')
+    measurements.line((x,y), label='Halftime = %s' % tau, color='blue')
 
 #    a = pylab.gca()
 #    a.set_xscale('log')
@@ -127,7 +130,7 @@ def timecourse(run):
     rho = run.all_parameters['release_cooperativity']
     rate = run.all_parameters['release_rate']
 #    nh_conc = run.all_parameters['initial_nh_atp_concentration']
-    pylab.legend(loc=2)
+    pylab.legend(loc=4)
     pylab.title('Copolymerization, rho = %s, rate = %s' % (rho, rate))
     pylab.xlabel('Time (seconds)')
-    pylab.ylabel('Tau (seconds)')
+    pylab.ylabel('[Pi] (uM)')
