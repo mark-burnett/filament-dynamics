@@ -163,19 +163,16 @@ experiments:
 
         objectives:
             executors:
-                tau:
-                    class_name: FitTau
-                    fixed_arguments:
-                        analysis_name: Pi
-                        start_time: 200
-
                 halftime:
                     class_name: HalfTime
+                    variable_arguments:
+                        base_value: initial_concentration
+                        subtract_fraction: fraction_adp
+                        second_subtract_fraction: fraction_nh_atp
                     fixed_arguments:
                         analysis_name: Pi
 
-                magnitude:
-                    class_name: FitMagnitude
+                peaktime:
+                    class_name: PeakTime
                     fixed_arguments:
-                        analysis_name: Pi
-                        start_time: 200
+                        analysis_name: ADPPi

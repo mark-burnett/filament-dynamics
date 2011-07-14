@@ -23,37 +23,46 @@ from actin_dynamics.numerical import regression
 
 
 class HalfTime(base_classes.Objective):
-    def __init__(self, analysis_name=None, falling=False, *args, **kwargs):
+    def __init__(self, analysis_name=None, base_value=None,
+            subtract_fraction=0, second_subtract_fraction=0, *args, **kwargs):
         self.analysis_name = analysis_name
-        self.falling = falling
+        self.half_value = float(base_value) * (
+                1 - float(subtract_fraction)
+                  - float(second_subtract_fraction)) / 2
+
         base_classes.Objective.__init__(self, *args, **kwargs)
 
     def perform(self, run, target):
         times, values, errors = run.analyses[self.analysis_name]
 
-        target.value = _calc_halftime(times, values, self.falling)
+        target.value = _calc_halftime(times, values, self.half_value)
 
-def _calc_halftime(times, values, falling):
-    max_val = max(values)
-    max_index = values.index(max_val)
 
-    if falling:
-        raise NotImplementedError()
-    else:
-        cut_vals = values[:max_index+1]
-        min_val = values[0]
-        half_val = (max_val - min_val) / 2
+def _calc_halftime(times, values, half_value):
+    i = bisect.bisect_left(values, half_value)
 
-        i = bisect.bisect_left(cut_vals, half_val)
+    left_time = times[i]
+    left_value = values[i]
 
-        left_time = times[i]
-        left_value = values[i]
+    # XXX This obviously breaks if the halftime isn't reached.
+    right_time = times[i+1]
+    right_value = values[i+1]
 
-        right_time = times[i+1]
-        right_value = values[i+1]
+    return interpolation.linear_project(left_value, left_time,
+            right_value, right_time, half_value)
 
-        return interpolation.linear_project(left_value, left_time,
-                right_value, right_time, half_val)
+
+def PeakTime(base_classes.Objective):
+    def __init__(self, analysis_name=None, *args, **kwargs):
+        self.analysis_name = analysis_name
+        base_classes.Objective.__init__(self, *args, **kwargs)
+
+    def perform(self, run, target):
+        times, values, errors = run.analyses[self.analysis_name]
+
+        max_value = max(values)
+        max_index = values.index(max_value)
+        target.value = times[max_index]
 
 
 class FitTau(base_classes.Objective):

@@ -1,4 +1,16 @@
+Run sims to look at peak times (or just add on).
+
+Write/update config file to vary [Pi]_0 and look at peak time.
+
+
+Make some plots.
+
+Write some intro.
+
+
+Make meshes end on the correct point.
+
 Make sure that we are sampling these simulations fast enough
     i.e. 30 second release halftime sampled at 5 seconds is not good enough.
 
-Make meshes end on the correct point.
+Fix up database cascading.

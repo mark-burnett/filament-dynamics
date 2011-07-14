@@ -1,0 +1,7 @@
+import:
+    - 'adp_nh_poly/nh_fixed_base.yaml'
+
+experiments:
+    adp_nh_poly:
+        parameters:
+            fraction_nh_atp: 0
