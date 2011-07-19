@@ -14,3 +14,6 @@ Make sure that we are sampling these simulations fast enough
     i.e. 30 second release halftime sampled at 5 seconds is not good enough.
 
 Fix up database cascading.
+
+Add validation for config files (separate program to check file set).
+    Pretty sure most of this code exists in main branch.
