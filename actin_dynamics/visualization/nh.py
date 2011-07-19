@@ -23,6 +23,9 @@ from . import measurements
 
 from actin_dynamics import database
 
+import actin_dynamics.numerical.measurements
+from actin_dynamics import numerical
+
 
 def both(db_session, id=1):
     print 'Tau:'
@@ -110,18 +113,24 @@ def timecourse(run):
 #    print run.objectives
     print [(i, o.bind.label) for i, o in enumerate(run.objectives)]
     tau = run.objectives[0].value
-    magnitude = run.objectives[2].value
+#    magnitude = run.objectives[2].value
+    pi_conc = run.all_parameters['initial_pi_concentration']
     ftc = run.all_parameters['filament_tip_concentration']
     print 'Tau =', tau
-    print 'Magnitude =', magnitude
+#    print 'Magnitude =', magnitude
     print 'FTC =', ftc
+    print '[Pi]_0 =', pi_conc
     pi = run.analyses['Pi']
+    adppi_count = run.analyses['ADPPi']
+
+    adppi = numerical.measurements.scale(adppi_count, ftc)
 
 #    pylab.figure()
     measurements.line(pi, label='Simulated [Pi]', color='red')
-    x = numpy.array(pi[0])
-    y = magnitude * (1 - numpy.exp(-x / tau))
-    measurements.line((x,y), label='Halftime = %s' % tau, color='blue')
+    measurements.line(adppi, label='Simulated [F-ADPPi]', color='green')
+#    x = numpy.array(pi[0])
+#    y = magnitude * (1 - numpy.exp(-x / tau))
+#    measurements.line((x,y), label='Halftime = %s' % tau, color='blue')
 
 #    a = pylab.gca()
 #    a.set_xscale('log')
@@ -130,7 +139,7 @@ def timecourse(run):
     rho = run.all_parameters['release_cooperativity']
     rate = run.all_parameters['release_rate']
 #    nh_conc = run.all_parameters['initial_nh_atp_concentration']
-    pylab.legend(loc=4)
+    pylab.legend(loc=5)
     pylab.title('Copolymerization, rho = %s, rate = %s' % (rho, rate))
     pylab.xlabel('Time (seconds)')
     pylab.ylabel('[Pi] (uM)')

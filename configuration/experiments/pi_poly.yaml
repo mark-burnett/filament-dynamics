@@ -35,16 +35,6 @@ experiments:
                     fixed_arguments:
                         initial_concentration: 0
 
-                ADPPi_bulk:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                        sample_period: sample_period
-                    fixed_arguments:
-                        initial_concentration: 0
-
-
                 ADP:
                     class_name: FixedReagent
                     variable_arguments:
@@ -53,14 +43,6 @@ experiments:
                         sample_period: sample_period
                     fixed_arguments:
                         initial_concentration: 0
-
-                Pi_bulk:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                        sample_period: sample_period
-                        initial_concentration: initial_pi_concentration
 
                 Pi:
                     class_name: FixedReagent
@@ -158,19 +140,7 @@ experiments:
 
         objectives:
             executors:
-                halftime:
-                    class_name: HalfTime
+                peaktime:
+                    class_name: PeakTime
                     fixed_arguments:
-                        analysis_name: Pi
-
-                tau:
-                    class_name: FitTau
-                    fixed_arguments:
-                        analysis_name: Pi
-                        start_time: 200
-
-                magnitude:
-                    class_name: FitMagnitude
-                    fixed_arguments:
-                        analysis_name: Pi
-                        start_time: 200
+                        analysis_name: ADPPi

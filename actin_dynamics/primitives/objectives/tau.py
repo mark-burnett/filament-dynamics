@@ -52,7 +52,7 @@ def _calc_halftime(times, values, half_value):
             right_value, right_time, half_value)
 
 
-def PeakTime(base_classes.Objective):
+class PeakTime(base_classes.Objective):
     def __init__(self, analysis_name=None, *args, **kwargs):
         self.analysis_name = analysis_name
         base_classes.Objective.__init__(self, *args, **kwargs)

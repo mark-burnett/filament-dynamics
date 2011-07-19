@@ -140,12 +140,12 @@ class Simulation(object):
         'Simulation failed: time = %s, concentrations = %s',
                       time, dict((key, c.value)
                           for key, c in self.concentrations.iteritems()))
-            trans_labels = [t.label for t in self.transitions]
-            log.critical('Transition labels: %s',trans_labels)
-            log.critical('Transition Rs: %s', transition_Rs)
-            log.critical('Running Transition Rs: %s', running_transition_R)
-            log.critical('Transition r: %s', transition_r)
-            log.critical('Chosen transition: %s', trans_labels[transition_index])
+#            trans_labels = [t.label for t in self.transitions]
+#            log.critical('Transition labels: %s',trans_labels)
+#            log.critical('Transition Rs: %s', transition_Rs)
+#            log.critical('Running Transition Rs: %s', running_transition_R)
+#            log.critical('Transition r: %s', transition_r)
+#            log.critical('Chosen transition: %s', trans_labels[transition_index])
             raise
 
 
