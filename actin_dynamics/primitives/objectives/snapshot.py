@@ -1,4 +1,4 @@
-#    Copyright (C) 2010-2011 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,14 +13,20 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from registry import objective_registry as registry
+import bisect
 
-from simple_data_fit import *
-from renormalized_fit import *
-from diffusion_coefficient import *
-from elongation_rate import *
+from . import base_classes
 
-from . import snapshot
-from . import tau
+class Snapshot(base_classes.Objective):
+    def __init__(self, time=None, analysis_name=None,
+            *args, **kwargs):
+        self.time = float(time)
+        self.analysis_name = analysis_name
 
-del base_classes
+        base_classes.Objective.__init__(self, *args, **kwargs)
+
+    def perform(self, run, target):
+        times, values, errors = run.analyses[self.analysis_name]
+
+        i = bisect.bisect_left(times, self.time)
+        target.value = values[i]

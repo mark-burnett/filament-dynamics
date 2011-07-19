@@ -1,9 +1,11 @@
-Write/update config file to vary [Pi]_0 and look at peak time.
+Reorganize configuration files:
+    parameters should have some index-like files:
+        bulk -> imports all the bulk parameters
+    models should have more useful add on stuff:
+        bulk -> imports all the bulk components
 
-
-Make some plots.
-
-Write some intro.
+delete unused configuration
+    (this is supposed to be the stuff that reproduces the paper)
 
 
 Make meshes end on the correct point.

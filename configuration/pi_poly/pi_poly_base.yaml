@@ -1,0 +1,37 @@
+import:
+    - 'experiments/pi_poly.yaml'
+    - 'models/random_cooperative_full.yaml'
+    - 'components/reverse_release.yaml'
+#    - 'components/fast_tip_phosphate_release.yaml'
+    - 'parameters/polymerization_fujiwara_barbed.yaml'
+    - 'parameters/polymerization_fujiwara_pointed.yaml'
+    - 'parameters/fujiwara_reverse_release.yaml'
+    - 'parameters/in_solution_release_rate.yaml'
+
+experiments:
+    pi_poly:
+        parameters:
+            asymptotic_time: 3000
+
+            simulation_duration: 3600
+            sample_period: 5
+
+            seed_concentration: 6
+
+            filament_tip_concentration: 0.003
+            initial_concentration: 30
+
+            number_of_simulations: 15
+            number_of_filaments:   2
+
+            cleavage_rate: 0.198
+
+
+parameter_specifications:
+    pi_poly:
+        simulation:
+            initial_pi_concentration:
+                lower_bound: 1
+                upper_bound: 1000000
+                mesh_type: log
+                num_points: 16

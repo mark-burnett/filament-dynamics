@@ -8,4 +8,3 @@ models:
                 old_state: ADPPi
                 new_state: ADP
                 byproduct: Pi
-

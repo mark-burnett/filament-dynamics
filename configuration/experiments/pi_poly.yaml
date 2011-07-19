@@ -1,9 +1,3 @@
-global_parameters:
-    simulation_duration: 3000
-    sample_period: 5
-
-    seed_concentration: 6
-
 experiments:
     pi_poly:
         simulation:
@@ -144,3 +138,10 @@ experiments:
                     class_name: PeakTime
                     fixed_arguments:
                         analysis_name: ADPPi
+
+                asymptotic_adppi:
+                    class_name: Snapshot
+                    fixed_arguments:
+                        analysis_name: ADPPi
+                    variable_arguments:
+                        time: asymptotic_time

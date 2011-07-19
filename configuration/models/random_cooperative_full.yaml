@@ -3,3 +3,4 @@ import:
     - 'components/random_cleavage.yaml'
     - 'components/cooperative_release.yaml'
     - 'components/pointed_polymerization.yaml'
+    - 'components/pi_release_in_solution.yaml'
