@@ -47,7 +47,7 @@ def setup_database_from_dict(db_dict):
     '''
     dbc = DatabaseConfiguration(**db_dict)
 
-    engine = create_engine(dbc.bind)
+    engine = create_engine(dbc.bind, pool_recycle=7200)
     database.global_state.metadata.bind = engine
     database.global_state.metadata.create_all(engine)
 
