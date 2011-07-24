@@ -1,3 +1,18 @@
+[ -- July 28 -- ]
+
+Pi* run
+
+Melki fits for 10^5, 10^6, 10^7
+    replot curve & refit parabola
+
+Intro draft
+
+Asymptotic ADPPi Plot - for 3 values of Pi reattachment rate
+    Half-Concentration (x) vs. Cooperativity (y)
+
+[ -- July 28 -- ]
+
+
 Reorganize configuration files:
     parameters should have some index-like files:
         bulk -> imports all the bulk parameters
@@ -14,6 +29,8 @@ Make sure that we are sampling these simulations fast enough
     i.e. 30 second release halftime sampled at 5 seconds is not good enough.
 
 Fix up database cascading.
+
+Add database requirements for 1 or more experiments per session, runs per experiment?
 
 Add validation for config files (separate program to check file set).
     Pretty sure most of this code exists in main branch.

@@ -1,5 +1,5 @@
 experiments:
-    adp_nh_poly:
+    pi_poly:
         simulation:
             filaments:
                 filament_factory:
@@ -12,15 +12,6 @@ experiments:
                         state: ADP
 
             concentrations:
-                NH_ATP:
-                    class_name: FixedReagent
-                    variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                        sample_period: sample_period
-                        initial_concentration: initial_concentration
-                        scale_concentration: fraction_nh_atp
-
                 ATP:
                     class_name: FixedReagent
                     variable_arguments:
@@ -28,8 +19,6 @@ experiments:
                         number: number_of_filaments
                         sample_period: sample_period
                         initial_concentration: initial_concentration
-                        subtract_fraction: fraction_nh_atp
-                        second_subtract_fraction: fraction_adp
 
                 ADPPi:
                     class_name: FixedReagent
@@ -40,15 +29,32 @@ experiments:
                     fixed_arguments:
                         initial_concentration: 0
 
+                ADPPi_bulk:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                        sample_period: sample_period
+                    fixed_arguments:
+                        initial_concentration: 0
+
+
                 ADP:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
                         sample_period: sample_period
-                        initial_concentration: initial_concentration
-                        scale_concentration: fraction_adp
+                    fixed_arguments:
+                        initial_concentration: 0
 
+                Pi_bulk:
+                    class_name: FixedReagent
+                    variable_arguments:
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
+                        sample_period: sample_period
+                        initial_concentration: initial_pi_concentration
 
                 Pi:
                     class_name: FixedReagent
@@ -71,13 +77,6 @@ experiments:
                     variable_arguments:
                         sample_period: sample_period
 
-                NH_ATP:
-                    class_name: StateCount
-                    fixed_arguments:
-                        state: ATP
-                    variable_arguments:
-                        sample_period: sample_period
-
                 ATP:
                     class_name: StateCount
                     fixed_arguments:
@@ -89,6 +88,13 @@ experiments:
                     class_name: StateCount
                     fixed_arguments:
                         state: ADPPi
+                    variable_arguments:
+                        sample_period: sample_period
+
+                ADPPi_bulk:
+                    class_name: StateCount
+                    fixed_arguments:
+                        state: ADPPi_bulk
                     variable_arguments:
                         sample_period: sample_period
 
@@ -121,15 +127,15 @@ experiments:
                     measurement_name: Pi
                     measurement_type: concentration
 
-            NH_ATP:
+            Pi_bulk:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: NH_ATP
-                    measurement_type: filament
+                    measurement_name: Pi_bulk
+                    measurement_type: concentration
 
             ATP:
                 class_name: StandardErrorMean
@@ -151,6 +157,16 @@ experiments:
                     measurement_name: ADPPi
                     measurement_type: filament
 
+            ADPPi_bulk:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: ADPPi_bulk
+                    measurement_type: filament
+
             ADP:
                 class_name: StandardErrorMean
                 variable_arguments:
@@ -167,15 +183,8 @@ experiments:
                     class_name: HalfTime
                     variable_arguments:
                         base_value: initial_concentration
-                        subtract_fraction: fraction_adp
-                        second_subtract_fraction: fraction_nh_atp
                     fixed_arguments:
                         analysis_name: Pi
-
-                peaktime:
-                    class_name: PeakTime
-                    fixed_arguments:
-                        analysis_name: ADPPi
 
                 asymptotic_adppi:
                     class_name: Snapshot

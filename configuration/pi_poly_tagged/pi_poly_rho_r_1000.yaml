@@ -1,0 +1,5 @@
+name: 'Pi poly tagged - rho = 1000'
+
+import:
+    - 'pi_poly_tagged/pi_poly_base.yaml'
+    - 'melki_pyrene_fit_pars/rho_r_1000.yaml'
