@@ -19,6 +19,21 @@ from actin_dynamics import database
 from actin_dynamics.io import data
 
 
+def collate_asymptotic_adppi(db_session, ids, filename=None,
+        x_name = 'initial_pi_concentration', y_name = 'asymptotic_adppi',
+        column_name='release_cooperativity', experiment_index=0):
+    results = _simple_collate(db_session, ids, x_name, y_name,
+            column_name, experiment_index)
+
+    # scale results (* ftc / total f-actin)
+    ftc = _get_ftc(db_session, ids, experiment_index)
+    total_factin = _get_total_factin(db_session, ids, experiment_index)
+
+    scaled_results = _scale_results(results, ftc / total_factin)
+
+    _write_results(filename, scaled_results, x_name, y_name, column_name)
+
+
 def basic_collate(db_session, ids, filename=None,
         x_name='filament_tip_concentration', y_name='halftime',
         column_name='release_cooperativity', experiment_index=0):
@@ -116,3 +131,32 @@ def _get_xy(db_session, experiment, x_name=None, y_name=None):
 
     xy.sort()
     return zip(*xy)
+
+def _get_ftc(db_session, ids, experiment_id):
+    s = db_session.query(database.Session).filter_by(id=ids[0]).first()
+    e = s.experiments[experiment_id]
+    r = e.runs[0]
+
+    return r.all_parameters['filament_tip_concentration']
+
+def _get_total_factin(db_session, ids, experiment_id):
+    s = db_session.query(database.Session).filter_by(id=ids[0]).first()
+    e = s.experiments[experiment_id]
+    r = e.runs[0]
+
+    pars = r.all_parameters
+
+    total = pars.get('seed_concentration', 0)
+    total += pars.get('initial_concentration', 0)
+
+    return total
+
+def _scale_results(results, factor):
+    column_ids, rows = results
+
+    scaled_rows = []
+    for row in rows:
+        scaled_row = [row[0]] + [r * factor for r in row[1:]]
+        scaled_rows.append(scaled_row)
+
+    return column_ids, scaled_rows
