@@ -33,6 +33,8 @@ def collate_asymptotic_adppi(db_session, ids, filename=None,
 
     _write_results(filename, scaled_results, x_name, y_name, column_name)
 
+    return scaled_results
+
 
 def basic_collate(db_session, ids, filename=None,
         x_name='filament_tip_concentration', y_name='halftime',
@@ -41,6 +43,8 @@ def basic_collate(db_session, ids, filename=None,
             column_name, experiment_index)
 
     _write_results(filename, results, x_name, y_name, column_name)
+
+    return results
 
 
 def adp_nh_collate(db_session, adp_ids, nh_ids, filename=None,

@@ -22,6 +22,8 @@ Reorganize configuration files:
 delete unused configuration
     (this is supposed to be the stuff that reproduces the paper)
 
+delete unused visualization code
+
 
 Make meshes end on the correct point.
 

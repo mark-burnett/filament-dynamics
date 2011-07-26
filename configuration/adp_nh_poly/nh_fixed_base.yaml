@@ -5,6 +5,7 @@ import:
     - 'models/nh_polymerization.yaml'
     - 'parameters/polymerization_fujiwara_barbed.yaml'
     - 'parameters/polymerization_fujiwara_pointed.yaml'
+    - 'parameters/fujiwara_reverse_release.yaml'
     - 'parameters/in_solution_release_rate.yaml'
 
 experiments:
@@ -17,8 +18,8 @@ experiments:
 
             seed_concentration: 6
 
-            number_of_simulations: 30
-            number_of_filaments:   3
+            number_of_simulations: 10
+            number_of_filaments:   2
 
             filament_tip_concentration: 0.003
             initial_concentration: 30

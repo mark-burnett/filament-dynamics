@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -13,17 +15,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#import pollard
-from . import collate
-from . import slicing
-from . import pieper_wegner
-from . import measurements
-from . import fujiwara
-from . import melki
-from . import critical_concentration
-
-from . import nh
-
-from . import pi_poly
-
-from . import new_pollard
+./sim.sh -n 8 -l -s configuration/pi_poly_tagged/pi_poly_rho_r_1.yaml
+./sim.sh -n 0 -l -s configuration/pi_poly_tagged/pi_poly_rho_r_10.yaml
+./sim.sh -n 0 -l -s configuration/pi_poly_tagged/pi_poly_rho_r_100.yaml
+./sim.sh -n 0 -l -s configuration/pi_poly_tagged/pi_poly_rho_r_1000.yaml
+./sim.sh -n 0 -l -s configuration/pi_poly_tagged/pi_poly_rho_r_10000.yaml

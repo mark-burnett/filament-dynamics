@@ -15,7 +15,7 @@
 
 import configobj
 
-from sqlalchemy import orm, create_engine
+from sqlalchemy import orm, create_engine, exc
 
 from actin_dynamics import database
 
@@ -41,13 +41,50 @@ class DatabaseConfiguration(object):
         result += '/' + self.database_name
         return result
 
+# NOTE:  This class taken from the sqlalchemy mailing list.
+class LookLively(object):
+    """Ensures that MySQL connections checked out of the pool are alive.
+
+    Specific to the MySQLdb DB-API.  Note that this can not totally
+    guarantee live connections- the remote side can drop the connection
+    in the time between ping and the connection reaching user code.
+
+    This is a simplistic implementation.  If there's a lot of pool churn
+    (i.e. implicit connections checking in and out all the time), one
+    possible and easy optimization would be to add a timer check:
+
+    1) On check-in, record the current time (integer part) into the
+       connection record's .properties
+    2) On check-out, compare the current integer time to the (possibly
+       empty) record in .properties.  If it is still the same second as
+       when the connection was last checked in, skip the ping.  The
+       connection is probably fine.
+
+    Something much like this logic will go into the SQLAlchemy core
+    eventually.
+
+    -jek
+    """
+
+    def checkout(self, dbapi_con, con_record, con_proxy):
+        try:
+            try:
+                dbapi_con.ping(False)
+            except TypeError:
+                dbapi_con.ping()
+        except dbapi_con.OperationalError, ex:
+            if ex.args[0] in (2006, 2013, 2014, 2045, 2055):
+                raise exc.DisconnectionError()
+            else:
+                raise
+
 
 def setup_database_from_dict(db_dict):
     '''Sets up singletons needed to access the database.
     '''
     dbc = DatabaseConfiguration(**db_dict)
 
-    engine = create_engine(dbc.bind, pool_recycle=7200)
+    engine = create_engine(dbc.bind, pool_recycle=7200, listeners=[LookLively()])
     database.global_state.metadata.bind = engine
     database.global_state.metadata.create_all(engine)
 
