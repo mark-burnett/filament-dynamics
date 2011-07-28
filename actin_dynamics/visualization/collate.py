@@ -160,7 +160,8 @@ def _scale_results(results, factor):
 
     scaled_rows = []
     for row in rows:
-        scaled_row = [row[0]] + [r * factor for r in row[1:]]
-        scaled_rows.append(scaled_row)
+        if None not in row:
+            scaled_row = [row[0]] + [r * factor for r in row[1:]]
+            scaled_rows.append(scaled_row)
 
     return column_ids, scaled_rows

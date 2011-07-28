@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import pprint
+
 import bisect
 import csv
 
@@ -60,18 +62,21 @@ def _small_writer(filename, results, x_name, y_name):
 def _half_concentrations(base_results, value=0.5):
     column_ids, rows = base_results
     cols = numpy.transpose(rows)
+    concentrations, halftimes = cols[0], cols[1:]
 
     half_concentrations = []
-    for col in cols:
+    for cid, hts in zip(column_ids, halftimes):
         # Find surrounding indices -> interpolate (log-linear)
-        i = bisect.bisect_left(col, value)
-        log_hc = linear_project(numpy.log(column_ids[i]), col[i],
-                numpy.log(column_ids[i+1]), col[i+1],
-                value)
+        i = bisect.bisect_left(hts, value)
+        if i >= len(hts):
+            continue
+        log_hc = linear_project(numpy.log(hts[i]), numpy.log(concentrations[i]),
+                numpy.log(hts[i+1]), numpy.log(concentrations[i+1]),
+                numpy.log(2 * value))
         hc = numpy.exp(log_hc)
-        half_concentrations.append(hc)
+        half_concentrations.append((hc, cid))
 
-    return zip(half_concentrations, column_ids)
+    return half_concentrations
 
 
 def _doubling_concentrations(base_results, random_halftime):
@@ -81,16 +86,19 @@ def _doubling_concentrations(base_results, random_halftime):
     '''
     column_ids, rows = base_results
     cols = numpy.transpose(rows)
+    concentrations, halftimes = cols[0], cols[1:]
 
     doubling_concentrations = []
-    for col in cols:
+    for cid, hts in zip(column_ids, halftimes):
         # Find surrounding indices -> interpolate (log-log)
-        i = bisect.bisect_left(col, 2 * random_halftime)
-        log_dc = linear_project(numpy.log(column_ids[i]), numpy.log(col[i]),
-                numpy.log(column_ids[i+1]), numpy.log(col[i+1]),
+        i = bisect.bisect_left(hts, 2 * random_halftime)
+        if i >= len(hts):
+            continue
+        log_dc = linear_project(numpy.log(hts[i]), numpy.log(concentrations[i]),
+                numpy.log(hts[i+1]), numpy.log(concentrations[i+1]),
                 numpy.log(2 * random_halftime))
         dc = numpy.exp(log_dc)
-        doubling_concentrations.append(dc)
+        doubling_concentrations.append((dc, cid))
 
-    return zip(doubling_concentrations, column_ids)
+    return doubling_concentrations
 
