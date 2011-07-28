@@ -36,16 +36,9 @@ def pi_poly(db_session, ids, filename='pi_poly_asymptotic_adppi.dat',
             y_name='release cooperativity')
 
 
-def pi_poly_tagged(db_session, ids, filename='pi_poly_tagged_pi_halftime.dat',
-        doubling_conc_filename='pi_poly_tagged_doubling_conc.dat',
-        random_halftime=390):
+def pi_poly_tagged(db_session, ids, filename='pi_poly_tagged_pi_halftime.dat'):
     results = collate.basic_collate(db_session, ids, filename,
             x_name='initial_pi_concentration')
-
-    dc_results = _doubling_concentrations(results, random_halftime)
-    _small_writer(doubling_conc_filename, dc_results,
-            x_name='doubling concentration',
-            y_name='release cooperativity')
 
 
 def _small_writer(filename, results, x_name, y_name):
@@ -77,28 +70,3 @@ def _half_concentrations(base_results, value=0.5):
         half_concentrations.append((hc, cid))
 
     return half_concentrations
-
-
-def _doubling_concentrations(base_results, random_halftime):
-    '''
-    Calculates the concentration required to double the halftime
-    (compared with zero concentration/random model)
-    '''
-    column_ids, rows = base_results
-    cols = numpy.transpose(rows)
-    concentrations, halftimes = cols[0], cols[1:]
-
-    doubling_concentrations = []
-    for cid, hts in zip(column_ids, halftimes):
-        # Find surrounding indices -> interpolate (log-log)
-        i = bisect.bisect_left(hts, 2 * random_halftime)
-        if i >= len(hts):
-            continue
-        log_dc = linear_project(numpy.log(hts[i]), numpy.log(concentrations[i]),
-                numpy.log(hts[i+1]), numpy.log(concentrations[i+1]),
-                numpy.log(2 * random_halftime))
-        dc = numpy.exp(log_dc)
-        doubling_concentrations.append((dc, cid))
-
-    return doubling_concentrations
-
