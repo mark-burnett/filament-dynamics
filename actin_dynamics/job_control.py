@@ -20,7 +20,7 @@ import os
 
 import contextlib
 
-import sqlalchemy.exceptions
+import sqlalchemy.exc
 
 from . import database
 from . import version
@@ -67,7 +67,7 @@ def get_job(process_id, db_session):
                 log.debug('Job acquired, id = %s.' % job.id)
             else:
                 log.debug('No jobs found.')
-    except sqlalchemy.exceptions.OperationalError as oe:
+    except sqlalchemy.exc.OperationalError as oe:
         if 1213 == oe.orig[0]:
             _log.warn('Deadlock while acquiring job %s.', job.id)
             job = None
