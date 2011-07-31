@@ -1,0 +1,26 @@
+import:
+    - 'experiments/melki_fievez_carlier_1996.yaml'
+    - 'models/random_cooperative_full.yaml'
+    - 'parameters/polymerization_fujiwara_full.yaml'
+    - 'parameters/in_solution_release_rate.yaml'
+
+global_parameters:
+    number_of_simulations: 10
+    number_of_filaments:   1
+    sample_period: 10
+
+    seed_concentration: 6
+    initial_concentration: 30
+
+    simulation_duration: 2500
+
+    cleavage_rate: 0.3
+
+parameter_specifications:
+    melki_fievez_carlier_1996:
+        simulation:
+            filament_tip_concentration:
+                lower_bound: 0.0015
+                upper_bound: 0.0045
+                mesh_type:   linear
+                num_points:  24
