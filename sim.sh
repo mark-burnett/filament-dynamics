@@ -66,7 +66,7 @@ fi
 
 echo "Starting job runners..."
 for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
-    nice 5 bin/worker.py $CONFIG_COMMAND >& /dev/null &
+    nice bin/worker.py $CONFIG_COMMAND >& /dev/null &
     echo "Started process #$SIMNUM"
 done
 
