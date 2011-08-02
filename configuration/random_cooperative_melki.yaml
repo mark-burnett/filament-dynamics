@@ -6,20 +6,20 @@ import:
     - 'parameters/polymerization_fujiwara_full.yaml'
 
 global_parameters:
-    number_of_simulations: 15
-    number_of_filaments:   2
+    number_of_simulations: 30
+    number_of_filaments:   3
     sample_period: 10
 
-    cleavage_rate: 0.198
+    cleavage_rate: 0.3
 
-    release_cooperativity: 10000
+    release_cooperativity: 1
 
 parameter_specifications:
     melki_fievez_carlier_1996:
         simulation:
             release_rate:
-                lower_bound: 0.00001
-                upper_bound: 0.0005
+                lower_bound: 0.0015
+                upper_bound: 0.0035
                 mesh_type:   linear
                 num_points:  24
 
@@ -27,4 +27,4 @@ parameter_specifications:
                 lower_bound: 0.001
                 upper_bound: 0.005
                 mesh_type:   linear
-                num_points:  8
+                num_points:  16

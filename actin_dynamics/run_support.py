@@ -50,7 +50,8 @@ def run_job(job, db_session):
         o.perform(job.run, objective)
         log.debug('Storing summary of %s for job %s (%s).',
                   objective.bind.label, job.id, objective.value)
-        store_summary_information(objective)
+# XXX For now drop slice information
+#        store_summary_information(objective)
 
     log.info('Finished job %s.', job.id)
 

@@ -41,12 +41,13 @@ def save_parameters(session_ids, filename='results/melki_rates.dat'):
 
     session_rate_meshes = []
     session_pi_arrays = []
+    session_fractional_errors = []
 
     # Collect the data and find the best FNC
     fnc_totals = None
     for session in sessions:
         session_arrays = get_session_arrays(dbs, session)
-        fnc_mesh, rate_mesh, f_array, p_array = session_arrays
+        fnc_mesh, rate_mesh, f_array, p_array, fractional_error = session_arrays
 
         if fnc_totals is None:
             fnc_totals = numpy.zeros(len(fnc_mesh))
@@ -55,6 +56,7 @@ def save_parameters(session_ids, filename='results/melki_rates.dat'):
         fnc_totals += f_array.min(1)
         session_rate_meshes.append(rate_mesh)
         session_pi_arrays.append(p_array)
+        session_fractional_errors.append(fractional_error)
 
     # Get the best fnc
     fnc_i = fnc_totals.argmin()
@@ -63,21 +65,34 @@ def save_parameters(session_ids, filename='results/melki_rates.dat'):
     # Get the best rates for each session
     cooperativities = [s.parameters['release_cooperativity'] for s in sessions]
     rates = []
-    for rate_mesh, pi_array in zip(session_rate_meshes, session_pi_arrays):
+    statistical_errors = []
+    mesh_errors = []
+    for rate_mesh, pi_array, fractional_error in zip(session_rate_meshes,
+            session_pi_arrays, session_fractional_errors):
         fixed_fnc = pi_array[fnc_i, :]
         pi_fit = fixed_fnc.min()
         rate_i = bisect.bisect_left(fixed_fnc, pi_fit)
-        rates.append(rate_mesh[rate_i])
+        rate = rate_mesh[rate_i]
+        step_size = rate_mesh[rate_i + 1] - rate
+        rates.append(rate)
+        statistical_errors.append(fractional_error * rate)
+        mesh_errors.append(step_size / 2)
 
-    _small_writer(filename, zip(cooperativities, rates),
-            'release_cooperativity', 'release_rate')
+    fnc_step_size = fnc_mesh[fnc_i + 1] - best_fnc
+    _small_writer(filename,
+            zip(cooperativities, rates, statistical_errors, mesh_errors),
+            ('release_cooperativity', 'release_rate', 'statistical_error', 'mesh_error'),
+            header='# Filament Number Concentration: %s\n#    FNC Statistical Error: %s\n#    FNC Mesh Error: %s\n'
+            % (best_fnc, fractional_error * best_fnc, fnc_step_size / 2))
 
-def _small_writer(filename, results, x_name, y_name):
+def _small_writer(filename, results, names, header=None):
     with open(filename, 'w') as f:
         # Header lines, identifying x, y, column name
         f.write('# Auto-collated output:\n')
-        f.write('# x: %s\n' % x_name)
-        f.write('# y: %s\n' % y_name)
+        if header:
+            f.write(header)
+        for i, name in enumerate(names):
+            f.write('# Column %i: %s\n' % ((i + 1), name))
         # CSV dump of actual data
         w = csv.writer(f, dialect=data.DatDialect)
         w.writerows(results)
@@ -99,8 +114,13 @@ def get_session_arrays(db_session, session):
         f_array[fi, ri] = f_fit
         p_array[fi, ri] = p_fit
 
+    # Figure out rough statistical error.
+    sample_size = (session.parameters['number_of_simulations']
+            * session.parameters['number_of_filaments'])
+    fractional_error = 1 / numpy.sqrt(sample_size)
 
-    return fnc_mesh, rate_mesh, f_array, p_array
+
+    return fnc_mesh, rate_mesh, f_array, p_array, fractional_error
 
 
 def _extract_session_values(db_session, session):

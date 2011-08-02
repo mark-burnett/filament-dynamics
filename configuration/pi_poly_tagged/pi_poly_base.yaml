@@ -22,7 +22,7 @@ experiments:
             filament_tip_concentration: 0.003
             initial_concentration: 30
 
-            number_of_simulations: 15
+            number_of_simulations: 10
             number_of_filaments:   2
 
             cleavage_rate: 0.198
@@ -32,7 +32,7 @@ parameter_specifications:
     pi_poly:
         simulation:
             initial_pi_concentration:
-                lower_bound: 1
+                lower_bound: 10
                 upper_bound: 1000000
                 mesh_type: log
                 num_points: 16

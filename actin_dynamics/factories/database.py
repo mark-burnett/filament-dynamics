@@ -179,6 +179,7 @@ def create_static_session(db_session, name=None, parameters={}, model={},
     session.models.append(static_model(model))
     session.experiments = static_experiments(experiments, parameters)
 
-    static_summary_tables(session.experiments, parameter_specifications)
+# XXX For now drop the slicing tables.
+#    static_summary_tables(session.experiments, parameter_specifications)
 
     return session

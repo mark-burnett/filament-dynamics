@@ -33,6 +33,7 @@ discover
 mysqldb
 sqlalchemy
 yaml
+dulwich
 
 numpy
 scipy

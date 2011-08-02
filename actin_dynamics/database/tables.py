@@ -38,35 +38,35 @@ MAX_LOG_MESSAGE_SIZE = 1024
 # These tables contain no unique information.  Just for convenience.
 
 # This table maps objective_bind_id's to slice table names.
-slice_definition_table = schema.Table('slice_definition', global_state.metadata,
-        schema.Column('id', types.Integer, primary_key=True),
-# XXX This should be the primary key, but sqla doesn't like it..
-        schema.Column('objective_bind_id', types.Integer,
-                      schema.ForeignKey('bind.id'),
-                      unique=True, nullable=False),
-        schema.Column('table_name', types.String(MAX_TABLE_NAME_LENGTH),
-                      unique=True, nullable=False),
-        mysql_engine='InnoDB')
-
-# This table maps parameter names to column names
-slice_parameter_table = schema.Table('slice_parameter', global_state.metadata,
-        schema.Column('id', types.Integer, primary_key=True),
-        schema.Column('slice_definition_id', types.Integer,
-                      schema.ForeignKey('slice_definition.id'),
-                      nullable=False),
-        schema.Column('parameter_name', types.String(MAX_NAME_LENGTH),
-                      nullable=False),
-        schema.Column('column_name',
-                      types.String(MAX_COLUMN_NAME_LENGTH),
-                      unique=True, nullable=False),
-        mysql_engine='InnoDB')
-
-slice_mesh_table = schema.Table('slice_mesh', global_state.metadata,
-        schema.Column('id', types.Integer, primary_key=True),
-        schema.Column('slice_parameter_id',
-                      schema.ForeignKey('slice_parameter.id'), nullable=False),
-        schema.Column('value', types.Float),
-        mysql_engine='InnoDB')
+#slice_definition_table = schema.Table('slice_definition', global_state.metadata,
+#        schema.Column('id', types.Integer, primary_key=True),
+## XXX This should be the primary key, but sqla doesn't like it..
+#        schema.Column('objective_bind_id', types.Integer,
+#                      schema.ForeignKey('bind.id'),
+#                      unique=True, nullable=False),
+#        schema.Column('table_name', types.String(MAX_TABLE_NAME_LENGTH),
+#                      unique=True, nullable=False),
+#        mysql_engine='InnoDB')
+#
+## This table maps parameter names to column names
+#slice_parameter_table = schema.Table('slice_parameter', global_state.metadata,
+#        schema.Column('id', types.Integer, primary_key=True),
+#        schema.Column('slice_definition_id', types.Integer,
+#                      schema.ForeignKey('slice_definition.id'),
+#                      nullable=False),
+#        schema.Column('parameter_name', types.String(MAX_NAME_LENGTH),
+#                      nullable=False),
+#        schema.Column('column_name',
+#                      types.String(MAX_COLUMN_NAME_LENGTH),
+#                      unique=True, nullable=False),
+#        mysql_engine='InnoDB')
+#
+#slice_mesh_table = schema.Table('slice_mesh', global_state.metadata,
+#        schema.Column('id', types.Integer, primary_key=True),
+#        schema.Column('slice_parameter_id',
+#                      schema.ForeignKey('slice_parameter.id'), nullable=False),
+#        schema.Column('value', types.Float),
+#        mysql_engine='InnoDB')
 
 # ---------------------------------------------------------------------
 # - Logging tables                                                    -

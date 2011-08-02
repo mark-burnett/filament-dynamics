@@ -29,7 +29,7 @@ from .parameters import *
 from .results import *
 from .runs import *
 from .sessions import *
-from .slice import *
+#from .slice import *
 
 del analyses
 del arguments
@@ -43,4 +43,4 @@ del parameters
 del results
 del runs
 del sessions
-del slice
+#del slice

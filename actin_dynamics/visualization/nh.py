@@ -116,17 +116,19 @@ def timecourse(run):
 #    magnitude = run.objectives[2].value
     pi_conc = run.all_parameters['initial_pi_concentration']
     ftc = run.all_parameters['filament_tip_concentration']
+    asymp_val = run.objectives[0].value * ftc
     print 'Tau =', tau
 #    print 'Magnitude =', magnitude
     print 'FTC =', ftc
     print '[Pi]_0 =', pi_conc
+    print 'Asymptotic [ADPPi] =', asymp_val
     pi = run.analyses['Pi']
     adppi_count = run.analyses['ADPPi']
 
     adppi = numerical.measurements.scale(adppi_count, ftc)
 
 #    pylab.figure()
-    measurements.line(pi, label='Simulated [Pi]', color='red')
+#    measurements.line(pi, label='Simulated [Pi]', color='red')
     measurements.line(adppi, label='Simulated [F-ADPPi]', color='green')
 #    x = numpy.array(pi[0])
 #    y = magnitude * (1 - numpy.exp(-x / tau))

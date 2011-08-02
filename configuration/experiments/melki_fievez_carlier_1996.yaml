@@ -1,13 +1,5 @@
-global_parameters:
-    simulation_duration: 2500
-
-    seed_concentration: 6
-
 experiments:
     melki_fievez_carlier_1996:
-        parameters:
-            initial_atp_concentration: 30
-
         simulation:
             filaments:
                 filament_factory:
@@ -24,7 +16,7 @@ experiments:
                     class_name: FixedReagent
                     variable_arguments:
                         sample_period: sample_period
-                        initial_concentration: initial_atp_concentration
+                        initial_concentration: initial_concentration
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
 
