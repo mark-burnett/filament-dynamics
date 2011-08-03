@@ -32,6 +32,8 @@ from actin_dynamics.io import data
 #from . import measurements
 #from . import themes
 
+def save_all(session_ids):
+    pass
 
 def save_parameters(session_ids, filename='results/melki_rates.dat'):
     dbs = database.DBSession()
@@ -67,13 +69,18 @@ def save_parameters(session_ids, filename='results/melki_rates.dat'):
     rates = []
     statistical_errors = []
     mesh_errors = []
-    for rate_mesh, pi_array, fractional_error in zip(session_rate_meshes,
-            session_pi_arrays, session_fractional_errors):
+    for i, (rate_mesh, pi_array, fractional_error) in enumerate(zip(session_rate_meshes,
+            session_pi_arrays, session_fractional_errors)):
         fixed_fnc = pi_array[fnc_i, :]
-        pi_fit = fixed_fnc.min()
-        rate_i = bisect.bisect_left(fixed_fnc, pi_fit)
+        rate_i = fixed_fnc.argmin()
+#        pi_fit = fixed_fnc.min()
+#        rate_i = bisect.bisect_left(fixed_fnc, pi_fit)
         rate = rate_mesh[rate_i]
-        step_size = rate_mesh[rate_i + 1] - rate
+        try:
+            step_size = rate_mesh[rate_i + 1] - rate
+        except IndexError:
+            print 'Index error for rho = %s' % cooperativities[i]
+            step_size = 0
         rates.append(rate)
         statistical_errors.append(fractional_error * rate)
         mesh_errors.append(step_size / 2)
@@ -84,6 +91,7 @@ def save_parameters(session_ids, filename='results/melki_rates.dat'):
             ('release_cooperativity', 'release_rate', 'statistical_error', 'mesh_error'),
             header='# Filament Number Concentration: %s\n#    FNC Statistical Error: %s\n#    FNC Mesh Error: %s\n'
             % (best_fnc, fractional_error * best_fnc, fnc_step_size / 2))
+
 
 def _small_writer(filename, results, names, header=None):
     with open(filename, 'w') as f:
