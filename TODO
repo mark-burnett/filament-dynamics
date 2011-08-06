@@ -1,16 +1,10 @@
-[ -- July 28 -- ]
+[ -- August 11 -- ]
 
-Pi* run
+Fix incorrect measurement start.
+Set simulation run times to be 0.1s longer so final measurement is taken.
+Write queries to speed up melki fits.
 
-Melki fits for 10^5, 10^6, 10^7
-    replot curve & refit parabola
-
-Intro draft
-
-Asymptotic ADPPi Plot - for 3 values of Pi reattachment rate
-    Half-Concentration (x) vs. Cooperativity (y)
-
-[ -- July 28 -- ]
+[ -- August 11 -- ]
 
 
 Reorganize configuration files:

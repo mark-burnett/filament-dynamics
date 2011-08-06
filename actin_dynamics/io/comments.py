@@ -32,7 +32,7 @@ class CommentFilter(object):
     def next(self):
         line = self.stream.next()
         line.strip()
-        while line.startswith('#'):
+        while line.startswith('#') or line.startswith('\n'):
             line = self.stream.next()
             line.strip()
 
