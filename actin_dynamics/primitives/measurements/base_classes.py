@@ -33,8 +33,9 @@ class Measurement(object):
         measurements = filament.measurements[self.label]
         if not measurements:
             measurements.append([time, value])
+            measurements.append([time + self.sample_period, value])
         last_time, last_value = measurements[-1]
         if time <= last_time:
             measurements[-1][1] = value
         else:
-            measurements.append([time + self.sample_period, value])
+            measurements.append([last_time + self.sample_period, value])
