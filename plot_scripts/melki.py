@@ -31,7 +31,7 @@ from plot_scripts import settings
 
 def main():
     melki_rate_plot()
-#    melki_timecourses()
+    melki_timecourses()
 
 
 def melki_rate_plot():
@@ -76,32 +76,34 @@ def melki_timecourses():
 
     pyplot.figure()
     # Data
-    pyplot.plot(fd_cdot, fd_f, fmt='k-', linewidth=settings.BOLD_LINE_WIDTH,
+    pyplot.plot(fd_cdot, fd_f, 'k-',
+            linewidth=settings.BOLD_LINE_WIDTH,
             label='[F-actin] Data')
-    pyplot.plot(pd_cdot, pd_p, fmt='k.', linewidth=settings.BOLD_LINE_WIDTH,
+    pyplot.plot(pd_cdot, pd_p, 'k.',
+            linewidth=settings.BOLD_LINE_WIDTH,
             label='[Pi] Data')
 
     # Rho = 1
-    pyplot.plot(fs_cdot, fs_rho1e0, fmt='r-',
+    pyplot.plot(fs_cdot, f_rho_1e0, 'r-',
             label=r'$\rho_d = 1$ [F-actin] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
-    pyplot.plot(ps_cdot, ps_rho1e0, fmt='r.',
+    pyplot.plot(ps_cdot, p_rho_1e0, 'r.',
             label=r'$\rho_d = 1$ [Pi] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
 
     # Rho = 1000
-    pyplot.plot(fs_cdot, fs_rho1e3, fmt='g-',
+    pyplot.plot(fs_cdot, f_rho_1e3, 'g-',
             label=r'$\rho_d = 1000$ [F-actin] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
-    pyplot.plot(ps_cdot, ps_rho1e3, fmt='g.',
+    pyplot.plot(ps_cdot, p_rho_1e3, 'g.',
             label=r'$\rho_d = 1000$ [Pi] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
 
     # Rho = 1000000
-    pyplot.plot(fs_cdot, fs_rho1e6, fmt='b-',
+    pyplot.plot(fs_cdot, f_rho_1e6, 'b-',
             label=r'$\rho_d = 1000000$ [F-actin] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
-    pyplot.plot(ps_cdot, ps_rho1e6, fmt='b.',
+    pyplot.plot(ps_cdot, p_rho_1e6, 'b.',
             label=r'$\rho_d = 1000000$ [Pi] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
 
@@ -110,7 +112,7 @@ def melki_timecourses():
 
     # XXX Units font is not to be perfect/uniform.
     pyplot.xlabel('Time [s]')
-    pyplot.ylabel(r'Concentration [$\micro M$]')
+    pyplot.ylabel(r'Concentration [$\mu M$]')
 
     pyplot.legend(loc='lower right')
 

@@ -19,6 +19,7 @@
 import bisect
 import csv
 
+import sqlalchemy
 import numpy
 
 from actin_dynamics import database
@@ -32,10 +33,10 @@ from actin_dynamics.io import data
 #from . import measurements
 #from . import themes
 
-def save_all(session_ids):
-    pass
-
-def save_parameters(session_ids, filename='results/melki_rates.dat'):
+def save(session_ids, plot_cooperativities=[1, 1000, 1000000],
+        rate_filename='results/melki_rates.dat',
+        factin_timecourse_filename='results/melki_factin_timecourses.dat',
+        pi_timecourse_filename='results/melki_pi_timecourses.dat'):
     dbs = database.DBSession()
 
     sessions = [dbs.query(database.Session).get(sid) for sid in session_ids]
@@ -66,6 +67,7 @@ def save_parameters(session_ids, filename='results/melki_rates.dat'):
 
     # Get the best rates for each session
     cooperativities = [s.parameters['release_cooperativity'] for s in sessions]
+    best_runs = []
     rates = []
     statistical_errors = []
     mesh_errors = []
@@ -73,9 +75,20 @@ def save_parameters(session_ids, filename='results/melki_rates.dat'):
             session_pi_arrays, session_fractional_errors)):
         fixed_fnc = pi_array[fnc_i, :]
         rate_i = fixed_fnc.argmin()
-#        pi_fit = fixed_fnc.min()
-#        rate_i = bisect.bisect_left(fixed_fnc, pi_fit)
         rate = rate_mesh[rate_i]
+        best_run = _get_best_run(dbs, sessions[i].experiments[0], release_rate=rate, filament_tip_concentration=best_fnc)
+
+        try:
+            assert rate == best_run.all_parameters['release_rate']
+        except AssertionError:
+            print 'run parameters', best_run.parameters
+            print 'Pi objectives:'
+            print fixed_fnc
+            print 'best index:', rate_i
+            print 'rate mesh:'
+            print numpy.array(rate_mesh)
+            print 'expected rate:', rate, 'actual rate:', best_run.all_parameters['release_rate']
+
         try:
             step_size = rate_mesh[rate_i + 1] - rate
         except IndexError:
@@ -84,13 +97,57 @@ def save_parameters(session_ids, filename='results/melki_rates.dat'):
         rates.append(rate)
         statistical_errors.append(fractional_error * rate)
         mesh_errors.append(step_size / 2)
+        best_runs.append(best_run)
 
     fnc_step_size = fnc_mesh[fnc_i + 1] - best_fnc
-    _small_writer(filename,
+    _small_writer(rate_filename,
             zip(cooperativities, rates, statistical_errors, mesh_errors),
             ('release_cooperativity', 'release_rate', 'statistical_error', 'mesh_error'),
             header='# Filament Number Concentration: %s\n#    FNC Statistical Error: %s\n#    FNC Mesh Error: %s\n'
             % (best_fnc, fractional_error * best_fnc, fnc_step_size / 2))
+
+    # Pick & write timecourses
+    f_tcs = []
+    pi_tcs = []
+    for pc in plot_cooperativities:
+        run_i = cooperativities.index(pc)
+        run = best_runs[run_i]
+        times, factin, pi, f_err, pi_err = _get_timecourses(run)
+        f_tcs.append(factin)
+        pi_tcs.append(pi)
+
+    factin_results = zip(times, *f_tcs)
+    pi_results = zip(times, *pi_tcs)
+    
+    _write_results(factin_timecourse_filename, factin_results,
+            'Time (s)', '[F-actin] (uM)', 'release cooperativity',
+            plot_cooperativities)
+
+    _write_results(pi_timecourse_filename, pi_results,
+            'Time (s)', '[Pi] (uM)', 'release cooperativity',
+            plot_cooperativities)
+
+def _get_best_run(dbs, experiment, release_rate=None, filament_tip_concentration=None):
+    fnc_alias = sqlalchemy.orm.aliased(database.RunParameter)
+    rr_alias = sqlalchemy.orm.aliased(database.RunParameter)
+
+    q = dbs.query(database.Run).filter_by(experiment=experiment)
+    q = q.join((fnc_alias, fnc_alias.run_id == database.Run.id)
+            ).filter_by(name='filament_tip_concentration'
+            ).filter(fnc_alias.value.like(filament_tip_concentration))
+
+    q = q.join((rr_alias, rr_alias.run_id == database.Run.id)
+            ).filter_by(name='release_rate'
+            ).filter(rr_alias.value.like(release_rate))
+
+    return q.one()
+
+
+def _get_timecourses(run):
+    times, factin, f_err = run.analyses['factin']
+    times, pi, pi_err = run.analyses['Pi']
+
+    return times, factin, pi, f_err, pi_err
 
 
 def _small_writer(filename, results, names, header=None):
@@ -104,6 +161,18 @@ def _small_writer(filename, results, names, header=None):
         # CSV dump of actual data
         w = csv.writer(f, dialect=data.DatDialect)
         w.writerows(results)
+
+def _write_results(filename, rows, x_name, y_name, column_name, column_ids):
+    with open(filename, 'w') as f:
+        # Header lines, identifying x, y, column name
+        f.write('# Auto-collated output:\n')
+        f.write('# x: %s\n' % x_name)
+        f.write('# y: %s\n' % y_name)
+        f.write('# columns: %s\n' % column_name)
+        f.write('#     %s\n\n' % column_ids)
+        # CSV dump of actual data
+        w = csv.writer(f, dialect=data.DatDialect)
+        w.writerows(rows)
 
 def get_session_arrays(db_session, session):
     session_values = _extract_session_values(db_session, session)
