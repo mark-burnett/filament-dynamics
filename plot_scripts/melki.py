@@ -14,12 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#from matplotlib import pyplot
-import matplotlib
-
-matplotlib.use('AGG')
-
-from matplotlib import pyplot
+import pprint
 
 import numpy
 import scipy
@@ -27,11 +22,12 @@ import scipy
 from actin_dynamics.io import data
 from actin_dynamics.numerical import meshes
 
+from plot_scripts import contexts
 from plot_scripts import settings
 
 def main():
     melki_rate_plot()
-    melki_timecourses()
+#    melki_timecourses()
 
 
 def melki_rate_plot():
@@ -39,26 +35,27 @@ def melki_rate_plot():
     cooperativities, rates, statistical_errors, mesh_errors = results
 
     total_errors = numpy.array(statistical_errors) + numpy.array(mesh_errors)
-    pyplot.figure()
-    pyplot.errorbar(cooperativities, rates, yerr=total_errors,
-            fmt='ro', label='Simulation Result')
 
-    fit_x, fit_y, polynomial = rate_fit(cooperativities, rates, 2)
-    poly_label = make_poly_fit_label(polynomial)
-    pyplot.plot(fit_x, fit_y, label=poly_label)
+    with contexts.basic_figure('plots/melki_rates.eps',
+            x_label=r'Phosphate Dissociation Cooperativity, $\rho_d$',
+            y_label=r'Phosphate Dissociation Rate, $r_d$ [$s^{-1}$]',
+            logscale_x=True, logscale_y=True) as axes:
+        contexts.plot(axes, 'errorbar', cooperativities, rates,
+                total_errors, fmt='r.')
+#                , label='Simulation Result')
 
+        fit_x, fit_y, polynomial = rate_fit(cooperativities, rates, 2)
+        poly_label = make_poly_fit_label(polynomial)
+        plt = contexts.plot(axes, 'plot', fit_x, fit_y, 'b-', label=poly_label)
 
-    pyplot.xlabel(r'Phosphate Dissociation Cooperativity, $\rho_d$')
-    pyplot.ylabel(r'Phosphate Dissociation Rate, $r_d$ [$s^{-1}$]')
+        axes.set_xlim([0.1, 10000000])
+        axes.set_ylim([1e-5, 0.01])
 
-    pyplot.xscale('log')
-    pyplot.yscale('log')
-    pyplot.xlim([0.1, 10000000])
-    pyplot.ylim([1e-6, 0.01])
+        axes.text(1, 4e-3, poly_label, fontsize=settings.SMALL_FONT_SIZE)
 
-    pyplot.legend(loc='lower left')
+#        contexts.add_legend(axes, loc='lower left', dashlength=0)
 
-    pyplot.savefig('plots/melki_rates.eps', dpi=settings.DPI)
+#        axes.legend(loc='lower left')
 
 
 def melki_timecourses():
@@ -74,47 +71,51 @@ def melki_timecourses():
     fd_cdot, fd_f = f_data
     pd_cdot, pd_p = p_data
 
-    pyplot.figure()
+    pyplot.figure(dpi=settings.DPI,
+            figsize=(8.7 / settings.CM_SCALE, 8.7 / settings.CM_SCALE))
     # Data
     pyplot.plot(fd_cdot, fd_f, 'k-',
             linewidth=settings.BOLD_LINE_WIDTH,
             label='[F-actin] Data')
-    pyplot.plot(pd_cdot, pd_p, 'k.',
-            linewidth=settings.BOLD_LINE_WIDTH,
-            label='[Pi] Data')
+    pyplot.plot(pd_cdot, pd_p, 'k:',
+            linewidth=settings.BOLD_LINE_WIDTH)
+#            label='[Pi] Data')
 
     # Rho = 1
     pyplot.plot(fs_cdot, f_rho_1e0, 'r-',
             label=r'$\rho_d = 1$ [F-actin] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
-    pyplot.plot(ps_cdot, p_rho_1e0, 'r.',
-            label=r'$\rho_d = 1$ [Pi] Simulation',
+    pyplot.plot(ps_cdot, p_rho_1e0, 'r:',
+#            label=r'$\rho_d = 1$ [Pi] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
 
     # Rho = 1000
     pyplot.plot(fs_cdot, f_rho_1e3, 'g-',
             label=r'$\rho_d = 1000$ [F-actin] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
-    pyplot.plot(ps_cdot, p_rho_1e3, 'g.',
-            label=r'$\rho_d = 1000$ [Pi] Simulation',
+    pyplot.plot(ps_cdot, p_rho_1e3, 'g:',
+#            label=r'$\rho_d = 1000$ [Pi] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
 
     # Rho = 1000000
     pyplot.plot(fs_cdot, f_rho_1e6, 'b-',
             label=r'$\rho_d = 1000000$ [F-actin] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
-    pyplot.plot(ps_cdot, p_rho_1e6, 'b.',
-            label=r'$\rho_d = 1000000$ [Pi] Simulation',
+    pyplot.plot(ps_cdot, p_rho_1e6, 'b:',
+#            label=r'$\rho_d = 1000000$ [Pi] Simulation',
             linewidth=settings.NORM_LINE_WIDTH)
 
     pyplot.xlim([0, 2500])
     pyplot.ylim([0, 35])
 
     # XXX Units font is not to be perfect/uniform.
-    pyplot.xlabel('Time [s]')
-    pyplot.ylabel(r'Concentration [$\mu M$]')
+    pyplot.xlabel('Time [s]', fontsize=settings.LARGE_FONT_SIZE)
+    pyplot.ylabel(r'Concentration [$\mu M$]', fontsize=settings.LARGE_FONT_SIZE)
 
     pyplot.legend(loc='lower right')
+    a = pyplot.gca()
+    lt = a.get_legend().get_texts()
+    pyplot.setp(lt, fontsize=settings.SMALL_FONT_SIZE)
 
     pyplot.savefig('plots/melki_timecourses.eps', dpi=settings.DPI)
 
@@ -164,9 +165,9 @@ def make_poly_fit_label(polynomial):
                 expression = this_part
 
     if expression:
-        return r'$r_d = e^{%s}$' % expression
+        return r'$r_d \approx\,e^{%s}$' % expression
     else:
-        return r'$r_d = 1$'
+        return r'$r_d \approx\,1$'
 
 def transform_value(value):
     basic_string = '%e' % value
