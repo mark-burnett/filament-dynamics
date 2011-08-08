@@ -10,7 +10,7 @@ parameter_specifications:
     melki_fievez_carlier_1996:
         simulation:
             release_rate:
-                lower_bound: 0.00005
-                upper_bound: 0.00012
+                lower_bound: 0.00006
+                upper_bound: 0.00010
                 mesh_type:   linear
-                num_points:  70
+                num_points:  41

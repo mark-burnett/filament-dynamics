@@ -15,10 +15,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-./sim.sh -n 8 -l -s configuration/melki/melki_rho_1.yaml
+./sim.sh -n 0 -l -s configuration/melki/melki_rho_1.yaml
+sleep 2
 ./sim.sh -n 0 -l -s configuration/melki/melki_rho_10.yaml
+sleep 2
 ./sim.sh -n 0 -l -s configuration/melki/melki_rho_100.yaml
+sleep 2
 ./sim.sh -n 0 -l -s configuration/melki/melki_rho_1000.yaml
+sleep 2
 ./sim.sh -n 0 -l -s configuration/melki/melki_rho_10000.yaml
+sleep 2
 ./sim.sh -n 0 -l -s configuration/melki/melki_rho_100000.yaml
+sleep 2
 ./sim.sh -n 0 -l -s configuration/melki/melki_rho_1000000.yaml
+
+./sim.sh -n 7 -l -j
