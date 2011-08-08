@@ -27,7 +27,7 @@ from plot_scripts import settings
 
 def main():
     melki_rate_plot()
-#    melki_timecourses()
+    melki_timecourses()
 
 
 def melki_rate_plot():
@@ -41,12 +41,12 @@ def melki_rate_plot():
             y_label=r'Phosphate Dissociation Rate, $r_d$ [$s^{-1}$]',
             logscale_x=True, logscale_y=True) as axes:
         contexts.plot(axes, 'errorbar', cooperativities, rates,
-                total_errors, fmt='r.')
+                total_errors, fmt='k.')
 #                , label='Simulation Result')
 
         fit_x, fit_y, polynomial = rate_fit(cooperativities, rates, 2)
         poly_label = make_poly_fit_label(polynomial)
-        plt = contexts.plot(axes, 'plot', fit_x, fit_y, 'b-', label=poly_label)
+        contexts.plot(axes, 'plot', fit_x, fit_y, 'k-', label=poly_label)
 
         axes.set_xlim([0.1, 10000000])
         axes.set_ylim([1e-5, 0.01])
@@ -71,53 +71,85 @@ def melki_timecourses():
     fd_cdot, fd_f = f_data
     pd_cdot, pd_p = p_data
 
-    pyplot.figure(dpi=settings.DPI,
-            figsize=(8.7 / settings.CM_SCALE, 8.7 / settings.CM_SCALE))
-    # Data
-    pyplot.plot(fd_cdot, fd_f, 'k-',
-            linewidth=settings.BOLD_LINE_WIDTH,
-            label='[F-actin] Data')
-    pyplot.plot(pd_cdot, pd_p, 'k:',
-            linewidth=settings.BOLD_LINE_WIDTH)
-#            label='[Pi] Data')
+    scaled_pd_p = _scale_data_to(pd_p, 30)
 
-    # Rho = 1
-    pyplot.plot(fs_cdot, f_rho_1e0, 'r-',
-            label=r'$\rho_d = 1$ [F-actin] Simulation',
-            linewidth=settings.NORM_LINE_WIDTH)
-    pyplot.plot(ps_cdot, p_rho_1e0, 'r:',
-#            label=r'$\rho_d = 1$ [Pi] Simulation',
-            linewidth=settings.NORM_LINE_WIDTH)
+    with contexts.basic_figure('plots/melki_timecourses.eps',
+            x_label=r'Time [s]',
+            y_label=r'Phosphate Concentration [$\mu$M]') as axes:
+#        contexts.plot(axes, 'plot', fd_cdot, fd_f, 'k-')#, label='Data')
+#        contexts.plot(axes, 'plot', pd_cdot, scaled_pd_p, 'k:')
+        contexts.plot(axes, 'plot', pd_cdot, scaled_pd_p, 'k-')
 
-    # Rho = 1000
-    pyplot.plot(fs_cdot, f_rho_1e3, 'g-',
-            label=r'$\rho_d = 1000$ [F-actin] Simulation',
-            linewidth=settings.NORM_LINE_WIDTH)
-    pyplot.plot(ps_cdot, p_rho_1e3, 'g:',
-#            label=r'$\rho_d = 1000$ [Pi] Simulation',
-            linewidth=settings.NORM_LINE_WIDTH)
+#        contexts.plot(axes, 'plot', fs_cdot, f_rho_1e0, 'r-',
+#                label=r'$\rho_d =\,1$')
+#        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e0, 'r:')
+        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e0, 'r:',
+                label=r'$\rho_d =\,1$')
 
-    # Rho = 1000000
-    pyplot.plot(fs_cdot, f_rho_1e6, 'b-',
-            label=r'$\rho_d = 1000000$ [F-actin] Simulation',
-            linewidth=settings.NORM_LINE_WIDTH)
-    pyplot.plot(ps_cdot, p_rho_1e6, 'b:',
-#            label=r'$\rho_d = 1000000$ [Pi] Simulation',
-            linewidth=settings.NORM_LINE_WIDTH)
+#        contexts.plot(axes, 'plot', fs_cdot, f_rho_1e3, 'g-',
+#                label=r'$\rho_d =\,10^3$')
+#        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e3, 'g:')
+        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e3, 'g--',
+                label=r'$\rho_d =\,10^3$')
 
-    pyplot.xlim([0, 2500])
-    pyplot.ylim([0, 35])
+#        contexts.plot(axes, 'plot', fs_cdot, f_rho_1e6, 'b-',
+#                label=r'$\rho_d =\,10^6$')
+#        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e6, 'b:')
+        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e6, 'b-.',
+                label=r'$\rho_d =\,10^6$')
 
-    # XXX Units font is not to be perfect/uniform.
-    pyplot.xlabel('Time [s]', fontsize=settings.LARGE_FONT_SIZE)
-    pyplot.ylabel(r'Concentration [$\mu M$]', fontsize=settings.LARGE_FONT_SIZE)
+        axes.set_xlim([0, 2500])
+        axes.set_ylim([0, 35])
 
-    pyplot.legend(loc='lower right')
-    a = pyplot.gca()
-    lt = a.get_legend().get_texts()
-    pyplot.setp(lt, fontsize=settings.SMALL_FONT_SIZE)
+        contexts.add_legend(axes, loc='lower right')
 
-    pyplot.savefig('plots/melki_timecourses.eps', dpi=settings.DPI)
+#    pyplot.figure(dpi=settings.DPI,
+#            figsize=(8.7 / settings.CM_SCALE, 8.7 / settings.CM_SCALE))
+#    # Data
+#    pyplot.plot(fd_cdot, fd_f, 'k-',
+#            linewidth=settings.BOLD_LINE_WIDTH,
+#            label='[F-actin] Data')
+#    pyplot.plot(pd_cdot, pd_p, 'k:',
+#            linewidth=settings.BOLD_LINE_WIDTH)
+##            label='[Pi] Data')
+#
+#    # Rho = 1
+#    pyplot.plot(fs_cdot, f_rho_1e0, 'r-',
+#            label=r'$\rho_d = 1$ [F-actin] Simulation',
+#            linewidth=settings.NORM_LINE_WIDTH)
+#    pyplot.plot(ps_cdot, p_rho_1e0, 'r:',
+##            label=r'$\rho_d = 1$ [Pi] Simulation',
+#            linewidth=settings.NORM_LINE_WIDTH)
+#
+#    # Rho = 1000
+#    pyplot.plot(fs_cdot, f_rho_1e3, 'g-',
+#            label=r'$\rho_d = 1000$ [F-actin] Simulation',
+#            linewidth=settings.NORM_LINE_WIDTH)
+#    pyplot.plot(ps_cdot, p_rho_1e3, 'g:',
+##            label=r'$\rho_d = 1000$ [Pi] Simulation',
+#            linewidth=settings.NORM_LINE_WIDTH)
+#
+#    # Rho = 1000000
+#    pyplot.plot(fs_cdot, f_rho_1e6, 'b-',
+#            label=r'$\rho_d = 1000000$ [F-actin] Simulation',
+#            linewidth=settings.NORM_LINE_WIDTH)
+#    pyplot.plot(ps_cdot, p_rho_1e6, 'b:',
+##            label=r'$\rho_d = 1000000$ [Pi] Simulation',
+#            linewidth=settings.NORM_LINE_WIDTH)
+#
+#    pyplot.xlim([0, 2500])
+#    pyplot.ylim([0, 35])
+#
+#    # XXX Units font is not to be perfect/uniform.
+#    pyplot.xlabel('Time [s]', fontsize=settings.LARGE_FONT_SIZE)
+#    pyplot.ylabel(r'Concentration [$\mu M$]', fontsize=settings.LARGE_FONT_SIZE)
+#
+#    pyplot.legend(loc='lower right')
+#    a = pyplot.gca()
+#    lt = a.get_legend().get_texts()
+#    pyplot.setp(lt, fontsize=settings.SMALL_FONT_SIZE)
+#
+#    pyplot.savefig('plots/melki_timecourses.eps', dpi=settings.DPI)
 
 
 
@@ -183,6 +215,13 @@ def transform_value(value):
         return r'%.2f' % f_coef
     else:
         return r'%.2f \cdot 10^{%d}' % (f_coef, i_expo)
+
+
+def _scale_data_to(data, final_value):
+    result = numpy.array(data)
+    current_final_value = data[-1]
+    result *= float(final_value) / current_final_value
+    return result
 
 
 if '__main__' == __name__:

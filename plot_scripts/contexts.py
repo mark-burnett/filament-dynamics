@@ -88,6 +88,3 @@ def add_legend(axes,
     l.draw_frame(False)
     for text in l.get_texts():
         text.set_size(settings.LEGEND_FONT_SIZE)
-
-def add_text(axes, text, *args, **kwargs):
-    axes.text(None, None, text, *args, **kwargs)
