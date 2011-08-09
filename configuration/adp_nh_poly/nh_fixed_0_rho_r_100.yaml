@@ -2,4 +2,4 @@ name: 'ADP + NH (fixed 0) Copoly - rho = 100'
 
 import:
     - 'adp_nh_poly/nh_fixed_0.yaml'
-    - 'melki_pyrene_fit_pars/rho_r_100.yaml'
+    - 'melki_fit_pars/rho_r_100.yaml'
