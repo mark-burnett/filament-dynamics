@@ -1,0 +1,27 @@
+import:
+    - 'experiments/adp_nh_poly.yaml'
+    - 'models/random_cooperative_full.yaml'
+    - 'components/reverse_release.yaml'
+    - 'models/nh_polymerization.yaml'
+    - 'parameters/polymerization_fujiwara_barbed.yaml'
+    - 'parameters/polymerization_fujiwara_pointed.yaml'
+    - 'parameters/fujiwara_reverse_release.yaml'
+    - 'parameters/in_solution_release_rate.yaml'
+
+experiments:
+    adp_nh_poly:
+        parameters:
+            asymptotic_time: 3000
+
+            simulation_duration: 3600.1
+            sample_period: 1
+
+            seed_concentration: 6
+
+            number_of_simulations: 30
+            number_of_filaments:   2
+
+            filament_tip_concentration: 0.0018
+            initial_concentration: 30
+
+            cleavage_rate: 0.3
