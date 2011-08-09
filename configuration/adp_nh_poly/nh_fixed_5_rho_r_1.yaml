@@ -1,5 +1,0 @@
-name: 'ADP + NH (fixed 5) Copoly - rho = 1'
-
-import:
-    - 'adp_nh_poly/nh_fixed_5.yaml'
-    - 'melki_fit_pars/rho_r_1.yaml'
