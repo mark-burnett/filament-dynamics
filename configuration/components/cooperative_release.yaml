@@ -11,13 +11,13 @@ models:
                 ADP:      release_cooperativity
                 Spectrin: release_cooperativity
 
-        release_bulk:
-            class_name: CooperativeHydrolysisWithByproduct
-            fixed_arguments:
-                old_state: ADPPi_bulk
-                new_state: ADP
-                byproduct: Pi_bulk
-            variable_arguments:
-                rate:     release_rate
-                ADP:      release_cooperativity
-                Spectrin: release_cooperativity
+#        release_bulk:
+#            class_name: CooperativeHydrolysisWithByproduct
+#            fixed_arguments:
+#                old_state: ADPPi_bulk
+#                new_state: ADP
+#                byproduct: Pi_bulk
+#            variable_arguments:
+#                rate:     release_rate
+#                ADP:      release_cooperativity
+#                Spectrin: release_cooperativity
