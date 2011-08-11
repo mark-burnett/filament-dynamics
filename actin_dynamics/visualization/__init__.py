@@ -19,11 +19,14 @@ from . import slicing
 from . import pieper_wegner
 from . import measurements
 from . import fujiwara
-from . import melki
 from . import critical_concentration
 
 from . import nh
 
-from . import pi_poly
-
 from . import new_pollard
+
+# Stuff actually used in the first paper
+from . import melki
+from . import copoly
+
+from . import pi_poly
