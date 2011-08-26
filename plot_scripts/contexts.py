@@ -27,12 +27,12 @@ import matplotlib
 
 matplotlib.rc('font', size=settings.DEFAULT_FONT_SIZE)
 
-@contextlib.contextmanager
-def basic_figure(filename, dpi=settings.DPI,
+@ contextlib.contextmanager
+def complex_figure(filename, dpi=settings.DPI,
         width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
         height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
-        draw_frame=False, logscale_x=False, logscale_y=False,
-        x_label=None, y_label=None):
+        draw_frame=False,
+        **unused_kwargs):
     scaled_width = width / settings.CM_SCALE
     scaled_height = height / settings.CM_SCALE
 
@@ -47,31 +47,47 @@ def basic_figure(filename, dpi=settings.DPI,
             linewidth=settings.DEFAULT_FRAME_LINE_WIDTH,
             figsize=(scaled_width, scaled_height),
             subplotpars=matplotlib.figure.SubplotParams(
-#                top=scaled_top_margin,
                 bottom=scaled_bottom_margin,
                 left=scaled_left_margin))
-#                right=scaled_right_margin))
+
+    yield figure
 
     canvas = _FigureCanvas(figure)
 
-    axes = figure.add_subplot(1, 1, 1)
+    figure.savefig(filename)
+
+@contextlib.contextmanager
+def subplot(figure, location, logscale_x=False, logscale_y=False,
+        x_label=None, y_label=None,
+        title=None, title_position=0.05,
+        **unused_kwargs):
+    axes = figure.add_subplot(*location)
 
     if logscale_x:
         axes.set_xscale('log')
     if logscale_y:
         axes.set_yscale('log')
 
+    if title:
+        axes.set_title(title, x=title_position)
+
     if x_label:
         axes.set_xlabel(x_label, size=settings.LABEL_FONT_SIZE)
     if y_label:
         axes.set_ylabel(y_label, size=settings.LABEL_FONT_SIZE)
-
+    
     yield axes
 
-    for label in itertools.chain(axes.get_xticklabels(), axes.get_yticklabels()):
+    for label in itertools.chain(axes.get_xticklabels(),
+            axes.get_yticklabels()):
         label.set_size(settings.TICK_FONT_SIZE)
 
-    figure.savefig(filename)
+@contextlib.contextmanager
+def basic_figure(filename, **kwargs):
+    with complex_figure(filename, **kwargs) as figure:
+        with subplot(figure, (1, 1, 1), **kwargs) as axes:
+            yield axes
+
 
 # XXX Linewidth is not being set.
 def plot(axes, plot_type, #linewidth=settings.DEFAULT_PLOT_LINE_WIDTH,

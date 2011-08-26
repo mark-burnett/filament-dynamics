@@ -11,11 +11,6 @@ import:
 experiments:
     adp_nh_poly:
         parameters:
-            asymptotic_time: 3000
-
-            simulation_duration: 3600.1
-            sample_period: 1
-
             seed_concentration: 6
 
             number_of_simulations: 30

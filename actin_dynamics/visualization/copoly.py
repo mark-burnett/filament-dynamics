@@ -18,8 +18,35 @@ import csv
 from actin_dynamics.io import data
 from actin_dynamics import database
 
-def save(adp_session_ids, nh_session_ids,
-        cooperativities=[1, 10, 100, 1000, 10000, 1000000],
+from actin_dynamics.numerical import measurements
+
+def save_timecourse(session_id, experiment_index=0, run_index=0,
+        timecourse_filename='results/copoly_timecourse.dat'):
+    dbs = database.DBSession()
+
+    session = dbs.query(database.Session).get(session_id)
+    run = session.experiments[experiment_index].runs[run_index]
+
+    ftc = run.all_parameters['filament_tip_concentration']
+    seed_concentration = run.all_parameters['seed_concentration']
+    
+    length_data = run.analyses['length']
+    # convert to  [factin]
+    factin_data = measurements.add_number(measurements.scale(length_data, ftc),
+            -seed_concentration)
+
+    pi_data = run.analyses['Pi']
+
+    # File output columns are "time [factin] (error) [pi] (error)"
+    combined_data = _combine_timecourse_data(factin_data, pi_data)
+
+    _write_results(timecourse_filename, combined_data,
+            'Time (s)', 'Concentration (uM)', 'Data',
+            ['[F-actin]', '[F-actin] error', '[Pi]', '[Pi] error'])
+
+
+def save_halftimes(adp_session_ids, nh_session_ids,
+        cooperativities=[1, 10, 100, 1000, 10000, 100000, 1000000],
         adp_timecourse_cooperativities=[1000],
         nh_timecourse_cooperativities=[1000],
         adp_halftime_filename='results/adp_copoly_halftimes.dat',
@@ -34,11 +61,6 @@ def save(adp_session_ids, nh_session_ids,
     adp_halftime_results = _get_halftimes(adp_sessions)
     nh_halftime_results = _get_halftimes(nh_sessions)
 
-#    adp_timecourse_results = _get_timecourses(adp_sessions,
-#            adp_timecourse_cooperativities)
-#    nh_timecourse_results = _get_timecourses(nh_sessions,
-#            nh_timecourse_cooperativities)
-
     _write_results(adp_halftime_filename, _create_rows(adp_halftime_results),
             'ADP Fraction', 'Halftime', 'Release Cooperativity',
             adp_cooperativities)
@@ -46,6 +68,14 @@ def save(adp_session_ids, nh_session_ids,
             'NH Fraction', 'Halftime', 'Release Cooperativity',
             nh_cooperativities)
 
+
+def _combine_timecourse_data(*timecourses):
+    results = []
+    for times, values, errors in timecourses:
+        results.append(values)
+        results.append(errors)
+
+    return zip(times, *results)
 
 
 def _get_sessions(dbs, session_ids, cooperativities):

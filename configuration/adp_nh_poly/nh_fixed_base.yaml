@@ -1,6 +1,14 @@
 import:
     - 'adp_nh_poly/base.yaml'
 
+experiments:
+    adp_nh_poly:
+        parameters:
+            asymptotic_time: 4500
+
+            simulation_duration: 5000.1
+            sample_period: 5
+
 parameter_specifications:
     adp_nh_poly:
         simulation:

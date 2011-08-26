@@ -78,7 +78,8 @@ def melki_timecourses():
             y_label=r'Phosphate Concentration [$\mu$M]') as axes:
 #        contexts.plot(axes, 'plot', fd_cdot, fd_f, 'k-')#, label='Data')
 #        contexts.plot(axes, 'plot', pd_cdot, scaled_pd_p, 'k:')
-        contexts.plot(axes, 'plot', pd_cdot, scaled_pd_p, 'k-')
+        contexts.plot(axes, 'plot', pd_cdot, scaled_pd_p, 'k-',
+                label='Data')
 
 #        contexts.plot(axes, 'plot', fs_cdot, f_rho_1e0, 'r-',
 #                label=r'$\rho_d =\,1$')

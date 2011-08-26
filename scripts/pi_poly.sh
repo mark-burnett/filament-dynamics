@@ -15,8 +15,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-./sim.sh -n 8 -l -s configuration/pi_poly/pi_poly_rho_r_1.yaml
-./sim.sh -n 0 -l -s configuration/pi_poly/pi_poly_rho_r_10.yaml
-./sim.sh -n 0 -l -s configuration/pi_poly/pi_poly_rho_r_100.yaml
-./sim.sh -n 0 -l -s configuration/pi_poly/pi_poly_rho_r_1000.yaml
-./sim.sh -n 0 -l -s configuration/pi_poly/pi_poly_rho_r_10000.yaml
+#./sim.sh -n 8 -l -s configuration/pi_poly/pi_poly_rho_r_1.yaml
+#./sim.sh -n 0 -l -s configuration/pi_poly/pi_poly_rho_r_10.yaml
+#./sim.sh -n 0 -l -s configuration/pi_poly/pi_poly_rho_r_100.yaml
+#./sim.sh -n 0 -l -s configuration/pi_poly/pi_poly_rho_r_1000.yaml
+#./sim.sh -n 0 -l -s configuration/pi_poly/pi_poly_rho_r_10000.yaml
+
+for FILE in configuration/pi_poly/pi_poly_rho_r_*.yaml; do
+    ./sim.sh -n 0 -l -s $FILE
+done
