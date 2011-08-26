@@ -25,8 +25,11 @@ from plot_scripts import settings
 
 LINETYPES = ['r', 'g', 'c', 'b', 'm', 'y', 'k']
 
+X_LABEL_MARGIN = -0.1
+X_LABEL_PADDING = 0.075
+
 def main(filename='plots/copoly_results.eps'):
-    with contexts.complex_figure(filename,
+    with contexts.figure(filename,
             height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2) as figure:
         copoly_timecourse_plot(figure)
         copoly_halftime_plot(figure)
@@ -55,29 +58,28 @@ def copoly_halftime_plot(figure):
     fractions, combined_data = _combine_data(adp_halftimes, nh_halftimes)
 
     with contexts.subplot(figure, (2, 1, 2), title='B',
-            x_label='Contaminant Fraction [%]',
+#            x_label='',
+#            x_label='Contaminant Fraction [%]',
             y_label=r'Halftime [s]',
             logscale_y=True) as axes:
         for local_data, lt, in zip(combined_data, LINETYPES):
             contexts.plot(axes, 'plot', fractions, local_data, lt)
 
-# XXX Tick labels are messed up
-    x_tick_labels = axes.get_xticklabels()
-    new_x_tick_labels = []
-    for xt in x_tick_labels:
-        label = xt.get_text()
-        if label.startswith(u'\u2212'):
-            xt.set_text(label[1:])
-#            new_x_tick_labels.append(label[1:])
-#        else:
-#            new_x_tick_labels.append(label)
+        new_x_tick_labels = [10, 5, 0, 5, 10]
 
-#    axes.set_xticks(list(axes.get_xticks()), new_x_tick_labels)
-#    axes.set_xticklabels(new_x_tick_labels)
+        axes.set_xticks([-10, -5, 0, 5, 10])
+        axes.set_xticklabels(new_x_tick_labels)
 
+        axes.text(X_LABEL_PADDING, X_LABEL_MARGIN, 'ADP-actin %',
+                verticalalignment='top', horizontalalignment='left',
+                transform=axes.transAxes)
+        axes.text(1 - X_LABEL_PADDING, X_LABEL_MARGIN, 'NH-actin %',
+                verticalalignment='top', horizontalalignment='right',
+                transform=axes.transAxes)
 
 #        axes.set_xlim([0.1, 10000000])
 #        axes.set_ylim([1e-5, 0.01])
+
 
 def _combine_data(adp_halftimes, nh_halftimes):
     adp_fractions = adp_halftimes[0]
