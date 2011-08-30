@@ -29,6 +29,10 @@ X_LABEL_MARGIN = -0.1
 X_LABEL_PADDING = 0.075
 
 TIMECOURSE_HALFTIME = 406
+HT_ARROW_X_OFFSET = 5
+
+INCREASING_RHO_TEXT = r'''increasing
+$\rho_r$'''
 
 def main(filename='plots/copoly_results.eps'):
     with contexts.complex_figure(filename,
@@ -59,13 +63,16 @@ def copoly_timecourse_plot(figure, xmax=1000, ymax=35):
         axes.annotate('halftime', xy=(TIMECOURSE_HALFTIME, 0.05),
                 xytext=(TIMECOURSE_HALFTIME + 200, 5),
                 arrowprops={'facecolor': 'black',
-                    'arrowstyle': '->'})
+                    'arrowstyle': '->'},
+                size=settings.SMALL_FONT_SIZE)
 
         # Curve labels
         axes.text(0.5 * xmax, 30.5, '[F-actin]',
-                horizontalalignment='center', verticalalignment='bottom')
-        axes.text(600, 20.5, '[Pi]', horizontalalignment='right',
-                verticalalignment='bottom')
+                horizontalalignment='center', verticalalignment='bottom',
+                size=settings.SMALL_FONT_SIZE)
+        axes.text(600, 20.5, '[Pi]',
+                horizontalalignment='right', verticalalignment='bottom',
+                size=settings.SMALL_FONT_SIZE)
 
 def copoly_halftime_plot(figure):
     adp_halftimes = data.load_data('results/adp_copoly_halftimes.dat')
@@ -91,8 +98,26 @@ def copoly_halftime_plot(figure):
                 verticalalignment='top', horizontalalignment='right',
                 transform=axes.transAxes)
 
-#        axes.set_xlim([0.1, 10000000])
-#        axes.set_ylim([1e-5, 0.01])
+        # \rho_r arrows
+        axes.annotate(INCREASING_RHO_TEXT,
+                xy=(-HT_ARROW_X_OFFSET, TIMECOURSE_HALFTIME),
+                xytext=(-HT_ARROW_X_OFFSET, 6e3),
+                arrowprops={'facecolor': 'black',
+                    'arrowstyle': '->'},
+                horizontalalignment='center',
+                verticalalignment='top',
+                size=settings.SMALL_FONT_SIZE)
+
+        axes.annotate(INCREASING_RHO_TEXT,
+                xy=(HT_ARROW_X_OFFSET, TIMECOURSE_HALFTIME),
+                xytext=(HT_ARROW_X_OFFSET, 16),
+                arrowprops={'facecolor': 'black',
+                    'arrowstyle': '->'},
+                horizontalalignment='center',
+                verticalalignment='bottom',
+                size=settings.SMALL_FONT_SIZE)
+
+        axes.axvline(0, 0, 1, linestyle=':', linewidth=0.5, color='k')
 
 
 def _combine_data(adp_halftimes, nh_halftimes):
