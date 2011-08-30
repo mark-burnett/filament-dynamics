@@ -28,8 +28,10 @@ LINETYPES = ['r', 'g', 'c', 'b', 'm', 'y', 'k']
 X_LABEL_MARGIN = -0.1
 X_LABEL_PADDING = 0.075
 
+TIMECOURSE_HALFTIME = 406
+
 def main(filename='plots/copoly_results.eps'):
-    with contexts.figure(filename,
+    with contexts.complex_figure(filename,
             height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2) as figure:
         copoly_timecourse_plot(figure)
         copoly_halftime_plot(figure)
@@ -48,8 +50,22 @@ def copoly_timecourse_plot(figure, xmax=1000, ymax=35):
         axes.set_xlim(0, xmax)
         axes.set_ylim(0, ymax)
 
-        axes.axhline(15, 0, 1, linestyle=':', linewidth=1, color='k')
-        axes.axvline(403, 0, 15.0 / 35, linestyle=':', linewidth=1, color='k')
+        # Lines to highlight halftime
+        axes.axhline(15, 0, 1, linestyle='-', linewidth=0.5, color='k')
+        axes.axvline(TIMECOURSE_HALFTIME, 0, 15.0 / 35,
+                linestyle=':', linewidth=0.5, color='k')
+
+        # Halftime label with arrow
+        axes.annotate('halftime', xy=(TIMECOURSE_HALFTIME, 0.05),
+                xytext=(TIMECOURSE_HALFTIME + 200, 5),
+                arrowprops={'facecolor': 'black',
+                    'arrowstyle': '->'})
+
+        # Curve labels
+        axes.text(0.5 * xmax, 30.5, '[F-actin]',
+                horizontalalignment='center', verticalalignment='bottom')
+        axes.text(600, 20.5, '[Pi]', horizontalalignment='right',
+                verticalalignment='bottom')
 
 def copoly_halftime_plot(figure):
     adp_halftimes = data.load_data('results/adp_copoly_halftimes.dat')
@@ -58,8 +74,6 @@ def copoly_halftime_plot(figure):
     fractions, combined_data = _combine_data(adp_halftimes, nh_halftimes)
 
     with contexts.subplot(figure, (2, 1, 2), title='B',
-#            x_label='',
-#            x_label='Contaminant Fraction [%]',
             y_label=r'Halftime [s]',
             logscale_y=True) as axes:
         for local_data, lt, in zip(combined_data, LINETYPES):
@@ -70,10 +84,10 @@ def copoly_halftime_plot(figure):
         axes.set_xticks([-10, -5, 0, 5, 10])
         axes.set_xticklabels(new_x_tick_labels)
 
-        axes.text(X_LABEL_PADDING, X_LABEL_MARGIN, 'ADP-actin %',
+        axes.text(X_LABEL_PADDING, X_LABEL_MARGIN, 'ADP-actin [%]',
                 verticalalignment='top', horizontalalignment='left',
                 transform=axes.transAxes)
-        axes.text(1 - X_LABEL_PADDING, X_LABEL_MARGIN, 'NH-actin %',
+        axes.text(1 - X_LABEL_PADDING, X_LABEL_MARGIN, 'NH-actin [%]',
                 verticalalignment='top', horizontalalignment='right',
                 transform=axes.transAxes)
 

@@ -28,7 +28,7 @@ import matplotlib
 matplotlib.rc('font', size=settings.DEFAULT_FONT_SIZE)
 
 @ contextlib.contextmanager
-def figure(filename, dpi=settings.DPI,
+def complex_figure(filename, dpi=settings.DPI,
         width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
         height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
         draw_frame=False,
@@ -84,7 +84,7 @@ def subplot(figure, location, logscale_x=False, logscale_y=False,
 
 @contextlib.contextmanager
 def basic_figure(filename, **kwargs):
-    with figure(filename, **kwargs) as figure:
+    with complex_figure(filename, **kwargs) as figure:
         with subplot(figure, (1, 1, 1), **kwargs) as axes:
             yield axes
 

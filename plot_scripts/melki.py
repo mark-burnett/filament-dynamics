@@ -37,8 +37,8 @@ def melki_rate_plot():
     total_errors = numpy.array(statistical_errors) + numpy.array(mesh_errors)
 
     with contexts.basic_figure('plots/melki_rates.eps',
-            x_label=r'Phosphate Dissociation Cooperativity, $\rho_d$',
-            y_label=r'Phosphate Dissociation Rate, $r_d$ [$s^{-1}$]',
+            x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
+            y_label=r'Pi Dissociation Rate, $r_d$ [$s^{-1}$]',
             logscale_x=True, logscale_y=True) as axes:
         contexts.plot(axes, 'errorbar', cooperativities, rates,
                 total_errors, fmt='k.')
@@ -50,6 +50,10 @@ def melki_rate_plot():
 
         axes.set_xlim([0.1, 10000000])
         axes.set_ylim([1e-5, 0.01])
+
+        axes.set_xticks([1, 10, 100, 1000, 10000, 100000, 1000000])
+        axes.set_xticklabels([r'$10^{0}$', r'$10^{1}$', r'$10^2$', r'$10^3$',
+            r'$10^4$', r'$10^5$', r'$10^6$'])
 
         axes.text(1, 4e-3, poly_label, fontsize=settings.SMALL_FONT_SIZE)
 
