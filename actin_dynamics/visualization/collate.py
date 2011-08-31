@@ -31,7 +31,8 @@ def collate_asymptotic_adppi(db_session, ids, filename=None,
 
     scaled_results = _scale_results(results, ftc / total_factin)
 
-    _write_results(filename, scaled_results, x_name, y_name, column_name)
+    if filename:
+        _write_results(filename, scaled_results, x_name, y_name, column_name)
 
     return scaled_results
 
@@ -42,7 +43,8 @@ def basic_collate(db_session, ids, filename=None,
     results = _simple_collate(db_session, ids, x_name, y_name,
             column_name, experiment_index)
 
-    _write_results(filename, results, x_name, y_name, column_name)
+    if filename:
+        _write_results(filename, results, x_name, y_name, column_name)
 
     return results
 
@@ -57,8 +59,9 @@ def adp_nh_collate(db_session, adp_ids, nh_ids, filename=None,
 
     combined_results = _combine_results(nh_results, adp_results)
 
-    _write_results(filename, combined_results, 'nh (adp) fraction',
-            y_name, column_name)
+    if filename:
+        _write_results(filename, combined_results, 'nh (adp) fraction',
+                y_name, column_name)
 
 
 def _simple_collate(db_session, ids, x_name, y_name,
