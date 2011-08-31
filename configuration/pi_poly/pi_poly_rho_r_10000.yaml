@@ -1,5 +1,0 @@
-name: 'Pi poly - rho = 10000'
-
-import:
-    - 'pi_poly/pi_poly_base.yaml'
-    - 'melki_fit_pars/rho_r_10000.0.yaml'
