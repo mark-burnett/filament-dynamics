@@ -52,8 +52,6 @@ def melki_rate_plot():
         axes.set_ylim([1e-5, 0.01])
 
         axes.set_xticks([1, 10, 100, 1000, 10000, 100000, 1000000])
-        axes.set_xticklabels([r'$10^{0}$', r'$10^{1}$', r'$10^2$', r'$10^3$',
-            r'$10^4$', r'$10^5$', r'$10^6$'])
 
         axes.text(1, 4e-3, poly_label, fontsize=settings.SMALL_FONT_SIZE)
 

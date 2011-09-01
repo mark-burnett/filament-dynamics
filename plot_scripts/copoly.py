@@ -32,7 +32,7 @@ TIMECOURSE_HALFTIME = 406
 HT_ARROW_X_OFFSET = 5
 
 INCREASING_RHO_TEXT = r'''increasing
-$\rho_r$'''
+$\rho_d$'''
 
 def main(filename='plots/copoly_results.eps'):
     with contexts.complex_figure(filename,
@@ -98,7 +98,7 @@ def copoly_halftime_plot(figure):
                 verticalalignment='top', horizontalalignment='right',
                 transform=axes.transAxes)
 
-        # \rho_r arrows
+        # \rho_d arrows
         axes.annotate(INCREASING_RHO_TEXT,
                 xy=(-HT_ARROW_X_OFFSET, TIMECOURSE_HALFTIME),
                 xytext=(-HT_ARROW_X_OFFSET, 6e3),
@@ -110,7 +110,7 @@ def copoly_halftime_plot(figure):
 
         axes.annotate(INCREASING_RHO_TEXT,
                 xy=(HT_ARROW_X_OFFSET, TIMECOURSE_HALFTIME),
-                xytext=(HT_ARROW_X_OFFSET, 16),
+                xytext=(HT_ARROW_X_OFFSET, 17),
                 arrowprops={'facecolor': 'black',
                     'arrowstyle': '->'},
                 horizontalalignment='center',
@@ -144,4 +144,3 @@ def _combine_data(adp_halftimes, nh_halftimes):
 
 if '__main__' == __name__:
     main()
-
