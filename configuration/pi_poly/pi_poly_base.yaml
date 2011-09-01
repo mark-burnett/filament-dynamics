@@ -1,5 +1,6 @@
 import:
-    - 'experiments/pi_poly.yaml'
+#    - 'experiments/pi_poly.yaml'
+    - 'experiments/pi_poly_tagged.yaml'
     - 'models/random_cooperative_full.yaml'
     - 'components/reverse_release.yaml'
 #    - 'components/fast_tip_phosphate_release.yaml'
@@ -11,20 +12,20 @@ import:
 experiments:
     pi_poly:
         parameters:
-            asymptotic_time: 300
+            asymptotic_time: 3600
 
-            simulation_duration: 360
+            simulation_duration: 3600
             sample_period: 1
 
             seed_concentration: 6
 
-            filament_tip_concentration: 0.003
+            filament_tip_concentration: 0.0018
             initial_concentration: 30
 
             number_of_simulations: 30
             number_of_filaments:   2
 
-            cleavage_rate: 0.198
+            cleavage_rate: 0.3
 
 
 parameter_specifications:
