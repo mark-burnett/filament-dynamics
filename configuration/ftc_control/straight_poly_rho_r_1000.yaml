@@ -1,0 +1,11 @@
+name: 'FNC Control: (NH 0) (ADP 0) rho = 1000.0'
+
+import:
+    - 'ftc_control/base.yaml'
+    - 'melki_fit_pars/rho_r_1000.0.yaml'
+
+experiments:
+    adp_nh_poly:
+        parameters:
+            fraction_nh_atp: 0
+            fraction_adp: 0
