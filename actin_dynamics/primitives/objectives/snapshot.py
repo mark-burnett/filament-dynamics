@@ -17,16 +17,23 @@ import bisect
 
 from . import base_classes
 
+from actin_dynamics.numerical import measurements
+
 class Snapshot(base_classes.Objective):
     def __init__(self, time=None, analysis_name=None,
-            *args, **kwargs):
+            secondary_name=None, *args, **kwargs):
         self.time = float(time)
         self.analysis_name = analysis_name
+        self.secondary_name = secondary_name
 
         base_classes.Objective.__init__(self, *args, **kwargs)
 
     def perform(self, run, target):
-        times, values, errors = run.analyses[self.analysis_name]
+        results = [run.analyses[self.analysis_name]]
+        if self.secondary_name:
+            results.append(run.analyses[self.secondary_name])
+
+        times, values, errors = measurements.add(results)
 
         i = bisect.bisect_left(times, self.time)
         target.value = values[i]

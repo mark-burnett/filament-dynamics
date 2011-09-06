@@ -190,5 +190,6 @@ experiments:
                     class_name: Snapshot
                     fixed_arguments:
                         analysis_name: ADPPi
+                        secondary_name: ADPPi_bulk
                     variable_arguments:
                         time: asymptotic_time

@@ -63,7 +63,7 @@ def asymptotic_adppi_v_pi(db_session, ids,
     collate.collate_asymptotic_adppi(db_session, ids, filename)
 
 def rho_v_pi(db_session, ids, filename='results/rho_v_pi.dat'):
-    results = collate.collate_asymptotic_adppi(db_session, ids, filename)
+    results = collate.collate_asymptotic_adppi(db_session, ids)
     half_conc_results = _half_concentrations(results)
 
     _small_writer(filename, half_conc_results,

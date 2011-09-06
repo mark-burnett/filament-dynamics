@@ -20,7 +20,7 @@ from actin_dynamics.io import data
 
 
 def collate_asymptotic_adppi(db_session, ids, filename=None,
-        x_name = 'initial_pi_concentration', y_name = 'asymptotic_adppi',
+        x_name = 'initial_pi_concentration', y_name = 'real_asymptotic_adppi',
         column_name='release_cooperativity', experiment_index=0):
     results = _simple_collate(db_session, ids, x_name, y_name,
             column_name, experiment_index)
@@ -28,6 +28,7 @@ def collate_asymptotic_adppi(db_session, ids, filename=None,
     # scale results (* ftc / total f-actin)
     ftc = _get_ftc(db_session, ids, experiment_index)
     total_factin = _get_total_factin(db_session, ids, experiment_index)
+#    print 'scale factor:', ftc /total_factin
 
     scaled_results = _scale_results(results, ftc / total_factin)
 
@@ -82,6 +83,7 @@ def _simple_collate(db_session, ids, x_name, y_name,
         row = [x]
         for ar in accumulated_results:
             row.append(ar[1][1][i])
+#        print 'r1:', row[1]
         rows.append(row)
 
     return column_ids, rows
