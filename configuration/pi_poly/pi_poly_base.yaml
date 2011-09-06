@@ -6,7 +6,7 @@ import:
     - 'components/reverse_release_bulk.yaml'
     - 'parameters/fujiwara_reverse_release.yaml'
 
-    - 'components/pi_release_in_solution.yaml'
+#    - 'components/pi_release_in_solution.yaml'
     - 'components/pi_release_in_solution_bulk.yaml'
     - 'parameters/in_solution_release_rate.yaml'
 

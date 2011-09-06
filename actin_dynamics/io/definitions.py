@@ -39,8 +39,15 @@ def load_definition(filename, source_directory=None):
 
     imports = results.get('import', [])
     for import_filename in imports:
-        results = merge_dicts(results, load_definition(
-            import_filename, source_directory=source_directory))
+        try:
+            results = merge_dicts(results, load_definition(
+                import_filename, source_directory=source_directory))
+        except IOError:
+            raise
+        except Exception as e:
+            log.exception("Failed to load '%s' from '%s'.",
+                    import_filename, source_directory)
+            raise IOError(e)
 
     return results
 
