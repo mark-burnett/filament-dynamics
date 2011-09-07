@@ -20,7 +20,7 @@ from actin_dynamics.io import data
 
 
 def collate_asymptotic_adppi(db_session, ids, filename=None,
-        x_name = 'initial_pi_concentration', y_name = 'real_asymptotic_adppi',
+        x_name = 'initial_pi_concentration', y_name = 'asymptotic_adppi',
         column_name='release_cooperativity', experiment_index=0):
     results = _simple_collate(db_session, ids, x_name, y_name,
             column_name, experiment_index)

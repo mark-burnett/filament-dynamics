@@ -133,10 +133,10 @@ experiments:
 
         objectives:
             executors:
-                peaktime:
-                    class_name: PeakTime
-                    fixed_arguments:
-                        analysis_name: ADPPi
+#                peaktime:
+#                    class_name: PeakTime
+#                    fixed_arguments:
+#                        analysis_name: ADPPi
 
                 asymptotic_adppi:
                     class_name: Snapshot

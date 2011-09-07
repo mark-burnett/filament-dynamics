@@ -41,6 +41,9 @@ class HalfTime(base_classes.Objective):
 def _calc_halftime(times, values, half_value):
     i = bisect.bisect_left(values, half_value)
 
+    if not (0 <= i < len(times)):
+        return -1
+
     left_time = times[i]
     left_value = values[i]
 

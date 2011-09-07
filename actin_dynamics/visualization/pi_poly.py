@@ -39,15 +39,25 @@ def timecourse(db_session, session_id, experiment_index=0, run_index=0,
     factin_data = measurements.add_number(measurements.scale(length_data, ftc),
             -seed_concentration)
 
+    pi_data = run.analyses['Pi']
+
+    adppi_bulk_data = run.analyses['ADPPi_bulk']
+    scaled_adppi_bulk_data = measurements.scale(adppi_bulk_data, ftc)
+
     adppi_data = run.analyses['ADPPi']
     scaled_adppi_data = measurements.scale(adppi_data, ftc)
 
+    full_adppi_data = measurements.add([scaled_adppi_data,
+        scaled_adppi_bulk_data])
+
     # File output columns are "time [factin] (error) [pi] (error)"
-    combined_data = _combine_timecourse_data(factin_data, scaled_adppi_data)
+    combined_data = _combine_timecourse_data(factin_data, full_adppi_data,
+            pi_data)
 
     _write_results(filename, combined_data,
             'Time (s)', 'Concentration (uM)', 'Data',
-            ['[F-actin]', '[F-actin] error', '[F-ADPPi]', '[F-ADPPi] error'])
+            ['[F-actin]', '[F-actin] error', '[F-ADPPi]', '[F-ADPPi] error',
+                '[Pi]', '[Pi] error'])
 
 def _combine_timecourse_data(*timecourses):
     results = []

@@ -50,6 +50,8 @@ def timecourse_plot(figure, xmax=3600, ymax=35):
         contexts.plot(axes, 'plot', timecourses[0], timecourses[1], 'b-.')
         # adp-pi
         contexts.plot(axes, 'plot', timecourses[0], timecourses[3], 'g-')
+        # pi
+        contexts.plot(axes, 'plot', timecourses[0], timecourses[5], 'r-')
 
         axes.set_xlim(0, xmax)
         axes.set_ylim(0, ymax)
