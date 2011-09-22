@@ -17,3 +17,8 @@ import math
 
 def rate(cooperativity, a, b, c):
     return 1.0 / (a * math.sqrt(cooperativity))
+
+#def rate(cooperativity, a, b, c):
+#    logrho = math.log(cooperativity)
+#
+#    return math.exp(a * logrho**2 + b * logrho + c)
