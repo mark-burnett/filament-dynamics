@@ -73,7 +73,7 @@ experiments:
                 halftime_reached:
                     class_name: Threshold
                     fixed_arguments:
-                        measurement_name: Pi_tagged
+                        concentration_name: Pi_tagged
                         scaled_by: 0.5
                     variable_arguments:
                         value: initial_concentration

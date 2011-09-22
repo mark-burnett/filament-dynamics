@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,11 +13,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from registry import end_condition_registry as registry
+from base_classes import EndCondition as _EndCondition
 
-from duration import *
-from threshold import *
+class Threshold(_EndCondition):
+    def __init__(self, label=None, concentration_name=None, value=None,
+            subtract_fraction=0, scaled_by=1):
+        self.concentration_name = concentration_name
+        self.value = value * scaled_by * (1 - subtract_fraction)
 
-del duration
+        _EndCondition.__init__(self, label=label)
 
-del base_classes
+    def reset(self):
+        pass
+
+    def __call__(self, time, filaments, concentrations):
+        return concentrations[self.concentration_name] > self.value
