@@ -21,6 +21,7 @@ from .. import logger
 log = logger.getLogger(__file__)
 
 def load_definition(filename, source_directory=None):
+    log.debug('Loading definition file %s, from %s', filename, source_directory)
     if not source_directory:
         source_directory, partial_filename = _backward_path_split(filename)
 #        source_directory, partial_filename = os.path.split(filename)
