@@ -34,10 +34,10 @@ class Transition(object):
 #                   self.__class__.__name__)
 
     def perform(self, time, filaments, concentrations, index, r):
-        pass
+        self.count += 1
 
     def initialize_measurement(self, filaments):
-        pass
+        self.count = 0
 
 
 class FilamentTransition(Transition):

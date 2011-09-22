@@ -16,12 +16,19 @@
 from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
+from . import melki_equation as _melki_equation
+
 class RandomHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'rate', 'new_state']
-    def __init__(self, old_state=None, rate=None, new_state=None, label=None):
+    def __init__(self, old_state=None, rate=None, new_state=None, label=None,
+            cooperativity=None, melki_a=None, melki_b=None, melki_c=None):
         self.old_state = old_state
         self.rate      = rate
         self.new_state = new_state
+
+        if cooperativity and melki_a and melki_b and melki_c:
+            self.rate = _melki_equation.rate(cooperativity,
+                    melki_a, melki_b, melki_c)
 
         _FilamentTransition.__init__(self, label=label)
 

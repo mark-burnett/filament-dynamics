@@ -16,12 +16,14 @@
 from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
+from . import melki_equation as _melki_equation
 
 class VectorialHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'new_state']
     def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
                  new_state=None, label=None, base_rate=None, cooperativity=None,
-                 subtract_cooperativity=1):
+                melki_a=None, melki_b=None, melki_c=None,
+                 subtract_cooperativity=None):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
         self.rate             = rate
@@ -30,6 +32,11 @@ class VectorialHydrolysis(_FilamentTransition):
             if subtract_cooperativity:
                 cooperativity -= subtract_cooperativity
             self.rate = base_rate * cooperativity
+
+        if cooperativity and melki_a and melki_b and melki_c:
+            self.rate = _melki_equation.rate(cooperativity,
+                    melki_a, melki_b, melki_c)
+
 
 
         _FilamentTransition.__init__(self, label=label)
