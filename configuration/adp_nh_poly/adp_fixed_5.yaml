@@ -1,7 +1,0 @@
-import:
-    - 'adp_nh_poly/adp_fixed_base.yaml'
-
-experiments:
-    adp_nh_poly:
-        parameters:
-            fraction_adp: 0.05

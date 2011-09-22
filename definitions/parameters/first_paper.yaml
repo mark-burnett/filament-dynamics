@@ -1,0 +1,6 @@
+global_parameters:
+    number_of_simulations: 30
+    number_of_filaments:   2
+
+    cleavage_rate: 0.3
+

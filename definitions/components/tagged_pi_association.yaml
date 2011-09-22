@@ -1,0 +1,28 @@
+models:
+    transitions:
+        tagged_reverse_release:
+            class_name: ReverseRelease
+            fixed_arguments:
+                old_state: ADP
+                new_state: ADPPi_tagged
+                concentration: Pi_tagged
+            variable_arguments:
+                rate: reverse_release_rate
+
+#        tagged_barbed_tip_reverse_release:
+#            class_name: BarbedTipReverseRelease
+#            fixed_arguments:
+#                old_state: ADP
+#                new_state: ADPPi_tagged
+#                concentration: Pi_tagged
+#            variable_arguments:
+#                rate: barbed_tip_reverse_release_rate
+#
+#        tagged_pointed_tip_reverse_release:
+#            class_name: PointedTipReverseRelease
+#            fixed_arguments:
+#                old_state: ADP
+#                new_state: ADPPi_tagged
+#                concentration: Pi_tagged
+#            variable_arguments:
+#                rate: pointed_tip_reverse_release_rate

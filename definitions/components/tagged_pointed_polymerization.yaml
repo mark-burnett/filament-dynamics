@@ -1,0 +1,17 @@
+models:
+    transitions:
+        # Polymerization
+        tagged_pointed_adppi_polymerization:
+            class_name: PointedPolymerization
+            fixed_arguments:
+                state: ADPPi_tagged
+            variable_arguments:
+                rate: pointed_adppi_polymerization_rate
+
+        # Depolymerization
+        tagged_pointed_adppi_depolymerization:
+            class_name: PointedDepolymerization
+            fixed_arguments:
+                state: ADPPi_tagged
+            variable_arguments:
+                rate: pointed_adppi_depolymerization_rate

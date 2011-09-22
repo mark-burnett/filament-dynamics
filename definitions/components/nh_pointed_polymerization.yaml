@@ -1,0 +1,18 @@
+models:
+    transitions:
+        # Polymerization
+        nh_pointed_atp_polymerization:
+            class_name: PointedPolymerization
+            fixed_arguments:
+                state: NH_ATP
+            variable_arguments:
+                rate: pointed_atp_polymerization_rate
+
+
+        # Depolymerization
+        nh_pointed_atp_depolymerization:
+            class_name: PointedDepolymerization
+            fixed_arguments:
+                state: NH_ATP
+            variable_arguments:
+                rate: pointed_atp_depolymerization_rate

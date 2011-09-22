@@ -1,2 +1,0 @@
-import: [adp_nh_poly/nh_fixed_0.yaml, melki_fit_pars/rho_r_1000.0.yaml]
-name: ADP + NH (fixed 0) Copoly - rho = 1000.0
