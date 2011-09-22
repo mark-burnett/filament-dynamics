@@ -20,11 +20,17 @@ from . import mixins as _mixins
 class VectorialHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'new_state']
     def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
-                 new_state=None, label=None):
+                 new_state=None, label=None, base_rate=None, cooperativity=None,
+                 subtract_cooperativity=1):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
         self.rate             = rate
         self.new_state        = new_state
+        if base_rate and cooperativity:
+            if subtract_cooperativity:
+                cooperativity -= subtract_cooperativity
+            self.rate = base_rate * cooperativity
+
 
         _FilamentTransition.__init__(self, label=label)
 
