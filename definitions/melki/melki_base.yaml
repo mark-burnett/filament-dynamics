@@ -7,6 +7,7 @@ import:
     - 'components/pointed_polymerization.yaml'
     - 'components/pi_release_in_solution.yaml'
     - 'components/pi_association.yaml'
+    - 'components/random_cleavage.yaml'
     - 'components/cooperative_release.yaml'
 
     # Parameters
@@ -14,13 +15,14 @@ import:
     - 'parameters/fujiwara_reverse_release.yaml'
     - 'parameters/in_solution_release_rate.yaml'
     - 'parameters/melki_conditions.yaml'
-    - 'parameters/first_paper.yaml'
+#    - 'parameters/first_paper.yaml'
+    - 'parameters/small_statistics.yaml'
 
 
 global_parameters:
     simulation_duration: 2500.1
 
-    sample_period: 5
+    sample_period: 1
 
 
 parameter_specifications:

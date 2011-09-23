@@ -68,7 +68,7 @@ class HalftimeFit(_Objective):
         _Objective.__init__(self, label=label)
 
     def perform(self, run, target):
-        sim_result = run.analsyes[self.measurement_name]
+        sim_result = run.analyses[self.measurement_name]
         times, values, errors = sim_result
         halftime = _calc_halftime(times, values, self.half_value)
 

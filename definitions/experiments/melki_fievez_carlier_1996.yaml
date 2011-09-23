@@ -108,7 +108,6 @@ experiments:
                     class_name: HalftimeFit
                     fixed_arguments:
                         measurement: Pi
-                        residual_type: naked_chi_squared
                         data_halftime: 388
                     variable_arguments:
                         base_value: initial_concentration
