@@ -11,4 +11,4 @@ models:
                 melki_b: melki_b
                 melki_c: melki_c
                 ADP:      release_cooperativity
-                Spectrin: release_cooperativity
+#                Spectrin: release_cooperativity

@@ -58,7 +58,7 @@ experiments:
                     class_name: Threshold
                     fixed_arguments:
                         concentration_name: Pi
-                        scaled_by: 0.5
+                        scaled_by: 0.55
                     variable_arguments:
                         value: initial_concentration
 

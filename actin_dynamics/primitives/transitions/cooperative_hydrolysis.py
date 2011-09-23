@@ -20,14 +20,23 @@ from ...numerical import utils
 from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
+from . import melki_equation as _melki_equation
+
 class CooperativeHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'pointed_neighbors', 'rate', 'new_state',
                  'boundary_rates']
     def __init__(self, old_state=None, rate=None, new_state=None, label=None,
+                 melki_a=None, melki_b=None, melki_c=None,
                  **cooperativities):
         self.old_state        = old_state
         self.rate             = rate
         self.new_state        = new_state
+
+        # XXX Just assume that there is only one cooperative element...
+        if melki_a is not None and melki_b is not None and melki_c is not None:
+            cooperativity = cooperativities.values()[0]
+            self.rate = _melki_equation.rate(cooperativity,
+                melki_a, melki_b, melki_c)
 
         for c in cooperativities.itervalues():
             assert c >= 1

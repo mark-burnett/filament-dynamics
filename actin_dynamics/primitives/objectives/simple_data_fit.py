@@ -57,3 +57,34 @@ class SimpleDataFit(_Objective):
 
         if target.value <= 0:
             log.warn('Negative or zero residual found %s.', target.value)
+
+class HalftimeFit(_Objective):
+    def __init__(self, measurement=None, base_value=None,
+            data_halftime=None, label=None):
+        self.measurement_name = measurement
+        self.data_halftime = data_halftime
+        self.half_value = float(base_value) / 2
+
+        _Objective.__init__(self, label=label)
+
+    def perform(self, run, target):
+        sim_result = run.analsyes[self.measurement_name]
+        times, values, errors = sim_result
+        halftime = _calc_halftime(times, values, self.half_value)
+
+        target.value = (halftime - self.data_halftime)**2
+
+
+def _calc_halftime(times, values, half_value):
+    for i, v in enumerate(values):
+        if v > half_value:
+            break;
+
+    left_time = times[i-1]
+    left_value = values[i-1]
+
+    right_time = times[i]
+    right_value = values[i]
+
+    return _interpolation.linear_project(left_value, left_time,
+            right_value, right_time, half_value)

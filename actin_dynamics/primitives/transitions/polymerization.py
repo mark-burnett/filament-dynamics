@@ -30,6 +30,9 @@ class _FixedRate(_FilamentTransition):
 
     def R(self, filaments, concentrations):
         value = self.rate * concentrations[self.state].value
+#        value = concentrations[self.state].value
+#        log.warn('concentration: %s', value)
+#        value *= self.rate
         return [value for s in filaments]
 
     def perform(self, time, filaments, concentrations, index, r):

@@ -13,8 +13,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import bisect
-
 from . import base_classes
 
 from actin_dynamics.numerical import interpolation
@@ -38,18 +36,17 @@ class HalfTime(base_classes.Objective):
         target.value = _calc_halftime(times, values, self.half_value)
 
 
+# XXX This obviously breaks if the halftime isn't reached.
 def _calc_halftime(times, values, half_value):
-    i = bisect.bisect_left(values, half_value)
+    for i, v in enumerate(values):
+        if v > half_value:
+            break;
 
-    if not (0 <= i < len(times)):
-        return -1
+    left_time = times[i-1]
+    left_value = values[i-1]
 
-    left_time = times[i]
-    left_value = values[i]
-
-    # XXX This obviously breaks if the halftime isn't reached.
-    right_time = times[i+1]
-    right_value = values[i+1]
+    right_time = times[i]
+    right_value = values[i]
 
     return interpolation.linear_project(left_value, left_time,
             right_value, right_time, half_value)

@@ -9,6 +9,7 @@ import:
     - 'components/pointed_polymerization.yaml'
     - 'components/pi_release_in_solution.yaml'
     - 'components/pi_association.yaml'
+    - 'components/random_cleavage.yaml'
     - 'components/melki_cooperative_release.yaml'
 
     # Parameters

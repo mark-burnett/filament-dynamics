@@ -13,6 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from actin_dynamics import logger
+log = logger.getLogger(__file__)
+
 from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
@@ -23,12 +26,18 @@ class RandomHydrolysis(_FilamentTransition):
     def __init__(self, old_state=None, rate=None, new_state=None, label=None,
             cooperativity=None, melki_a=None, melki_b=None, melki_c=None):
         self.old_state = old_state
-        self.rate      = rate
         self.new_state = new_state
 
-        if cooperativity and melki_a and melki_b and melki_c:
-            self.rate = _melki_equation.rate(cooperativity,
+        if (cooperativity and
+                melki_a is not None and
+                melki_b is not None and
+                melki_c is not None):
+            cooperativity = float(cooperativity)
+            rate = _melki_equation.rate(cooperativity,
                     melki_a, melki_b, melki_c)
+
+        self.rate = float(rate)
+        log.debug('Random rate: %s', rate)
 
         _FilamentTransition.__init__(self, label=label)
 

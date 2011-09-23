@@ -95,16 +95,6 @@ experiments:
                         filename: 'melki_fievez_carlier_1996/factin_concentration.dat'
                         interpolate_data: True
 
-                pi_fit:
-                    class_name: DatReader
-                    variable_arguments:
-                        sample_period: sample_period
-                        xmax: simulation_duration
-                    fixed_arguments:
-                        xmin: 0
-                        filename: 'melki_fievez_carlier_1996/phosphate_concentration.dat'
-                        interpolate_data: True
-
 
             executors:
                 factin_fit:
@@ -115,7 +105,10 @@ experiments:
 
                 # XXX Add pi halftime fit?
                 pi_fit:
-                    class_name: RenormalizedFit
+                    class_name: HalftimeFit
                     fixed_arguments:
-                        Pi: 1
+                        measurement: Pi
                         residual_type: naked_chi_squared
+                        data_halftime: 388
+                    variable_arguments:
+                        base_value: initial_concentration

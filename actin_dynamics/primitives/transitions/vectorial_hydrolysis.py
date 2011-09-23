@@ -13,6 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from actin_dynamics import logger
+log = logger.getLogger(__file__)
+
 from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
@@ -28,15 +31,21 @@ class VectorialHydrolysis(_FilamentTransition):
         self.pointed_neighbor = pointed_neighbor
         self.rate             = rate
         self.new_state        = new_state
-        if base_rate and cooperativity:
-            if subtract_cooperativity:
-                cooperativity -= subtract_cooperativity
-            self.rate = base_rate * cooperativity
 
-        if cooperativity and melki_a and melki_b and melki_c:
-            self.rate = _melki_equation.rate(cooperativity,
+        if cooperativity:
+            cooperativity = float(cooperativity)
+            if melki_a is not None and melki_b is not None and melki_c is not None:
+                base_rate = _melki_equation.rate(cooperativity,
                     melki_a, melki_b, melki_c)
 
+            if subtract_cooperativity:
+                cooperativity -= float(subtract_cooperativity)
+
+            base_rate = float(base_rate)
+            self.rate = cooperativity * base_rate
+
+#            log.warning('Vectorial cooperativity: %s, vectorial base rate: %s',
+#                    cooperativity, base_rate)
 
 
         _FilamentTransition.__init__(self, label=label)

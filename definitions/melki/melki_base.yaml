@@ -20,14 +20,14 @@ import:
 global_parameters:
     simulation_duration: 2500.1
 
-    sample_period: 10
+    sample_period: 5
 
 
 parameter_specifications:
     melki_fievez_carlier_1996:
         simulation:
             filament_tip_concentration:
-                lower_bound: 0.001
-                upper_bound: 0.002
+                lower_bound: 0.0015
+                upper_bound: 0.0021
                 mesh_type:   linear
-                num_points:  21
+                num_points:  13

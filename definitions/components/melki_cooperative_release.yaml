@@ -7,6 +7,7 @@ models:
                 new_state: ADP
                 byproduct: Pi
             variable_arguments:
+                cooperativity: release_cooperativity
                 melki_a: melki_a
                 melki_b: melki_b
                 melki_c: melki_c

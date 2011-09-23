@@ -9,6 +9,7 @@ import:
     - 'components/pointed_polymerization.yaml'
     - 'components/pi_release_in_solution.yaml'
     - 'components/pi_association.yaml'
+    - 'components/random_cleavage.yaml'
     - 'components/melki_cooperative_release.yaml'
 
     # Parameters
@@ -20,14 +21,14 @@ import:
     - 'parameters/first_paper.yaml'
 
 experiments:
-    adp_nh_poly:
+    adp_copoly:
         parameters:
             simulation_duration: 500
             sample_period: 0.5
 
 
 parameter_specifications:
-    adp_nh_poly:
+    adp_copoly:
         simulation:
             fraction_adp:
                 lower_bound: 0.001

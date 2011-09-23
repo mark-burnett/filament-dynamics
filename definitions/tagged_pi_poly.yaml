@@ -15,6 +15,7 @@ import:
     - 'components/tagged_pi_release_in_solution.yaml'
     - 'components/tagged_pi_association.yaml'
 
+    - 'components/random_cleavage.yaml'
     - 'components/melki_cooperative_release.yaml'
     - 'components/tagged_melki_cooperative_release.yaml'
 

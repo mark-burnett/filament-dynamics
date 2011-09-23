@@ -1,4 +1,8 @@
 global_parameters:
-    melki_a: -0.002
-    melki_b: -0.002
-    melki_c: -0.002
+    melki_a: 388
+    melki_b: 0
+    melki_c: 0
+
+#    melki_a: -0.00219
+#    melki_b: -0.00378
+#    melki_c: -6.23

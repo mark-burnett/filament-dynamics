@@ -13,13 +13,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from actin_dynamics import logger
+log = logger.getLogger(__file__)
+
 from base_classes import EndCondition as _EndCondition
 
 class Threshold(_EndCondition):
     def __init__(self, label=None, concentration_name=None, value=None,
             subtract_fraction=0, scaled_by=1):
         self.concentration_name = concentration_name
-        self.value = value * scaled_by * (1 - subtract_fraction)
+        self.value = float(value) * float(scaled_by) * (
+                1 - float(subtract_fraction))
 
         _EndCondition.__init__(self, label=label)
 
@@ -27,4 +31,4 @@ class Threshold(_EndCondition):
         pass
 
     def __call__(self, time, filaments, concentrations):
-        return concentrations[self.concentration_name] > self.value
+        return concentrations[self.concentration_name].value > self.value
