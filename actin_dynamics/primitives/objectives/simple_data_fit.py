@@ -62,7 +62,7 @@ class HalftimeFit(_Objective):
     def __init__(self, measurement=None, base_value=None,
             data_halftime=None, label=None):
         self.measurement_name = measurement
-        self.data_halftime = data_halftime
+        self.data_halftime = float(data_halftime)
         self.half_value = float(base_value) / 2
 
         _Objective.__init__(self, label=label)
