@@ -114,6 +114,7 @@ class Simulation(object):
                 # Update simulation time
                 if total_R <= 0:
                     log.warn('ENDING SIMULATION:  no possible events.')
+                    log.warn('First filament length: %s', len(self.filaments[0]))
                     break;
                 time += ml(1/rng(0, 1)) / total_R
 
