@@ -21,6 +21,12 @@ def _config(parser):
                         help='Configuration file name')
     return parser
 
+def _fitting(parser):
+    parser.add_argument('-o', '--objective', help='Optimization objective.')
+    parser.add_argument('--polling_period', type=float, default=5,
+            help='Time between queue checks.')
+#    parser.add_argument('-p', '--parameter', help='Parameter to fit.')
+
 def _session_file(parser):
     parser.add_argument('session', help='Session file name')
     return parser
@@ -80,6 +86,10 @@ def _build_and_execute_parser(functions):
 _controller_args = [_config,
                     _session_file]
 
+_fitting_controller_args = [_config,
+                            _fitting,
+                            _session_file]
+
 _worker_args     = [_config,
                     _delays_and_timeouts]
 
@@ -91,6 +101,9 @@ _log_view_args   = [_config,
 
 def controller_process():
     return _build_and_execute_parser(_controller_args)
+
+def fitting_process():
+    return _build_and_execute_parser(_fitting_controller_args)
 
 def worker_process():
     return _build_and_execute_parser(_worker_args)

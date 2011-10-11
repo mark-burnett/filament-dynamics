@@ -15,6 +15,7 @@
 
 import bisect
 import random
+import time
 
 from actin_dynamics import database
 
@@ -111,6 +112,8 @@ class Population(object):
 
     def get_best_parameter(self):
         fitness, parameter, run = self._fitness_tuples[0]
+        if not self.minimize:
+            fitness = - fitness
         return parameter, fitness
 
     def get_best_run(self):
@@ -156,7 +159,10 @@ class Population(object):
     def _get_fitness(self, run):
         for o in run.objectives:
             if self.objective_name == o.bind.label:
-                return o.value
+                if self.minimize:
+                    return o.value
+                else:
+                    return -o.value
 
     def _get_child_parameter(self):
         r = random.random()
@@ -189,17 +195,18 @@ class Population(object):
 
 
 class SimpleFitController(object):
-    def __init__(self, session_id, objective_name, parameter_name,
+    def __init__(self, dbs, session, objective_name, parameter_name,
             parameter_min, parameter_max,
             process,
             min_queue_size=10, max_queue_size=20,
-            initial_population_size=100, max_population_size=500,
+            initial_population_size=100, max_population_size=100,
             polling_period=5, minimize=True,
             max_iterations=100,
             parameter_tolerance=0.001, fitness_tolerance=0.001):
         assert initial_population_size >= min_queue_size
 
-        self.session_id = session_id
+        self.dbs = dbs
+        self.session = session
 
         self.objective_name = objective_name
         self.parameter_name = parameter_name
@@ -225,32 +232,34 @@ class SimpleFitController(object):
         self.parameter_specifications = parameter_specifications
 
     def run(self):
-        dbs = database.DBSession()
-        session = dbs.query(database.Session).get(self.session_id)
-
+        log.debug('Running fit for %s', self.parameter_name)
         # XXX We assume we're only running one model and one experiment.
-        model = session.models[0]
-        experiment = session.experiments[0]
+        model = self.session.models[0]
+        experiment = self.session.experiments[0]
 
         # We need to keep track of:
         #   started/running or finished job ids
         #   queued job ids
-        queued_job_ids = _create_initial_jobs(dbs,
+        queued_job_ids = _create_initial_jobs(self.dbs,
                 model=model, experiment=experiment,
                 initial_population_size=initial_population_size,
                 parameter_name=parameter_name, process=process,
                 parameter_min=parameter_min, parameter_max=parameter_max)
 
-        population = Population(dbs, process=process, minimize=self.minimize,
+        population = Population(self.dbs, process=process, minimize=self.minimize,
                 model=model, experiment=experiment,
                 parameter_name=self.parameter_name,
-                objective_name=self.objective_name)
+                objective_name=self.objective_name,
+                parameter_min=self.parameter_min,
+                parameter_max=self.parameter_max,
+                max_size=self.max_population_size)
 
         previous_parameter = None
         previous_fit = None
         for iteration in xrange(self.max_iterations):
             # Wait until we drop below our queue size threshold
             while len(queued_job_ids) > self.min_queue_size:
+                time.sleep(self.polling_period)
                 # While waiting, add the completed jobs to the population
                 newly_completed_jobs = _get_finished_jobs(queued_job_ids)
                 for job in newly_completed_jobs:
@@ -276,10 +285,10 @@ class SimpleFitController(object):
         population.log_report()
         return best_parameter, best_fit, population.get_best_run()
 
-def _create_initial_jobs(dbs, model=model, experiment=experiment,
-        initial_population_size=initial_population_size,
-        parameter_name=parameter_name, process=process,
-        parameter_min=parameter_min, parameter_max=parameter_max)
+def _create_initial_jobs(dbs, model=None, experiment=None,
+        initial_population_size=None,
+        parameter_name=None, process=None,
+        parameter_min=None, parameter_max=None):
     initial_jobs = []
     with dbs.transaction:
         for i in xrange(initial_population_size):
