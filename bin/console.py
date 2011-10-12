@@ -19,7 +19,7 @@ import pylab
 
 from IPython.Shell import IPShellEmbed
 
-from actin_dynamics import database, visualization
+from actin_dynamics import database, visualization, job_control
 
 from actin_dynamics.configuration import command_line_parsers
 from actin_dynamics.configuration import ini_parsers
@@ -40,6 +40,7 @@ def console_main():
                  'db_session': database.DBSession(),
                  'numpy': numpy,
                  'pylab': pylab,
+                 'job_control': job_control,
                  'visualization': visualization}
 
     shell = IPShellEmbed(argv=[], banner=banner)

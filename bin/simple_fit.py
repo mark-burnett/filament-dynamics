@@ -42,8 +42,8 @@ def main(session_filename, objective_name, polling_period):
 
 def _par_from_spec(par_spec):
     # Go deep
-    parameters = par_spec.values()[0].values[0]
-    par_name, par_info = parameters.items()
+    parameters = par_spec.values()[0].values()[0]
+    par_name, par_info = parameters.items()[0]
     par_min = par_info['lower_bound']
     par_max = par_info['upper_bound']
 

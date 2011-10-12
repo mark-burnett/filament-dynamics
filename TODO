@@ -1,30 +1,30 @@
-[ -- August 11 -- ]
+[ --- First paper goals --- ]
+*error estimation
 
-Write queries to speed up melki fits.
+*halftime sensitivity (various cooperativities)
+    propagate error estimate
 
-[ -- August 11 -- ]
+rate - cooperativity relationship (from melki)
 
+fnc variation
+    - show raw and normalized (with carlier86 points) by random variation
 
-Reorganize configuration files:
-    parameters should have some index-like files:
-        bulk -> imports all the bulk parameters
-    models should have more useful add on stuff:
-        bulk -> imports all the bulk components
+*depolymerization timecourse/profile (recent carlier)
+    - this probably doesn't exclude many models
 
-delete unused configuration
-    (this is supposed to be the stuff that reproduces the paper)
+copoly spread
+    - show normalized by random -> add P & W points (normalized by average)
+
+?pi variation
+    - seems tacked on
+
+[ ------------------------- ]
 
 delete unused visualization code
 
-
-Make meshes end on the correct point.
-
-Make sure that we are sampling these simulations fast enough
-    i.e. 30 second release halftime sampled at 5 seconds is not good enough.
-
 Fix up database cascading.
 
-Add database requirements for 1 or more experiments per session, runs per experiment?
+Add database constraints for 1 or more experiments per session, runs per experiment?
 
 Add validation for config files (separate program to check file set).
     Pretty sure most of this code exists in main branch.

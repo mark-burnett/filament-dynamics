@@ -22,10 +22,12 @@ def _config(parser):
     return parser
 
 def _fitting(parser):
-    parser.add_argument('-o', '--objective', help='Optimization objective.')
+    parser.add_argument('-o', '--objective', required=True,
+            help='Optimization objective.')
     parser.add_argument('--polling_period', type=float, default=5,
             help='Time between queue checks.')
 #    parser.add_argument('-p', '--parameter', help='Parameter to fit.')
+    return parser
 
 def _session_file(parser):
     parser.add_argument('session', help='Session file name')

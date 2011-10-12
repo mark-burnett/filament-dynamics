@@ -78,10 +78,32 @@ def get_job(process_id, db_session):
 
 # XXX This may need to delete partial data, like analyses or something.
 # XXX Fix session management
-def cleanup_incomplete_jobs():
+def restart_incomplete_jobs():
     db_session = database.DBSession()
     job_query = db_session.query(database.Job).filter_by(complete=False
             ).filter(database.Job.worker != None)
 
     job_query.update({'worker': None})
     db_session.commit()
+
+def delete_jobs():
+    db_session = database.DBSession()
+    with db_session.transaction:
+        job_query = db_session.query(database.Job).filter_by(complete=False)
+        job_query.update({'complete': True})
+
+
+def job_status():
+    db_session = database.DBSession()
+    with db_session.transaction:
+        incomplete_count = db_session.query(database.Job
+                ).filter_by(complete=False).count()
+        assigned_count = db_session.query(database.Job
+                ).filter_by(complete=False).filter(database.Job.worker != None
+                ).count()
+        unassigned_count = db_session.query(database.Job
+                ).filter_by(complete=False).filter_by(worker=None).count()
+    print
+    print 'Incomplete jobs:', incomplete_count
+    print 'Assigned jobs:', assigned_count
+    print 'Unassigned jobs:', unassigned_count

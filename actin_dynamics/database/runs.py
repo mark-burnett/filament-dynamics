@@ -49,6 +49,10 @@ class Run(object):
     parameters = _ap('_parameters', 'value', creator=_parameters.RunParameter)
     analyses   = _ap('_analyses', 'measurement', creator=_analyses.Analysis)
 
+    def get_objective(self, label):
+        for o in self.objectives:
+            if label == o.bind.label:
+                return o.value
 
     @property
     def all_parameters(self):
