@@ -1,6 +1,6 @@
 import:
     # Experiment
-    - 'experiments/melki_fit.yaml'
+    - 'experiments/fnc_exploration.yaml'
 
     # Model
     - 'components/barbed_polymerization.yaml'
@@ -14,22 +14,22 @@ import:
     - 'parameters/polymerization_fujiwara_full.yaml'
     - 'parameters/fujiwara_reverse_release.yaml'
     - 'parameters/in_solution_release_rate.yaml'
+    - 'parameters/melki_equation.yaml'
     - 'parameters/melki_conditions.yaml'
     - 'parameters/first_paper.yaml'
 #    - 'parameters/small_statistics.yaml'
 
+experiments:
+    fnc_exploration:
+        parameters:
+            simulation_duration: 500
+            sample_period: 0.5
 
-global_parameters:
-    simulation_duration: 500.0
-
-    sample_period: 0.5
-
-
-#parameter_specifications:
-#    melki_fievez_carlier_1996:
-#        simulation:
-#            filament_tip_concentration:
-#                lower_bound: 0.00175
-#                upper_bound: 0.00195
-#                mesh_type:   linear
-#                num_points:  21
+parameter_specifications:
+    fnc_exploration:
+        simulation:
+            filament_tip_concentration:
+                lower_bound: 0.001
+                upper_bound: 0.1
+                mesh_type: log
+                num_points: 21

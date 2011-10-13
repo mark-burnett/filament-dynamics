@@ -2,7 +2,6 @@ name: 'Melki Release Fit, rho_c = 1'
 
 import:
     - 'melki/melki_base.yaml'
-    - 'parameters/melki_fnc.yaml'
 
 global_parameters:
     release_cooperativity: 1
@@ -13,3 +12,11 @@ parameter_specifications:
             release_rate:
                 lower_bound: 0.0019
                 upper_bound: 0.0023
+                mesh_type:   linear
+                num_points:  21
+
+            filament_tip_concentration:
+                lower_bound: 0.0015
+                upper_bound: 0.0020
+                mesh_type:   linear
+                num_points:  51

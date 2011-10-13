@@ -2,6 +2,7 @@ name: 'Melki Release Fit, rho_c = 100000'
 
 import:
     - 'melki/melki_base.yaml'
+    - 'parameters/melki_fnc.yaml'
 
 global_parameters:
     release_cooperativity: 100000
@@ -10,7 +11,5 @@ parameter_specifications:
     melki_fievez_carlier_1996:
         simulation:
             release_rate:
-                lower_bound: 0.00006
-                upper_bound: 0.00010
-                mesh_type:   linear
-                num_points:  41
+                lower_bound: 0.000005
+                upper_bound: 0.00002

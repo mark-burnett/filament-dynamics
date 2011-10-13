@@ -1,0 +1,5 @@
+name: 'FNC Variation, rho_c = 100'
+
+import:
+    - 'fnc/base.yaml'
+    - 'fit_rates/rho_100.yaml'

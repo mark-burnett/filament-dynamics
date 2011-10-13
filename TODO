@@ -1,5 +1,6 @@
 [ --- First paper goals --- ]
 *error estimation
+    make sure the new model is a o k
 
 *halftime sensitivity (various cooperativities)
     propagate error estimate
