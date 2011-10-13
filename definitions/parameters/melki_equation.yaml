@@ -1,8 +1,25 @@
 global_parameters:
-    melki_a: 388
-    melki_b: 0
-    melki_c: 0
+# theoretical (uses different melki_equation.rate)
+#    melki_a: 388
+#    melki_b: 0
+#    melki_c: 0
 
+# from poly fit to old data
 #    melki_a: -0.00219
 #    melki_b: -0.00378
 #    melki_c: -6.23
+
+# from poly fit w data
+#    melki_a: -5.89233753e-03
+#    melki_b: -3.87844168e-01
+#    melki_c: -6.14383638
+
+# from poly fit w new data (fixed ftc, etc.)
+#    melki_a: -4.98138369e-03
+#    melki_b: -4.00355736e-01
+#    melki_c: -6.10183552
+
+# small statistics fit fit 10/7/2011, max 6 seconds halftime error
+    melki_a: -0.00645513
+    melki_b: -0.38676968
+    melki_c: -6.13660249
