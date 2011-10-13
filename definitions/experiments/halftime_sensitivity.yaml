@@ -1,5 +1,5 @@
 experiments:
-    fnc_exploration:
+    halftime_sensitivity:
         simulation:
             filaments:
                 filament_factory:
@@ -15,26 +15,26 @@ experiments:
                 ATP:
                     class_name: FixedReagent
                     variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
                         sample_period: sample_period
                         initial_concentration: initial_concentration
+                        filament_tip_concentration: filament_tip_concentration
+                        number: number_of_filaments
 
                 ADPPi:
                     class_name: FixedReagent
                     variable_arguments:
+                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
-                        sample_period: sample_period
                     fixed_arguments:
                         initial_concentration: 0
 
                 ADP:
                     class_name: FixedReagent
                     variable_arguments:
+                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
-                        sample_period: sample_period
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -42,9 +42,9 @@ experiments:
                 Pi:
                     class_name: FixedReagent
                     variable_arguments:
+                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
-                        sample_period: sample_period
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -54,49 +54,20 @@ experiments:
                     variable_arguments:
                         duration: simulation_duration
 
-                halftime_reached:
-                    class_name: Threshold
-                    fixed_arguments:
-                        concentration_name: Pi
-                        scaled_by: 0.55
-                    variable_arguments:
-                        value: initial_concentration
-
-
             measurements:
                 length:
                     class_name: Length
                     variable_arguments:
                         sample_period: sample_period
 
-#                ATP:
-#                    class_name: StateCount
-#                    fixed_arguments:
-#                        state: ATP
-#                    variable_arguments:
-#                        sample_period: sample_period
-#
-#                ADPPi:
-#                    class_name: StateCount
-#                    fixed_arguments:
-#                        state: ADPPi
-#                    variable_arguments:
-#                        sample_period: sample_period
-#
-#                ADP:
-#                    class_name: StateCount
-#                    fixed_arguments:
-#                        state: ADP
-#                    variable_arguments:
-#                        sample_period: sample_period
-
-            
         analyses:
-            length:
+            factin:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
+                    scale_by:      filament_tip_concentration
+                    subtract:      seed_concentration
                 fixed_arguments:
                     interpolation_method: previous_value
                     measurement_name: length
@@ -111,36 +82,6 @@ experiments:
                     interpolation_method: previous_value
                     measurement_name: Pi
                     measurement_type: concentration
-
-#            ATP:
-#                class_name: StandardErrorMean
-#                variable_arguments:
-#                    sample_period: sample_period
-#                    stop_time:     simulation_duration
-#                fixed_arguments:
-#                    interpolation_method: previous_value
-#                    measurement_name: ATP
-#                    measurement_type: filament
-#
-#            ADPPi:
-#                class_name: StandardErrorMean
-#                variable_arguments:
-#                    sample_period: sample_period
-#                    stop_time:     simulation_duration
-#                fixed_arguments:
-#                    interpolation_method: previous_value
-#                    measurement_name: ADPPi
-#                    measurement_type: filament
-#
-#            ADP:
-#                class_name: StandardErrorMean
-#                variable_arguments:
-#                    sample_period: sample_period
-#                    stop_time:     simulation_duration
-#                fixed_arguments:
-#                    interpolation_method: previous_value
-#                    measurement_name: ADP
-#                    measurement_type: filament
 
         objectives:
             executors:

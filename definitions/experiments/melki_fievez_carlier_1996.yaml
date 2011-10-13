@@ -103,7 +103,6 @@ experiments:
                         measurement:   factin
                         residual_type: naked_chi_squared
 
-                # XXX Add pi halftime fit?
                 pi_fit:
                     class_name: HalftimeFit
                     fixed_arguments:
@@ -111,3 +110,10 @@ experiments:
                         data_halftime: 388
                     variable_arguments:
                         base_value: initial_concentration
+
+                halftime:
+                    class_name: HalfTime
+                    variable_arguments:
+                        base_value: initial_concentration
+                    fixed_arguments:
+                        analysis_name: Pi

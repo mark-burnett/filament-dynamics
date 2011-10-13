@@ -1,7 +1,8 @@
-name: 'Melki Release Fit, rho_c = 1'
+name: 'Melki Release FNC Fit, rho_c = 1'
 
 import:
     - 'melki/melki_base.yaml'
+    - 'random_cooperative_model.yaml'
 
 global_parameters:
     release_cooperativity: 1

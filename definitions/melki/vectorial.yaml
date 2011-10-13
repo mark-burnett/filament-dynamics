@@ -1,0 +1,14 @@
+name: 'Melki Release Fit, vectorial'
+
+import:
+    - 'melki/melki_base.yaml'
+    - 'parameters/melki_fnc.yaml'
+    - 'random_vectorial_model.yaml'
+
+parameter_specifications:
+    melki_fievez_carlier_1996:
+        simulation:
+            release_rate:
+                lower_bound:  0.1
+                upper_bound: 10.0
+

@@ -1,0 +1,3 @@
+global_parameters:
+    number_of_simulations: 10
+    number_of_filaments:   1

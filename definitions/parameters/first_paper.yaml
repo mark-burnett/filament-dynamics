@@ -1,5 +1,7 @@
-global_parameters:
-    number_of_simulations: 30
-    number_of_filaments:   2
+import:
+    - 'parameters/polymerization_fujiwara_full.yaml'
+    - 'parameters/fujiwara_reverse_release.yaml'
+    - 'parameters/in_solution_release_rate.yaml'
 
+global_parameters:
     cleavage_rate: 0.3

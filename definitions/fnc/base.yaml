@@ -2,22 +2,10 @@ import:
     # Experiment
     - 'experiments/fnc_exploration.yaml'
 
-    # Model
-    - 'components/barbed_polymerization.yaml'
-    - 'components/pointed_polymerization.yaml'
-    - 'components/pi_release_in_solution.yaml'
-    - 'components/pi_association.yaml'
-    - 'components/random_cleavage.yaml'
-    - 'components/cooperative_release.yaml'
-
     # Parameters
-    - 'parameters/polymerization_fujiwara_full.yaml'
-    - 'parameters/fujiwara_reverse_release.yaml'
-    - 'parameters/in_solution_release_rate.yaml'
-    - 'parameters/melki_equation.yaml'
     - 'parameters/melki_conditions.yaml'
     - 'parameters/first_paper.yaml'
-#    - 'parameters/small_statistics.yaml'
+    - 'parameters/big_statistics.yaml'
 
 experiments:
     fnc_exploration:
