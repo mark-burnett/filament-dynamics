@@ -45,6 +45,7 @@ experiments:
                         filament_tip_concentration: filament_tip_concentration
                         number: number_of_filaments
                         sample_period: sample_period
+                    fixed_arguments:
                         initial_concentration: 0
 
 
@@ -70,7 +71,7 @@ experiments:
                         scaled_by: 0.55
                     variable_arguments:
                         value: initial_concentration
-                        subtract_fraction: fraction_nh
+                        subtract_fraction: fraction_nh_atp
 
 
             measurements:
