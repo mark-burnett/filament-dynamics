@@ -1,0 +1,6 @@
+name: 'ADP Copoly, rho_c = 1000'
+
+import:
+    - 'adp_copoly/base.yaml'
+    - 'random_cooperative_model.yaml'
+    - 'fit_rates/rho_1000.yaml'
