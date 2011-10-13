@@ -1,4 +1,4 @@
 import:
     - 'fnc/base.yaml'
-    - 'random_vectorial_model.yamml'
+    - 'random_vectorial_model.yaml'
     - 'fit_rates/vectorial.yaml'
