@@ -24,7 +24,6 @@ class CooperativeHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'pointed_neighbors', 'rate', 'new_state',
                  'boundary_rates']
     def __init__(self, old_state=None, rate=None, new_state=None, label=None,
-                 melki_a=None, melki_b=None, melki_c=None,
                  **cooperativities):
         self.old_state        = old_state
         self.rate             = rate

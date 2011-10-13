@@ -19,22 +19,12 @@ log = logger.getLogger(__file__)
 from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
-from . import melki_equation as _melki_equation
-
 class RandomHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'rate', 'new_state']
     def __init__(self, old_state=None, rate=None, new_state=None, label=None,
-            cooperativity=None, melki_a=None, melki_b=None, melki_c=None):
+            cooperativity=None):
         self.old_state = old_state
         self.new_state = new_state
-
-        if (cooperativity and
-                melki_a is not None and
-                melki_b is not None and
-                melki_c is not None):
-            cooperativity = float(cooperativity)
-            rate = _melki_equation.rate(cooperativity,
-                    melki_a, melki_b, melki_c)
 
         self.rate = float(rate)
         log.debug('Random rate: %s', rate)

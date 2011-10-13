@@ -19,34 +19,15 @@ log = logger.getLogger(__file__)
 from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
-from . import melki_equation as _melki_equation
-
 class VectorialHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'new_state']
     def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
                  new_state=None, label=None, base_rate=None, cooperativity=None,
-                melki_a=None, melki_b=None, melki_c=None,
                  subtract_cooperativity=None):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
         self.rate             = rate
         self.new_state        = new_state
-
-        if cooperativity:
-            cooperativity = float(cooperativity)
-            if melki_a is not None and melki_b is not None and melki_c is not None:
-                base_rate = _melki_equation.rate(cooperativity,
-                    melki_a, melki_b, melki_c)
-
-            if subtract_cooperativity:
-                cooperativity -= float(subtract_cooperativity)
-
-            base_rate = float(base_rate)
-            self.rate = cooperativity * base_rate
-
-#            log.warning('Vectorial cooperativity: %s, vectorial base rate: %s',
-#                    cooperativity, base_rate)
-
 
         _FilamentTransition.__init__(self, label=label)
 
