@@ -1,23 +1,39 @@
 [ --- First paper goals --- ]
+
 *error estimation
-    make sure the new model is a o k
+    - make sure the SEM new model is a o k
+    - figure out how to calculate the error in the halftime
+        SEM of [Pi] / d[Pi]/dt @ [Pi] halftime
+            average SEM of containing points
+    - propagate error estimate to rate
+        SEM of halftime / sensitivity
+        
 
 *halftime sensitivity (various cooperativities)
     propagate error estimate
 
+
 rate - cooperativity relationship (from melki)
 
+
 fnc variation
-    - show raw and normalized (with carlier86 points) by random variation
+    - use carlier86 conditions
+    - show carlier86 points
+    - show random, vectorial, carlier86 "bounding" cooperative traces
+    - show raw & normalized by random variation
+
 
 *depolymerization timecourse/profile (recent carlier)
     - this probably doesn't exclude many models
+    - try implementing by having a disable time for transitions
+
 
 copoly spread
-    - show normalized by random -> add P & W points (normalized by average)
+    - add P & W points (to see how they look)
 
-?pi variation
-    - seems tacked on
+
+pi variation
+
 
 [ ------------------------- ]
 

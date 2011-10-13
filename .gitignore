@@ -1,2 +1,10 @@
 *.pyc
 \.*.swp
+scripts/
+plots/
+prof/
+hpcload
+remote.sh
+running_jobs
+next_meeting
+micro.py
