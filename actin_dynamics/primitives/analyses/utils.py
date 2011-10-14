@@ -36,10 +36,12 @@ def iter_filaments(simulation_results):
         for filament in simulation['filaments']:
             yield filament
 
+def get_concentration_measurements(simulation_results, name):
+    return [sr['concentrations'][name] for sr in simulation_results]
+
 def get_measurement_bundle(simulation_results, name):
     bundle = []
     for simulation in simulation_results:
         measurements = [f['measurements'][name] for f in simulation['filaments']]
         bundle.append(measurements)
     return bundle
-
