@@ -53,6 +53,7 @@ class HalfTimeError(base_classes.Objective):
 
     def perform(self, run, target):
         times, values, errors = run.analyses[self.analysis_name]
+        log.warn('times: %s', times)
 
         halftime = _calc_halftime(times, values, self.half_value)
 
@@ -66,7 +67,7 @@ class HalfTimeError(base_classes.Objective):
 #        right_error = errors[right_index]
 
         left_index = bisect.bisect_left(times, halftime)
-        log.debug('left_index = %s, times: %s', left_index,
+        log.warn('left_index = %s, times: %s', left_index,
                 times[left_index:left_index + 2])
 
         left_time, right_time = times[left_index:left_index + 2]
