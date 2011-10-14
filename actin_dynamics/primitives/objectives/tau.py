@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import bisect
+
 from . import base_classes
 
 from actin_dynamics.numerical import interpolation
@@ -38,6 +40,43 @@ class HalfTime(base_classes.Objective):
         times, values, errors = run.analyses[self.analysis_name]
 
         target.value = _calc_halftime(times, values, self.half_value)
+
+class HalfTimeError(base_classes.Objective):
+    def __init__(self, analysis_name=None, base_value=None,
+            subtract_fraction=0, second_subtract_fraction=0, *args, **kwargs):
+        self.analysis_name = analysis_name
+        self.half_value = float(base_value) * (
+                1 - float(subtract_fraction)
+                  - float(second_subtract_fraction)) / 2
+
+        base_classes.Objective.__init__(self, *args, **kwargs)
+
+    def perform(self, run, target):
+        times, values, errors = run.analyses[self.analysis_name]
+
+        halftime = _calc_halftime(times, values, self.half_value)
+
+        right_index = bisect.bisect_left(times, halftime)
+        left_time = times[right_index - 1]
+        left_value = values[right_index - 1]
+        left_error = errors[right_index - 1]
+
+        right_time = times[right_index]
+        right_value = values[right_index]
+        right_error = errors[right_index]
+
+#        left_index = bisect.bisect_left(times, halftime)
+#
+#        left_time, right_time = times[left_index:left_index + 2]
+#        left_value, right_value = values[left_index:left_index + 2]
+#        left_error, right_error = errors[left_index:left_index + 2]
+
+        half_value_error = interpolation.linear_project(left_time, left_error,
+                right_time, right_error, halftime)
+
+        slope = (right_value - left_value) / (right_time - left_time)
+
+        target.value = half_value_error / slope
 
 
 # XXX This obviously breaks if the halftime isn't reached.
