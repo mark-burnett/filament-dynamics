@@ -66,6 +66,8 @@ class HalfTimeError(base_classes.Objective):
 #        right_error = errors[right_index]
 
         left_index = bisect.bisect_left(times, halftime)
+        log.debug('left_index = %s, times: %s', left_index,
+                times[left_index:left_index + 2])
 
         left_time, right_time = times[left_index:left_index + 2]
         left_value, right_value = values[left_index:left_index + 2]
