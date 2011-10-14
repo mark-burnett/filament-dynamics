@@ -118,12 +118,12 @@ def _calculate_concentration_sem(measurements):
     return times, means, errors
 
 def _calculate_filament_sem(measurements):
-    times, means, stds, N = _bundle_stats(measurements)
-    sqrt_N = math.sqrt(N)
+    times, means, stds, Ns = _bundle_stats(measurements)
+#    sqrt_N = math.sqrt(sum(Ns))
     values = []
     errors = []
     for i, t in enumerate(times):
-        v, e = _single_point_sem(means, stds, i, sqrt_N)
+        v, e = _single_point_sem(means, stds, i, Ns)
         values.append(v)
         errors.append(e)
 
