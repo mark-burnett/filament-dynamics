@@ -45,17 +45,41 @@ class StandardErrorMean(_base_classes.Analysis):
 
         _base_classes.Analysis.__init__(self, label=label, **kwargs)
 
-    def perform(self, simulation_results, result_factory):
-        # Grab and resample the chosen measurement.
-        raw_measurements = utils.get_measurement_bundle(simulation_results,
-                self.measurement_name)
-        rescaled_measurements = self._rescale_measurements(raw_measurements)
+    def perform_concentration(self, simulation_results, result_factory):
+        raw_measurements = utils.get_concentration_measurements(
+                simulation_results, self.measurement_name)
+        rescaled_measurements = self._rescale_concentration_measurements(
+                raw_measurements)
 
-        resulting_measurement = _calculate_sem(rescaled_measurements)
+        resulting_measurement = _calculate_concentration_sem(
+                rescaled_measurements)
 
         return result_factory(resulting_measurement, label=self.label)
 
-    def _rescale_measurements(self, raw_measurements):
+    def _rescale_concentration_measurements(self, raw_measurements):
+        scaled_measurements = [measurements.scale(sm, self.scale_by)
+                               for sm in raw_measurements]
+        added_measurements  = [measurements.add_number(sm, self.add)
+                               for sm in scaled_measurements]
+
+        subtracted_measurements  = [measurements.add_number(am,
+                                        -self.subtract)
+                                    for am in added_measurements]
+        return subtracted_measurements
+
+
+    def perform_filament(self, simulation_results, result_factory):
+        # Grab and resample the chosen measurement.
+        raw_measurements = utils.get_measurement_bundle(simulation_results,
+                self.measurement_name)
+        rescaled_measurements = self._rescale_filament_measurements(
+                raw_measurements)
+
+        resulting_measurement = _calculate_filament_sem(rescaled_measurements)
+
+        return result_factory(resulting_measurement, label=self.label)
+
+    def _rescale_filament_measurements(self, raw_measurements):
         result_bundle = []
         for simulation in raw_measurements:
             scaled_measurements = [measurements.scale(sm, self.scale_by)
@@ -70,7 +94,24 @@ class StandardErrorMean(_base_classes.Analysis):
         return result_bundle
 
 
-def _calculate_sem(measurements):
+def _calculate_concentration_sem(measurements):
+    sqrt_N = math.sqrt(len(measurements))
+    values = map(operator.itemgetter(1), measurements)
+    transposed_values = zip(*values)
+
+    means  = []
+    errors = []
+    for tv in transposed_values:
+        mean = sum(tv) / len(tv)
+        err = workalike.std(tv, mean) / sqrt_N
+        means.append(mean)
+        errors.append(err)
+
+    times = measurements[0][0]
+
+    return times, means, errors
+
+def _calculate_filament_sem(measurements):
     times, means, stds, N = _bundle_stats(measurements)
     sqrt_N = math.sqrt(N)
     values = []
