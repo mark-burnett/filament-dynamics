@@ -47,9 +47,9 @@ class StandardErrorMean(_base_classes.Analysis):
 
     def perform(self, simulation_results, result_factory):
         if 'concentration' == self.measurement_type:
-            self.perform_concentration(simulation_results, result_factory)
+            return self.perform_concentration(simulation_results, result_factory)
         elif 'filament' == self.measurement_type:
-            self.perform_filament(simulation_results, result_factory)
+            return self.perform_filament(simulation_results, result_factory)
 
     def perform_concentration(self, simulation_results, result_factory):
         raw_measurements = utils.get_concentration_measurements(
