@@ -24,7 +24,7 @@ def _config(parser):
 def _fitting(parser):
     parser.add_argument('-o', '--objective', required=True,
             help='Optimization objective.')
-    parser.add_argument('--polling_period', type=float, default=5,
+    parser.add_argument('--polling_period', type=float, default=1,
             help='Time between queue checks.')
 #    parser.add_argument('-p', '--parameter', help='Parameter to fit.')
     return parser

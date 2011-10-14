@@ -3,6 +3,7 @@ models:
         release:
             class_name: VectorialHydrolysisWithByproduct
             fixed_arguments:
+                pointed_neighbor: ADP
                 old_state: ADPPi
                 new_state: ADP
                 byproduct: Pi

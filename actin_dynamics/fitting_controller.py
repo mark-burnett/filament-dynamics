@@ -209,9 +209,9 @@ class SimpleFitController(object):
             parameter_min, parameter_max,
             process,
             min_queue_size=0, max_queue_size=20,
-            initial_population_size=70, max_population_size=50,
+            initial_population_size=40, max_population_size=50,
             polling_period=5, minimize=True,
-            min_iterations=2, max_iterations=20,
+            min_iterations=2, max_iterations=100,
             parameter_tolerance=0.001, fitness_tolerance=0.1):
 
         self.dbs = dbs

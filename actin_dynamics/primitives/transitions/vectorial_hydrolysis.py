@@ -26,8 +26,6 @@ class VectorialHydrolysis(_FilamentTransition):
                  subtract_cooperativity=1):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
-#        self.base_rate        = base_rate
-#        self.cooperativity    = cooperativity
         self.new_state        = new_state
 
         if rate is not None:

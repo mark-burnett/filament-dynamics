@@ -2,9 +2,13 @@
 
 *error estimation
     - make sure the SEM new model is a o k
+        * are we doing concentration SEMs right? (there is not std per run)
+
     - figure out how to calculate the error in the halftime
         SEM of [Pi] / d[Pi]/dt @ [Pi] halftime
             average SEM of containing points
+        * check that this works
+
     - propagate error estimate to rate
         SEM of halftime / sensitivity
         
@@ -19,7 +23,7 @@ rate - cooperativity relationship (from melki)
 fnc variation
     - use carlier86 conditions
     - show carlier86 points
-    - show random, vectorial, carlier86 "bounding" cooperative traces
+    - show random, vectorial, carlier86 "bounding"/fitting cooperative traces
     - show raw & normalized by random variation
 
 
@@ -33,6 +37,12 @@ copoly spread
 
 
 pi variation
+
+
+[ --- Immediate Steps --- ]
+
+fit vectorial rate
+
 
 
 [ ------------------------- ]

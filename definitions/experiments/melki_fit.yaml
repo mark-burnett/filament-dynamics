@@ -107,3 +107,10 @@ experiments:
                         base_value: initial_concentration
                     fixed_arguments:
                         analysis_name: Pi
+
+                halftime_error:
+                    class_name: HalfTimeError
+                    variable_arguments:
+                        base_value: initial_concentration
+                    fixed_arguments:
+                        analysis_name: Pi
