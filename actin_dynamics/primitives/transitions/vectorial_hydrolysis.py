@@ -23,11 +23,17 @@ class VectorialHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'pointed_neighbor', 'rate', 'new_state']
     def __init__(self, old_state=None, pointed_neighbor=None, rate=None,
                  new_state=None, label=None, base_rate=None, cooperativity=None,
-                 subtract_cooperativity=None):
+                 subtract_cooperativity=0):
         self.old_state        = old_state
         self.pointed_neighbor = pointed_neighbor
-        self.rate             = rate
+#        self.base_rate        = base_rate
+#        self.cooperativity    = cooperativity
         self.new_state        = new_state
+
+        if rate is not None:
+            self.rate = rate
+        else:
+            self.rate = base_rate * (cooperativity - subtract_cooperativity)
 
         _FilamentTransition.__init__(self, label=label)
 

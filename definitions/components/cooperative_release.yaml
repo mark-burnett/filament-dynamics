@@ -16,7 +16,6 @@ models:
                 old_state: ADPPi
                 new_state: ADP
                 byproduct: Pi
-                subtract_cooperativity: 1
             variable_arguments:
                 base_rate: release_rate
                 cooperativity: release_cooperativity

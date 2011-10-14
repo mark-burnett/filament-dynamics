@@ -86,5 +86,16 @@ def _calc_halftime(times, values, half_value):
     right_time = times[i]
     right_value = values[i]
 
-    return _interpolation.linear_project(left_value, left_time,
+    if (left_value == right_value):
+        log.warn('Matching values: left = %s, right = %s', left_value, right_value)
+
+    if (left_time == right_time):
+        log.warn('Matching times: left = %s, right = %s', left_time, right_time)
+
+    y = _interpolation.linear_project(left_value, left_time,
             right_value, right_time, half_value)
+
+    if y == float('nan'):
+        log.error('Halftime is not a number: i = %s, lt = %s, rt = %s, lv = %s, rv = %s',
+                i, left_time, right_time, left_value, right_value)
+    return y
