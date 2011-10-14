@@ -135,9 +135,9 @@ def _single_point_sem(means, stds, Ns, index):
     num_components = []
     for m, s, n in itertools.izip(means, stds, Ns):
         if index < len(m):
-            value_components.append(m[i])
-            ec = (n - 1) * (s[i]**2) - n * m[i]**2
-            error_components.append(s[i])
+            value_components.append(m[index])
+            ec = (n - 1) * (s[index]**2) - n * m[index]**2
+            error_components.append(s[index])
             num_components.append(n)
 
     value = numpy.mean(value_components)
