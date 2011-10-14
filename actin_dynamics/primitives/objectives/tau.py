@@ -56,20 +56,20 @@ class HalfTimeError(base_classes.Objective):
 
         halftime = _calc_halftime(times, values, self.half_value)
 
-        right_index = bisect.bisect_left(times, halftime)
-        left_time = times[right_index - 1]
-        left_value = values[right_index - 1]
-        left_error = errors[right_index - 1]
-
-        right_time = times[right_index]
-        right_value = values[right_index]
-        right_error = errors[right_index]
-
-#        left_index = bisect.bisect_left(times, halftime)
+#        right_index = bisect.bisect_left(times, halftime)
+#        left_time = times[right_index - 1]
+#        left_value = values[right_index - 1]
+#        left_error = errors[right_index - 1]
 #
-#        left_time, right_time = times[left_index:left_index + 2]
-#        left_value, right_value = values[left_index:left_index + 2]
-#        left_error, right_error = errors[left_index:left_index + 2]
+#        right_time = times[right_index]
+#        right_value = values[right_index]
+#        right_error = errors[right_index]
+
+        left_index = bisect.bisect_left(times, halftime)
+
+        left_time, right_time = times[left_index:left_index + 2]
+        left_value, right_value = values[left_index:left_index + 2]
+        left_error, right_error = errors[left_index:left_index + 2]
 
         half_value_error = interpolation.linear_project(left_time, left_error,
                 right_time, right_error, halftime)
