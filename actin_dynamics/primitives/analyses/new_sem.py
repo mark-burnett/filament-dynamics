@@ -123,7 +123,7 @@ def _calculate_filament_sem(measurements):
     values = []
     errors = []
     for i, t in enumerate(times):
-        v, e = _single_point_sem(means, stds, i, Ns)
+        v, e = _single_point_sem(means, stds, Ns, i)
         values.append(v)
         errors.append(e)
 
