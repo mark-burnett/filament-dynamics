@@ -1,0 +1,4 @@
+global_parameters:
+    seed_concentration: 0.05
+
+    initial_concentration: 40

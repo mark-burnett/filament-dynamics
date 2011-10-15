@@ -8,3 +8,6 @@ remote.sh
 running_jobs
 next_meeting
 micro.py
+results/
+stop_jobs.sh
+push.sh

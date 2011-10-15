@@ -24,7 +24,9 @@ fnc variation
     - use carlier86 conditions
     - show carlier86 points
     - show random, vectorial, carlier86 "bounding"/fitting cooperative traces
-    - show raw & normalized by random variation
+    + carlier86 halftime is 1000s
+        is this because of nucleation?
+        is there a problem with the experiment?
 
 
 *depolymerization timecourse/profile (recent carlier)
@@ -41,8 +43,7 @@ pi variation
 
 [ --- Immediate Steps --- ]
 
-fit vectorial rate
-
+rig up a depolymerization scheme
 
 
 [ ------------------------- ]

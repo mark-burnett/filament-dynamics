@@ -18,7 +18,6 @@ import numpy
 import scipy
 
 from actin_dynamics.io import data
-from actin_dynamics.numerical import meshes
 
 from plot_scripts import contexts
 from plot_scripts import settings

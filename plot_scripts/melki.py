@@ -32,7 +32,7 @@ def main():
 
 def melki_rate_plot():
     results = data.load_data('results/melki_rates.dat')
-    cooperativities, rates, statistical_errors, mesh_errors = results
+    cooperativities, rates, statistical_errors, mesh_errors, halftimes = results
 
     total_errors = numpy.array(statistical_errors) + numpy.array(mesh_errors)
 
@@ -45,6 +45,7 @@ def melki_rate_plot():
 #                , label='Simulation Result')
 
         fit_x, fit_y, polynomial = rate_fit(cooperativities, rates, 2)
+        print polynomial
         poly_label = make_poly_fit_label(polynomial)
         contexts.plot(axes, 'plot', fit_x, fit_y, 'k-', label=poly_label)
 
