@@ -8,6 +8,7 @@
         SEM of [Pi] / d[Pi]/dt @ [Pi] halftime
             average SEM of containing points
         * check that this works
+            e.g. regenerate melki random timecourse timecourse
 
     - propagate error estimate to rate
         SEM of halftime / sensitivity
@@ -25,6 +26,7 @@ fnc variation
     - show carlier86 points
     - show random, vectorial, carlier86 "bounding"/fitting cooperative traces
     + carlier86 halftime is 1000s
+        is it simply the FNC & [G-actin]?
         is this because of nucleation?
         is there a problem with the experiment?
 
@@ -45,6 +47,41 @@ pi variation
 
 rig up a depolymerization scheme
 
+
+[ --- Framework Thoughts --- ]
+
+Missing features:
+    nucleation, filament deletion, severing, and merging
+    multi-stage simulations
+    derived parameters
+    monitoring/completion estimates
+    job continuation/extension (more stats or restarting)
+        also easy additional analysis on previous sims
+
+Key components:
+    - job control
+        track live/zombie processes (make procs logout on any exception)
+    - algorithm
+    - data storage
+        store much more data (full, individual runs)
+            should these be zipped streams in the DB?
+    - configuration
+        controller selection from config file?
+        good validation
+    - analysis & results
+        better framework for this
+    - fitting/job selection
+    - visualization
+    - monitoring
+        predict job completion
+        ?email/sms
+
+    - misc automation
+
+Other shiny things:
+    require worker code revision to match controller code revision
+        (have setting to require clean/no modifications?)
+    get delete cascading correct
 
 [ ------------------------- ]
 
