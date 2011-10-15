@@ -1,3 +1,5 @@
+name: 'FNC Variation, vectorial'
+
 import:
     - 'fnc/base.yaml'
     - 'random_vectorial_model.yaml'
