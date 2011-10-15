@@ -18,67 +18,78 @@ import bisect
 
 import numpy
 
-from actin_dynamics.io import data
 from actin_dynamics import database
+from actin_dynamics.io import data
 
-from actin_dynamics.numerical import measurements
+def vectorial(session_id):
+    single(session_id, output_filename='results/vectorial_fnc_halftimes.dat')
 
-def save_timecourse(session_id, experiment_index=0, run_index=0,
-        timecourse_filename='results/copoly_timecourse.dat'):
+def single(session_id, output_filename='results/single_fnc_halftimes.dat'):
     dbs = database.DBSession()
-
     session = dbs.query(database.Session).get(session_id)
-    run = session.experiments[experiment_index].runs[run_index]
 
-    ftc = run.all_parameters['filament_tip_concentration']
-    seed_concentration = run.all_parameters['seed_concentration']
-    
-    length_data = run.analyses['length']
-    # convert to  [factin]
-    factin_data = measurements.add_number(measurements.scale(length_data, ftc),
-            -seed_concentration)
+    results = _get_single_halftimes(session,
+            concentration_name='filament_tip_concentration')
 
-    pi_data = run.analyses['Pi']
+    _small_writer(output_filename, results, ['fnc', 'halftime'])
 
-    # File output columns are "time [factin] (error) [pi] (error)"
-    combined_data = _combine_timecourse_data(factin_data, pi_data)
-
-    _write_results(timecourse_filename, combined_data,
-            'Time (s)', 'Concentration (uM)', 'Data',
-            ['[F-actin]', '[F-actin] error', '[Pi]', '[Pi] error'])
-
-
-def save_halftimes(adp_session_id, nh_session_id,
-#        cooperativities=[1, 10, 100, 1000, 10000, 100000, 1000000],
-        adp_halftime_filename='results/adp_copoly_halftimes.dat',
-        nh_halftime_filename='results/nh_copoly_halftimes.dat'):
+def multiple(session_ids, output_filename='results/fnc_halftimes.dat'):
     dbs = database.DBSession()
-    adp_session = dbs.query(database.Session).get(adp_session_id)
-    nh_session = dbs.query(database.Session).get(nh_session_id)
-
-    frac_adp_mesh, adp_cooperativities, adp_halftime_results = _get_halftimes(
-            adp_session, concentration_name='fraction_adp')
-    frac_nh_mesh, nh_cooperativities, nh_halftime_results = _get_halftimes(
-            nh_session, concentration_name='fraction_nh_atp')
-
-    _write_results(adp_halftime_filename,
-            _create_rows(frac_adp_mesh, adp_halftime_results),
-            'ADP Fraction', 'Halftime', 'Release Cooperativity',
-            adp_cooperativities)
-    _write_results(nh_halftime_filename,
-            _create_rows(frac_nh_mesh, nh_halftime_results),
-            'NH Fraction', 'Halftime', 'Release Cooperativity',
-            nh_cooperativities)
-
-
-def _combine_timecourse_data(*timecourses):
+    cooperativities = []
     results = []
-    for times, values, errors in timecourses:
-        results.append(values)
-        results.append(errors)
+    fncs = None
+    for sid in session_ids:
+        session = dbs.query(database.Session).get(sid)
 
-    return zip(times, *results)
+        cooperativities.append(session.experiments[0]
+                .all_parameters['release_cooperativity'])
+        fnc_plus_results = _get_single_halftimes(session,
+            concentration_name='filament_tip_concentration')
+        fncs, c_results = zip(*fnc_plus_results)
+        results.append(c_results)
+    results = numpy.array(results).transpose()
+    rows = _create_rows(fncs, results)
 
+    _write_results(output_filename, rows,
+            'FNC', 'Halftime', 'Release Cooperativity',
+            cooperativities)
+
+
+def _get_single_halftimes(session, concentration_name):
+    e = session.experiments[0]
+    concentrations = []
+    values = []
+    for run in e.runs:
+        c = run.parameters[concentration_name]
+        v = run.objectives[0].value
+        concentrations.append(c)
+        values.append(v)
+    return sorted(zip(concentrations, values))
+
+def _small_writer(filename, results, names, header=None):
+    with open(filename, 'w') as f:
+        # Header lines, identifying x, y, column name
+        f.write('# Auto-collated output:\n')
+        if header:
+            f.write(header)
+        for i, name in enumerate(names):
+            f.write('# Column %i: %s\n' % ((i + 1), name))
+        # CSV dump of actual data
+        w = csv.writer(f, dialect=data.DatDialect)
+        w.writerows(results)
+
+
+def save_halftimes(session_id, halftime_filename='results/fnc_halftimes.dat'):
+    dbs = database.DBSession()
+    session = dbs.query(database.Session).get(session_id)
+
+    fnc_mesh, cooperativities, halftime_results = _get_halftimes(
+            session, concentration_name='filament_tip_concentration')
+
+    _write_results(halftime_filename,
+            _create_rows(fnc_mesh, halftime_results),
+            'FNC', 'Halftime', 'Release Cooperativity',
+            cooperativities)
 
 def _get_halftimes(session, cooperativity_name='release_cooperativity',
         concentration_name=None):

@@ -22,6 +22,79 @@ import numpy
 from actin_dynamics import database
 from actin_dynamics.io import data
 
+def extract_best_fnc(session_id):
+    fncs, fits = _extract_fnc_fits(session_id)
+    return fncs, fits
+
+
+def _extract_fnc_fits(session_id):
+    dbs = database.DBSession()
+    session = dbs.query(database.Session).get(session_id)
+
+    e = session.experiments[0]
+
+    fncs = _get_fnc_mesh(e)
+
+    obj_bind = e.objectives['factin_fit']
+
+    fits = []
+    for fnc in fncs:
+        obj_q = dbs.query(database.Objective).filter_by(bind=obj_bind)
+        runs_q = obj_q.join(database.Run)
+        par_q = runs_q.join(database.RunParameter).filter_by(
+                name='filament_tip_concentration').filter(
+                        database.RunParameter.value.like(fnc))
+        best_fit = None
+        for objective in par_q:
+            this_fit = objective.value
+            if best_fit is None or this_fit < best_fit:
+                best_fit = this_fit
+
+        fits.append(best_fit)
+
+    return fncs, fits
+
+#    fncs = []
+#    fits = []
+#    for run in e.runs:
+#        fncs.append(run.all_parameters['filament_tip_concentration'])
+#        objective = dbs.query(database.Objective).filter_by(run=run
+#                ).filter_by(bind=obj_bind).one()
+#        fits.append(objective.value)
+#    return zip(sorted(zip(fncs, fits)))
+
+
+def _get_fnc_mesh(experiment):
+    fncs = set()
+    for run in experiment.runs:
+        fncs.add(run.parameters['filament_tip_concentration'])
+    return sorted(list(fncs))
+
+
+def _calculate_crossing_fnc(fncs, fits):
+    pass
+
+
+def single_fnc_save(session_ids, plot_cooperativities=[1, 1000, 1000000],
+        rate_filename='results/melki_rates.dat',
+        factin_timecourse_filename='results/melki_factin_timecourses.dat',
+        pi_timecourse_filename='results/melki_pi_timecourses.dat'):
+    dbs = database.DBSession()
+
+    sessions = [dbs.query(database.Session).get(sid) for sid in session_ids]
+    sessions.sort(key=lambda s: s.parameters['release_cooperativity'])
+
+    cooperativities = [s.parameters['release_cooperativity'] for s in sessions]
+
+
+    rows = []
+    for rho, session in zip(cooperativities, sessions):
+        half_value = session.parameters['initial_concentration'] / 2
+        row = rho, best_rate, statistical_error, mesh_error
+        rows.append(row)
+
+
+
 def save(session_ids, plot_cooperativities=[1, 1000, 1000000],
         rate_filename='results/melki_rates.dat',
         factin_timecourse_filename='results/melki_factin_timecourses.dat',
@@ -60,6 +133,7 @@ def save(session_ids, plot_cooperativities=[1, 1000, 1000000],
     rates = []
     statistical_errors = []
     mesh_errors = []
+    halftimes = []
     for i, (rate_mesh, pi_array, fractional_error) in enumerate(
             zip(session_rate_meshes, session_pi_arrays,
                 session_fractional_errors)):
@@ -78,17 +152,23 @@ def save(session_ids, plot_cooperativities=[1, 1000, 1000000],
         statistical_errors.append(fractional_error * rate)
         mesh_errors.append(step_size / 2)
         best_runs.append(best_run)
+        halftimes.append(best_run.get_objective('halftime'))
 
-    fnc_step_size = fnc_mesh[fnc_i + 1] - best_fnc
+    try:
+        fnc_step_size = fnc_mesh[fnc_i + 1] - best_fnc
+    except IndexError:
+        fnc_step_size = 0
+
     _small_writer(rate_filename,
-            zip(cooperativities, rates, statistical_errors, mesh_errors),
-            ('release_cooperativity', 'release_rate', 'statistical_error', 'mesh_error'),
+            zip(cooperativities, rates, statistical_errors, mesh_errors, halftimes),
+            ('release_cooperativity', 'release_rate', 'statistical_error', 'mesh_error', 'halftime'),
             header='# Filament Number Concentration: %s\n#    FNC Statistical Error: %s\n#    FNC Mesh Error: %s\n'
             % (best_fnc, fractional_error * best_fnc, fnc_step_size / 2))
 
     # Pick & write timecourses
     f_tcs = []
     pi_tcs = []
+    times = []
     for pc in plot_cooperativities:
         run_i = cooperativities.index(pc)
         run = best_runs[run_i]
@@ -203,3 +283,19 @@ def _extract_session_values(db_session, session):
         pi_fits.append(po.value)
 
     return fncs, rates, factin_fits, pi_fits
+
+
+def _calc_halftime(measurement, half_value):
+    times, values, errors = measurement
+    for i, v in enumerate(values):
+        if v > half_value:
+            break;
+
+    left_time = times[i-1]
+    left_value = values[i-1]
+
+    right_time = times[i]
+    right_value = values[i]
+
+    return _interpolation.linear_project(left_value, left_time,
+            right_value, right_time, half_value)

@@ -32,3 +32,5 @@ from . import copoly
 from . import pi_poly
 
 from . import short_time
+
+from . import fnc
