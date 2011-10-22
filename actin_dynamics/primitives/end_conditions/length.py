@@ -15,8 +15,6 @@
 
 from base_classes import EndCondition as _EndCondition
 
-import random
-
 class MinLength(_EndCondition):
     'End simulation after duration seconds.'
 
