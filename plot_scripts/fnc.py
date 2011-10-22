@@ -60,7 +60,7 @@ def fnc_zoomed_out(figure):
             v_scaled_halftimes = v_halftimes
         contexts.plot(axes, 'plot', v_fncs, v_scaled_halftimes, 'k')
 
-        axes.set_xlim(0.001, 0.1)
+        axes.set_xlim(0.001, 0.02)
 
 if '__main__' == __name__:
     main()

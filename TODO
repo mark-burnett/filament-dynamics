@@ -32,6 +32,7 @@ fnc variation
 
 
 *depolymerization timecourse/profile (recent carlier)
+    - plot data + lots of light single filament traces
     - this probably doesn't exclude many models
     - try implementing by having a disable time for transitions
 
