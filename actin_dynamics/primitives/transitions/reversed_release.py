@@ -27,7 +27,7 @@ class ReverseRelease(_FilamentTransition):
 
         _FilamentTransition.__init__(self, label=label)
 
-    def R(self, filaments, concentrations):
+    def R(self, time, filaments, concentrations):
         r = self.rate * concentrations[self.concentration].value
         return [r * filament.state_count(self.old_state)
                 for filament in filaments]

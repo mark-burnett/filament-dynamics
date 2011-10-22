@@ -38,7 +38,7 @@ class CooperativeHydrolysis(_FilamentTransition):
 
         _FilamentTransition.__init__(self, label=label)
 
-    def R(self, filaments, concentrations):
+    def R(self, time, filaments, concentrations):
         return [sum(self._boundary_rates(filament)) + self._random_rate(filament)
                 for filament in filaments]
 

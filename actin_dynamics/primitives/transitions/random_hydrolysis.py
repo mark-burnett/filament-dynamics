@@ -31,7 +31,7 @@ class RandomHydrolysis(_FilamentTransition):
 
         _FilamentTransition.__init__(self, label=label)
 
-    def R(self, filaments, concentrations):
+    def R(self, time, filaments, concentrations):
         return [self.rate * filament.state_count(self.old_state)
                 for filament in filaments]
 

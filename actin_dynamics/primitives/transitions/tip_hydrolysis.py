@@ -17,7 +17,8 @@ from base_classes import FilamentTransition as _FilamentTransition
 
 class EndHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'rate', 'new_state']
-    def __init__(self, index=None, old_state=None, rate=None, new_state=None, label=None):
+    def __init__(self, index=None, old_state=None, rate=None, new_state=None,
+            label=None):
         self.index     = int(index)
         self.old_state = old_state
         self.rate      = float(rate)
@@ -25,7 +26,7 @@ class EndHydrolysis(_FilamentTransition):
 
         _FilamentTransition.__init__(self, label=label)
 
-    def R(self, filaments, concentrations):
+    def R(self, time, filaments, concentrations):
         num_filaments = sum(self.old_state == f[self.index] for f in filaments)
         return [self.rate * num_filaments]
 

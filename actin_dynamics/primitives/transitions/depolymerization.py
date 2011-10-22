@@ -20,8 +20,9 @@ _log = _logger.getLogger(__file__)
 
 class _FixedRate(_FilamentTransition):
     skip_registration = True
-    __slots__ = ['state', 'rate', 'check_index']
-    def __init__(self, check_index=None, state=None, rate=None, label=None):
+    __slots__ = ['state', 'rate', 'check_index', 'disable_time']
+    def __init__(self, check_index=None, state=None, rate=None,
+            disable_time=999999999, label=None):
         """
         state - state to depolymerize
         rate  - depolymerization rate (constant)
@@ -29,17 +30,21 @@ class _FixedRate(_FilamentTransition):
         self.state       = state
         self.rate        = rate
         self.check_index = check_index
+        self.disable_time = float(disable_time)
 
         _FilamentTransition.__init__(self, label=label)
 
-    def R(self, filaments, concentrations):
-        result = []
-        for filament in filaments:
-            if self.state == filament[self.check_index]:
-                result.append(self.rate)
-            else:
-                result.append(0)
-        return result
+    def R(self, time, filaments, concentrations):
+        if time < self.disable_time:
+            result = []
+            for filament in filaments:
+                if self.state == filament[self.check_index]:
+                    result.append(self.rate)
+                else:
+                    result.append(0)
+            return result
+        else:
+            return [0 for f in filaments]
 
     def perform(self, time, filaments, concentrations, index, r):
         if not len(filaments[index]):

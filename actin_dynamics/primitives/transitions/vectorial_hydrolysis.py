@@ -36,7 +36,7 @@ class VectorialHydrolysis(_FilamentTransition):
 
         _FilamentTransition.__init__(self, label=label)
 
-    def R(self, filaments, concentrations):
+    def R(self, time, filaments, concentrations):
         return [self.rate * filament.boundary_count(self.old_state,
                                                     self.pointed_neighbor)
                 for filament in filaments]

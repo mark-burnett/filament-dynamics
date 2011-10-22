@@ -1,0 +1,21 @@
+name: Jegou Depolymerization Timecourse
+
+import:
+    # Experiment
+    - 'experiments/simple_depoly.yaml'
+
+    - 'random_cooperative_model_depoly.yaml'
+
+    # Parameters
+    - 'parameters/jegou_2011_conditions.yaml'
+    - 'parameters/first_paper.yaml'
+
+experiments:
+    simple_depoly:
+        parameters:
+            simulation_duration: 1300.1
+            polymerization_duration: 600
+            sample_period: 1
+
+            number_of_simulations: 1
+            number_of_filaments: 1

@@ -104,7 +104,7 @@ class Simulation(object):
                 small_Rs = []
                 transition_Rs = []
                 for t in self.transitions:
-                    local_Rs = t.R(self.filaments, self.concentrations)
+                    local_Rs = t.R(time, self.filaments, self.concentrations)
                     transition_Rs.append(sum(local_Rs))
                     small_Rs.append(local_Rs)
 
