@@ -10,6 +10,8 @@ import:
     - 'parameters/jegou_2011_conditions.yaml'
     - 'parameters/first_paper.yaml'
 
+    - 'fit_rates/rho_100000.yaml'
+
 experiments:
     simple_depoly:
         parameters:
@@ -19,3 +21,12 @@ experiments:
 
             number_of_simulations: 1
             number_of_filaments: 1
+
+parameter_specifications:
+    simple_depoly:
+        simulation:
+            dummy_parameter:
+                lower_bound: 1
+                upper_bound: 1
+                mesh_type: linear
+                num_points: 1

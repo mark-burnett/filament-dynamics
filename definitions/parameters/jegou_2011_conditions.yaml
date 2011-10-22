@@ -1,0 +1,4 @@
+global_parameters:
+    filament_tip_concentration: 0.001
+    seed_concentration: 2
+    initial_concentration: 1.5

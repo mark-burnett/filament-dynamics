@@ -47,23 +47,27 @@ class ReverseRelease(_FilamentTransition):
 class BarbedTipReverseRelease(_FilamentTransition):
     __slots__ = ['old_state', 'rate', 'concentration', 'new_state']
     def __init__(self, old_state=None, rate=None, new_state=None,
-                 concentration=None, label=None):
+            disable_time=999999999, concentration=None, label=None):
         self.old_state = old_state
         self.rate      = rate
         self.new_state = new_state
         self.concentration = concentration
+        self.disable_time = float(disable_time)
 
         _FilamentTransition.__init__(self, label=label)
 
-    def R(self, filaments, concentrations):
-        r = self.rate * concentrations[self.concentration].value
-        result = []
-        for filament in filaments:
-            if self.old_state == filament[-1]:
-                result.append(r)
-            else:
-                result.append(0)
-        return result
+    def R(self, time, filaments, concentrations):
+        if time < self.disable_time:
+            r = self.rate * concentrations[self.concentration].value
+            result = []
+            for filament in filaments:
+                if self.old_state == filament[-1]:
+                    result.append(r)
+                else:
+                    result.append(0)
+            return result
+        else:
+            return [0 for f in filaments]
 
     def perform(self, time, filaments, concentrations, filament_index, r):
         last_r = self.rate * concentrations[self.concentration].value

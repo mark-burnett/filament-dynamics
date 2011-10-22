@@ -31,13 +31,20 @@ def db_single(bind, parameters):
 #    log.warn('bind.va: %s', bind.variable_arguments)
 
 
-    kwargs = dict((local_name, parameters[global_name])
+    var_args = dict((local_name, parameters[global_name])
           for local_name, global_name in bind.variable_arguments.iteritems())
 
+    kwargs = dict(var_args)
     kwargs['label'] = bind.label
     kwargs.update(bind.fixed_arguments)
 
-    return cls(**kwargs)
+    try:
+        o = cls(**kwargs)
+    except Exception as e:
+        log.exception('Failed to instantiate binding: class_name = %s, fixed_arguments = %s, variable_arguments = %s',
+                bind.class_name, bind.fixed_arguments, var_args)
+        raise
+    return o
 
 def db_multiple(binds, parameters):
     results = []

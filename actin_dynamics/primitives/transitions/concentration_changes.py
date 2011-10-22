@@ -25,7 +25,7 @@ class ConcentrationChange(_SolutionTransition):
 
         _SolutionTransition.__init__(self, label=label)
 
-    def R(self, filaments, concentrations):
+    def R(self, time, filaments, concentrations):
 #        return [self.rate * concentrations[self.old_state].value]
         return [self.rate * concentrations[self.old_state].monomer_count]
 
