@@ -75,12 +75,3 @@ experiments:
                     interpolation_method: previous_value
                     measurement_name: length
                     measurement_type: filament
-
-        objectives:
-            executors:
-                halftime:
-                    class_name: HalfTime
-                    variable_arguments:
-                        base_value: initial_concentration
-                    fixed_arguments:
-                        analysis_name: Pi

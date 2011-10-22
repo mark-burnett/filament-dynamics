@@ -1,4 +1,4 @@
-name: Jegou Depolymerization Timecourse
+name: Jegou Depolymerization Timecourse, rho = 100000
 
 import:
     # Experiment
@@ -27,6 +27,6 @@ parameter_specifications:
         simulation:
             dummy_parameter:
                 lower_bound: 1
-                upper_bound: 1
+                upper_bound: 100
                 mesh_type: linear
-                num_points: 1
+                num_points: 100

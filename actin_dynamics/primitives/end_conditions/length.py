@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,12 +13,23 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from registry import end_condition_registry as registry
+from base_classes import EndCondition as _EndCondition
 
-from duration import *
-from threshold import *
-from length import *
+import random
 
-del duration
+class MinLength(_EndCondition):
+    'End simulation after duration seconds.'
 
-del base_classes
+    __slots__ = ['duration']
+    def __init__(self, value=None, label=None):
+        self.value = value
+        _EndCondition.__init__(self, label=label)
+
+    def reset(self):
+        pass
+
+    def __call__(self, time, filaments, concentrations):
+        for f in filaments:
+            if len(f) < self.value:
+                return True
+        return False

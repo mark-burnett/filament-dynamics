@@ -17,20 +17,24 @@ from .base_classes import FilamentTransition as _FilamentTransition
 from . import mixins as _mixins
 
 class ReverseRelease(_FilamentTransition):
-    __slots__ = ['old_state', 'rate', 'concentration', 'new_state']
+    __slots__ = ['old_state', 'rate', 'concentration', 'new_state', 'disable_time']
     def __init__(self, old_state=None, rate=None, new_state=None,
-                 concentration=None, label=None):
+            disable_time=999999999, concentration=None, label=None):
         self.old_state = old_state
         self.rate      = rate
         self.new_state = new_state
         self.concentration = concentration
+        self.disable_time = float(disable_time)
 
         _FilamentTransition.__init__(self, label=label)
 
     def R(self, time, filaments, concentrations):
-        r = self.rate * concentrations[self.concentration].value
-        return [r * filament.state_count(self.old_state)
-                for filament in filaments]
+        if time < self.disable_time:
+            r = self.rate * concentrations[self.concentration].value
+            return [r * filament.state_count(self.old_state)
+                    for filament in filaments]
+        else:
+            return [0 for f in filaments]
 
     def perform(self, time, filaments, concentrations, filament_index, r):
         last_r = self.rate * concentrations[self.concentration].value
@@ -45,7 +49,7 @@ class ReverseRelease(_FilamentTransition):
                                     filament_index, r)
 
 class BarbedTipReverseRelease(_FilamentTransition):
-    __slots__ = ['old_state', 'rate', 'concentration', 'new_state']
+    __slots__ = ['old_state', 'rate', 'concentration', 'new_state', 'disable_time']
     def __init__(self, old_state=None, rate=None, new_state=None,
             disable_time=999999999, concentration=None, label=None):
         self.old_state = old_state
@@ -82,25 +86,29 @@ class BarbedTipReverseRelease(_FilamentTransition):
 
 
 class PointedTipReverseRelease(_FilamentTransition):
-    __slots__ = ['old_state', 'rate', 'concentration', 'new_state']
+    __slots__ = ['old_state', 'rate', 'concentration', 'new_state', 'disable_time']
     def __init__(self, old_state=None, rate=None, new_state=None,
-                 concentration=None, label=None):
+            disable_time=999999999, concentration=None, label=None):
         self.old_state = old_state
         self.rate      = rate
         self.new_state = new_state
         self.concentration = concentration
+        self.disable_time = float(disable_time)
 
         _FilamentTransition.__init__(self, label=label)
 
-    def R(self, filaments, concentrations):
-        r = self.rate * concentrations[self.concentration].value
-        result = []
-        for filament in filaments:
-            if self.old_state == filament[0]:
-                result.append(r)
-            else:
-                result.append(0)
-        return result
+    def R(self, time, filaments, concentrations):
+        if time < self.disable_time:
+            r = self.rate * concentrations[self.concentration].value
+            result = []
+            for filament in filaments:
+                if self.old_state == filament[0]:
+                    result.append(r)
+                else:
+                    result.append(0)
+            return result
+        else:
+            return [0 for f in filaments]
 
     def perform(self, time, filaments, concentrations, filament_index, r):
         last_r = self.rate * concentrations[self.concentration].value
