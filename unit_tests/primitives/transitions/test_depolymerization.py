@@ -30,24 +30,24 @@ class BarbedDepolymerizationSingleFilament(unittest.TestCase):
         self.depoly_two = BarbedDepolymerization(state=2, rate=2)
 
     def test_rates(self):
-        self.assertEqual(self.depoly_one.R([self.filament], None), [1])
-        self.assertEqual(self.depoly_two.R([self.filament], None), [0])
+        self.assertEqual(self.depoly_one.R(None, [self.filament], None), [1])
+        self.assertEqual(self.depoly_two.R(None, [self.filament], None), [0])
 
     def test_normal_perform(self):
         self.depoly_one.perform(None, [self.filament], self.concentrations, 0, None)
         self.assertEqual(list(self.filament), [None, 1, 2])
-        self.assertEqual(self.depoly_one.R([self.filament], None), [0])
-        self.assertEqual(self.depoly_two.R([self.filament], None), [2])
+        self.assertEqual(self.depoly_one.R(None, [self.filament], None), [0])
+        self.assertEqual(self.depoly_two.R(None, [self.filament], None), [2])
 
         self.depoly_two.perform(None, [self.filament], self.concentrations, 0, None)
         self.assertEqual(list(self.filament), [None, 1])
-        self.assertEqual(self.depoly_one.R([self.filament], None), [1])
-        self.assertEqual(self.depoly_two.R([self.filament], None), [0])
+        self.assertEqual(self.depoly_one.R(None, [self.filament], None), [1])
+        self.assertEqual(self.depoly_two.R(None, [self.filament], None), [0])
 
         self.depoly_one.perform(None, [self.filament], self.concentrations, 0, None)
         self.assertEqual(list(self.filament), [None])
-        self.assertEqual(self.depoly_one.R([self.filament], None), [0])
-        self.assertEqual(self.depoly_two.R([self.filament], None), [0])
+        self.assertEqual(self.depoly_one.R(None, [self.filament], None), [0])
+        self.assertEqual(self.depoly_two.R(None, [self.filament], None), [0])
 
 if '__main__' == __name__:
     unittest.main()

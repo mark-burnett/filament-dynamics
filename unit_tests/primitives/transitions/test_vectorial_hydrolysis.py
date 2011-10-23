@@ -34,20 +34,20 @@ class VectorialHydrolysisSingleFilamentTest(unittest.TestCase):
                                               new_state=7, rate=1)
 
     def test_normal_rates(self):
-        self.assertEqual(self.normal_one.R([self.filament], None), [6])
-        self.assertEqual(self.normal_two.R([self.filament], None), [4])
+        self.assertEqual(self.normal_one.R(None, [self.filament], None), [6])
+        self.assertEqual(self.normal_two.R(None, [self.filament], None), [4])
 
     def test_missing_rates(self):
-        self.assertEqual(self.missing.R([self.filament], None), [0])
+        self.assertEqual(self.missing.R(None, [self.filament], None), [0])
 
     def test_perform_normal(self):
         self.normal_one.perform(None, [self.filament], None, 0, 4)
-        self.assertEqual(self.normal_one.R([self.filament], None), [3])
-        self.assertEqual(self.normal_two.R([self.filament], None), [4])
+        self.assertEqual(self.normal_one.R(None, [self.filament], None), [3])
+        self.assertEqual(self.normal_two.R(None, [self.filament], None), [4])
 
         self.normal_two.perform(None, [self.filament], None, 0, 1)
-        self.assertEqual(self.normal_one.R([self.filament], None), [3])
-        self.assertEqual(self.normal_two.R([self.filament], None), [2])
+        self.assertEqual(self.normal_one.R(None, [self.filament], None), [3])
+        self.assertEqual(self.normal_two.R(None, [self.filament], None), [2])
 
     def test_perform_missing(self):
         self.assertRaises(IndexError, self.missing.perform,
@@ -68,29 +68,29 @@ class VectorialHydrolysisMultipleFilamentTest(unittest.TestCase):
                                               new_state=7, rate=1)
 
     def test_normal_rates(self):
-        self.assertEqual(self.normal_one.R(self.filaments, None), [6, 6, 0])
-        self.assertEqual(self.normal_two.R(self.filaments, None), [4, 4, 0])
+        self.assertEqual(self.normal_one.R(None, self.filaments, None), [6, 6, 0])
+        self.assertEqual(self.normal_two.R(None, self.filaments, None), [4, 4, 0])
 
     def test_missing_rates(self):
-        self.assertEqual(self.missing.R(self.filaments, None), [0, 0, 2])
+        self.assertEqual(self.missing.R(None, self.filaments, None), [0, 0, 2])
 
     def test_perform_normal(self):
         self.normal_one.perform(None, self.filaments, None, 0, 4)
-        self.assertEqual(self.normal_one.R(self.filaments, None), [3, 6, 0])
-        self.assertEqual(self.normal_two.R(self.filaments, None), [4, 4, 0])
+        self.assertEqual(self.normal_one.R(None, self.filaments, None), [3, 6, 0])
+        self.assertEqual(self.normal_two.R(None, self.filaments, None), [4, 4, 0])
 
         self.normal_two.perform(None, self.filaments, None, 0, 1)
-        self.assertEqual(self.normal_one.R(self.filaments, None), [3, 6, 0])
-        self.assertEqual(self.normal_two.R(self.filaments, None), [2, 4, 0])
+        self.assertEqual(self.normal_one.R(None, self.filaments, None), [3, 6, 0])
+        self.assertEqual(self.normal_two.R(None, self.filaments, None), [2, 4, 0])
 
         self.normal_one.perform(None, self.filaments, None, 1, 0)
-        self.assertEqual(self.normal_one.R(self.filaments, None), [3, 3, 0])
-        self.assertEqual(self.normal_two.R(self.filaments, None), [2, 2, 0])
+        self.assertEqual(self.normal_one.R(None, self.filaments, None), [3, 3, 0])
+        self.assertEqual(self.normal_two.R(None, self.filaments, None), [2, 2, 0])
 
         self.missing.perform(None, self.filaments, None, 2, 0)
-        self.assertEqual(self.normal_one.R(self.filaments, None), [3, 3, 0])
-        self.assertEqual(self.normal_two.R(self.filaments, None), [2, 2, 0])
-        self.assertEqual(self.missing.R(self.filaments, None),    [0, 0, 1])
+        self.assertEqual(self.normal_one.R(None, self.filaments, None), [3, 3, 0])
+        self.assertEqual(self.normal_two.R(None, self.filaments, None), [2, 2, 0])
+        self.assertEqual(self.missing.R(None, self.filaments, None),    [0, 0, 1])
 
     def test_perform_missing(self):
         self.assertRaises(IndexError, self.missing.perform,
@@ -119,21 +119,21 @@ class VectorialHydrolysisWithByproductSingleFilamentTest(unittest.TestCase):
                                                            byproduct=17)
 
     def test_normal_rates(self):
-        self.assertEqual(self.normal_one.R([self.filament], None), [6])
-        self.assertEqual(self.normal_two.R([self.filament], None), [4])
+        self.assertEqual(self.normal_one.R(None, [self.filament], None), [6])
+        self.assertEqual(self.normal_two.R(None, [self.filament], None), [4])
 
     def test_missing_rates(self):
-        self.assertEqual(self.missing.R([self.filament], None), [0])
+        self.assertEqual(self.missing.R(None, [self.filament], None), [0])
 
     def test_perform_normal(self):
         self.normal_one.perform(None, [self.filament], self.concentrations, 0, 4)
-        self.assertEqual(self.normal_one.R([self.filament], None), [3])
-        self.assertEqual(self.normal_two.R([self.filament], None), [4])
+        self.assertEqual(self.normal_one.R(None, [self.filament], None), [3])
+        self.assertEqual(self.normal_two.R(None, [self.filament], None), [4])
         self.assertEqual(self.concentrations[11].count, 1)
 
         self.normal_two.perform(None, [self.filament], self.concentrations, 0, 1)
-        self.assertEqual(self.normal_one.R([self.filament], None), [3])
-        self.assertEqual(self.normal_two.R([self.filament], None), [2])
+        self.assertEqual(self.normal_one.R(None, [self.filament], None), [3])
+        self.assertEqual(self.normal_two.R(None, [self.filament], None), [2])
         self.assertEqual(self.concentrations[12].count, 1)
 
     def test_perform_missing(self):

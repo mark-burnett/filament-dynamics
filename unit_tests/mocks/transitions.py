@@ -22,7 +22,7 @@ class MockTransition(object):
         self.rate = rate
         self.measurements = collections.defaultdict(list)
 
-    def R(self, filaments, concentrations):
+    def R(self, time, filaments, concentrations):
         return list(itertools.repeat(self.rate, len(filaments)))
 
     def perform(self, time, filaments, concentrations, index, r):

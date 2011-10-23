@@ -35,8 +35,8 @@ class BarbedPolymerizationSingleFilament(unittest.TestCase):
         self.poly_two = BarbedPolymerization(state=2, rate=2)
 
     def test_rates(self):
-        self.assertEqual(self.poly_one.R([self.filament], self.concentrations), [3])
-        self.assertEqual(self.poly_two.R([self.filament], self.concentrations), [14])
+        self.assertEqual(self.poly_one.R(None, [self.filament], self.concentrations), [3])
+        self.assertEqual(self.poly_two.R(None, [self.filament], self.concentrations), [14])
 
     def test_normal_perform(self):
         self.poly_one.perform(None, [self.filament], self.concentrations, 0, None)
