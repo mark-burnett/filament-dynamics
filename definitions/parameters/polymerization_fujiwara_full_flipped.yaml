@@ -1,0 +1,3 @@
+import:
+    - 'parameters/polymerization_flipped_fujiwara_barbed.yaml'
+    - 'parameters/polymerization_flipped_fujiwara_pointed.yaml'

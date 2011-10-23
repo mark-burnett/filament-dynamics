@@ -5,4 +5,4 @@ import:
     - 'components/pi_association_depoly.yaml'
     - 'components/random_cleavage.yaml'
     - 'components/cooperative_release.yaml'
-#    - 'components/fast_pi_tip_release.yaml'
+    - 'components/fast_pi_tip_release.yaml'

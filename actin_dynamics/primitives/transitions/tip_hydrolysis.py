@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from base_classes import FilamentTransition as _FilamentTransition
+from . import mixins as _mixins
 
 class EndHydrolysis(_FilamentTransition):
     __slots__ = ['old_state', 'rate', 'new_state']
@@ -44,3 +45,6 @@ class BarbedEndHydrolysis(EndHydrolysis):
 class PointedEndHydrolysis(EndHydrolysis):
     def __init__(self, *args, **kwargs):
         EndHydrolysis.__init__(self, index=0, *args, **kwargs)
+
+BarbedEndHydrolysisWIthByproduct = _mixins.add_byproduct(BarbedEndHydrolysis)
+PointedEndHydrolysisWIthByproduct = _mixins.add_byproduct(PointedEndHydrolysis)

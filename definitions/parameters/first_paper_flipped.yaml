@@ -1,8 +1,8 @@
 import:
-    - 'parameters/polymerization_fujiwara_full.yaml'
+    - 'parameters/polymerization_fujiwara_full_flipped.yaml'
     - 'parameters/fujiwara_reverse_release.yaml'
     - 'parameters/in_solution_release_rate.yaml'
-    - 'parameters/tip_release_rate.yaml'
+    - 'parameters/tip_release_rate_flipped.yaml'
 
 global_parameters:
     cleavage_rate: 0.3
