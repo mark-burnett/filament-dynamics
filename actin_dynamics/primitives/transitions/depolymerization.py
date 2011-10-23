@@ -20,8 +20,10 @@ _log = _logger.getLogger(__file__)
 
 class _FixedRate(_FilamentTransition):
     skip_registration = True
-    __slots__ = ['state', 'rate', 'check_index', 'disable_time']
+    __slots__ = ['state', 'rate', 'check_index', 'disable_time',
+            'concentration_name', 'concentration_threshold']
     def __init__(self, check_index=None, state=None, rate=None,
+            concentration_name=None, concentration_threshold=None,
             disable_time=999999999, label=None):
         """
         state - state to depolymerize
@@ -32,13 +34,22 @@ class _FixedRate(_FilamentTransition):
         self.check_index = check_index
         self.disable_time = float(disable_time)
 
+        self.concentration_name = concentration_name
+        self.concentration_threshold = float(concentration_threshold)
+
         _FilamentTransition.__init__(self, label=label)
 
     def R(self, time, filaments, concentrations):
-        if time < self.disable_time:
+        go_ahead = time < self.disable_time
+        if self.concentration_name:
+            if (self.concentration_threshold <
+                    concentrations[self.concentration_name].value):
+                go_ahead = False
+
+        if go_ahead:
             result = []
             for filament in filaments:
-                if self.state == filament[self.check_index]:
+                if filament.states and self.state == filament[self.check_index]:
                     result.append(self.rate)
                 else:
                     result.append(0)
@@ -48,7 +59,7 @@ class _FixedRate(_FilamentTransition):
 
     def perform(self, time, filaments, concentrations, index, r):
         if not len(filaments[index]):
-            _log.warn('Filament completely depolymerized.')
+            _log.warn('Filament (index = %s) completely depolymerized.', index)
         _FilamentTransition.perform(self, time, filaments, concentrations, index, r)
 
 class BarbedDepolymerization(_FixedRate):
@@ -58,6 +69,8 @@ class BarbedDepolymerization(_FixedRate):
 
     def perform(self, time, filaments, concentrations, index, r):
         current_filament = filaments[index]
+        if not current_filament.states:
+            _log.error('Attempted to depolymerize empty filament.')
         current_filament.shrink_barbed_end()
         concentrations[self.state].add_monomer(time)
         _FixedRate.perform(self, time, filaments, concentrations, index, r)
@@ -69,6 +82,8 @@ class PointedDepolymerization(_FixedRate):
 
     def perform(self, time, filaments, concentrations, index, r):
         current_filament = filaments[index]
+        if not current_filament.states:
+            _log.error('Attempted to depolymerize empty filament.')
         current_filament.shrink_pointed_end()
         concentrations[self.state].add_monomer(time)
         _FixedRate.perform(self, time, filaments, concentrations, index, r)

@@ -17,8 +17,10 @@ from base_classes import FilamentTransition as _FilamentTransition
 
 class _FixedRate(_FilamentTransition):
     skip_registration = True
-    __slots__ = ['rate', 'state', 'disable_time']
+    __slots__ = ['rate', 'state', 'disable_time',
+            'concentration_name', 'concentration_threshold']
     def __init__(self, state=None, rate=None, disable_time=999999999,
+            concentration_name=None, concentration_threshold=None,
             label=None):
         """
         'state' that are added to the barbed end of the filament.
@@ -28,14 +30,29 @@ class _FixedRate(_FilamentTransition):
         self.rate  = rate
         self.disable_time = float(disable_time)
 
+        self.concentration_name = concentration_name
+        self.concentration_threshold = float(concentration_threshold)
+
         _FilamentTransition.__init__(self, label=label)
 
     def R(self, time, filaments, concentrations):
-        if time < self.disable_time:
+        go_ahead = time < self.disable_time
+        if self.concentration_name:
+            if (self.concentration_threshold <
+                    concentrations[self.concentration_name].value):
+                go_ahead = False
+
+        if go_ahead:
             value = self.rate * concentrations[self.state].value
+            result = []
+            for filament in filaments:
+                if filament.states:
+                    result.append(value)
+                else:
+                    result.append(0)
+                return result
         else:
-            value = 0
-        return [value for s in filaments]
+            return [0 for s in filaments]
 
     def perform(self, time, filaments, concentrations, index, r):
         _FilamentTransition.perform(self, time, filaments, concentrations, index, r)

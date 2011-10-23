@@ -28,8 +28,15 @@ class EndHydrolysis(_FilamentTransition):
         _FilamentTransition.__init__(self, label=label)
 
     def R(self, time, filaments, concentrations):
-        num_filaments = sum(self.old_state == f[self.index] for f in filaments)
-        return [self.rate * num_filaments]
+        results = []
+        for filament in filaments:
+            if filament.states and self.old_state == filament[self.index]:
+                results.append(self.rate)
+            else:
+                results.append(0)
+        return results
+#        num_filaments = sum(self.old_state == f[self.index] for f in filaments)
+#        return [self.rate * num_filaments]
 
     def perform(self, time, filaments, concentrations, filament_index, r):
         current_filament = filaments[filament_index]

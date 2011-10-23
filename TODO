@@ -2,7 +2,7 @@
 
 to code/configure:
     depolymerization bulk pyrene stuff
-        disable transitions at concentration threshold
+        (done) disable transitions at concentration threshold
         configuration files
         cut time down at right place
         floating fit (normalize for final value?)

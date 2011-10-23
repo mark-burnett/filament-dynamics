@@ -53,11 +53,6 @@ experiments:
                     variable_arguments:
                         duration: simulation_duration
 
-                minimum_length:
-                    class_name: MinLength
-                    fixed_arguments:
-                        value: 5
-
 
             measurements:
                 length:
