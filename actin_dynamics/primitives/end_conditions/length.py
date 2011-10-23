@@ -20,7 +20,7 @@ class MinLength(_EndCondition):
 
     __slots__ = ['duration']
     def __init__(self, value=None, label=None):
-        self.value = value
+        self.value = int(value)
         _EndCondition.__init__(self, label=label)
 
     def reset(self):

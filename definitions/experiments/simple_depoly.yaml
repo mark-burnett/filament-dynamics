@@ -56,7 +56,7 @@ experiments:
                 minimum_length:
                     class_name: MinLength
                     fixed_arguments:
-                        value: 100
+                        value: 5
 
 
             measurements:

@@ -34,3 +34,5 @@ from . import pi_poly
 from . import short_time
 
 from . import fnc
+
+from . import depoly
