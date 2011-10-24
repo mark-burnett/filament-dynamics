@@ -1,0 +1,5 @@
+name: 'Pyrene Depoly, rho_r = 100000'
+
+import:
+    - 'pyrene_depoly/base.yaml'
+    - 'fit_rates/rho_100000.yaml'

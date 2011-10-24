@@ -3,9 +3,10 @@
 to code/configure:
     depolymerization bulk pyrene stuff
         (done) disable transitions at concentration threshold
-        configuration files
-        cut time down at right place
-        floating fit (normalize for final value?)
+        (done) configuration files
+        (done) run with flat pyrene coefs
+        floating fit (for chi^2 v rho curve)
+            2 free parameters (* scale, + background) & time adjustment
 
 to run:
     fit melki rates for lots of cooperativities

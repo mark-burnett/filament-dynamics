@@ -20,6 +20,16 @@ from actin_dynamics import database
 from actin_dynamics.io import data
 
 
+def bulk(session_id, output_filename='results/pyrene_timecourse.dat',
+        analysis_name='pyrene'):
+    dbs = database.DBSession()
+    session = dbs.query(database.Session).get(session_id)
+    run = session.experiments[0].runs[0]
+    results = numpy.transpose(run.analyses[analysis_name])
+
+    _small_writer(output_filename, results, ['times', analysis_name])
+
+
 def save(session_id,
         output_filename='results/depolymerization_timecourses.dat'):
     dbs = database.DBSession()

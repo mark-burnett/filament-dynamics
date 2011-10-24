@@ -1,0 +1,4 @@
+global_parameters:
+    pyrene_atp_coefficient: 0.37
+    pyrene_adppi_coefficient: 0.56
+    pyrene_adp_coefficient: 0.75

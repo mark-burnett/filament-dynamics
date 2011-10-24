@@ -1,4 +1,4 @@
-name: 'FNC Variation, rho_c = 100'
+name: 'FNC Variation, rho_r = 100'
 
 import:
     - 'fnc/base.yaml'

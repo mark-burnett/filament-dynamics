@@ -21,5 +21,6 @@ from tip_diffusion import *
 from individual_filaments import *
 from tip_state_autocorrelation import *
 from velocity_autocorrelation import *
+from pyrene import *
 
 del base_classes

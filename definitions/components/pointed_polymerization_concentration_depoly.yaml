@@ -5,25 +5,28 @@ models:
             class_name: PointedPolymerization
             fixed_arguments:
                 state: ATP
+                concentration_name: ATP
             variable_arguments:
+                concentration_threshold: depoly_threshold
                 rate: pointed_atp_polymerization_rate
-                disable_time: polymerization_duration
 
         pointed_adppi_polymerization:
             class_name: PointedPolymerization
             fixed_arguments:
                 state: ADPPi
+                concentration_name: ATP
             variable_arguments:
+                concentration_threshold: depoly_threshold
                 rate: pointed_adppi_polymerization_rate
-                disable_time: polymerization_duration
 
         pointed_adp_polymerization:
             class_name: PointedPolymerization
             fixed_arguments:
                 state: ADP
+                concentration_name: ATP
             variable_arguments:
+                concentration_threshold: depoly_threshold
                 rate: pointed_adp_polymerization_rate
-                disable_time: polymerization_duration
 
 
         # Depolymerization

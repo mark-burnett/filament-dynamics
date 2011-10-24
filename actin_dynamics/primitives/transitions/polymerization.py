@@ -31,14 +31,15 @@ class _FixedRate(_FilamentTransition):
         self.disable_time = float(disable_time)
 
         self.concentration_name = concentration_name
-        self.concentration_threshold = float(concentration_threshold)
+        if concentration_name:
+            self.concentration_threshold = float(concentration_threshold)
 
         _FilamentTransition.__init__(self, label=label)
 
     def R(self, time, filaments, concentrations):
         go_ahead = time < self.disable_time
         if self.concentration_name:
-            if (self.concentration_threshold <
+            if (self.concentration_threshold >
                     concentrations[self.concentration_name].value):
                 go_ahead = False
 
