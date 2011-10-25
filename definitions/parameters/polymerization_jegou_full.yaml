@@ -1,0 +1,12 @@
+global_parameters:
+    barbed_atp_polymerization_rate:    11.6
+    barbed_adppi_polymerization_rate:   3.4
+    barbed_adp_polymerization_rate:     2.9
+
+    barbed_atp_depolymerization_rate:   1.4
+    # ADP-Pi rate based on chromium-actin, we know Ca vs Mg matters
+    barbed_adppi_depolymerization_rate: 0.18
+    barbed_adp_depolymerization_rate:   5.8
+
+    barbed_tip_release_rate: 1.8
+    pointed_tip_release_rate: 0

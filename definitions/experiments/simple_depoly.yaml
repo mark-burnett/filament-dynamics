@@ -13,39 +13,39 @@ experiments:
 
             concentrations:
                 ATP:
-                    class_name: FixedReagent
+                    class_name: FixedConcentration
                     variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
+#                        filament_tip_concentration: filament_tip_concentration
+#                        number: number_of_filaments
                         sample_period: sample_period
-                        initial_concentration: initial_concentration
+                        concentration: initial_concentration
 
                 ADPPi:
-                    class_name: FixedReagent
+                    class_name: ZeroConcentration
                     variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
+#                        filament_tip_concentration: filament_tip_concentration
+#                        number: number_of_filaments
                         sample_period: sample_period
-                    fixed_arguments:
-                        initial_concentration: 0
+#                    fixed_arguments:
+#                        concentration: 0
 
                 ADP:
-                    class_name: FixedReagent
+                    class_name: ZeroConcentration
                     variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
+#                        filament_tip_concentration: filament_tip_concentration
+#                        number: number_of_filaments
                         sample_period: sample_period
-                    fixed_arguments:
-                        initial_concentration: 0
+#                    fixed_arguments:
+#                        concentration: 0
 
                 Pi:
-                    class_name: FixedReagent
+                    class_name: ZeroConcentration
                     variable_arguments:
-                        filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
+#                        filament_tip_concentration: filament_tip_concentration
+#                        number: number_of_filaments
                         sample_period: sample_period
-                    fixed_arguments:
-                        initial_concentration: 0
+#                    fixed_arguments:
+#                        concentration: 0
 
             end_conditions:
                 duration:

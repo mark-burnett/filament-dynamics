@@ -5,30 +5,35 @@ to code/configure:
         (done) disable transitions at concentration threshold
         (done) configuration files
         (done) run with flat pyrene coefs
-        floating fit (for chi^2 v rho curve)
+        (not now) floating fit (for chi^2 v rho curve)
             2 free parameters (* scale, + background) & time adjustment
+        
+        (not now) try it with 4 state random model?
+
+to explore:
+    make sure that large rho depoly timecourses look like vectorial
+    (not now) run pyrene depoly sim with large num filaments per sim
+        statistical spread may explain bulk depoly timecourse
 
 to run:
     fit melki rates for lots of cooperativities
+    fnc variation sims for a few rhos
+    depoly timecourse sims for (rho 1, 1000, vectorial) for both par sets
     copoly sims for power of 10 rhos
     pi variation sims for all rhos
-    fnc variation sims for a few rhos
-    depoly fit sims for all rhos
-    depoly timecourses for "best"/largest ok rho
+    tagged pi variation sims for (all) rhos
 
 to write:
-    revamp intro to start with fnc data from 86 and 2011 data
+    sections:
+        intro
+        analysis of past experiments
+        proposed experiments
+        conclusions/discussion
 
     extend results
     make sure global fit discussion says "bulk and single-filament data"
 
     everything else
-
-to misc:
-    extract data from carlier86 (just the two points)
-    extract data from 2011 paper
-        single filament
-        bulk pyrene
 
 [ --- First paper goals --- ]
 
@@ -80,12 +85,18 @@ pi variation
 [ --- Framework Thoughts --- ]
 
 Missing features:
-    nucleation, filament deletion, severing, and merging
-    multi-stage simulations
+    nucleation, filament deletion, severing, and annealing
+    "multi-stage" simulations
     derived parameters
     monitoring/completion estimates
     job continuation/extension (more stats or restarting)
         also easy additional analysis on previous sims
+
+Misc problems/thoughts:
+    it's probably reasonable to store much more data than I am now
+    visualization/analysis code is kind of terrible
+        perhaps it should be thought of as more ad hoc, with the core
+            framework only generating actually timecourses?
 
 Key components:
     - job control

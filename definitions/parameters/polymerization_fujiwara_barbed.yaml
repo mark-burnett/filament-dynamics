@@ -6,3 +6,5 @@ global_parameters:
     barbed_atp_depolymerization_rate:   1.4
     barbed_adppi_depolymerization_rate: 0.2
     barbed_adp_depolymerization_rate:   5.4
+
+    barbed_tip_release_rate: 2

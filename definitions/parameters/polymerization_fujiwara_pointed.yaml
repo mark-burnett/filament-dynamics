@@ -6,3 +6,5 @@ global_parameters:
     pointed_atp_depolymerization_rate:   0.8
     pointed_adppi_depolymerization_rate: 0.02
     pointed_adp_depolymerization_rate:   0.25
+
+    pointed_tip_release_rate: 0

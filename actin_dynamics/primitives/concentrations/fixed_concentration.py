@@ -20,7 +20,7 @@ class FixedConcentration(_Concentration):
     def __init__(self, concentration=-1, **kwargs):
         if concentration < 0:
             raise ValueError('Negative concentrations not allowed.')
-        self.value = concentration
+        self.value = float(concentration)
         _Concentration.__init__(self, **kwargs)
 
     def add_monomer(self, time):
@@ -31,9 +31,10 @@ class FixedConcentration(_Concentration):
 
 
 class ZeroConcentration(_Concentration):
-    __slots__ = ['value', 'data']
+    __slots__ = ['value', 'data', 'monomer_count']
     def __init__(self, **kwargs):
         self.value = 0
+        self.monomer_count = 0
         _Concentration.__init__(self, **kwargs)
 
     def add_monomer(self, time):
