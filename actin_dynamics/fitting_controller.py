@@ -190,17 +190,23 @@ class Population(object):
                     parent_parameter + delta)
         # Chance to use derivative to find next child
         elif r < (self.mutation_rate + self.spontaneous_rate + self.shooting_rate):
-            keep_trying = True
-            while keep_trying:
+            success = False
+            for i in xrange(100):
                 a, b = _choose_two(self._fitness_tuples, _weighted_choice)
                 a_fit, a_par = a[0], a[1]
                 b_fit, b_par = b[0], b[1]
                 try:
                     new_parameter = interpolation.simple_zero(a_par, a_fit,
                             b_par, b_fit)
-                    keep_trying = False
+                    success = True
+                    break
                 except:
                     pass
+            if not success:
+                a_par, b_par = self._select_two_parameters()
+                min_par = min(a_par, b_par)
+                max_par = max(a_par, b_par)
+                new_parameter = _random_value(min_par, max_par)
         # Chance to combine parents.
         else:
             a_par, b_par = self._select_two_parameters()
