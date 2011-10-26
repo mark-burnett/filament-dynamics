@@ -15,6 +15,10 @@
 
 import bisect
 
+def simple_zero(x1, y1, x2, y2):
+    z = x1 - (x2 - x1) / (y2 - y1) * y1
+    return z
+
 def interp1d(x_data, y_data):
     def inner(x):
         left = bisect.bisect_left(x_data, x)

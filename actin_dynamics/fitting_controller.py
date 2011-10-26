@@ -19,6 +19,7 @@ import random
 import time
 
 from actin_dynamics import database
+from actin_dynamics.numerical import interpolation
 
 from . import logger
 log = logger.getLogger(__file__)
@@ -83,8 +84,8 @@ class Population(object):
     def __init__(self, dbs, process=None, minimize=None,
             model=None, experiment=None, max_size=100,
             parameter_name=None, objective_name=None,
-            mutation_rate=0.1, spontaneous_rate=0.05,
-            mutation_scale=0.02, parameter_min=None, parameter_max=None):
+            mutation_rate=0.1, spontaneous_rate=0.05, shooting_rate=0.05,
+            mutation_scale=0.05, parameter_min=None, parameter_max=None):
         self.dbs = dbs
 
         self.model = model
@@ -98,6 +99,7 @@ class Population(object):
 
         self.mutation_rate = mutation_rate
         self.spontaneous_rate = spontaneous_rate
+        self.shooting_rate = shooting_rate
 
         self.mutation_scale = mutation_scale
 
@@ -186,6 +188,19 @@ class Population(object):
             delta = parent_parameter * self.mutation_scale
             new_parameter = _random_value(parent_parameter - delta,
                     parent_parameter + delta)
+        # Chance to use derivative to find next child
+        elif r < (self.mutation_rate + self.spontaneous_rate + self.shooting_rate):
+            keep_trying = True
+            while keep_trying:
+                a, b = _choose_two(self._fitness_tuples, _weighted_choice)
+                a_fit, a_par = a[0], a[1]
+                b_fit, b_par = b[0], b[1]
+                try:
+                    new_parameter = interpolation.simple_zero(a_par, a_fit,
+                            b_par, b_fit)
+                    keep_trying = False
+                except:
+                    pass
         # Chance to combine parents.
         else:
             a_par, b_par = self._select_two_parameters()
