@@ -203,10 +203,8 @@ class Population(object):
                 except:
                     pass
             if not success:
-                a_par, b_par = self._select_two_parameters()
-                min_par = min(a_par, b_par)
-                max_par = max(a_par, b_par)
-                new_parameter = _random_value(min_par, max_par)
+                new_parameter = _random_value(self.parameter_min,
+                        self.parameter_max)
         # Chance to combine parents.
         else:
             a_par, b_par = self._select_two_parameters()
