@@ -231,7 +231,7 @@ class SimpleFitController(object):
             initial_population_size=40, max_population_size=50,
             polling_period=5, minimize=True,
             min_iterations=2, max_iterations=100,
-            parameter_tolerance=0.001, fitness_tolerance=0.1):
+            fitness_tolerance=0.01):
 
         self.dbs = dbs
         self.session = session
@@ -263,7 +263,6 @@ class SimpleFitController(object):
 
         self.min_iterations = min_iterations
         self.max_iterations = max_iterations
-        self.parameter_tolerance = parameter_tolerance
         self.fitness_tolerance = fitness_tolerance
 
     def run(self):
@@ -321,9 +320,6 @@ class SimpleFitController(object):
                     best_fit)
 
             if previous_parameter is not None and previous_fit is not None:
-#                relative_parameter_change = abs(best_parameter - previous_parameter)
-#                relative_fit_change = abs(best_fit - previous_fit)
-#                if (relative_parameter_change < best_parameter * self.parameter_tolerance and
                 if (best_fit < self.fitness_tolerance and
                     iteration > self.min_iterations):
                     break
