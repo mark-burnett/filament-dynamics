@@ -5,7 +5,7 @@ import:
     # Parameters
     - 'parameters/melki_conditions.yaml'
     - 'parameters/first_paper.yaml'
-    - 'parameters/big_statistics.yaml'
+    - 'parameters/really_big_statistics.yaml'
 
 global_parameters:
     simulation_duration: 500.0

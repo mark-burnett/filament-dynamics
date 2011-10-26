@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-FRACTIONAL_DX = 0.01
+FRACTIONAL_DX = 0.001
 
 FILENAME_TEMPLATE = 'definitions/sensitivity/rho_%s.yaml'
 
