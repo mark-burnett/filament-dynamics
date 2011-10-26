@@ -84,8 +84,8 @@ class Population(object):
     def __init__(self, dbs, process=None, minimize=None,
             model=None, experiment=None, max_size=100,
             parameter_name=None, objective_name=None,
-            mutation_rate=0.1, spontaneous_rate=0.05, shooting_rate=0.05,
-            mutation_scale=0.05, parameter_min=None, parameter_max=None):
+            mutation_rate=0.2, spontaneous_rate=0.05, shooting_rate=0.05,
+            mutation_scale=0.02, parameter_min=None, parameter_max=None):
         self.dbs = dbs
 
         self.model = model
@@ -196,8 +196,22 @@ class Population(object):
                 a_fit, a_par = a[0], a[1]
                 b_fit, b_par = b[0], b[1]
                 try:
-                    new_parameter = interpolation.simple_zero(a_par, a_fit,
+                    suspected_zero = interpolation.simple_zero(a_par, a_fit,
                             b_par, b_fit)
+                    if suspected_zero < a_par < b_par:
+                        new_parameter = _random_value(suspected_zero, a_par)
+                    elif a_par < b_par <  suspected_zero:
+                        new_parameter = _random_value(b_par, suspected_zero)
+                    elif a_par < suspected_zero < b_par:
+                        new_parameter = suspected_zero
+                    elif suspected_zero < b_par < a_par:
+                        new_parameter = _random_value(suspected_zero, b_par)
+                    elif b_par < a_par <  suspected_zero:
+                        new_parameter = _random_value(a_par, suspected_zero)
+                    elif b_par <= suspected_zero <= a_par:
+                        new_parameter = suspected_zero
+                    else:
+                        raise RuntimeError('Impossible case.')
                     success = True
                     break
                 except:

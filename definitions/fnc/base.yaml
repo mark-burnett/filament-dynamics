@@ -12,7 +12,7 @@ experiments:
     fnc_exploration:
         parameters:
             simulation_duration: 500
-            sample_period: 0.5
+            sample_period: 0.1
 
 parameter_specifications:
     fnc_exploration:
