@@ -27,14 +27,14 @@ from plot_scripts import settings
 
 def main():
     melki_rate_plot()
-    melki_timecourses()
+#    melki_timecourses()
 
 
 def melki_rate_plot():
     results = data.load_data('results/melki_rates.dat')
-    cooperativities, rates, statistical_errors, mesh_errors, halftimes = results
+    cooperativities, rates, statistical_errors, halftimes, hte = results
 
-    total_errors = numpy.array(statistical_errors) + numpy.array(mesh_errors)
+    total_errors = numpy.array(statistical_errors)
 
     with contexts.basic_figure('plots/melki_rates.eps',
             x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
@@ -44,17 +44,21 @@ def melki_rate_plot():
                 total_errors, fmt='k.')
 #                , label='Simulation Result')
 
-        fit_x, fit_y, polynomial = rate_fit(cooperativities, rates, 2)
-        print polynomial
-        poly_label = make_poly_fit_label(polynomial)
-        contexts.plot(axes, 'plot', fit_x, fit_y, 'k-', label=poly_label)
+        cooperativities = numpy.array(cooperativities)
+        contexts.plot(axes, 'plot',
+                cooperativities, 1.0 / (388 * numpy.sqrt(cooperativities)),
+                'r-', linewidth=0.5)
+#        fit_x, fit_y, polynomial = rate_fit(cooperativities, rates, 2)
+#        print polynomial
+#        poly_label = make_poly_fit_label(polynomial)
+#        contexts.plot(axes, 'plot', fit_x, fit_y, 'k-', label=poly_label)
 
         axes.set_xlim([0.1, 10000000])
-        axes.set_ylim([1e-5, 0.01])
+#        axes.set_ylim([1e-5, 0.01])
 
         axes.set_xticks([1, 10, 100, 1000, 10000, 100000, 1000000])
 
-        axes.text(1, 4e-3, poly_label, fontsize=settings.SMALL_FONT_SIZE)
+#        axes.text(1, 4e-3, poly_label, fontsize=settings.SMALL_FONT_SIZE)
 
 #        contexts.add_legend(axes, loc='lower left', dashlength=0)
 

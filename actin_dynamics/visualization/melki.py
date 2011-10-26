@@ -76,9 +76,9 @@ def _calculate_crossing_fnc(fncs, fits):
 
 
 def single_fnc_save(session_ids, plot_cooperativities=[1, 1000, 1000000],
-        rate_filename='results/melki_rates.dat',
-        factin_timecourse_filename='results/melki_factin_timecourses.dat',
-        pi_timecourse_filename='results/melki_pi_timecourses.dat'):
+        rate_filename='results/melki_rates.dat'):
+#        factin_timecourse_filename='results/melki_factin_timecourses.dat',
+#        pi_timecourse_filename='results/melki_pi_timecourses.dat'):
     dbs = database.DBSession()
 
     sessions = [dbs.query(database.Session).get(sid) for sid in session_ids]
@@ -89,10 +89,33 @@ def single_fnc_save(session_ids, plot_cooperativities=[1, 1000, 1000000],
 
     rows = []
     for rho, session in zip(cooperativities, sessions):
-        half_value = session.parameters['initial_concentration'] / 2
-        row = rho, best_rate, statistical_error, mesh_error
+        sample_size = (session.parameters['number_of_simulations']
+                * session.parameters['number_of_filaments'])
+        fractional_error = 1 / numpy.sqrt(sample_size)
+
+        best_run = None
+        best_fit = None
+        for run in session.experiments[0].runs:
+            run_fit = run.get_objective('pi_fit')
+            if run_fit is None:
+                continue
+            if not best_run or best_fit > run.get_objective('pi_fit'):
+                best_run = run
+                best_fit = run.get_objective('pi_fit')
+        best_rate = best_run.parameters['release_rate']
+        statistical_error = best_rate * fractional_error
+        row = (rho, best_rate, statistical_error,
+                best_run.get_objective('halftime'),
+                best_run.get_objective('halftime_error'))
         rows.append(row)
 
+    _small_writer(rate_filename, rows,
+            ['release_cooperativity', 'release_rate', 'naive statistical error',
+                'halftime', 'halftime_error'])
+#            zip(cooperativities, rates, statistical_errors, mesh_errors, halftimes),
+#            ('release_cooperativity', 'release_rate', 'statistical_error', 'mesh_error', 'halftime'),
+#            header='# Filament Number Concentration: %s\n#    FNC Statistical Error: %s\n#    FNC Mesh Error: %s\n'
+#            % (best_fnc, fractional_error * best_fnc, fnc_step_size / 2))
 
 
 def save(session_ids, plot_cooperativities=[1, 1000, 1000000],
