@@ -15,6 +15,9 @@
 
 from base_classes import FilamentTransition as _FilamentTransition
 
+from actin_dynamics import logger as _logger
+_log = _logger.getLogger(__file__)
+
 class _FixedRate(_FilamentTransition):
     skip_registration = True
     __slots__ = ['rate', 'state', 'disable_time',
@@ -38,10 +41,10 @@ class _FixedRate(_FilamentTransition):
 
     def R(self, time, filaments, concentrations):
         go_ahead = time < self.disable_time
-        if self.concentration_name:
-            if (self.concentration_threshold >
-                    concentrations[self.concentration_name].value):
-                go_ahead = False
+#        if self.concentration_name:
+#            if (self.concentration_threshold >
+#                    concentrations[self.concentration_name].value):
+#                go_ahead = False
 
         if go_ahead:
             value = self.rate * concentrations[self.state].value
@@ -50,10 +53,13 @@ class _FixedRate(_FilamentTransition):
                 if filament.states:
                     result.append(value)
                 else:
+#                    _log.warn('adding zero poly rate @ %s', time)
                     result.append(0)
-                return result
+            return result
         else:
-            return [0 for s in filaments]
+#            _log.warn('*ALL* zeros for poly @ %s', time)
+            value = 0
+            return [value for s in filaments]
 
     def perform(self, time, filaments, concentrations, index, r):
         _FilamentTransition.perform(self, time, filaments, concentrations, index, r)

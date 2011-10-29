@@ -41,11 +41,13 @@ class _FixedRate(_FilamentTransition):
         _FilamentTransition.__init__(self, label=label)
 
     def R(self, time, filaments, concentrations):
+#        return [self.rate for f in filaments]
+
         go_ahead = time < self.disable_time
-        if self.concentration_name:
-            if (self.concentration_threshold >
-                    concentrations[self.concentration_name].value):
-                go_ahead = False
+#        if self.concentration_name:
+#            if (self.concentration_threshold >
+#                    concentrations[self.concentration_name].value):
+#                go_ahead = False
 
         if go_ahead:
             result = []

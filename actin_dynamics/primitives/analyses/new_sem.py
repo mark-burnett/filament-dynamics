@@ -70,7 +70,8 @@ class StandardErrorMean(_base_classes.Analysis):
                                         -self.subtract)
                                     for am in added_measurements]
         sample_times = numpy.arange(0, self.stop_time, self.sample_period)
-        results = [interpolation.resample_measurement(sm, sample_times)
+        results = [interpolation.resample_measurement(sm, sample_times,
+            method='previous_value')
                 for sm in subtracted_measurements]
         return results
 
@@ -99,7 +100,8 @@ class StandardErrorMean(_base_classes.Analysis):
                                             -self.subtract)
                                         for am in added_measurements]
 
-            results = [interpolation.resample_measurement(sm, sample_times)
+            results = [interpolation.resample_measurement(sm, sample_times,
+                method='previous_value')
                     for sm in subtracted_measurements]
             result_bundle.append(results)
 

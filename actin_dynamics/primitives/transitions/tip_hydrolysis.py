@@ -35,8 +35,6 @@ class EndHydrolysis(_FilamentTransition):
             else:
                 results.append(0)
         return results
-#        num_filaments = sum(self.old_state == f[self.index] for f in filaments)
-#        return [self.rate * num_filaments]
 
     def perform(self, time, filaments, concentrations, filament_index, r):
         current_filament = filaments[filament_index]

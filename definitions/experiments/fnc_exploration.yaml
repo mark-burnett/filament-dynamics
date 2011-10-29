@@ -62,6 +62,12 @@ experiments:
                     variable_arguments:
                         value: initial_concentration
 
+#                adppi_decreasing:
+#                    class_name: FilamentMeasurementDecreasing
+#                    fixed_arguments:
+#                        measurement_name: ADPPi
+#                        decreased_by: 0.1
+
 
             measurements:
                 length:
@@ -69,38 +75,24 @@ experiments:
                     variable_arguments:
                         sample_period: sample_period
 
-#                ATP:
-#                    class_name: StateCount
-#                    fixed_arguments:
-#                        state: ATP
-#                    variable_arguments:
-#                        sample_period: sample_period
-#
-#                ADPPi:
-#                    class_name: StateCount
-#                    fixed_arguments:
-#                        state: ADPPi
-#                    variable_arguments:
-#                        sample_period: sample_period
-#
-#                ADP:
-#                    class_name: StateCount
-#                    fixed_arguments:
-#                        state: ADP
-#                    variable_arguments:
-#                        sample_period: sample_period
+                ADPPi:
+                    class_name: StateCount
+                    fixed_arguments:
+                        state: ADPPi
+                    variable_arguments:
+                        sample_period: sample_period
 
             
         analyses:
-            length:
-                class_name: StandardErrorMean
-                variable_arguments:
-                    sample_period: sample_period
-                    stop_time:     simulation_duration
-                fixed_arguments:
-                    interpolation_method: previous_value
-                    measurement_name: length
-                    measurement_type: filament
+#            length:
+#                class_name: StandardErrorMean
+#                variable_arguments:
+#                    sample_period: sample_period
+#                    stop_time:     simulation_duration
+#                fixed_arguments:
+#                    interpolation_method: previous_value
+#                    measurement_name: length
+#                    measurement_type: filament
 
             Pi:
                 class_name: StandardErrorMean
@@ -112,40 +104,37 @@ experiments:
                     measurement_name: Pi
                     measurement_type: concentration
 
-#            ATP:
-#                class_name: StandardErrorMean
-#                variable_arguments:
-#                    sample_period: sample_period
-#                    stop_time:     simulation_duration
-#                fixed_arguments:
-#                    interpolation_method: previous_value
-#                    measurement_name: ATP
-#                    measurement_type: filament
-#
-#            ADPPi:
-#                class_name: StandardErrorMean
-#                variable_arguments:
-#                    sample_period: sample_period
-#                    stop_time:     simulation_duration
-#                fixed_arguments:
-#                    interpolation_method: previous_value
-#                    measurement_name: ADPPi
-#                    measurement_type: filament
-#
-#            ADP:
-#                class_name: StandardErrorMean
-#                variable_arguments:
-#                    sample_period: sample_period
-#                    stop_time:     simulation_duration
-#                fixed_arguments:
-#                    interpolation_method: previous_value
-#                    measurement_name: ADP
-#                    measurement_type: filament
+            ADPPi:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: ADPPi
+                    measurement_type: filament
 
         objectives:
             executors:
+                adppi_peak_time:
+                    class_name: PeakTime
+                    fixed_arguments:
+                        analysis_name: ADPPi
+
+                adppi_peak_value:
+                    class_name: PeakValue
+                    fixed_arguments:
+                        analysis_name: ADPPi
+
                 halftime:
                     class_name: HalfTime
+                    variable_arguments:
+                        base_value: initial_concentration
+                    fixed_arguments:
+                        analysis_name: Pi
+
+                halftime_error:
+                    class_name: HalfTimeError
                     variable_arguments:
                         base_value: initial_concentration
                     fixed_arguments:

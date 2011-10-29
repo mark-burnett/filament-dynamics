@@ -116,6 +116,17 @@ class PeakTime(base_classes.Objective):
         max_index = values.index(max_value)
         target.value = times[max_index]
 
+class PeakValue(base_classes.Objective):
+    def __init__(self, analysis_name=None, *args, **kwargs):
+        self.analysis_name = analysis_name
+        base_classes.Objective.__init__(self, *args, **kwargs)
+
+    def perform(self, run, target):
+        times, values, errors = run.analyses[self.analysis_name]
+
+        max_value = max(values)
+        target.value = max_value
+
 
 class FitTau(base_classes.Objective):
     def __init__(self, analysis_name=None, start_time=None, *args, **kwargs):
