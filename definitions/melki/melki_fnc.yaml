@@ -1,0 +1,21 @@
+name: 'Melki FNC Fit (random)'
+
+import:
+    - 'experiments/melki_fievez_carlier_1996.yaml'
+    - 'parameters/melki_conditions.yaml'
+    - 'parameters/first_paper.yaml'
+    - 'parameters/medium_statistics.yaml'
+    - 'random_random_model.yaml'
+    - 'fit_rates/rho_1.yaml'
+
+global_parameters:
+    simulation_duration: 500.0
+
+    sample_period: 0.1
+
+parameter_specifications:
+    melki_fievez_carlier_1996:
+        simulation:
+            filament_tip_concentration:
+                lower_bound: 0.001
+                upper_bound: 0.002
