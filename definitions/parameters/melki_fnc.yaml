@@ -2,5 +2,8 @@ global_parameters:
 #    filament_tip_concentration: 0.0018
 #    filament_tip_concentration: 0.00176
 
-#   fit from 10/11 to only random data
-    filament_tip_concentration: 0.00158
+#   fit from 10/11 to only random model
+#    filament_tip_concentration: 0.00158
+
+#   fit from 10/30/2011 to random model (with tip release)
+    filament_tip_concentration: 0.00193
