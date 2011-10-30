@@ -29,15 +29,19 @@ logger = logging.getLogger()
 def main(session_filename, objective_name, polling_period):
     db_session = database.DBSession()
     with job_control.process('controller', db_session) as process:
-        session, par_spec = factories.controllers.load_complete_session(
-            db_session, session_filename)
+        try:
+            session, par_spec = factories.controllers.load_complete_session(
+                db_session, session_filename)
 
-        par_name, par_min, par_max = _par_from_spec(par_spec)
+            par_name, par_min, par_max = _par_from_spec(par_spec)
 
-        c = fitting_controller.SimpleFitController(db_session, session,
-                objective_name, par_name, par_min, par_max, process,
-                polling_period=polling_period)
-        c.run()
+            c = fitting_controller.SimpleFitController(db_session, session,
+                    objective_name, par_name, par_min, par_max, process,
+                    polling_period=polling_period)
+            c.run()
+        except:
+            logger.exception('Exception in controller main.')
+            raise
 
 
 def _par_from_spec(par_spec):
@@ -54,8 +58,4 @@ if '__main__' == __name__:
     namespace = command_line_parsers.fitting_process()
     ini_parsers.full_config(namespace.config)
 
-    try:
-        main(namespace.session, namespace.objective, namespace.polling_period)
-    except:
-        logger.exception('Exception in controller main.')
-        raise
+    main(namespace.session, namespace.objective, namespace.polling_period)
