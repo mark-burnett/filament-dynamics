@@ -192,6 +192,8 @@ class Population(object):
         elif r < (self.mutation_rate + self.spontaneous_rate + self.shooting_rate):
             success = False
             for i in xrange(100):
+                if len(self._fitness_tuples) < 2:
+                    break
                 a, b = _choose_two(self._fitness_tuples, _weighted_choice)
                 a_fit, a_par = a[0], a[1]
                 b_fit, b_par = b[0], b[1]
@@ -221,10 +223,14 @@ class Population(object):
                         self.parameter_max)
         # Chance to combine parents.
         else:
-            a_par, b_par = self._select_two_parameters()
-            min_par = min(a_par, b_par)
-            max_par = max(a_par, b_par)
-            new_parameter = _random_value(min_par, max_par)
+            if len(self._fitness_tuples) < 2:
+                new_parameter = _random_value(self.parameter_min,
+                        self.parameter_max)
+            else:
+                a_par, b_par = self._select_two_parameters()
+                min_par = min(a_par, b_par)
+                max_par = max(a_par, b_par)
+                new_parameter = _random_value(min_par, max_par)
 
         return new_parameter
 
