@@ -402,7 +402,7 @@ def _weighted_choice(sequence, width=None):
     front of the list.
     """
     if not width:
-        width = float(len(sequence))/2
+        width = float(len(sequence))/4
     j = len(sequence)
     while j >= len(sequence):
         j = abs(int(random.normalvariate(0, width)))

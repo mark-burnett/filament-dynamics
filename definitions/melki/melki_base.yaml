@@ -5,11 +5,15 @@ import:
     # Parameters
     - 'parameters/melki_conditions.yaml'
     - 'parameters/first_paper.yaml'
-    - 'parameters/big_statistics.yaml'
+#    - 'parameters/big_statistics.yaml'
+    - 'parameters/medium_statistics.yaml'
 #    - 'parameters/small_statistics.yaml'
 
 
 global_parameters:
+#    number_of_simulations: 10
+#    number_of_filaments: 1
+
     simulation_duration: 500.0
 
     sample_period: 0.1
