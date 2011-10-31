@@ -1,0 +1,18 @@
+
+name: 'Halftime Sensitivity, rho_c = 200.0'
+
+import:
+    - 'sensitivity/base.yaml'
+    - 'random_cooperative_model.yaml'
+
+global_parameters:
+    release_cooperativity: 200.0
+
+parameter_specifications:
+    halftime_sensitivity:
+        simulation:
+            release_rate:
+                lower_bound: 0.000231573195
+                upper_bound: 0.000232036805
+                mesh_type:   linear
+                num_points:  3
