@@ -1,3 +1,3 @@
 global_parameters:
-    release_cooperativity: 500
-    release_rate: 0.000149883
+    release_cooperativity: 500.0
+    release_rate: 0.000148792
