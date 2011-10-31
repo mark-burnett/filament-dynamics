@@ -1,6 +1,6 @@
 import:
     # Experiment
-    - 'experiments/adp_copoly.yaml'
+    - 'experiments/nh_copoly.yaml'
 
     # Parameters
     - 'parameters/melki_conditions.yaml'
@@ -10,11 +10,11 @@ import:
 experiments:
     adp_copoly:
         parameters:
-            simulation_duration: 500
-            sample_period: 0.1
+            simulation_duration: 20000
+            sample_period: 0.5
 
 parameter_specifications:
-    adp_copoly:
+    nh_copoly:
         simulation:
             fraction_adp:
                 lower_bound: 0.001

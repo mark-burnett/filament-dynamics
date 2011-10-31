@@ -1,0 +1,6 @@
+name: 'NH Copoly, rho_c = 100'
+
+import:
+    - 'nh_copoly/base.yaml'
+    - 'random_cooperative_model.yaml'
+    - 'fit_rates/rho_100.yaml'

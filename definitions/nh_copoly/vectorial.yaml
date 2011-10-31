@@ -1,0 +1,4 @@
+import:
+    - 'nh_copoly/base.yaml'
+    - 'random_vectorial_model.yaml'
+    - 'fit_rates/vectorial.yaml'
