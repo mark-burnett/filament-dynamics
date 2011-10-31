@@ -24,42 +24,69 @@ from plot_scripts import settings
 THIN_LINE = 0.1
 
 def main():
-    depoly_timecourse()
+    random_vectorial_timecourse()
+    cooperative_timecourse()
 
-def depoly_timecourse():
-    fuji_results = data.load_data('results/depolymerization_timecourses.dat')
-#    fuji_results = data.load_data('results/depoly_tc_fuji_pars.dat')
-#    jegou_results = data.load_data('results/depoly_tc_jegou_pars.dat')
+def random_vectorial_timecourse():
+    random_results = data.load_data('results/depoly_timecourse_random.dat')
+    vectorial_results = data.load_data('results/depoly_timecourse_vectorial.dat')
 
     expt = data.load_data(
             'experimental_data/jegou_2011/sample_filament_timecourse.dat')
 
-    ftimes, fvalues = numpy.array(fuji_results[0]), fuji_results[1:]
-#    jtimes, jvalues = numpy.array(jegou_results[0]), jegou_results[1:]
+    rtimes, rvalues = numpy.array(random_results[0]), random_results[1:]
+    vtimes, vvalues = numpy.array(vectorial_results[0]), vectorial_results[1:]
+
     etimes, evals = numpy.array(expt[0]), expt[1]
 
-    ftimes -= 300
-#    jtimes -= 300
+    rtimes -= 300
+    vtimes -= 300
 
-    with contexts.basic_figure('plots/depoly_timecourse.eps',
+    with contexts.basic_figure('plots/depoly_rv_timecourses.eps',
             x_label='Time [s]',
             y_label=r'Filament Length [$\mu$m]') as axes:
-        for y in fvalues:
+        for y in rvalues:
             y = numpy.array(y)
             y *= 0.0027
-            contexts.plot(axes, 'plot', ftimes, y, '-', color='#FFA0A0',
+            contexts.plot(axes, 'plot', rtimes, y, '-', color='#FFA0A0',
                     linewidth=THIN_LINE)
 
-#        for y in jvalues:
-#            y = numpy.array(y)
-#            y *= 0.0027
-#            contexts.plot(axes, 'plot', jtimes, y, '-', color='blue',
-##                    color='#FF8080',
-#                    linewidth=THIN_LINE)
+        for y in vvalues:
+            y = numpy.array(y)
+            y *= 0.0027
+            contexts.plot(axes, 'plot', vtimes, y, '-', color='#A0A0FF',
+                    linewidth=THIN_LINE)
 
         contexts.plot(axes, 'plot', etimes, evals, 'k', linewidth=0.7)
         axes.set_ylim(0, 15)
         axes.set_xlim(0, 1000)
+
+
+def cooperative_timecourse():
+    random_results = data.load_data('results/depoly_timecourse_rho_200000.dat')
+
+    expt = data.load_data(
+            'experimental_data/jegou_2011/sample_filament_timecourse.dat')
+
+    rtimes, rvalues = numpy.array(random_results[0]), random_results[1:]
+
+    etimes, evals = numpy.array(expt[0]), expt[1]
+
+    rtimes -= 300
+
+    with contexts.basic_figure('plots/depoly_coop_timecourses.eps',
+            x_label='Time [s]',
+            y_label=r'Filament Length [$\mu$m]') as axes:
+        for y in rvalues:
+            y = numpy.array(y)
+            y *= 0.0027
+            contexts.plot(axes, 'plot', rtimes, y, '-', color='#80FF80',
+                    linewidth=THIN_LINE)
+
+        contexts.plot(axes, 'plot', etimes, evals, 'k', linewidth=0.7)
+        axes.set_ylim(0, 15)
+        axes.set_xlim(0, 1000)
+
 
 if '__main__' == __name__:
     main()
