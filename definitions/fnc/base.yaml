@@ -3,15 +3,14 @@ import:
     - 'experiments/fnc_exploration.yaml'
 
     # Parameters
-#    - 'parameters/melki_conditions.yaml'
     - 'parameters/carlier86_conditions.yaml'
     - 'parameters/first_paper.yaml'
-    - 'parameters/big_statistics.yaml'
+    - 'parameters/medium_statistics.yaml'
 
 experiments:
     fnc_exploration:
         parameters:
-            simulation_duration: 500
+            simulation_duration: 1200
             sample_period: 0.1
 
 parameter_specifications:

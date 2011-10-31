@@ -6,10 +6,12 @@ import:
     - 'parameters/melki_conditions.yaml'
     - 'parameters/melki_fnc.yaml'
     - 'parameters/first_paper.yaml'
-    - 'parameters/medium_statistics.yaml'
 
 
 global_parameters:
+    number_of_simulations: 20
+    number_of_filaments: 1
+
     simulation_duration: 2500.1
 
     sample_period: 0.1
