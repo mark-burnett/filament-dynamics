@@ -4,8 +4,11 @@ import:
 
     # Parameters
     - 'parameters/melki_conditions.yaml'
+    - 'parameters/melki_fnc.yaml'
     - 'parameters/first_paper.yaml'
-    - 'parameters/medium_statistics.yaml'
+    - 'parameters/tip_release_rate.yaml'
+#    - 'parameters/small_statistics.yaml'
+#    - 'parameters/medium_statistics.yaml'
 
 experiments:
     adp_copoly:
@@ -13,11 +16,14 @@ experiments:
             simulation_duration: 500
             sample_period: 0.1
 
+            number_of_simulations: 50
+            number_of_filaments: 1
+
 parameter_specifications:
     adp_copoly:
         simulation:
             fraction_adp:
-                lower_bound: 0.001
-                upper_bound: 0.1
+                lower_bound: 0.005
+                upper_bound: 0.5
                 mesh_type: log
                 num_points: 21

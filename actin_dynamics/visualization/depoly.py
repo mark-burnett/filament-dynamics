@@ -30,6 +30,40 @@ def bulk(session_id, output_filename='results/pyrene_timecourse.dat',
     _small_writer(output_filename, results, ['times', analysis_name])
 
 
+def fit(session_id, fit_output='results/depoly_fit.dat',
+        timecourse_output='results/depoly_timecourse.dat'):
+    dbs = database.DBSession()
+    session = dbs.query(database.Session).get(session_id)
+
+    best_fit = 99999999
+    best_rate = None
+    best_run = None
+
+    tip_rates = []
+    fits = []
+    for run in session.experiments[0].runs:
+        rate = run.parameters['barbed_tip_release_rate']
+        fit = run.get_objective('length_fit')
+        if fit is not None:
+            tip_rates.append(rate)
+            fits.append(fit)
+            if fit < best_fit:
+                best_fit = fit
+                best_run = run
+                best_rate = rate
+
+    tip_rates, fits = zip(*sorted(zip(tip_rates, fits)))
+
+    _small_writer(fit_output, zip(tip_rates, fits), ['tip rate', 'fit'])
+
+    length = run.analyses['length']
+
+    _small_writer(timecourse_output, zip(*length),
+            ['time (s)', 'filament length (monomers)', 'error (incorrect)'],
+            header='# Tip release rate: %s\n' % best_rate)
+
+
+
 def save(session_id,
         output_filename='results/depolymerization_timecourses.dat'):
     dbs = database.DBSession()

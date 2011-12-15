@@ -1,3 +1,5 @@
+name: 'ADP Copoly, vectorial'
+
 import:
     - 'adp_copoly/base.yaml'
     - 'random_vectorial_model.yaml'

@@ -108,8 +108,18 @@ def asymptotic_plot(figure):
 
 
 
-def halftime_plot(figure):
-    pass
+def halftime_plot(figure, data_filename='results/halftime_v_rho.dat'):
+    results = data.load_data(data_filename)
+    pis, halftimes = results[0], results[1:]
+    pis = numpy.array(pis) / 1000.0
+
+    with contexts.subplot(figure, (2, 2, 3), title='B',
+            x_label=r'Pi Concentration [mM]',
+            y_label=r'[Pi] Halftime [s]',
+            logscale_x=True, logscale_y=True) as axes:
+        for ht in halftimes:
+            contexts.plot(axes, 'plot', pis, ht)
+        axes.set_xlim(0, 2000)
 
 
 def cooperativity_plot(figure):

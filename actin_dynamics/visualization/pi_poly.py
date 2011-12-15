@@ -41,14 +41,16 @@ def timecourse(db_session, session_id, experiment_index=0, run_index=0,
 
     pi_data = run.analyses['Pi']
 
-    adppi_bulk_data = run.analyses['ADPPi_bulk']
-    scaled_adppi_bulk_data = measurements.scale(adppi_bulk_data, ftc)
+# XXX Need to add this in
+#    adppi_bulk_data = run.analyses['ADPPi_tagged']
+#    scaled_adppi_bulk_data = measurements.scale(adppi_bulk_data, ftc)
 
     adppi_data = run.analyses['ADPPi']
     scaled_adppi_data = measurements.scale(adppi_data, ftc)
 
-    full_adppi_data = measurements.add([scaled_adppi_data,
-        scaled_adppi_bulk_data])
+#    full_adppi_data = measurements.add([scaled_adppi_data,
+#        scaled_adppi_bulk_data])
+    full_adppi_data = scaled_adppi_data
 
     # File output columns are "time [factin] (error) [pi] (error)"
     combined_data = _combine_timecourse_data(factin_data, full_adppi_data,
@@ -67,10 +69,16 @@ def _combine_timecourse_data(*timecourses):
 
     return zip(times, *results)
 
+def save_all(ids):
+    dbs = database.DBSession()
+    asymptotic_adppi_v_pi(dbs, ids)
+    rho_v_pi(dbs, ids)
+    halftime_v_rho(dbs, ids)
 
 def asymptotic_adppi_v_pi(db_session, ids,
         filename='results/asymptotic_adppi_v_pi.dat'):
     collate.collate_asymptotic_adppi(db_session, ids, filename)
+
 
 def rho_v_pi(db_session, ids, filename='results/rho_v_pi.dat'):
     results = collate.collate_asymptotic_adppi(db_session, ids)
@@ -106,7 +114,7 @@ def _half_concentrations(base_results, value=0.5):
     for cid, fracs in zip(column_ids, fractions):
         # Find surrounding indices -> interpolate (log-linear)
         i = bisect.bisect_left(fracs, value)
-        if i >= len(fracs):
+        if i+1 >= len(fracs):
             continue
         log_hc = linear_project(numpy.log(fracs[i]), numpy.log(concentrations[i]),
                 numpy.log(fracs[i+1]), numpy.log(concentrations[i+1]),

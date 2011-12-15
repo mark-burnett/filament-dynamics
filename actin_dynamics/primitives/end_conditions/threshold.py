@@ -32,3 +32,26 @@ class Threshold(_EndCondition):
 
     def __call__(self, time, filaments, concentrations):
         return concentrations[self.concentration_name].value > self.value
+
+class FilamentMeasurementDecreasing(_EndCondition):
+    def __init__(self, measurement_name=None, decreased_by=0.1, label=None):
+        self.measurement_name = measurement_name
+        self.decreased_by = float(decreased_by)
+        self.peak_value = 0
+        self.threshold = 0
+
+        _EndCondition.__init__(self, label=label)
+
+    def reset(self):
+        pass
+
+    def __call__(self, time, filaments, concentrations):
+        current_value = 0
+        for filament in filaments:
+            current_value += filament['measurements'][self.measurement_name]
+        if current_value > self.peak_value:
+            self.peak_value = current_value
+            self.threshold = current_value * (1 - self.decreased_by)
+        elif current_value < self.threshold:
+            return True
+        return False

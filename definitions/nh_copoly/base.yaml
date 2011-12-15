@@ -1,23 +1,31 @@
 import:
     # Experiment
     - 'experiments/nh_copoly.yaml'
+    - 'components/nh_barbed_polymerization.yaml'
+    - 'components/nh_pointed_polymerization.yaml'
 
     # Parameters
     - 'parameters/melki_conditions.yaml'
+    - 'parameters/melki_fnc.yaml'
     - 'parameters/first_paper.yaml'
-    - 'parameters/medium_statistics.yaml'
+    - 'parameters/tip_release_rate.yaml'
+#    - 'parameters/small_statistics.yaml'
+#    - 'parameters/medium_statistics.yaml'
 
 experiments:
-    adp_copoly:
+    nh_copoly:
         parameters:
-            simulation_duration: 20000
-            sample_period: 0.5
+            simulation_duration: 1000000
+            sample_period: 10
+
+            number_of_simulations: 50
+            number_of_filaments: 1
 
 parameter_specifications:
     nh_copoly:
         simulation:
-            fraction_adp:
-                lower_bound: 0.001
-                upper_bound: 0.1
+            fraction_nh_atp:
+                lower_bound: 0.005
+                upper_bound: 0.5
                 mesh_type: log
                 num_points: 21

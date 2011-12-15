@@ -22,22 +22,25 @@ from actin_dynamics.io import data
 from plot_scripts import contexts
 from plot_scripts import settings
 
-LINETYPES = ['r', 'g', 'c', 'b', 'm', 'y', 'k']
+LINETYPES = ['k', 'r', 'g', 'c', 'b', 'm', 'y']
 
 X_LABEL_MARGIN = -0.1
 X_LABEL_PADDING = 0.075
 
-TIMECOURSE_HALFTIME = 406
-HT_ARROW_X_OFFSET = 5
+TIMECOURSE_HALFTIME = 388
+HT_ARROW_X_OFFSET = 25
 
 INCREASING_RHO_TEXT = r'''increasing
 $\rho_d$'''
 
 def main(filename='plots/copoly_results.eps'):
+#    copoly_adp_only(filename)
+#    copoly_halftime_plot(filename)
     with contexts.complex_figure(filename,
             height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2) as figure:
         copoly_timecourse_plot(figure)
-        copoly_halftime_plot(figure)
+        copoly_adp_only(figure)
+#        copoly_halftime_plot(figure)
 
 def copoly_timecourse_plot(figure, xmax=1000, ymax=35):
     timecourses = data.load_data('results/copoly_timecourse.dat')
@@ -59,7 +62,8 @@ def copoly_timecourse_plot(figure, xmax=1000, ymax=35):
                 linestyle=':', linewidth=0.5, color='k')
 
         # Halftime label with arrow
-        axes.annotate('halftime', xy=(TIMECOURSE_HALFTIME, 0.05),
+#        axes.annotate('halftime', xy=(TIMECOURSE_HALFTIME, 0.05),
+        axes.annotate(r'$t_{\frac{1}{2}}$', xy=(TIMECOURSE_HALFTIME, 0.05),
                 xytext=(TIMECOURSE_HALFTIME + 200, 5),
                 arrowprops={'facecolor': 'black',
                     'arrowstyle': '->'},
@@ -73,22 +77,60 @@ def copoly_timecourse_plot(figure, xmax=1000, ymax=35):
                 horizontalalignment='right', verticalalignment='bottom',
                 size=settings.SMALL_FONT_SIZE)
 
-def copoly_halftime_plot(figure):
+def copoly_adp_only(figure):
+    adp_halftimes = data.load_data('results/adp_copoly_halftimes.dat')
+    adp_v_halftimes = data.load_data('results/adp_copoly_halftimes_vectorial.dat')
+
+    fractions, halftimes = adp_halftimes[0], adp_halftimes[1:]
+    v_fractions, v_halftimes = adp_v_halftimes[0], adp_v_halftimes[1]
+
+    with contexts.subplot(figure, (2, 1, 2), title='B',
+            y_label=r'[Pi] Halftime [s]',
+            x_label=r'% ADP-actin') as axes:
+        for ht, lt, in zip(halftimes, LINETYPES):
+            contexts.plot(axes, 'plot', fractions, ht, lt)
+
+        contexts.plot(axes, 'plot', v_fractions, v_halftimes, 'k-')
+
+        new_x_tick_labels = [0, 10, 20, 30, 40, 50]
+
+        axes.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5])
+        axes.set_xticklabels(new_x_tick_labels)
+
+        axes.set_ylim(0, 450)
+
+
+#def copoly_halftime_plot(figure):
+def copoly_halftime_plot(filename):
     adp_halftimes = data.load_data('results/adp_copoly_halftimes.dat')
     nh_halftimes = data.load_data('results/nh_copoly_halftimes.dat')
 
-    fractions, combined_data = _combine_data(adp_halftimes, nh_halftimes)
+    adp_v_halftimes = data.load_data('results/adp_copoly_halftimes_vectorial.dat')
+    nh_v_halftimes = data.load_data('results/nh_copoly_halftimes_vectorial.dat')
 
-    with contexts.subplot(figure, (2, 1, 2), title='B',
+    fractions, combined_data = _combine_data(adp_halftimes, nh_halftimes)
+    vfractions, vcombined_data = _combine_data(adp_v_halftimes, nh_v_halftimes)
+
+
+    with contexts.basic_figure(filename,
             y_label=r'Halftime [s]',
             logscale_y=True) as axes:
         for local_data, lt, in zip(combined_data, LINETYPES):
             contexts.plot(axes, 'plot', fractions, local_data, lt)
 
-        new_x_tick_labels = [10, 5, 0, 5, 10]
+        for vld in vcombined_data:
+            contexts.plot(axes, 'plot', vfractions, vld, 'k-')
 
-        axes.set_xticks([-10, -5, 0, 5, 10])
+#        new_x_tick_labels = [10, 5, 0, 5, 10]
+#
+#        axes.set_xticks([-10, -5, 0, 5, 10])
+
+        new_x_tick_labels = [50, 40, 30, 20, 10, 0, 10]
+
+        axes.set_xticks([-50, -40, -30, -20, -10, 0, 10])
         axes.set_xticklabels(new_x_tick_labels)
+
+        axes.set_ylim(10, 10**5)
 
         axes.text(X_LABEL_PADDING, X_LABEL_MARGIN, 'ADP-actin [%]',
                 verticalalignment='top', horizontalalignment='left',

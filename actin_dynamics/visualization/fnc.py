@@ -21,19 +21,43 @@ import numpy
 from actin_dynamics import database
 from actin_dynamics.io import data
 
-def vectorial(session_id):
-    single(session_id, output_filename='results/vectorial_fnc_halftimes.dat')
+def all(cooperative_session_ids, vectorial_session_id):
+    multiple(cooperative_session_ids, objective_name='halftime',
+            output_filename='results/fnc_pi_halftimes_cooperative.dat')
+    single(vectorial_session_id, objective_name='halftime',
+            output_filename='results/fnc_pi_halftimes_vectorial.dat')
 
-def single(session_id, output_filename='results/single_fnc_halftimes.dat'):
+    multiple(cooperative_session_ids, objective_name='factin_halftime',
+            output_filename='results/fnc_f_halftimes_cooperative.dat')
+    single(vectorial_session_id, objective_name='factin_halftime',
+            output_filename='results/fnc_f_halftimes_vectorial.dat')
+
+#    multiple(cooperative_session_ids, objective_name='adppi_peak_time',
+#            output_filename='results/fnc_adppi_peak_times_cooperative.dat')
+#    single(vectorial_session_id, objective_name='adppi_peak_time',
+#            output_filename='results/fnc_adppi_peak_times_vectorial.dat')
+#
+#    multiple(cooperative_session_ids, objective_name='adppi_peak_value',
+#            output_filename='results/fnc_adppi_peak_values_cooperative.dat')
+#    single(vectorial_session_id, objective_name='adppi_peak_value',
+#            output_filename='results/fnc_adppi_peak_values_vectorial.dat')
+
+def vectorial(session_id):
+    single(session_id, output_filename='results/fnc_halftimes_vectorial.dat')
+
+def single(session_id, objective_name='halftime',
+        output_filename='results/fnc_halftimes.dat'):
     dbs = database.DBSession()
     session = dbs.query(database.Session).get(session_id)
 
-    results = _get_single_halftimes(session,
-            concentration_name='filament_tip_concentration')
+    results = _get_objective_v_concentration(session,
+            concentration_name='filament_tip_concentration',
+            objective_name=objective_name)
 
     _small_writer(output_filename, results, ['fnc', 'halftime'])
 
-def multiple(session_ids, output_filename='results/fnc_halftimes.dat'):
+def multiple(session_ids, objective_name='halftime',
+        output_filename='results/fnc_halftimes_cooperative.dat'):
     dbs = database.DBSession()
     cooperativities = []
     results = []
@@ -43,25 +67,26 @@ def multiple(session_ids, output_filename='results/fnc_halftimes.dat'):
 
         cooperativities.append(session.experiments[0]
                 .all_parameters['release_cooperativity'])
-        fnc_plus_results = _get_single_halftimes(session,
-            concentration_name='filament_tip_concentration')
+        fnc_plus_results = _get_objective_v_concentration(session,
+            concentration_name='filament_tip_concentration',
+            objective_name=objective_name)
         fncs, c_results = zip(*fnc_plus_results)
         results.append(c_results)
     results = numpy.array(results).transpose()
     rows = _create_rows(fncs, results)
 
     _write_results(output_filename, rows,
-            'FNC', 'Halftime', 'Release Cooperativity',
+            'FNC', objective_name, 'Release Cooperativity',
             cooperativities)
 
 
-def _get_single_halftimes(session, concentration_name):
+def _get_objective_v_concentration(session, concentration_name, objective_name='halftime'):
     e = session.experiments[0]
     concentrations = []
     values = []
     for run in e.runs:
         c = run.parameters[concentration_name]
-        v = run.objectives[0].value
+        v = run.get_objective(objective_name)
         concentrations.append(c)
         values.append(v)
     return sorted(zip(concentrations, values))

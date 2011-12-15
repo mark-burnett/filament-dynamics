@@ -7,4 +7,4 @@ models:
             fixed_arguments:
                 old_state: ADPPi_tagged
                 new_state: ADP
-                byproduct: Pi
+                byproduct: Pi_tagged

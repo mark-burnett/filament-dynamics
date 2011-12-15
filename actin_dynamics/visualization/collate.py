@@ -20,10 +20,16 @@ from actin_dynamics.io import data
 
 
 def collate_asymptotic_adppi(db_session, ids, filename=None,
-        x_name = 'initial_pi_concentration', y_name = 'asymptotic_adppi',
+        x_name = 'initial_pi_concentration',
+        y_name = 'asymptotic_adppi',
+        add_y='asymptotic_tagged_adppi',
         column_name='release_cooperativity', experiment_index=0):
     results = _simple_collate(db_session, ids, x_name, y_name,
             column_name, experiment_index)
+    if add_y:
+        tagged_results = _simple_collate(db_session, ids, x_name,
+                add_y, column_name, experiment_index)
+        results = _add_collated_results(results, tagged_results)
 
     # scale results (* ftc / total f-actin)
     ftc = _get_ftc(db_session, ids, experiment_index)
@@ -170,3 +176,14 @@ def _scale_results(results, factor):
             scaled_rows.append(scaled_row)
 
     return column_ids, scaled_rows
+
+def _add_collated_results(results, tagged_results):
+    column_ids, rows = results
+    tcids, t_rows = tagged_results
+    total_rows = []
+    for row, trow in zip(rows, t_rows):
+        if None not in row and None not in trow:
+            total_row = ([row[0]]
+                    + [r + t for r, t in zip(row[1:], trow[1:])])
+            total_rows.append(total_row)
+    return column_ids, total_rows

@@ -1,0 +1,6 @@
+name: 'Pi Poly, rho_d = 10000'
+
+import:
+    - 'tagged_pi_poly/base.yaml'
+    - 'tagged_random_cooperative_model.yaml'
+    - 'fit_rates/rho_10000.yaml'

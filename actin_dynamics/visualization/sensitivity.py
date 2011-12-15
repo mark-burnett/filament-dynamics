@@ -18,7 +18,7 @@ import csv
 from actin_dynamics import database
 from actin_dynamics.io import data
 
-def save(session_ids, output_filename='results/sensitivities.dat'):
+def save(session_ids, output_filename='results/melki_rate_sensitivities.dat'):
     dbs = database.DBSession()
     rows = []
     for session_id in session_ids:
@@ -34,10 +34,10 @@ def save(session_ids, output_filename='results/sensitivities.dat'):
         rows.append([cooperativity, rate, total_rate_error,
             halftime, halftime_error, low_sens, high_sens, sensitivity])
 
-    _small_writer(output_filename, rows,
+    _small_writer(output_filename, sorted(rows),
             ['release_cooperativity', 'release_rate', 'release rate error',
                 'halftime', 'halftime error',
-                'low sens', 'high sens' 'average sensitivity'])
+                'low sens', 'high sens', 'average sensitivity'])
 
 
 
@@ -47,7 +47,7 @@ def calculate(session, parameter_name='release_rate',
 
     us_parameters = [r.parameters[parameter_name] for r in runs]
     us_objectives = [r.get_objective(objective_name) for r in runs]
-    us_errors = [r.get_error(error_name) for r in runs]
+    us_errors = [r.get_objective(error_name) for r in runs]
 
     parameters, objectives, errors = zip(*sorted(
         zip(us_parameters, us_objectives, us_errors)))
@@ -62,10 +62,11 @@ def calculate(session, parameter_name='release_rate',
     low_obj = (objectives[0] - base_obj)
     high_obj = (objectives[2] - base_obj)
 
-    low_sense = low_obj / low_par
-    high_sense = high_obj / high_par
+    low_sense = abs(low_obj / low_par)
+    high_sense = abs(high_obj / high_par)
 
-    return base_par, base_obj, base_error, low_sense, high_sense, (low_sense + high_sense) / 2
+    return (base_par, base_obj, base_error, low_sense, high_sense,
+        (low_sense + high_sense) / 2)
 
 
 def _small_writer(filename, results, names, header=None):

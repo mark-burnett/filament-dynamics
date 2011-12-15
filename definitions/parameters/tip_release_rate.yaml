@@ -1,6 +1,6 @@
 global_parameters:
     # Value of 2 taken from Fujiwara 2007 (their lower limit)
     # Jegou/Carlier 2011 reports 1.8
-#    barbed_tip_release_rate: 2
-    barbed_tip_release_rate: 1.8
+    barbed_tip_release_rate: 2
+#    barbed_tip_release_rate: 1.8
     pointed_tip_release_rate: 0

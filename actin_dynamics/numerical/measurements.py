@@ -22,6 +22,14 @@ import numpy
 
 from actin_dynamics.numerical import workalike
 
+def skip_beginning(measurement, skip_time):
+    sliced_measurement = time_slice(measurement, start_time=skip_time)
+    length = len(sliced_measurement[0])
+    original_times = measurement[0]
+    times = original_times[0:length]
+    final_measurement = [times] + sliced_measurement[1:]
+    return final_measurement
+
 
 def time_slice(measurement, start_time=None, stop_time=None):
     start_index = 0

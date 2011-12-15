@@ -15,14 +15,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-for FILE in configuration/adp_nh_poly/adp_fixed_0_rho_r_*.yaml; do
+for FILE in definitions/adp_copoly/rho_*.yaml; do
     ./sim.sh -n 0 -l -s $FILE
     sleep 2
 done
 
-sleep 5
+./sim.sh -n 0 -l -s definitions/adp_copoly/vectorial.yaml
 
-for FILE in configuration/adp_nh_poly/nh_fixed_0_rho_r_*.yaml; do
-    ./sim.sh -n 0 -l -s $FILE
-    sleep 2
-done
+#sleep 5
+
+#for FILE in definitions/nh_copoly/rho_*.yaml; do
+#    ./sim.sh -n 0 -l -s $FILE
+#    sleep 2
+#done
+
+#./sim.sh -n 0 -l -s definitions/nh_copoly/vectorial.yaml

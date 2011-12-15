@@ -26,20 +26,24 @@ from plot_scripts import contexts
 from plot_scripts import settings
 
 def main():
-    melki_rate_plot()
-    melki_rate_error_plot()
+    with contexts.complex_figure('plots/melki_rates_combined.eps',
+            width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
+            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2) as figure:
+        melki_rate_plot(figure)
+        melki_rate_error_plot(figure)
     melki_timecourses()
 
 
-def melki_rate_plot():
+def melki_rate_plot(figure):
     results = data.load_data('results/melki_rates.dat')
 #    results = data.load_data('results/melki_rate_sensitivities.dat')
 #    cooperativities, rates, statistical_errors, halftimes, hte = results
 #    cooperativities, rates, errors = results[:3]
     cooperativities, rates = results[:2]
 
-    with contexts.basic_figure('plots/melki_rates.eps',
-            x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
+#    with contexts.basic_figure('plots/melki_rates.eps',
+    with contexts.subplot(figure, (2, 1, 1), title='A',
+#            x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
             y_label=r'Pi Dissociation Rate, $r_d$ [$s^{-1}$]',
             logscale_x=True, logscale_y=True) as axes:
         contexts.plot(axes, 'plot', cooperativities, rates, 'k.')
@@ -55,7 +59,7 @@ def melki_rate_plot():
 
         axes.set_xticks([1, 10, 100, 1000, 10000, 100000, 1000000])
 
-def melki_rate_error_plot():
+def melki_rate_error_plot(figure):
     results = data.load_data('results/melki_rate_sensitivities.dat')
     cooperativities, rates, errors = results[:3]
 
@@ -63,9 +67,10 @@ def melki_rate_error_plot():
     rates = numpy.array(rates) / theoretical_rates
     errors = numpy.array(errors) / theoretical_rates
 
-    with contexts.basic_figure('plots/melki_rate_errors.eps',
+#    with contexts.basic_figure('plots/melki_rate_errors.eps',
+    with contexts.subplot(figure, (2, 1, 2), title='B',
             x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
-            y_label=r'Normalized Pi Dissociation Rate [$s^{-1}$]',
+            y_label=r'Theoretical Fraction',
             logscale_x=True,
 #            logscale_y=True
             ) as axes:
@@ -93,7 +98,8 @@ def melki_timecourses():
     fd_cdot, fd_f = f_data
     pd_cdot, pd_p = p_data
 
-    scaled_pd_p = _scale_data_to(pd_p, 30)
+#    scaled_pd_p = _scale_data_to(pd_p, 30)
+    scaled_pd_p = pd_p
 
     with contexts.basic_figure('plots/melki_timecourses.eps',
             x_label=r'Time [s]',

@@ -1,0 +1,33 @@
+name: 'Carlier 86 random timecourse, fnc = 1.1 nM'
+#name: 'Carlier 86 random timecourse, fnc = 20 nM'
+
+import:
+    - 'experiments/carlier_86.yaml'
+
+    - 'parameters/carlier86_conditions.yaml'
+    - 'parameters/first_paper.yaml'
+    - 'parameters/small_statistics.yaml'
+    - 'parameters/tip_release_rate.yaml'
+
+
+    - 'random_cooperative_model.yaml'
+
+    - 'fit_rates/rho_1.yaml'
+
+experiments:
+    carlier_86:
+        parameters:
+            simulation_duration: 2100.1
+            sample_period: 5
+
+            filament_tip_concentration: 0.0011
+#            filament_tip_concentration: 0.020
+
+parameter_specifications:
+    carlier_86:
+        simulation:
+            dummy_parameter:
+                lower_bound: 1
+                upper_bound: 1
+                num_points: 1
+                mesh_type: linear

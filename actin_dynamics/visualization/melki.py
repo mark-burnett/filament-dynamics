@@ -22,6 +22,55 @@ import numpy
 from actin_dynamics import database
 from actin_dynamics.io import data
 
+
+def save_timecourses(session_ids,
+        factin_filename='results/melki_factin_timecourses.dat',
+        pi_filename='results/melki_pi_timecourses.dat'):
+    dbs = database.DBSession()
+    sessions = [dbs.query(database.Session).get(sid) for sid in session_ids]
+    cooperativities = [s.parameters['release_cooperativity'] for s in sessions]
+    cooperativities, sessions = zip(*sorted(zip(cooperativities, sessions)))
+
+    times = None
+    factin_values = []
+    pi_values = []
+    for session in sessions:
+        run = session.experiments[0].runs[0]
+
+        times, fvals, ferrors = run.analyses['factin']
+        times, pvals, perrors = run.analyses['Pi']
+
+        factin_values.append(fvals)
+        pi_values.append(pvals)
+
+    factin_rows = zip(*([times] + factin_values))
+    pi_rows = zip(*([times] + pi_values))
+
+    _write_results(factin_filename, factin_rows, 'Time (s)', 'F-actin (uM)',
+            'Release Cooperativitiy', cooperativities)
+
+    _write_results(pi_filename, pi_rows, 'Time (s)', '[Pi] (uM)',
+            'Release Cooperativitiy', cooperativities)
+
+
+def save_timecourse(run, analyses=['factin', 'Pi'],
+        output_filename='results/timecourses.dat'):
+    times = None
+    values = []
+    for a in analyses:
+        times, avals, aerrors = run.analyses[a]
+        values.append(avals)
+
+    rows = []
+    for i, t in enumerate(times):
+        row = [t]
+        for v in values:
+            row.append(v[i])
+        rows.append(row)
+
+    _small_writer(output_filename, rows, analyses)
+
+
 def extract_best_fnc(session_id):
     fncs, fits = _extract_fnc_fits(session_id)
     return fncs, fits
@@ -74,6 +123,62 @@ def _get_fnc_mesh(experiment):
 def _calculate_crossing_fnc(fncs, fits):
     pass
 
+def ht_v_fil(session_id, output_filename='results/ht_v_numfil.dat'):
+    dbs = database.DBSession()
+    session = dbs.query(database.Session).get(session_id)
+    rows = []
+    for run in session.experiments[0].runs:
+        numfils = run.all_parameters['number_of_filaments']
+        halftime = run.get_objective('halftime')
+        row = numfils, halftime
+        rows.append(row)
+
+    _small_writer(output_filename, sorted(rows),
+            ['release rate', 'pi halftime'])
+
+def save_fits(session_id, output_filename='results/sample_rates.dat',
+        objective_name='pi_fit', parameter_name='release_rate'):
+    dbs = database.DBSession()
+    session = dbs.query(database.Session).get(session_id)
+
+    rows = []
+    for run in session.experiments[0].runs:
+        rate = run.parameters[parameter_name]
+        fit = run.get_objective(objective_name)
+        halftime = run.get_objective('halftime')
+        halftime_error = run.get_objective('halftime_error')
+        if fit is not None:
+            rows.append((rate, fit, halftime, halftime_error))
+    _small_writer(output_filename, sorted(rows),
+            [parameter_name, objective_name, 'pi halftime', 'pi halftime error'])
+
+def vectorial_save(session_id, rate_filename='results/melki_vectorial_rate.dat'):
+    dbs = database.DBSession()
+    session = dbs.query(database.Session).get(session_id)
+
+    sample_size = (session.parameters['number_of_simulations']
+            * session.parameters['number_of_filaments'])
+    fractional_error = 1 / numpy.sqrt(sample_size)
+
+    best_run = None
+    best_fit = None
+    for run in session.experiments[0].runs:
+        run_fit = run.get_objective('pi_fit')
+        if run_fit is None:
+            continue
+        if not best_run or best_fit > run.get_objective('pi_fit'):
+            best_run = run
+            best_fit = run.get_objective('pi_fit')
+
+    best_rate = best_run.parameters['release_rate']
+    statistical_error = best_rate * fractional_error
+    row = ('Inf', best_rate, statistical_error,
+            best_run.get_objective('halftime'),
+            best_run.get_objective('halftime_error'))
+
+    _small_writer(rate_filename, [row],
+            ['rho', 'release_rate', 'naive statistical error',
+                'halftime', 'halftime_error'])
 
 def single_fnc_save(session_ids, plot_cooperativities=[1, 1000, 1000000],
         rate_filename='results/melki_rates.dat'):
@@ -252,7 +357,10 @@ def _write_results(filename, rows, x_name, y_name, column_name, column_ids):
         f.write('# x: %s\n' % x_name)
         f.write('# y: %s\n' % y_name)
         f.write('# columns: %s\n' % column_name)
-        f.write('#     %s\n\n' % column_ids)
+#        f.write('#     %s\n\n' % column_ids)
+        f.write('#     ')
+        f.write(str(column_ids))
+        f.write('\n\n')
         # CSV dump of actual data
         w = csv.writer(f, dialect=data.DatDialect)
         w.writerows(rows)

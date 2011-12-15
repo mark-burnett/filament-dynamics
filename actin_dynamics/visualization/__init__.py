@@ -36,3 +36,7 @@ from . import short_time
 from . import fnc
 
 from . import depoly
+
+from . import sensitivity
+
+from . import carlier

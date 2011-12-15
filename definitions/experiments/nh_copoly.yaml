@@ -1,5 +1,5 @@
 experiments:
-    adp_nh_poly:
+    nh_copoly:
         simulation:
             filaments:
                 filament_factory:
@@ -110,6 +110,18 @@ experiments:
 
             
         analyses:
+            factin:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
+                    scale_by:      filament_tip_concentration
+                    subtract:      seed_concentration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: length
+                    measurement_type: filament
+
             length:
                 class_name: StandardErrorMean
                 variable_arguments:
@@ -179,3 +191,10 @@ experiments:
                         subtract_fraction: fraction_nh_atp
                     fixed_arguments:
                         analysis_name: Pi
+
+                factin_halftime:
+                    class_name: HalfTime
+                    variable_arguments:
+                        base_value: initial_concentration
+                    fixed_arguments:
+                        analysis_name: factin

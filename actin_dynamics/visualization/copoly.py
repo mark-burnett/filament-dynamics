@@ -48,27 +48,81 @@ def save_timecourse(session_id, experiment_index=0, run_index=0,
             ['[F-actin]', '[F-actin] error', '[Pi]', '[Pi] error'])
 
 
-def save_halftimes(adp_session_id, nh_session_id,
-#        cooperativities=[1, 10, 100, 1000, 10000, 100000, 1000000],
+def save_halftimes(adp_session_ids, nh_session_ids,
+        adp_vectorial_session_id, nh_vectorial_session_id,
         adp_halftime_filename='results/adp_copoly_halftimes.dat',
-        nh_halftime_filename='results/nh_copoly_halftimes.dat'):
+        nh_halftime_filename='results/nh_copoly_halftimes.dat',
+        adp_vectorial_filename='results/adp_copoly_halftimes_vectorial.dat',
+        nh_vectorial_filename='results/nh_copoly_halftimes_vectorial.dat'):
+
+    _save_halftimes(adp_session_ids, fraction_name='fraction_adp',
+            output_filename=adp_halftime_filename)
+    _save_halftimes(nh_session_ids, fraction_name='fraction_nh_atp',
+            output_filename=nh_halftime_filename)
+
+    _save_vectorial(adp_vectorial_session_id, fraction_name='fraction_adp',
+            output_filename=adp_vectorial_filename)
+    _save_vectorial(nh_vectorial_session_id, fraction_name='fraction_nh_atp',
+            output_filename=nh_vectorial_filename)
+
+def _save_vectorial(session_id, halftime_name='halftime', fraction_name=None,
+        output_filename=None):
     dbs = database.DBSession()
-    adp_session = dbs.query(database.Session).get(adp_session_id)
-    nh_session = dbs.query(database.Session).get(nh_session_id)
+    session = dbs.query(database.Session).get(session_id)
 
-    frac_adp_mesh, adp_cooperativities, adp_halftime_results = _get_halftimes(
-            adp_session, concentration_name='fraction_adp')
-    frac_nh_mesh, nh_cooperativities, nh_halftime_results = _get_halftimes(
-            nh_session, concentration_name='fraction_nh_atp')
+    fractions, halftimes = _get_halftimes(session, halftime_name=halftime_name,
+            fraction_name=fraction_name)
 
-    _write_results(adp_halftime_filename,
-            _create_rows(frac_adp_mesh, adp_halftime_results),
-            'ADP Fraction', 'Halftime', 'Release Cooperativity',
-            adp_cooperativities)
-    _write_results(nh_halftime_filename,
-            _create_rows(frac_nh_mesh, nh_halftime_results),
-            'NH Fraction', 'Halftime', 'Release Cooperativity',
-            nh_cooperativities)
+    rows = zip(fractions, halftimes)
+
+    _small_writer(output_filename, rows, [fraction_name, 'pi halftime'])
+
+def _small_writer(filename, results, names, header=None):
+    with open(filename, 'w') as f:
+        # Header lines, identifying x, y, column name
+        f.write('# Auto-collated output:\n')
+        if header:
+            f.write(header)
+        for i, name in enumerate(names):
+            f.write('# Column %i: %s\n' % ((i + 1), name))
+        # CSV dump of actual data
+        w = csv.writer(f, dialect=data.DatDialect)
+        w.writerows(results)
+
+
+def _save_halftimes(session_ids, fraction_name=None, output_filename=None):
+    dbs = database.DBSession()
+
+    fractions = None
+    cooperativities = []
+    halftimes = []
+    for session_id in session_ids:
+        session = dbs.query(database.Session).get(session_id)
+        fractions, session_halftimes = _get_halftimes(session,
+                fraction_name=fraction_name)
+
+        cooperativities.append(session.parameters['release_cooperativity'])
+        halftimes.append(session_halftimes)
+
+    cooperativities, halftimes = zip(*sorted(zip(cooperativities, halftimes)))
+
+    rows = zip(*([fractions] + list(halftimes)))
+
+    _write_results(output_filename, rows,
+            fraction_name, 'Halftime', 'Release Cooperativity',
+            cooperativities)
+
+
+def _get_halftimes(session, fraction_name=None, halftime_name='halftime'):
+    experiment = session.experiments[0]
+    fractions = []
+    halftimes = []
+    for run in experiment.runs:
+        fractions.append(run.parameters[fraction_name])
+        halftimes.append(run.get_objective(halftime_name))
+
+    fractions, halftimes = zip(*sorted(zip(fractions, halftimes)))
+    return fractions, halftimes
 
 
 def _combine_timecourse_data(*timecourses):
@@ -80,35 +134,7 @@ def _combine_timecourse_data(*timecourses):
     return zip(times, *results)
 
 
-def _get_halftimes(session, cooperativity_name='release_cooperativity',
-        concentration_name=None):
-    # extract meshes
-    cooperativities = set()
-    concentrations = set()
-    e = session.experiments[0]
-    for run in e.runs:
-        cooperativities.add(run.parameters[cooperativity_name])
-        concentrations.add(run.parameters[concentration_name])
-    cooperativity_mesh = sorted(list(cooperativities))
-    concentration_mesh = sorted(list(concentrations))
-
-    results = - numpy.ones((len(concentration_mesh), len(cooperativity_mesh)))
-
-    ob = e.objectives['halftime']
-    for o in ob.objectives:
-        conc_i = bisect.bisect_left(concentration_mesh,
-                o.run.parameters[concentration_name])
-        coop_i = bisect.bisect_left(cooperativity_mesh,
-                o.run.parameters[cooperativity_name])
-        results[conc_i, coop_i] = o.value
-
-    return concentration_mesh, cooperativity_mesh, results
-
 def _create_rows(parameters, values):
-#    parameters = numpy.transpose(numpy.array(parameters))
-#    values = numpy.transpose(values)
-#    print parameters
-#    print values
     return numpy.insert(values, 0, parameters, axis=1)
 
 def _write_results(filename, rows, x_name, y_name, column_name, column_ids):
@@ -118,7 +144,7 @@ def _write_results(filename, rows, x_name, y_name, column_name, column_ids):
         f.write('# x: %s\n' % x_name)
         f.write('# y: %s\n' % y_name)
         f.write('# columns: %s\n' % column_name)
-        f.write('#     %s\n\n' % column_ids)
+        f.write('#     %s\n\n' % str(column_ids))
         # CSV dump of actual data
         w = csv.writer(f, dialect=data.DatDialect)
         w.writerows(rows)

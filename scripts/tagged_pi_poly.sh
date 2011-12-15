@@ -21,6 +21,7 @@
 #./sim.sh -n 0 -l -s configuration/pi_poly/pi_poly_rho_r_1000.yaml
 #./sim.sh -n 0 -l -s configuration/pi_poly/pi_poly_rho_r_10000.yaml
 
-for FILE in configuration/pi_poly/pi_poly_rho_r_*.yaml; do
+for FILE in definitions/tagged_pi_poly/rho_*.yaml; do
     ./sim.sh -n 0 -l -s $FILE
+    sleep 2
 done
