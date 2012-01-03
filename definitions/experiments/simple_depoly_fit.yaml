@@ -1,0 +1,93 @@
+experiments:
+    simple_depoly:
+        simulation:
+            filaments:
+                filament_factory:
+                    class_name: SingleStateFixedLengthFromConcentrations
+                    variable_arguments:
+                        number: number_of_filaments
+                        concentration: seed_concentration
+                        filament_tip_concentration: filament_tip_concentration
+                    fixed_arguments:
+                        state: ADP
+
+            concentrations:
+                ATP:
+                    class_name: FixedConcentration
+                    variable_arguments:
+#                        filament_tip_concentration: filament_tip_concentration
+#                        number: number_of_filaments
+                        sample_period: sample_period
+                        concentration: initial_concentration
+
+                ADPPi:
+                    class_name: ZeroConcentration
+                    variable_arguments:
+#                        filament_tip_concentration: filament_tip_concentration
+#                        number: number_of_filaments
+                        sample_period: sample_period
+#                    fixed_arguments:
+#                        concentration: 0
+
+                ADP:
+                    class_name: ZeroConcentration
+                    variable_arguments:
+#                        filament_tip_concentration: filament_tip_concentration
+#                        number: number_of_filaments
+                        sample_period: sample_period
+#                    fixed_arguments:
+#                        concentration: 0
+
+                Pi:
+                    class_name: ZeroConcentration
+                    variable_arguments:
+#                        filament_tip_concentration: filament_tip_concentration
+#                        number: number_of_filaments
+                        sample_period: sample_period
+#                    fixed_arguments:
+#                        concentration: 0
+
+            end_conditions:
+                duration:
+                    class_name: Duration
+                    variable_arguments:
+                        duration: simulation_duration
+
+
+            measurements:
+                length:
+                    class_name: Length
+                    variable_arguments:
+                        sample_period: sample_period
+
+        analyses:
+            length:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: length
+                    measurement_type: filament
+
+        objectives:
+            loaders:
+                length_fit:
+                    class_name: DatReader
+                    variable_arguments:
+                        sample_period: sample_period
+                    fixed_arguments:
+                        xmin: 0
+                        xmax: 1000
+                        filename: 'jegou_2011/sample_filament_timecourse.dat'
+                        interpolate_data: True
+
+            executors:
+                length_fit:
+                    class_name: SimpleDataFit
+                    fixed_arguments:
+                        measurement:   length
+                        scale_simulation_by: 0.0027
+                        residual_type: naked_chi_squared
+                        skip_beginning: 300

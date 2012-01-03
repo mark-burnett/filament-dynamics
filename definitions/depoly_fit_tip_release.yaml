@@ -1,0 +1,31 @@
+name: Depoly Fit to tip release rate
+
+import:
+    - 'experiments/simple_depoly_fit.yaml'
+    - 'random_cooperative_model_depoly.yaml'
+#    - 'random_vectorial_model_depoly.yaml'
+
+    # Parameters
+    - 'parameters/jegou_2011_conditions.yaml'
+    - 'parameters/first_paper.yaml'
+
+    - 'fit_rates/rho_1.yaml'
+#    - 'fit_rates/rho_200000.yaml'
+#    - 'fit_rates/vectorial.yaml'
+
+experiments:
+    simple_depoly:
+        parameters:
+            simulation_duration: 1300.1
+            polymerization_duration: 300
+            sample_period: 1
+
+            number_of_simulations: 10
+            number_of_filaments: 1
+
+parameter_specifications:
+    simple_depoly:
+        simulation:
+            barbed_tip_release_rate:
+                lower_bound: 2
+                upper_bound: 10

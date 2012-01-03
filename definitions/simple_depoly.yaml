@@ -1,19 +1,21 @@
 #name: Jegou Depolymerization Timecourse, rho = 1 (super fast tip release)
-#name: Jegou Depolymerization Timecourse, rho = 200000 (no tip)
-name: Jegou Depolymerization Timecourse, vectorial (no tip)
+name: Jegou Depolymerization Timecourse, rho = 1 (Rate 0.0076)
+#name: Jegou Depolymerization Timecourse, rho = 200000
+#name: Jegou Depolymerization Timecourse, vectorial (no tip)
 
 import:
     - 'experiments/simple_depoly.yaml'
-#    - 'random_cooperative_model_depoly.yaml'
-    - 'random_vectorial_model_depoly.yaml'
+    - 'random_cooperative_model_depoly.yaml'
+#    - 'random_vectorial_model_depoly.yaml'
 
     # Parameters
     - 'parameters/jegou_2011_conditions.yaml'
     - 'parameters/first_paper.yaml'
+    - 'parameters/tip_release_rate.yaml'
 
 #    - 'fit_rates/rho_1.yaml'
 #    - 'fit_rates/rho_200000.yaml'
-    - 'fit_rates/vectorial.yaml'
+#    - 'fit_rates/vectorial.yaml'
 
 experiments:
     simple_depoly:
@@ -23,17 +25,20 @@ experiments:
             sample_period: 1
 
             number_of_simulations: 1
-            number_of_filaments: 1
+            number_of_filaments: 10
+            
+            release_cooperativity: 1
+            release_rate: 0.0076
 
 #            barbed_tip_release_rate: 7.12529
-            barbed_tip_release_rate: 0
-            pointed_tip_release_rate: 0
+#            barbed_tip_release_rate: 0
+#            pointed_tip_release_rate: 0
 
 parameter_specifications:
     simple_depoly:
         simulation:
             dummy_parameter:
                 lower_bound: 1
-                upper_bound: 10
+                upper_bound: 1
                 mesh_type: linear
-                num_points: 10
+                num_points: 1

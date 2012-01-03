@@ -32,10 +32,10 @@ def main(filename='plots/pi_saturation.eps'):
 #            height=settings.DOUBLE_COLUMN_DEFAULT_HEIGHT_CM
             width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2,
             height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2) as figure:
-        timecourse_plot(figure)
-        asymptotic_plot(figure)
+#        timecourse_plot(figure)
+#        asymptotic_plot(figure)
         halftime_plot(figure)
-        cooperativity_plot(figure)
+#        cooperativity_plot(figure)
 
 
 # XXX convert to minutes
@@ -113,13 +113,15 @@ def halftime_plot(figure, data_filename='results/halftime_v_rho.dat'):
     pis, halftimes = results[0], results[1:]
     pis = numpy.array(pis) / 1000.0
 
-    with contexts.subplot(figure, (2, 2, 3), title='B',
+#    with contexts.subplot(figure, (2, 2, 3), title='B',
+    with contexts.subplot(figure, (1, 1, 1), #title='B',
             x_label=r'Pi Concentration [mM]',
             y_label=r'[Pi] Halftime [s]',
             logscale_x=True, logscale_y=True) as axes:
         for ht in halftimes:
             contexts.plot(axes, 'plot', pis, ht)
-        axes.set_xlim(0, 2000)
+        axes.set_xlim(0, 1000)
+        axes.set_ylim(0, 3000)
 
 
 def cooperativity_plot(figure):

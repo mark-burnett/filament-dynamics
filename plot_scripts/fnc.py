@@ -45,7 +45,7 @@ def main(filename='plots/fnc_lagtimes.eps'):
 #                cooperative_filename='results/fnc_adppi_peak_values_cooperative.dat',
 #                vectorial_filename='results/fnc_adppi_peak_values_vectorial.dat')
 
-def fnc_zoomed_out(figure, y_label='Renormalized [Pi] Lag Time [AU]',
+def fnc_zoomed_out(figure, y_label='Scaled [Pi] Lag Time [AU]',
         pi_cooperative_filename='results/fnc_pi_halftimes_cooperative.dat',
         pi_vectorial_filename='results/fnc_pi_halftimes_vectorial.dat',
         f_cooperative_filename='results/fnc_f_halftimes_cooperative.dat',
@@ -70,6 +70,8 @@ def fnc_zoomed_out(figure, y_label='Renormalized [Pi] Lag Time [AU]',
     f_v_fncs, f_v_halftimes = f_v_results[0], f_v_results[1]
 
     fncs = numpy.array(fncs) * 1000
+    tfncs = numpy.linspace(1.1, 20, 20)
+    theory = 20 / tfncs
 
     v_lagtimes = numpy.array(pi_v_halftimes) - numpy.array(f_v_halftimes)
     scaled_v_lagtimes = _rescale_by_final_value(v_lagtimes)
@@ -88,6 +90,8 @@ def fnc_zoomed_out(figure, y_label='Renormalized [Pi] Lag Time [AU]',
 
         contexts.plot(axes, 'plot', rescaled_lagtime_data[0],
                 rescaled_lagtime_data[1], 'ok')
+
+        contexts.plot(axes, 'plot', tfncs, theory, 'g-.', linewidth=0.5)
 
         x_ticks = [1.1, 5, 10, 15, 20]
         axes.set_xticks(x_ticks)

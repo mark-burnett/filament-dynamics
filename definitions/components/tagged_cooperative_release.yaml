@@ -1,0 +1,22 @@
+models:
+    transitions:
+        tagged_random_release:
+            class_name: RandomHydrolysisWithByproduct
+            fixed_arguments:
+                old_state: ADPPi_tagged
+                new_state: ADP
+                byproduct: Pi_tagged
+            variable_arguments:
+                rate: release_rate
+
+        tagged_vectorial_release:
+            class_name: VectorialHydrolysisWithByproduct
+            fixed_arguments:
+                pointed_neighbor: ADP
+                old_state: ADPPi_tagged
+                new_state: ADP
+                byproduct: Pi_tagged
+                subtract_cooperativity: 1
+            variable_arguments:
+                base_rate: release_rate
+                cooperativity: release_cooperativity

@@ -1,0 +1,20 @@
+models:
+    transitions:
+        random_conformational_change:
+            class_name: RandomHydrolysis
+            fixed_arguments:
+                old_state: ADP
+                new_state: slow_ADP
+            variable_arguments:
+                rate: random_slow_rate
+
+        vectorial_conformational_change:
+            class_name: VectorialHydrolysisWithByproduct
+            fixed_arguments:
+                pointed_neighbor: slow_ADP
+                old_state: ADP
+                new_state: slow_ADP
+                subtract_cooperativity: 1
+            variable_arguments:
+                base_rate: random_slow_rate
+                cooperativity: slow_cooperativity

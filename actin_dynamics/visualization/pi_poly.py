@@ -42,15 +42,15 @@ def timecourse(db_session, session_id, experiment_index=0, run_index=0,
     pi_data = run.analyses['Pi']
 
 # XXX Need to add this in
-#    adppi_bulk_data = run.analyses['ADPPi_tagged']
-#    scaled_adppi_bulk_data = measurements.scale(adppi_bulk_data, ftc)
+    adppi_bulk_data = run.analyses['ADPPi_tagged']
+    scaled_adppi_bulk_data = measurements.scale(adppi_bulk_data, ftc)
 
     adppi_data = run.analyses['ADPPi']
     scaled_adppi_data = measurements.scale(adppi_data, ftc)
 
-#    full_adppi_data = measurements.add([scaled_adppi_data,
-#        scaled_adppi_bulk_data])
-    full_adppi_data = scaled_adppi_data
+    full_adppi_data = measurements.add([scaled_adppi_data,
+        scaled_adppi_bulk_data])
+#    full_adppi_data = scaled_adppi_data
 
     # File output columns are "time [factin] (error) [pi] (error)"
     combined_data = _combine_timecourse_data(factin_data, full_adppi_data,

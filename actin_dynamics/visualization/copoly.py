@@ -48,22 +48,25 @@ def save_timecourse(session_id, experiment_index=0, run_index=0,
             ['[F-actin]', '[F-actin] error', '[Pi]', '[Pi] error'])
 
 
-def save_halftimes(adp_session_ids, nh_session_ids,
-        adp_vectorial_session_id, nh_vectorial_session_id,
+def save_halftimes(adp_session_ids,
+#        nh_session_ids,
+        adp_vectorial_session_id,
+#        nh_vectorial_session_id,
         adp_halftime_filename='results/adp_copoly_halftimes.dat',
-        nh_halftime_filename='results/nh_copoly_halftimes.dat',
-        adp_vectorial_filename='results/adp_copoly_halftimes_vectorial.dat',
-        nh_vectorial_filename='results/nh_copoly_halftimes_vectorial.dat'):
+#        nh_halftime_filename='results/nh_copoly_halftimes.dat',
+        adp_vectorial_filename='results/adp_copoly_halftimes_vectorial.dat'
+#        , nh_vectorial_filename='results/nh_copoly_halftimes_vectorial.dat'
+        ):
 
     _save_halftimes(adp_session_ids, fraction_name='fraction_adp',
             output_filename=adp_halftime_filename)
-    _save_halftimes(nh_session_ids, fraction_name='fraction_nh_atp',
-            output_filename=nh_halftime_filename)
+#    _save_halftimes(nh_session_ids, fraction_name='fraction_nh_atp',
+#            output_filename=nh_halftime_filename)
 
     _save_vectorial(adp_vectorial_session_id, fraction_name='fraction_adp',
             output_filename=adp_vectorial_filename)
-    _save_vectorial(nh_vectorial_session_id, fraction_name='fraction_nh_atp',
-            output_filename=nh_vectorial_filename)
+#    _save_vectorial(nh_vectorial_session_id, fraction_name='fraction_nh_atp',
+#            output_filename=nh_vectorial_filename)
 
 def _save_vectorial(session_id, halftime_name='halftime', fraction_name=None,
         output_filename=None):

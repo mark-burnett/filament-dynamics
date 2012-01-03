@@ -1,0 +1,28 @@
+name: Jegou 4-State Depolymerization Timecourse
+
+import:
+    - 'experiments/simple_depoly.yaml'
+    - 'random_four_state_model.yaml'
+
+    # Parameters
+    - 'parameters/jegou_2011_conditions.yaml'
+    - 'parameters/first_paper.yaml'
+
+experiments:
+    simple_depoly:
+        parameters:
+            simulation_duration: 1600.1
+            polymerization_duration: 600
+            sample_period: 1
+
+            number_of_simulations: 1
+            number_of_filaments: 1
+
+parameter_specifications:
+    simple_depoly:
+        simulation:
+            dummy_parameter:
+                lower_bound: 1
+                upper_bound: 10
+                mesh_type: linear
+                num_points: 10

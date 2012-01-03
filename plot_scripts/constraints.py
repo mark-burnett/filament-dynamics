@@ -23,17 +23,19 @@ def main():
 
 
 CONSTRAINTS = [
-        (1, 100, 'Melki 1996'), # Melki visual inspection
-        (10000, 1000000, 'Jegou 2011'), # Jegou/Carlier depoly sample filament
-        (1, 1000000, 'Carlier 1986') # Carlier86 FNC variation
+        (1, 100, False, False, 'Melki, et al (1996)'), # Melki visual inspection
+        (10000, 1000000, False, False, 'Jegou, et al (2011)'), # Jegou/Carlier depoly sample filament
+        (1, 1000000, False, True, 'Carlier, et al (1986)') # Carlier86 FNC variation
         ]
 
 TEXT_X = max(c[1] for c in CONSTRAINTS) * 10
 
 def constraint_plot():
-    centers = [float(a + b)/2 for (a, b, n) in CONSTRAINTS]
-    widths = [float(b - a)/2 for (a, b, n) in CONSTRAINTS]
-    names = [c[2] for c in CONSTRAINTS]
+    centers = [float(a + b)/2 for (a, b, l, u, n) in CONSTRAINTS]
+    widths = [float(b - a)/2 for (a, b, l, u, n) in CONSTRAINTS]
+    low_lims = [c[2] for c in CONSTRAINTS]
+    up_lims = [c[3] for c in CONSTRAINTS]
+    names = [c[4] for c in CONSTRAINTS]
 
     with contexts.basic_figure('plots/cooperativity_constraints.eps',
             x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
@@ -42,12 +44,15 @@ def constraint_plot():
 
         contexts.plot(axes, 'errorbar',
             centers, range(1, len(centers) + 1), xerr=widths,
-                fmt='k.', ms=0)
+                fmt='k.', ms=0, xlolims=low_lims, xuplims=up_lims)
 
-        for i, (low, high, name) in enumerate(CONSTRAINTS):
+
+        for i, (low, high, lowlim, uplim, name) in enumerate(CONSTRAINTS):
             axes.text(TEXT_X, i + 0.9, name)
 
-        axes.set_xlim([0.1, 10**13])
+
+
+        axes.set_xlim([0.1, 10**17])
         axes.set_xticks([1, 10, 100, 1000, 10000, 100000, 1000000])
 
         # Remove extra ticks on the right.

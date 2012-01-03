@@ -62,8 +62,6 @@ def fit(session_id, fit_output='results/depoly_fit.dat',
             ['time (s)', 'filament length (monomers)', 'error (incorrect)'],
             header='# Tip release rate: %s\n' % best_rate)
 
-
-
 def save(session_id,
         output_filename='results/depolymerization_timecourses.dat'):
     dbs = database.DBSession()

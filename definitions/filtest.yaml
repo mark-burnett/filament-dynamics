@@ -1,0 +1,32 @@
+name: 'Random model filament number dependence tip release'
+#name: 'Vectorial model filament number dependence tip release'
+
+import:
+#    - 'experiments/melki_fievez_carlier_1996.yaml'
+    - 'experiments/melki_fit.yaml'
+
+    - 'random_random_model.yaml'
+#    - 'random_vectorial_model.yaml'
+
+    - 'parameters/melki_fnc.yaml'
+    - 'parameters/melki_conditions.yaml'
+    - 'parameters/first_paper.yaml'
+
+    - 'fit_rates/rho_1.yaml'
+#    - 'fit_rates/vectorial.yaml'
+
+global_parameters:
+    simulation_duration: 1000.0
+    sample_period: 0.5
+
+    number_of_simulations: 3
+
+
+parameter_specifications:
+    melki_fievez_carlier_1996:
+        simulation:
+            number_of_filaments:
+                lower_bound: 1
+                upper_bound: 5
+                mesh_type:   linear
+                num_points:  5

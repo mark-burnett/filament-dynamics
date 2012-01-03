@@ -1,4 +1,4 @@
-name: Basic Timecourse
+name: Basic Timecourse (Jegou Rate)
 
 import:
     # Experiment
@@ -14,7 +14,7 @@ import:
 
     # Use the random model
     - 'random_cooperative_model.yaml'
-    - 'fit_rates/rho_1.yaml'
+#    - 'fit_rates/rho_1.yaml'
 
 experiments:
     adp_copoly:
@@ -24,6 +24,9 @@ experiments:
 
             number_of_simulations: 20
             number_of_filaments: 1
+
+            release_cooperativity: 1
+            release_rate: 0.0076
 
 parameter_specifications:
     adp_copoly:
