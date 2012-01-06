@@ -15,14 +15,17 @@
 
 import bisect
 
+import numpy
+
 from . import base_classes
 
 from actin_dynamics.numerical import measurements
 
 class Snapshot(base_classes.Objective):
     def __init__(self, time=None, analysis_name=None,
-            secondary_name=None, *args, **kwargs):
+            secondary_name=None, average=False, *args, **kwargs):
         self.time = float(time)
+        self.average = average
         self.analysis_name = analysis_name
         self.secondary_name = secondary_name
 
@@ -36,4 +39,7 @@ class Snapshot(base_classes.Objective):
         times, values, errors = measurements.add(results)
 
         i = bisect.bisect_left(times, self.time)
-        target.value = values[i]
+        if not self.average:
+            target.value = values[i]
+        else:
+            target.value = numpy.mean(values[i:])

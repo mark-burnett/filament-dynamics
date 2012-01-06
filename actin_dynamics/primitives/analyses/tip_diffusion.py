@@ -39,7 +39,10 @@ class FluctuationVariances(_base_classes.Analysis):
         else:
             self.tau_min = self.sample_period
 
-        self.tau_max = float(tau_max)
+        if tau_max:
+            self.tau_max = float(tau_max)
+        else:
+            self.tau_max = self.stop_time - self.start_time - self.sample_period
 
         self.interpolation_method = interpolation_method
         self.measurement_name     = measurement_name

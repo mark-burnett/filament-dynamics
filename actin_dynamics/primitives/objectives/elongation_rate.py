@@ -20,15 +20,25 @@ from .base_classes import Objective as _Objective
 from actin_dynamics.numerical import measurements
 
 class ElongationRate(_Objective):
-    def __init__(self, sample_period=None, label=None):
-        self.sample_period = float(sample_period)
+    def __init__(self, sample_period=None, start_time=None,
+            label=None):
+        if sample_period is not None:
+            self.sample_period = float(sample_period)
+        else:
+            self.sample_period = 1
+
+        if start_time is not None:
+            self.start_time = start_time
+        else:
+            self.start_time = 0
 
         _Objective.__init__(self, label=label)
 
     def perform(self, run, target):
         length = run.analyses['length']
         velocity = measurements.derivative(length)
-        target.value = numpy.mean(velocity[-50:])
+        starting_index = int(self.start_time / self.sample_period)
+        target.value = numpy.mean(velocity[starting_index:])
 
 class SquaredElongationRate(_Objective):
     def __init__(self, sample_period=None, label=None):

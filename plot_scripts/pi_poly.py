@@ -117,7 +117,7 @@ def halftime_plot(figure, data_filename='results/halftime_v_rho.dat'):
     with contexts.subplot(figure, (1, 1, 1), #title='B',
             x_label=r'Pi Concentration [mM]',
             y_label=r'[Pi] Halftime [s]',
-            logscale_x=True, logscale_y=True) as axes:
+            logscale_x=True, logscale_y=False) as axes:
         for ht in halftimes:
             contexts.plot(axes, 'plot', pis, ht)
         axes.set_xlim(0, 1000)
