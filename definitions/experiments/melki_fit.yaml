@@ -54,13 +54,13 @@ experiments:
                     variable_arguments:
                         duration: simulation_duration
 
-                halftime_reached:
-                    class_name: Threshold
-                    fixed_arguments:
-                        concentration_name: Pi
-                        scaled_by: 0.55
-                    variable_arguments:
-                        value: initial_concentration
+#                halftime_reached:
+#                    class_name: Threshold
+#                    fixed_arguments:
+#                        concentration_name: Pi
+#                        scaled_by: 0.55
+#                    variable_arguments:
+#                        value: initial_concentration
 
             measurements:
                 length:
@@ -92,15 +92,32 @@ experiments:
                     measurement_type: concentration
 
         objectives:
+            loaders:
+                length_fit:
+                    class_name: DatReader
+                    variable_arguments:
+                        sample_period: sample_period
+                    fixed_arguments:
+                        xmin: 0
+                        xmax: 25000
+                        filename: 'melki_fievez_carlier_1996/phosphate_concentration.dat'
+                        interpolate_data: True
+
             executors:
                 pi_fit:
-                    class_name: HalftimeFit
+                    class_name: SimpleDataFit
                     fixed_arguments:
                         measurement: Pi
-#                        data_halftime: 388
-                        data_halftime: 433
-                    variable_arguments:
-                        base_value: initial_concentration
+                        residual_type: naked_chi_squared
+
+#                pi_fit:
+#                    class_name: HalftimeFit
+#                    fixed_arguments:
+#                        measurement: Pi
+##                        data_halftime: 388
+#                        data_halftime: 433
+#                    variable_arguments:
+#                        base_value: initial_concentration
 
                 halftime:
                     class_name: HalfTime

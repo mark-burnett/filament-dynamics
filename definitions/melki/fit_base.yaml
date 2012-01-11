@@ -6,15 +6,12 @@ import:
     - 'parameters/melki_conditions.yaml'
     - 'parameters/first_paper.yaml'
     - 'parameters/tip_release_rate.yaml'
-#    - 'parameters/big_statistics.yaml'
-    - 'parameters/medium_statistics.yaml'
-#    - 'parameters/small_statistics.yaml'
 
 
 global_parameters:
-#    number_of_simulations: 10
-#    number_of_filaments: 1
+    number_of_simulations: 50
+    number_of_filaments: 1
 
-    simulation_duration: 500.0
+    simulation_duration: 2500.1
 
-    sample_period: 0.1
+    sample_period: 1

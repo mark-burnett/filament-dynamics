@@ -1,4 +1,4 @@
-name: 'Melki Release Fit, rho_c = 10000'
+name: 'Melki Release Fit, rho_d = 10000'
 
 import:
     - 'melki/fit_base.yaml'
@@ -12,5 +12,5 @@ parameter_specifications:
     melki_fievez_carlier_1996:
         simulation:
             release_rate:
-                lower_bound: 0.00003
-                upper_bound: 0.000035
+                lower_bound: 2.5e-5
+                upper_bound: 3.0e-5
