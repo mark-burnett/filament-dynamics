@@ -93,7 +93,7 @@ experiments:
 
         objectives:
             loaders:
-                length_fit:
+                pi_fit:
                     class_name: DatReader
                     variable_arguments:
                         sample_period: sample_period
@@ -108,7 +108,7 @@ experiments:
                     class_name: SimpleDataFit
                     fixed_arguments:
                         measurement: Pi
-                        residual_type: naked_chi_squared
+                        residual_type: naked_chi
 
 #                pi_fit:
 #                    class_name: HalftimeFit

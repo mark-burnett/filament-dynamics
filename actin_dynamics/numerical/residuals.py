@@ -72,6 +72,12 @@ def average_divided(a, b, minimum_error=0.0001):
     return 2 * sum((ax - bx)**2 / abs(ax + bx) / math.sqrt(ex)
                    for ax, bx, ex in itertools.izip(av, bv, errors))
 
+def naked_chi(a, b):
+    av = a[1]
+    bv = b[1]
+
+    return sum(abs(ax - bx) for ax, bx in itertools.izip(av, bv))/len(av)
+
 def naked_chi_squared(a, b):
     av = a[1]
     bv = b[1]
