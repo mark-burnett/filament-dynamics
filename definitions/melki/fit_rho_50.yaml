@@ -1,4 +1,4 @@
-name: 'Melki Release Fit, rho_c = 50'
+name: 'Melki Release Fit, rho_d = 50'
 
 import:
     - 'melki/fit_base.yaml'
