@@ -5,6 +5,7 @@ import:
     # Parameters
     - 'parameters/melki_conditions.yaml'
     - 'parameters/first_paper.yaml'
+    - 'parameters/tip_release_rate.yaml'
 #    - 'parameters/big_statistics.yaml'
     - 'parameters/medium_statistics.yaml'
 #    - 'parameters/small_statistics.yaml'

@@ -6,6 +6,7 @@ import:
     - 'parameters/melki_conditions.yaml'
     - 'parameters/melki_fnc.yaml'
     - 'parameters/first_paper.yaml'
+    - 'parameters/tip_release_rate.yaml'
 
 
 global_parameters:
@@ -14,7 +15,7 @@ global_parameters:
 
     simulation_duration: 2500.1
 
-    sample_period: 0.1
+    sample_period: 1
 
 parameter_specifications:
     melki_fievez_carlier_1996:

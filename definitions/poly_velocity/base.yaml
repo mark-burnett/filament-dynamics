@@ -1,0 +1,40 @@
+import:
+    # Experiment
+    - 'experiments/poly_velocity.yaml'
+
+    # Parameters
+    - 'parameters/polymerization_fujiwara_full.yaml'
+    - 'parameters/fujiwara_reverse_release.yaml'
+    - 'parameters/in_solution_release_rate.yaml'
+#    - 'parameters/tip_release_rate.yaml'
+
+    - 'components/nucleotide_exchange.yaml'
+    - 'parameters/nucleotide_exchange_rate.yaml'
+
+global_parameters:
+    cleavage_rate: 0.3
+
+experiments:
+    poly_velocity:
+        parameters:
+            seed_concentration: 0.5
+            filament_tip_concentration: 0.001
+
+            simulation_duration: 3600
+            sample_period: 1
+            analysis_start_time: 2400
+
+            number_of_simulations: 20
+            number_of_filaments: 5
+
+            initial_concentration: 0.5
+            pointed_tip_release_rate: 0
+
+parameter_specifications:
+    poly_velocity:
+        simulation:
+            barbed_tip_release_rate:
+                lower_bound: 0
+                upper_bound: 20
+                mesh_type: linear
+                num_points: 21

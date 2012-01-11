@@ -1,5 +1,5 @@
 experiments:
-    melki_fievez_carlier_1996:
+    poly_velocity:
         simulation:
             filaments:
                 filament_factory:
@@ -54,14 +54,6 @@ experiments:
                     variable_arguments:
                         duration: simulation_duration
 
-                halftime_reached:
-                    class_name: Threshold
-                    fixed_arguments:
-                        concentration_name: Pi
-                        scaled_by: 0.55
-                    variable_arguments:
-                        value: initial_concentration
-
             measurements:
                 length:
                     class_name: Length
@@ -69,49 +61,63 @@ experiments:
                         sample_period: sample_period
 
         analyses:
-            factin:
+            ATP_actin:
                 class_name: StandardErrorMean
                 variable_arguments:
                     sample_period: sample_period
                     stop_time:     simulation_duration
-                    scale_by:      filament_tip_concentration
-                    subtract:      seed_concentration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: ATP
+                    measurement_type: concentration
+
+            ADP_actin:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
+                fixed_arguments:
+                    interpolation_method: previous_value
+                    measurement_name: ADP
+                    measurement_type: concentration
+
+            length:
+                class_name: StandardErrorMean
+                variable_arguments:
+                    sample_period: sample_period
+                    stop_time:     simulation_duration
                 fixed_arguments:
                     interpolation_method: previous_value
                     measurement_name: length
                     measurement_type: filament
 
-            Pi:
-                class_name: StandardErrorMean
-                variable_arguments:
-                    sample_period: sample_period
-                    stop_time:     simulation_duration
+                
+            length_fluctuations:
+                class_name: FluctuationVariances
                 fixed_arguments:
                     interpolation_method: previous_value
-                    measurement_name: Pi
-                    measurement_type: concentration
+                variable_arguments:
+                    sample_period: sample_period
+                    start_time: analysis_start_time
+                    stop_time: simulation_duration
 
         objectives:
             executors:
-                pi_fit:
-                    class_name: HalftimeFit
+                diffusion_coefficient:
+                    class_name: DiffusionCoefficient
                     fixed_arguments:
-                        measurement: Pi
-#                        data_halftime: 388
-                        data_halftime: 433
-                    variable_arguments:
-                        base_value: initial_concentration
+                        analysis_name: length_fluctuations
 
-                halftime:
-                    class_name: HalfTime
+                final_velocity:
+                    class_name: ElongationRate
                     variable_arguments:
-                        base_value: initial_concentration
-                    fixed_arguments:
-                        analysis_name: Pi
+                        sample_period: sample_period
+                        start_time: analysis_start_time
 
-                halftime_error:
-                    class_name: HalfTimeError
-                    variable_arguments:
-                        base_value: initial_concentration
+                final_ATP_concentration:
+                    class_name: Snapshot
                     fixed_arguments:
-                        analysis_name: Pi
+                        analysis_name: ATP_actin
+                        average: True
+                    variable_arguments:
+                        time: analysis_start_time

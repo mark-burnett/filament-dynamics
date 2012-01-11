@@ -1,0 +1,6 @@
+name: 'Polymerization Velocity, vectorial'
+
+import:
+    - 'poly_velocity/base.yaml'
+    - 'random_vectorial_model.yaml'
+    - 'fit_rates/vectorial.yaml'
