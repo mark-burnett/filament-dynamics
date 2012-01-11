@@ -1,16 +1,16 @@
-name: 'Melki Release Fit, rho_c = 2000'
+name: 'Melki Release Fit, rho_c = 100000000'
 
 import:
-    - 'melki/melki_base.yaml'
+    - 'melki/fit_base.yaml'
     - 'parameters/melki_fnc.yaml'
     - 'random_cooperative_model.yaml'
 
 global_parameters:
-    release_cooperativity: 2000
+    release_cooperativity: 100000000
 
 parameter_specifications:
     melki_fievez_carlier_1996:
         simulation:
             release_rate:
-                lower_bound: 0.00007
-                upper_bound: 0.000085
+                lower_bound: 0.0000001
+                upper_bound: 0.0000002

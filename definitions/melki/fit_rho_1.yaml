@@ -1,7 +1,7 @@
-name: 'Melki Release Fit (433s), rho_d = 1'
+name: 'Melki Release Fit, rho_d = 1'
 
 import:
-    - 'melki/melki_base.yaml'
+    - 'melki/fit_base.yaml'
     - 'parameters/melki_fnc.yaml'
 #    - 'random_cooperative_model.yaml'
     - 'random_random_model.yaml'
