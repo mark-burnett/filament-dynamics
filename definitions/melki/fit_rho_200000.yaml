@@ -12,5 +12,5 @@ parameter_specifications:
     melki_fievez_carlier_1996:
         simulation:
             release_rate:
-                lower_bound: 0.000007
-                upper_bound: 0.000008
+                lower_bound: 5.7e-6
+                upper_bound: 6.4e-6

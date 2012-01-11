@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#    Copyright (C) 2011 Mark Burnett
+#    Copyright (C) 2012 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,18 +15,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-./sim.sh -n 0 -l -s configuration/melki/melki_rho_1.yaml
-sleep 2
-./sim.sh -n 0 -l -s configuration/melki/melki_rho_10.yaml
-sleep 2
-./sim.sh -n 0 -l -s configuration/melki/melki_rho_100.yaml
-sleep 2
-./sim.sh -n 0 -l -s configuration/melki/melki_rho_1000.yaml
-sleep 2
-./sim.sh -n 0 -l -s configuration/melki/melki_rho_10000.yaml
-sleep 2
-./sim.sh -n 0 -l -s configuration/melki/melki_rho_100000.yaml
-sleep 2
-./sim.sh -n 0 -l -s configuration/melki/melki_rho_1000000.yaml
+for FILE in definitions/melki/fit_rho_*.yaml; do
+    bin/simple_fit.py -o pi_fit $FILE &
+    sleep 2
+done
 
-./sim.sh -n 7 -l -j
+bin/simple_fit.py -o pi_fit definitions/melki/fit_vectorial.yaml &
+
+# Probably should wait, so I don't kill everything accidentally
+wait
