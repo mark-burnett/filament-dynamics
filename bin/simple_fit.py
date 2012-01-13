@@ -26,18 +26,26 @@ from actin_dynamics import factories, database
 logger = logging.getLogger()
 
 
-def main(session_filename, objective_name, polling_period):
+def main(session_filename, objective_name, polling_period, plot):
     db_session = database.DBSession()
     with job_control.process('controller', db_session) as process:
         try:
             session, par_spec = factories.controllers.load_complete_session(
                 db_session, session_filename)
 
-            par_name, par_min, par_max = _par_from_spec(par_spec)
+            par_name, par_guess = _par_from_spec(par_spec)
 
-            c = fitting_controller.SimpleFitController(db_session, session,
-                    objective_name, par_name, par_min, par_max, process,
-                    polling_period=polling_period)
+            population = fitting_controller.SimplePopulation(
+                    dbs=db_session, session=session,
+                    parameter_name=par_name, parameter_guess=par_guess,
+                    objective_name=objective_name,
+                    process=process, plot=plot)
+
+            c = fitting_controller.SimpleFitController(
+                    dbs=db_session, session=session,
+                    population=population,
+                    polling_period=polling_period,
+                    process=process)
             c.run()
         except:
             logger.exception('Exception in controller main.')
@@ -48,14 +56,14 @@ def _par_from_spec(par_spec):
     # Go deep
     parameters = par_spec.values()[0].values()[0]
     par_name, par_info = parameters.items()[0]
-    par_min = par_info['lower_bound']
-    par_max = par_info['upper_bound']
+    par_guess = par_info['guess']
 
-    return par_name, par_min, par_max
+    return par_name, par_guess
 
 
 if '__main__' == __name__:
     namespace = command_line_parsers.fitting_process()
     ini_parsers.full_config(namespace.config)
 
-    main(namespace.session, namespace.objective, namespace.polling_period)
+    main(namespace.session, namespace.objective, namespace.polling_period,
+            namespace.plot)

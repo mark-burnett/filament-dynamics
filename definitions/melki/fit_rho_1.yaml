@@ -3,7 +3,6 @@ name: 'Melki Release Fit, rho_d = 1'
 import:
     - 'melki/fit_base.yaml'
     - 'parameters/melki_fnc.yaml'
-#    - 'random_cooperative_model.yaml'
     - 'random_random_model.yaml'
 
 global_parameters:
@@ -13,5 +12,4 @@ parameter_specifications:
     melki_fievez_carlier_1996:
         simulation:
             release_rate:
-                lower_bound: 0.0016
-                upper_bound: 0.0018
+                guess: 0.0016

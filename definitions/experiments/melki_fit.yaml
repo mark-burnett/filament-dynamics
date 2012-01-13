@@ -99,7 +99,7 @@ experiments:
                         sample_period: sample_period
                     fixed_arguments:
                         xmin: 0
-                        xmax: 25000
+                        xmax: 2500
                         filename: 'melki_fievez_carlier_1996/phosphate_concentration.dat'
                         interpolate_data: True
 
@@ -108,7 +108,7 @@ experiments:
                     class_name: SimpleDataFit
                     fixed_arguments:
                         measurement: Pi
-                        residual_type: naked_chi
+                        residual_type: naked_chi_squared
 
 #                pi_fit:
 #                    class_name: HalftimeFit
