@@ -20,12 +20,12 @@ from actin_dynamics.configuration import ini_parsers
 
 from actin_dynamics import job_control
 
-def cleanup_jobs():
-    job_control.cleanup_jobs()
+def delete_jobs():
+    job_control.delete_jobs()
 
 
 if '__main__' == __name__:
     namespace = command_line_parsers.worker_process()
     ini_parsers.setup_database(namespace.config)
 
-    cleanup_jobs()
+    delete_jobs()
