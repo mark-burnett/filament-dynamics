@@ -1,5 +1,3 @@
-#ifndef _TRANSITIONS_TRANSITION_H_
-#define _TRANSITIONS_TRANSITION_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -15,20 +13,37 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <boost/ptr_container/ptr_vector.hpp>
+#include <gtest/gtest.h>
 
-#include "concentrations/concentration.h"
-#include "filaments/filament.h"
+#include "state.h"
+
+#include "concentrations/fixed_concentration.h"
+#include "concentrations/fixed_reagent.h"
 
 
-class Transition {
-    public:
-        virtual double R(double time,
-                    const boost::ptr_vector<Filament> &filaments,
-                    const boost::ptr_vector<Concentration> &concentrations) = 0;
-        virtual size_t perform(double time, double r,
-                    boost::ptr_vector<Filament> &filaments,
-                    boost::ptr_vector<Concentration> &concentrations) = 0;
-};
+TEST(Concentrations, FixedConcentration) {
+    FixedConcentration c(3.1);
 
-#endif // _TRANSITIONS_TRANSITION_H_
+    EXPECT_DOUBLE_EQ(3.1, c.value());
+
+    c.remove_monomer();
+    EXPECT_DOUBLE_EQ(3.1, c.value());
+
+    c.add_monomer();
+    EXPECT_DOUBLE_EQ(3.1, c.value());
+}
+
+TEST(Concentrations, FixedReagent) {
+    FixedReagent c(4, 1.2);
+
+    EXPECT_DOUBLE_EQ(4.8, c.value());
+
+    c.remove_monomer();
+    EXPECT_DOUBLE_EQ(3.6, c.value());
+
+    c.add_monomer();
+    c.add_monomer();
+
+    EXPECT_DOUBLE_EQ(6, c.value());
+}
+

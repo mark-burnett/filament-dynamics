@@ -12,7 +12,8 @@ stochastic_la_LDFLAGS = -module
 check_PROGRAMS   = test
 test_SOURCES = tests/test_main.cpp\
 			   tests/filaments/test_simple_filament.cpp\
-			   tests/transitions/test_random_hydrolysis.cpp
+			   tests/transitions/test_random_hydrolysis.cpp\
+			   tests/test_concentrations.cpp
 
 test_LDADD   = stochastic.la
 
