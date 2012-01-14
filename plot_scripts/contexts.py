@@ -31,7 +31,7 @@ matplotlib.rc('font', size=settings.DEFAULT_FONT_SIZE)
 def complex_figure(filename, dpi=settings.DPI,
         width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
         height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
-        draw_frame=False,
+        draw_frame=False, right_label=False,
         **unused_kwargs):
     scaled_width = width / settings.CM_SCALE
     scaled_height = height / settings.CM_SCALE
@@ -42,13 +42,21 @@ def complex_figure(filename, dpi=settings.DPI,
     scaled_left_margin = settings.LEFT_MARGIN / width
     scaled_right_margin = 1 - settings.RIGHT_MARGIN / width
 
-
-    figure = _Figure(dpi=dpi, frameon=draw_frame,
-            linewidth=settings.DEFAULT_FRAME_LINE_WIDTH,
-            figsize=(scaled_width, scaled_height),
-            subplotpars=matplotlib.figure.SubplotParams(
-                bottom=scaled_bottom_margin,
-                left=scaled_left_margin))
+    if right_label:
+        figure = _Figure(dpi=dpi, frameon=draw_frame,
+                linewidth=settings.DEFAULT_FRAME_LINE_WIDTH,
+                figsize=(scaled_width, scaled_height),
+                subplotpars=matplotlib.figure.SubplotParams(
+                    bottom=scaled_bottom_margin,
+                    left=scaled_left_margin,
+                    right=scaled_right_margin))
+    else:
+        figure = _Figure(dpi=dpi, frameon=draw_frame,
+                linewidth=settings.DEFAULT_FRAME_LINE_WIDTH,
+                figsize=(scaled_width, scaled_height),
+                subplotpars=matplotlib.figure.SubplotParams(
+                    bottom=scaled_bottom_margin,
+                    left=scaled_left_margin))
 
     yield figure
 

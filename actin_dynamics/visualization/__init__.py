@@ -29,7 +29,7 @@
 from . import melki
 from . import copoly
 
-from . import pi_poly
+#from . import pi_poly
 
 from . import short_time
 

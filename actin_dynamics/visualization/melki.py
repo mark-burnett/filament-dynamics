@@ -15,12 +15,63 @@
 
 import bisect
 import csv
+import operator
 
 import sqlalchemy
+
 import numpy
+import scipy
 
 from actin_dynamics import database
 from actin_dynamics.io import data
+
+
+def session_fits(session_id, fit_length=50,
+        output_filename='results/check_fit.dat',
+        write=True):
+    dbs = database.DBSession()
+    session = dbs.query(database.Session).get(session_id)
+    runs = session.experiments[0].runs
+
+    data = []
+    for run in runs:
+        parameter = run.parameters['release_rate']
+        fitness = run.get_objective('pi_fit')
+        if fitness is not None:
+            data.append((parameter, fitness))
+
+    fit_sorted_data = sorted(data, key=operator.itemgetter(1))
+    px, py = zip(*fit_sorted_data[:fit_length])
+    coeffs, R, n, svs, rcond = scipy.polyfit(px, py, 2, full=True)
+
+    x, y = zip(*sorted(data))
+
+    peak = float(-coeffs[1] / (2 * coeffs[0]))
+    fit = float(R/fit_length)
+
+    if write:
+        p = scipy.polyval(coeffs, x)
+        header = '# Parabola peak at %s\n# Parabola R^2/n = %s\n'
+        rows = zip(x, y, p)
+        _small_writer(output_filename, rows, ['release_rate', 'pi_fit', 'parabola'],
+                header=header % (peak, fit))
+
+    return session.parameters.get('release_cooperativity'), peak, fit
+
+
+def extract_fits(session_ids, output_filename='results/fit_rates.dat',
+        fit_length=50):
+    dbs = database.DBSession()
+
+    rows = []
+    for session_id in session_ids:
+        rows.append(session_fits(session_id, fit_length=fit_length,
+            write=False))
+
+    rows.sort()
+
+    _small_writer(output_filename, rows, ['release_cooperativity',
+        'release_rate', 'parabola R2'])
 
 
 def save_timecourses(session_ids,
@@ -293,27 +344,28 @@ def save(session_ids, plot_cooperativities=[1, 1000, 1000000],
             header='# Filament Number Concentration: %s\n#    FNC Statistical Error: %s\n#    FNC Mesh Error: %s\n'
             % (best_fnc, fractional_error * best_fnc, fnc_step_size / 2))
 
-    # Pick & write timecourses
-    f_tcs = []
-    pi_tcs = []
-    times = []
-    for pc in plot_cooperativities:
-        run_i = cooperativities.index(pc)
-        run = best_runs[run_i]
-        times, factin, pi, f_err, pi_err = _get_timecourses(run)
-        f_tcs.append(factin)
-        pi_tcs.append(pi)
+    if plot_cooperativities:
+        # Pick & write timecourses
+        f_tcs = []
+        pi_tcs = []
+        times = []
+        for pc in plot_cooperativities:
+            run_i = cooperativities.index(pc)
+            run = best_runs[run_i]
+            times, factin, pi, f_err, pi_err = _get_timecourses(run)
+            f_tcs.append(factin)
+            pi_tcs.append(pi)
 
-    factin_results = zip(times, *f_tcs)
-    pi_results = zip(times, *pi_tcs)
-    
-    _write_results(factin_timecourse_filename, factin_results,
-            'Time (s)', '[F-actin] (uM)', 'release cooperativity',
-            plot_cooperativities)
+        factin_results = zip(times, *f_tcs)
+        pi_results = zip(times, *pi_tcs)
+        
+        _write_results(factin_timecourse_filename, factin_results,
+                'Time (s)', '[F-actin] (uM)', 'release cooperativity',
+                plot_cooperativities)
 
-    _write_results(pi_timecourse_filename, pi_results,
-            'Time (s)', '[Pi] (uM)', 'release cooperativity',
-            plot_cooperativities)
+        _write_results(pi_timecourse_filename, pi_results,
+                'Time (s)', '[Pi] (uM)', 'release cooperativity',
+                plot_cooperativities)
 
 def _get_best_run(dbs, experiment, release_rate=None, filament_tip_concentration=None):
     fnc_alias = sqlalchemy.orm.aliased(database.RunParameter)

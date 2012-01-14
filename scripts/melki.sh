@@ -15,12 +15,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+echo 'Fitting...'
 for FILE in definitions/melki/fit_rho_*.yaml; do
-    bin/simple_fit.py -o pi_fit $FILE &
-    sleep 2
+    echo $FILE
+    bin/simple_fit.py -o pi_fit $FILE
 done
 
-bin/simple_fit.py -o pi_fit definitions/melki/fit_vectorial.yaml &
+bin/simple_fit.py -o pi_fit definitions/melki/fit_vectorial.yaml
 
 # Probably should wait, so I don't kill everything accidentally
-wait
+# bin/view_log.py -tf --process_type controller --min_level 50

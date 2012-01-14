@@ -83,37 +83,37 @@ experiments:
                     measurement_name: Pi
                     measurement_type: concentration
 
-        objectives:
-            loaders:
-                factin_fit:
-                    class_name: DatReader
-                    variable_arguments:
-                        sample_period: sample_period
-                        xmax: simulation_duration
-                    fixed_arguments:
-                        xmin: 0
-                        filename: 'melki_fievez_carlier_1996/factin_concentration.dat'
-                        interpolate_data: True
-
-
-            executors:
-                factin_fit:
-                    class_name: SimpleDataFit
-                    fixed_arguments:
-                        measurement:   factin
-                        residual_type: naked_chi_squared
-
-                pi_fit:
-                    class_name: HalftimeFit
-                    fixed_arguments:
-                        measurement: Pi
-                        data_halftime: 388
-                    variable_arguments:
-                        base_value: initial_concentration
-
-                halftime:
-                    class_name: HalfTime
-                    variable_arguments:
-                        base_value: initial_concentration
-                    fixed_arguments:
-                        analysis_name: Pi
+#        objectives:
+#            loaders:
+#                factin_fit:
+#                    class_name: DatReader
+#                    variable_arguments:
+#                        sample_period: sample_period
+#                        xmax: simulation_duration
+#                    fixed_arguments:
+#                        xmin: 0
+#                        filename: 'melki_fievez_carlier_1996/factin_concentration.dat'
+#                        interpolate_data: True
+#
+#
+#            executors:
+#                factin_fit:
+#                    class_name: SimpleDataFit
+#                    fixed_arguments:
+#                        measurement:   factin
+#                        residual_type: naked_chi_squared
+#
+#                pi_fit:
+#                    class_name: HalftimeFit
+#                    fixed_arguments:
+#                        measurement: Pi
+#                        data_halftime: 388
+#                    variable_arguments:
+#                        base_value: initial_concentration
+#
+#                halftime:
+#                    class_name: HalfTime
+#                    variable_arguments:
+#                        base_value: initial_concentration
+#                    fixed_arguments:
+#                        analysis_name: Pi

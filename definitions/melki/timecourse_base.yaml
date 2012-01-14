@@ -4,14 +4,15 @@ import:
 
     # Parameters
     - 'parameters/melki_conditions.yaml'
-    - 'parameters/melki_fnc.yaml'
     - 'parameters/first_paper.yaml'
     - 'parameters/tip_release_rate.yaml'
 
+    - 'parameters/melki_fnc.yaml'
+
 
 global_parameters:
-    number_of_simulations: 20
-    number_of_filaments: 1
+    number_of_simulations: 1
+    number_of_filaments: 10
 
     simulation_duration: 2500.1
 

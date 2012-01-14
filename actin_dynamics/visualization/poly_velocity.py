@@ -33,13 +33,36 @@ def save_vs_cooperativity(cooperative_session_ids, vectorial_session_id,
                 'Diffusion Coefficient (mon/s^2)'])
 
 
+def save_vs_parameter(session_id, output_filename='results/cc_d_tip.dat',
+        parameter='barbed_tip_release_rate'):
+    dbs = database.DBSession()
+    session = dbs.query(database.Session).get(session_id)
+
+    results = []
+    for run in session.experiments[0].runs:
+        results.append(get_cc_d_run(run, parameter=parameter))
+
+    results.sort()
+
+    _small_writer(output_filename, results,
+            [parameter, 'Critical Concentration (uM)',
+                'Diffusion Coefficient (mon/s^2)'])
 
 
-def get_cc_d(session_id, parameter='release_cooperativity'):
+
+def get_cc_d(session_id):
     dbs = database.DBSession()
     session = dbs.query(database.Session).get(session_id)
 
     run = session.experiments[0].runs[0]
+    cc = run.get_objective('final_ATP_concentration')
+    D = run.get_objective('diffusion_coefficient')
+
+    cooperativity = run.all_parameters.get(parameter)
+
+    return cooperativity, cc, D
+
+def get_cc_d_run(run, parameter='release_cooperativity'):
     cc = run.get_objective('final_ATP_concentration')
     D = run.get_objective('diffusion_coefficient')
 
