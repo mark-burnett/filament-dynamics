@@ -17,16 +17,16 @@
 
 #include "simulation_strategy.h"
 
-TEST(SimulationStrategy, RNG) {
-    SimulationStrategy ss;
-//    transition_container_t transitions;
-//    concentration_container_t concentrations;
-//    measurement_container_t measurements;
-//    end_condition_container_t end_conditions;
-//    filament_container_t filaments;
-//
-//    SimulationStrategy ss(transitions, concentrations, measurements,
-//            end_conditions, filaments);
-
-    ss.run();
-}
+// TEST(SimulationStrategy, RNG) {
+//     SimulationStrategy ss;
+// //    transition_container_t transitions;
+// //    concentration_container_t concentrations;
+// //    measurement_container_t measurements;
+// //    end_condition_container_t end_conditions;
+// //    filament_container_t filaments;
+// //
+// //    SimulationStrategy ss(transitions, concentrations, measurements,
+// //            end_conditions, filaments);
+// 
+//     ss.run();
+// }

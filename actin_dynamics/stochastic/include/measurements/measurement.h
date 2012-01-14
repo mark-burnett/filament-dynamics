@@ -18,22 +18,29 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 
+#include "filaments/filament.h"
+#include "concentrations/concentration.h"
+
 class Measurement : private boost::noncopyable {
     public:
         virtual ~Measurement() {}
+        virtual void initialize(filament_container_t &filaments,
+                concentration_container_t &concentrations) = 0;
+        virtual void perform(double time, filament_container_t &filaments,
+                concentration_container_t &concentrations) = 0;
 };
 
 class ConcentrationMeasurement : public Measurement {
     public:
         virtual ~ConcentrationMeasurement();
-        virtual void store(double time, double value) = 0;
+//        virtual void perform(double time, double value) = 0;
 };
 
 class FilamentMeasurement : public Measurement {
     public:
         virtual ~FilamentMeasurement();
-        virtual void store(double time, double value,
-                size_t filament_index) = 0;
+//        virtual void perform(double time, double value,
+//                size_t filament_index) = 0;
 };
 
 typedef boost::shared_ptr<Measurement> measurement_ptr_t;

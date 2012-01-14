@@ -26,6 +26,10 @@
 class EndCondition : public boost::noncopyable {
     public:
         virtual ~EndCondition() {}
+
+        virtual void initialize(const filament_container_t &filaments,
+                const concentration_container_t &concentrations) = 0;
+
         virtual bool satisfied(double time,
                 const filament_container_t &filaments,
                 const concentration_container_t &concentrations) = 0;

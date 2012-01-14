@@ -13,11 +13,63 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
+#include <cmath>
+
 #include "simulation_strategy.h"
 
 void SimulationStrategy::run() {
-//    for (int i = 0; i < 10; ++i) {
-//        std::cout << _random(i + 1) << std::endl;
-//    }
+    double time = 0;
+
+    // Initialize measurements
+    for (measurement_container_t::iterator mi = _measurements.begin();
+            mi < _measurements.end(); ++mi) {
+        (*mi)->initialize(_filaments, _concentrations);
+    }
+    // Initialize end conditions
+    for (end_condition_container_t::iterator ei = _end_conditions.begin();
+            ei < _end_conditions.end(); ++ei) {
+        (*ei)->initialize(_filaments, _concentrations);
+    }
+
+    std::vector<double> transition_rates;
+    transition_rates.resize(_transitions.size());
+
+    while (end_conditions_not_met(time)) {
+        // Calculate total rate for the next timestep.
+        double R = 0;
+        for (size_t ti = 0; ti < _transitions.size(); ++ti) {
+            transition_rates[ti] = _transitions[ti]->R(time,
+                    _filaments, _concentrations);
+            R += transition_rates[ti];
+        }
+        // if 0 == R no possible events, end simulation or take minimum time step?
+
+        // First update the time & perform measurements
+        time += log(1 / _random(1)) / R;
+
+        for (measurement_container_t::iterator mi = _measurements.begin();
+                mi < _measurements.end(); ++mi) {
+            (*mi)->perform(time, _filaments, _concentrations);
+        }
+
+        // Decide which transition to perform.
+        double r = _random(R);
+        for (size_t ti = 0; ti < _transitions.size(); ++ti) {
+            if (r < transition_rates[ti]) {
+                _transitions[ti]->perform(time, r, _filaments, _concentrations);
+                break;
+            }
+            r -= transition_rates[ti];
+        }
+    }
+}
+
+bool SimulationStrategy::end_conditions_not_met(double time) {
+    for (end_condition_container_t::iterator eci = _end_conditions.begin();
+            eci < _end_conditions.end(); ++eci) {
+        if ((*eci)->satisfied(time, _filaments, _concentrations)) {
+            return false;
+        }
+    }
+    return true;
 }

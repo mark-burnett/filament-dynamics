@@ -63,6 +63,8 @@ class SimulationStrategy {
         typedef boost::uniform_real<> _distribution_t;
         typedef boost::variate_generator<_rng_t, _distribution_t> _variate_t;
         _rng_t _rng;
+
+        bool end_conditions_not_met(double time);
 };
 
 #endif // _SIMULATION_STRATEGY_H_
