@@ -1,4 +1,4 @@
-#    Copyright (C) 2011 Mark Burnett
+#    Copyright (C) 2011-2012 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -256,7 +256,7 @@ class GeneticPopulation(object):
         return a[1], b[1]
 
 class SimplePopulation(object):
-    def __init__(self, parameter_guess=None, gaussian_width_fraction=0.2,
+    def __init__(self, parameter_guess=None, gaussian_width_fraction=0.1,
             parameter_name=None, objective_name=None, dbs=None,
             session=None, process=None, plot=False, max_population_size=50,
             parabola_tolerance=0.005):
@@ -316,9 +316,11 @@ class SimplePopulation(object):
         ordered_x = sorted(self._x)
         ordered_y = numpy.array(sorted(self._y))
 
-        parabola_fit_differences = numpy.array(self._y - scipy.polyval(self.coeffs, self._x))
+        parabola_fit_differences = numpy.array(self._y
+                - scipy.polyval(self.coeffs, self._x))
         parabola_fit_differences -= numpy.mean(parabola_fit_differences)
-        parabola_fit_differences /= numpy.sqrt(numpy.var(parabola_fit_differences))
+        parabola_fit_differences /= numpy.sqrt(
+                numpy.var(parabola_fit_differences))
         parabola_fit_differences = sorted(parabola_fit_differences**2)
 
         length = len(parabola_fit_differences)
@@ -364,11 +366,18 @@ class SimplePopulation(object):
     def fit_parabola(self):
         if self.pairs:
             self._y, self._x = zip(*self.pairs)
-            self.coeffs, self.R2, n, svs, rcond = scipy.polyfit(self._x, self._y,
+            self.coeffs, R2, n, svs, rcond = scipy.polyfit(self._x, self._y,
                     2, full=True)
             self.inverted_parabola = self.coeffs[0] < 0
 
             self.best_parameter = - self.coeffs[1] / (2 * self.coeffs[0])
+
+            parabola_peak = scipy.polyval(self.coeffs, self.best_parameter)
+
+            if R2 > 0:
+                self.R2 = float(R2 / parabola_peak)
+            else:
+                self.R2 = R2
 
 
     def create_jobs(self, number):
@@ -409,7 +418,7 @@ class SimplePopulation(object):
 class SimpleFitController(object):
     def __init__(self, dbs=None, session=None, process=None, population=None,
             min_queue_size=0, max_queue_size=10, initial_population_size=40,
-            polling_period=5, min_iterations=2, max_iterations=100):
+            polling_period=5, min_iterations=4, max_iterations=100):
         self.dbs = dbs
         self.session = session
 
@@ -455,8 +464,8 @@ class SimpleFitController(object):
                 self.population.add_completed_jobs(newly_completed_jobs)
             
             # If this fit is good enough, then break.
-            if (self.population.acceptable_fit()
-                    and iteration >= self.min_iterations):
+            if (iteration >= self.min_iterations
+                    and self.population.acceptable_fit()):
                 break
 
             # Otherwise, make more jobs
@@ -473,7 +482,7 @@ class SimpleFitController(object):
         log.critical('Completed %s iterations in %s.',
                 iteration + 1, total_runtime)
 
-        return best_parameter, best_fit
+        return population.best_parameter
 
 
 
