@@ -9,4 +9,4 @@ parameter_specifications:
     melki_fievez_carlier_1996:
         simulation:
             release_rate:
-                guess: 20
+                guess: 9
