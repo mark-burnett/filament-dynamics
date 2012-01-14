@@ -21,7 +21,7 @@
 // Bring operator+= into the namespace
 using namespace boost::assign;
 
-#include "state/simple_filament.h"
+#include "filaments/simple_filament.h"
 
 TEST(SimpleFilament, IteratorConstructor) {
     std::vector<size_t> values;
@@ -30,18 +30,18 @@ TEST(SimpleFilament, IteratorConstructor) {
     SimpleFilament f(values.begin(), values.end());
 
     EXPECT_EQ(8, f.length());
-    EXPECT_EQ(4, f.state_count(0));
-    EXPECT_EQ(3, f.state_count(1));
-    EXPECT_EQ(1, f.state_count(2));
+    EXPECT_EQ(4, f.filaments_count(0));
+    EXPECT_EQ(3, f.filaments_count(1));
+    EXPECT_EQ(1, f.filaments_count(2));
     EXPECT_EQ(2, f.boundary_count(0, 1));
 }
 
 TEST(SimpleFilament, NumberStateConstructor) {
     SimpleFilament f(26, 0);
     EXPECT_EQ(26, f.length());
-    EXPECT_EQ(26, f.state_count(0));
-    EXPECT_EQ(0, f.state_count(4));
-    EXPECT_EQ(0, f.barbed_state());
+    EXPECT_EQ(26, f.filaments_count(0));
+    EXPECT_EQ(0, f.filaments_count(4));
+    EXPECT_EQ(0, f.barbed_filaments());
 }
 
 TEST(SimpleFilament, Append) {
@@ -49,13 +49,13 @@ TEST(SimpleFilament, Append) {
 
     f.append_barbed(1);
     EXPECT_EQ(21, f.length());
-    EXPECT_EQ(1, f.barbed_state());
-    EXPECT_EQ(1, f.state_count(1));
+    EXPECT_EQ(1, f.barbed_filaments());
+    EXPECT_EQ(1, f.filaments_count(1));
 
     f.append_pointed(2);
     EXPECT_EQ(22, f.length());
-    EXPECT_EQ(2, f.pointed_state());
-    EXPECT_EQ(1, f.state_count(2));
+    EXPECT_EQ(2, f.pointed_filaments());
+    EXPECT_EQ(1, f.filaments_count(2));
 }
 
 TEST(SimpleFilament, Remove) {
@@ -84,37 +84,37 @@ TEST(SimpleFilament, Remove) {
 TEST(SimpleFilament, UpdateState) {
     SimpleFilament f(20, 0);
 
-    f.update_state(4, 0, 1);
+    f.update_filaments(4, 0, 1);
     EXPECT_EQ(20, f.length());
-    EXPECT_EQ(1, f.state_count(1));
+    EXPECT_EQ(1, f.filaments_count(1));
     EXPECT_EQ(1, f.boundary_count(0, 1));
 
-    f.update_state(3, 0, 1);
-    EXPECT_EQ(2, f.state_count(1));
+    f.update_filaments(3, 0, 1);
+    EXPECT_EQ(2, f.filaments_count(1));
     EXPECT_EQ(1, f.boundary_count(0, 1));
 
-    f.update_state(1, 1, 2);
-    EXPECT_EQ(1, f.state_count(1));
-    EXPECT_EQ(1, f.state_count(2));
+    f.update_filaments(1, 1, 2);
+    EXPECT_EQ(1, f.filaments_count(1));
+    EXPECT_EQ(1, f.filaments_count(2));
     EXPECT_EQ(1, f.boundary_count(0, 1));
     EXPECT_EQ(1, f.boundary_count(1, 2));
     EXPECT_EQ(1, f.boundary_count(2, 0));
 
-    f.update_state(0, 0, 3);
-    EXPECT_EQ(3, f.pointed_state());
-    EXPECT_EQ(1, f.state_count(3));
+    f.update_filaments(0, 0, 3);
+    EXPECT_EQ(3, f.pointed_filaments());
+    EXPECT_EQ(1, f.filaments_count(3));
 }
 
 TEST(SimpleFilament, UpdateBoundary) {
     SimpleFilament f(20, 0);
 
-    f.update_state(5, 0, 1);
+    f.update_filaments(5, 0, 1);
     f.update_boundary(0, 0, 1, 3, 2);
     EXPECT_EQ(1, f.boundary_count(0, 3));
     EXPECT_EQ(1, f.boundary_count(3, 2));
     EXPECT_EQ(1, f.boundary_count(2, 0));
 
-    f.update_state(10, 0, 3);
+    f.update_filaments(10, 0, 3);
     EXPECT_EQ(2, f.boundary_count(0, 3));
     f.update_boundary(1, 0, 3, 4, 5);
     EXPECT_EQ(1, f.boundary_count(0, 3));

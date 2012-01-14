@@ -18,7 +18,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "concentrations/concentration.h"
-#include "state/filament.h"
+#include "filaments/filament.h"
 
 
 class Transition {

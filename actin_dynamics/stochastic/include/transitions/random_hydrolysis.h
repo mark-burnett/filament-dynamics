@@ -18,15 +18,15 @@
 #include <vector>
 
 #include "concentrations/concentration.h"
-#include "state/filament.h"
+#include "filaments/filament.h"
 
 #include "transitions/transition.h"
 
 
 class RandomHydrolysis : public Transition {
     public:
-        RandomHydrolysis(size_t _old_state, size_t _new_state,
-                double _rate) : old_state(_old_state), new_state(_new_state),
+        RandomHydrolysis(size_t _old_filaments, size_t _new_filaments,
+                double _rate) : old_filaments(_old_filaments), new_filaments(_new_filaments),
                                 rate(_rate), count(0) {}
         double R(double time,
                     const boost::ptr_vector<Filament> &filaments,
@@ -35,8 +35,8 @@ class RandomHydrolysis : public Transition {
                     boost::ptr_vector<Filament> &filaments,
                     boost::ptr_vector<Concentration> &concentrations);
     private:
-        size_t old_state;
-        size_t new_state;
+        size_t old_filaments;
+        size_t new_filaments;
         double rate;
 
         size_t count;

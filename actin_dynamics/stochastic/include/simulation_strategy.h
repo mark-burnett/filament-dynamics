@@ -18,7 +18,7 @@
 #include "concentrations/concentration.h"
 #include "end_conditions/end_condition.h"
 #include "measurements/measurement.h"
-#include "state/filament.h"
+#include "filaments/filament.h"
 #include "transitions/transition.h"
 
 class SimulationStrategy {

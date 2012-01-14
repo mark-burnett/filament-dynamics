@@ -24,7 +24,7 @@
 using namespace boost::assign;
 
 #include "transitions/random_hydrolysis.h"
-#include "state/simple_filament.h"
+#include "filaments/simple_filament.h"
 #include "concentrations/fixed_concentration.h"
 
 TEST(RandomHydrolysis, SingleFilamentR) {
@@ -92,19 +92,19 @@ TEST(RandomHydrolysis, SingleFilamentPerform) {
     EXPECT_DOUBLE_EQ(9, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(4, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(1, filaments[0].pointed_state());
+    EXPECT_EQ(1, filaments[0].pointed_filaments());
 
     EXPECT_EQ(2, t_0.perform(0, 8, filaments, concentrations));
     EXPECT_DOUBLE_EQ(6, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(10, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(4, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(1, filaments[0].barbed_state());
+    EXPECT_EQ(1, filaments[0].barbed_filaments());
 
     EXPECT_EQ(1, t_1.perform(0, 9, filaments, concentrations));
     EXPECT_DOUBLE_EQ(6, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(2, filaments[0].barbed_state());
+    EXPECT_EQ(2, filaments[0].barbed_filaments());
 }
 
 TEST(RandomHydrolysis, DoubleFilamentPerform) {
@@ -132,5 +132,5 @@ TEST(RandomHydrolysis, DoubleFilamentPerform) {
     EXPECT_DOUBLE_EQ(21, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(10, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(16, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(2, filaments[1].pointed_state());
+    EXPECT_EQ(2, filaments[1].pointed_filaments());
 }

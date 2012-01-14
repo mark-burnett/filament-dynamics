@@ -18,7 +18,7 @@
 #include <vector>
 
 #include "concentrations/concentration.h"
-#include "state/filament.h"
+#include "filaments/filament.h"
 
 class EndCondition {
     public:

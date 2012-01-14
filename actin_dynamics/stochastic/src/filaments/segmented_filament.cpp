@@ -13,15 +13,15 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "state/segmented_filament.h"
+#include "filaments/segmented_filament.h"
 
 
-// Simple queries about the filament state.
-size_t SegmentedFilament::state_count(size_t state) const {
+// Simple queries about the filament filaments.
+size_t SegmentedFilament::filaments_count(size_t filaments) const {
     size_t count = 0;
     for (std::deque<Segment>::const_iterator i = segments.begin();
             i < segments.end(); ++i) {
-        if (i->state == state) {
+        if (i->filaments == filaments) {
             count += i->number;
         }
     }
@@ -29,16 +29,16 @@ size_t SegmentedFilament::state_count(size_t state) const {
     return count;
 }
 
-size_t SegmentedFilament::boundary_count(size_t pointed_state,
-        size_t barbed_state) const {
+size_t SegmentedFilament::boundary_count(size_t pointed_filaments,
+        size_t barbed_filaments) const {
     count = 0;
 
     std::deque<Segment>::const_iterator pointed = segments.begin();
     std::deque<Segment>::const_iterator barbed = segments.begin();
     ++barbed;
     while (barbed < segments.end()) {
-        if (pointed->state == pointed_state &&
-                barbed->state == barbed_state) {
+        if (pointed->filaments == pointed_filaments &&
+                barbed->filaments == barbed_filaments) {
             ++count;
             ++pointed;
             ++barbed;
@@ -60,20 +60,20 @@ size_t SegmentedFilament::length() const {
     return count;
 }
 
-size_t SegmentedFilament::barbed_state() const {
-    return segments.back().state
+size_t SegmentedFilament::barbed_filaments() const {
+    return segments.back().filaments
 }
 
-size_t SegmentedFilament::pointed_state() const {
-    return segments.front().state
+size_t SegmentedFilament::pointed_filaments() const {
+    return segments.front().filaments
 }
 
 // Add and remove subunits
-void SegmentedFilament::append_barbed(size_t new_state){
-    segments.push_back(Segment(1, new_state));
+void SegmentedFilament::append_barbed(size_t new_filaments){
+    segments.push_back(Segment(1, new_filaments));
     _merge_segments(segments.rbegin(), 2)
 }
 
-void SegmentedFilament:update_state(size_t instance_number,
-        size_t new_state) {
+void SegmentedFilament:update_filaments(size_t instance_number,
+        size_t new_filaments) {
 }
