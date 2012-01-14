@@ -17,13 +17,7 @@
 #include "simulation_strategy.h"
 
 void SimulationStrategy::run() {
-    for (int i = 0; i < 10; ++i) {
-        std::cout << _random(i + 1) << std::endl;
-    }
+//    for (int i = 0; i < 10; ++i) {
+//        std::cout << _random(i + 1) << std::endl;
+//    }
 }
-
-// inline double SimulationStrategy::_random(double max) {
-//     _distribution_t d(0, max);
-//     _variate_t vg(_rng, d);
-//     return vg();
-// }

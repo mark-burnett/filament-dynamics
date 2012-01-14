@@ -57,7 +57,7 @@ class RandomHydrolysisWithByproduct : public RandomHydrolysis {
         size_t perform(double time, double r,
                     filament_container_t &filaments,
                     concentration_container_t &concentrations) {
-            concentrations[_byproduct].add_monomer();
+            concentrations[_byproduct]->add_monomer();
             return RandomHydrolysis::perform(time, r, filaments, concentrations);
         }
 

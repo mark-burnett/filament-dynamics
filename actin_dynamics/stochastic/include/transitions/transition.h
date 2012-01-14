@@ -15,8 +15,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 
 #include "concentrations/concentration.h"
 #include "filaments/filament.h"
@@ -31,6 +31,6 @@ class Transition : public boost::noncopyable {
                     concentration_container_t &concentrations) = 0;
 };
 
-typedef boost::ptr_vector<Transition> transition_container_t;
+typedef std::vector< boost::shared_ptr<Transition> > transition_container_t;
 
 #endif // _TRANSITIONS_TRANSITION_H_

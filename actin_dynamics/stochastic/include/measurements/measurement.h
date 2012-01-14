@@ -15,26 +15,28 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 
-class Measurement : public boost::noncopyable {
+class Measurement : private boost::noncopyable {
+    public:
+        virtual ~Measurement() {}
 };
 
 class ConcentrationMeasurement : public Measurement {
     public:
+        virtual ~ConcentrationMeasurement();
         virtual void store(double time, double value) = 0;
 };
 
 class FilamentMeasurement : public Measurement {
     public:
+        virtual ~FilamentMeasurement();
         virtual void store(double time, double value,
                 size_t filament_index) = 0;
 };
 
-
-typedef boost::ptr_vector<Measurement> measurement_container_t;
-typedef boost::ptr_vector<ConcentrationMeasurement> concentration_measurement_container_t;
-typedef boost::ptr_vector<FilamentMeasurement> filament_measurement_container_t;
+typedef boost::shared_ptr<Measurement> measurement_ptr_t;
+typedef std::vector< measurement_ptr_t > measurement_container_t;
 
 #endif // _MEASUREMENTS_MEASUREMENT_H_

@@ -20,6 +20,8 @@
 class FixedReagent : public Concentration {
     public:
         FixedReagent(size_t number, double fnc) : _number(number), _fnc(fnc) {}
+        ~FixedReagent() {}
+
         double value() const {return _number * _fnc;};
         void add_monomer() { ++_number;};
         void remove_monomer() { if (_number > 0) --_number;};

@@ -20,6 +20,8 @@
 class FixedConcentration : public Concentration {
     public:
         FixedConcentration(double new_value) : _value(new_value) {}
+        ~FixedConcentration() {}
+
         double value() const {return _value;};
         void add_monomer() {};
         void remove_monomer() {};

@@ -18,6 +18,7 @@
 #include <vector>
 
 #include <boost/assign/std/vector.hpp>
+#include <boost/shared_ptr.hpp>
 
 // Bring operator+= into the namespace
 using namespace boost::assign;
@@ -33,7 +34,7 @@ TEST(RandomHydrolysis, SingleFilamentR) {
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
     filament_container_t filaments;
-    filaments.push_back(new SimpleFilament(values.begin(), values.end()));
+    filaments.push_back(filament_ptr_t(new SimpleFilament(values.begin(), values.end())));
 
     concentration_container_t concentrations;
 
@@ -55,8 +56,8 @@ TEST(RandomHydrolysis, DoubleFilamentR) {
     values2 += 1, 1, 2, 0, 2, 0, 0, 1;
 
     filament_container_t filaments;
-    filaments.push_back(new SimpleFilament(values1.begin(), values1.end()));
-    filaments.push_back(new SimpleFilament(values2.begin(), values2.end()));
+    filaments.push_back(filament_ptr_t(new SimpleFilament(values1.begin(), values1.end())));
+    filaments.push_back(filament_ptr_t(new SimpleFilament(values2.begin(), values2.end())));
 
     concentration_container_t concentrations;
 
@@ -76,7 +77,7 @@ TEST(RandomHydrolysis, SingleFilamentPerform) {
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
     filament_container_t filaments;
-    filaments.push_back(new SimpleFilament(values.begin(), values.end()));
+    filaments.push_back(filament_ptr_t(new SimpleFilament(values.begin(), values.end())));
 
     concentration_container_t concentrations;
 
@@ -93,19 +94,19 @@ TEST(RandomHydrolysis, SingleFilamentPerform) {
     EXPECT_DOUBLE_EQ(9, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(4, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(1, filaments[0].pointed_state());
+    EXPECT_EQ(1, filaments[0]->pointed_state());
 
     EXPECT_EQ(2, t_0.perform(0, 8, filaments, concentrations));
     EXPECT_DOUBLE_EQ(6, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(10, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(4, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(1, filaments[0].barbed_state());
+    EXPECT_EQ(1, filaments[0]->barbed_state());
 
     EXPECT_EQ(1, t_1.perform(0, 9, filaments, concentrations));
     EXPECT_DOUBLE_EQ(6, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(2, filaments[0].barbed_state());
+    EXPECT_EQ(2, filaments[0]->barbed_state());
 }
 
 TEST(RandomHydrolysis, DoubleFilamentPerform) {
@@ -115,8 +116,8 @@ TEST(RandomHydrolysis, DoubleFilamentPerform) {
     values2 += 1, 1, 2, 0, 2, 0, 0, 1;
 
     filament_container_t filaments;
-    filaments.push_back(new SimpleFilament(values1.begin(), values1.end()));
-    filaments.push_back(new SimpleFilament(values2.begin(), values2.end()));
+    filaments.push_back(filament_ptr_t(new SimpleFilament(values1.begin(), values1.end())));
+    filaments.push_back(filament_ptr_t(new SimpleFilament(values2.begin(), values2.end())));
 
     concentration_container_t concentrations;
 
@@ -133,7 +134,7 @@ TEST(RandomHydrolysis, DoubleFilamentPerform) {
     EXPECT_DOUBLE_EQ(21, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(10, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(16, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(2, filaments[1].pointed_state());
+    EXPECT_EQ(2, filaments[1]->pointed_state());
 }
 
 TEST(RandomHydrolysisWithByproduct, SingleFilamentPerform) {
@@ -141,15 +142,15 @@ TEST(RandomHydrolysisWithByproduct, SingleFilamentPerform) {
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
     filament_container_t filaments;
-    filaments.push_back(new SimpleFilament(values.begin(), values.end()));
+    filaments.push_back(filament_ptr_t(new SimpleFilament(values.begin(), values.end())));
 
     concentration_container_t concentrations;
-    concentrations.push_back(new FixedReagent(0, 3));
+    concentrations.push_back(concentration_ptr_t(new FixedReagent(0, 3)));
 
     RandomHydrolysisWithByproduct t_0(0, 1, 3, 0);
 
     EXPECT_DOUBLE_EQ(12, t_0.R(0, filaments, concentrations));
     EXPECT_EQ(1, t_0.perform(0, 1, filaments, concentrations));
     EXPECT_DOUBLE_EQ(9, t_0.R(0, filaments, concentrations));
-    EXPECT_DOUBLE_EQ(3, concentrations[0].value());
+    EXPECT_DOUBLE_EQ(3, concentrations[0]->value());
 }

@@ -15,16 +15,20 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <boost/utility.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
+#include <vector>
 
-class Concentration : public boost::noncopyable {
+#include <boost/shared_ptr.hpp>
+#include <boost/utility.hpp>
+
+class Concentration : private boost::noncopyable {
     public:
+        virtual ~Concentration() {};
         virtual double value() const = 0;
         virtual void add_monomer() = 0;
         virtual void remove_monomer() = 0;
 };
 
-typedef boost::ptr_vector<Concentration> concentration_container_t;
+typedef boost::shared_ptr<Concentration> concentration_ptr_t;
+typedef std::vector< concentration_ptr_t > concentration_container_t;
 
 #endif // _CONCENTRATIONS_CONCENTRATION_H_

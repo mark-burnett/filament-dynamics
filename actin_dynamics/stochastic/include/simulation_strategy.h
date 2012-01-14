@@ -29,18 +29,19 @@
 
 class SimulationStrategy {
     public:
-        SimulationStrategy() : _rng(generate_random_seed()) {};
+        SimulationStrategy() : _rng(generate_random_seed()) {}
 
-//        SimulationStrategy(transition_container_t &transitions,
-//                concentration_container_t &concentrations,
-//                measurement_container_t &measurements,
-//                end_condition_container_t &end_conditions,
-//                filament_container_t &filaments) :
-//            _transitions(transitions.begin(), transitions.end()),
-//            _concentrations(concentrations, transitions.begin(), transitions.end()),
-//            _measurements(measurements.begin(), measurements.end()),
-//            _end_conditions(end_conditions.begin(), end_conditions.end()),
-//            _filaments(filaments.begin(), filaments.end()) {}
+        SimulationStrategy(transition_container_t &transitions,
+                concentration_container_t &concentrations,
+                measurement_container_t &measurements,
+                end_condition_container_t &end_conditions,
+                filament_container_t &filaments) :
+            _transitions(transitions),
+            _concentrations(concentrations),
+            _measurements(measurements),
+            _end_conditions(end_conditions),
+            _filaments(filaments),
+            _rng(generate_random_seed()) {}
 
         // XXX Fix return value (concentration and filament measurements)
         void run();
@@ -52,11 +53,11 @@ class SimulationStrategy {
         };
 
     private:
-//        transition_container_t _transitions;
-//        concentration_container_t _concentrations;
-//        measurement_container_t _measurements;
-//        end_condition_container_t _end_conditions;
-//        filament_container_t _filaments;
+        transition_container_t _transitions;
+        concentration_container_t _concentrations;
+        measurement_container_t _measurements;
+        end_condition_container_t _end_conditions;
+        filament_container_t _filaments;
 
         typedef boost::mt19937 _rng_t;
         typedef boost::uniform_real<> _distribution_t;

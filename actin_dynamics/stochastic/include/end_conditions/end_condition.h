@@ -17,19 +17,21 @@
 
 #include <vector>
 
+#include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 
 #include "concentrations/concentration.h"
 #include "filaments/filament.h"
 
 class EndCondition : public boost::noncopyable {
     public:
+        virtual ~EndCondition() {}
         virtual bool satisfied(double time,
                 const filament_container_t &filaments,
                 const concentration_container_t &concentrations) = 0;
 };
 
-typedef boost::ptr_vector<EndCondition> end_condition_container_t;
+typedef boost::shared_ptr<EndCondition> end_condition_ptr_t;
+typedef std::vector< end_condition_ptr_t > end_condition_container_t;
 
 #endif // _END_CONDITIONS_END_CONDITION_H_

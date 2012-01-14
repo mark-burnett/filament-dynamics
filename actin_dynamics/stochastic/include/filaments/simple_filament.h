@@ -26,6 +26,7 @@ typedef std::vector<State>::const_iterator _vector_ui_ci;
 
 class SimpleFilament : public Filament {
     public:
+        ~SimpleFilament() {}
         SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop);
         SimpleFilament(size_t number, State state);
 
