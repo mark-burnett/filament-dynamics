@@ -17,3 +17,13 @@ aclocal.m4
 autom4te.cache
 config
 configure
+Makefile
+config.log
+config.status
+.libs
+libtool
+.deps
+.dirstamp
+test
+*.lo
+*.la
