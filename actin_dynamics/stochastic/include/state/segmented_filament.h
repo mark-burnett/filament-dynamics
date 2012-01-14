@@ -20,11 +20,11 @@
 #include "state/filament.h"
 
 struct Segment {
-    Segment(size_t new_number, unsigned int new_state) :
+    Segment(size_t new_number, size_t new_state) :
         number(new_number), state(new_state) {}
 
     size_t number;
-    unsigned int state;
+    size_t state;
 };
 
 class SegmentedFilament : public Filament {
@@ -32,24 +32,24 @@ class SegmentedFilament : public Filament {
         SegmentedFilament();
         ~SegmentedFilament();
 
-        size_t state_count(unsigned int state) const;
-        size_t boundary_count(unsigned int pointed_state,
-                unsigned int barbed_state) const;
+        size_t state_count(size_t state) const;
+        size_t boundary_count(size_t pointed_state,
+                size_t barbed_state) const;
         size_t length() const;
 
-        unsigned int barbed_state() const;
-        unsigned int pointed_state() const;
+        size_t barbed_state() const;
+        size_t pointed_state() const;
 
-        void append_barbed(unsigned int new_state);
-        void append_pointed(unsigned int new_state);
+        void append_barbed(size_t new_state);
+        void append_pointed(size_t new_state);
 
-        unsigned int pop_barbed();
-        unsigned int pop_pointed();
+        size_t pop_barbed();
+        size_t pop_pointed();
 
-        void update_state(size_t instance_number, unsigned int new_state);
+        void update_state(size_t instance_number, size_t new_state);
         void update_boundary(size_t instance_number,
-                unsigned int new_pointed_state,
-                unsigned int new_barbed_state);
+                size_t new_pointed_state,
+                size_t new_barbed_state);
 
     private:
         std::deque<Segment> segments;

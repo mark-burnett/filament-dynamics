@@ -28,7 +28,7 @@ using namespace boost::assign;
 #include "concentrations/fixed_concentration.h"
 
 TEST(RandomHydrolysis, SingleFilamentR) {
-    std::vector<unsigned int> values;
+    std::vector<size_t> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
     boost::ptr_vector<Filament> filaments;
@@ -48,9 +48,9 @@ TEST(RandomHydrolysis, SingleFilamentR) {
 }
 
 TEST(RandomHydrolysis, DoubleFilamentR) {
-    std::vector<unsigned int> values1;
+    std::vector<size_t> values1;
     values1 += 0, 1, 0, 0, 2, 1, 0, 1;
-    std::vector<unsigned int> values2;
+    std::vector<size_t> values2;
     values2 += 1, 1, 2, 0, 2, 0, 0, 1;
 
     boost::ptr_vector<Filament> filaments;
@@ -71,7 +71,7 @@ TEST(RandomHydrolysis, DoubleFilamentR) {
 }
 
 TEST(RandomHydrolysis, SingleFilamentPerform) {
-    std::vector<unsigned int> values;
+    std::vector<size_t> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
     boost::ptr_vector<Filament> filaments;
@@ -105,4 +105,32 @@ TEST(RandomHydrolysis, SingleFilamentPerform) {
     EXPECT_DOUBLE_EQ(8, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_2.R(0, filaments, concentrations));
     EXPECT_EQ(2, filaments[0].barbed_state());
+}
+
+TEST(RandomHydrolysis, DoubleFilamentPerform) {
+    std::vector<size_t> values1;
+    values1 += 0, 1, 0, 0, 2, 1, 0, 1;
+    std::vector<size_t> values2;
+    values2 += 1, 1, 2, 0, 2, 0, 0, 1;
+
+    boost::ptr_vector<Filament> filaments;
+    filaments.push_back(new SimpleFilament(values1.begin(), values1.end()));
+    filaments.push_back(new SimpleFilament(values2.begin(), values2.end()));
+
+    boost::ptr_vector<Concentration> concentrations;
+
+    RandomHydrolysis t_0(0, 1, 3);
+    RandomHydrolysis t_1(1, 2, 2);
+    RandomHydrolysis t_2(2, 3, 4);
+
+    // Must call R before perform
+    EXPECT_DOUBLE_EQ(21, t_0.R(0, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(12, t_1.R(0, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(12, t_2.R(0, filaments, concentrations));
+
+    EXPECT_EQ(1, t_1.perform(0, 7, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(21, t_0.R(0, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(10, t_1.R(0, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(16, t_2.R(0, filaments, concentrations));
+    EXPECT_EQ(2, filaments[1].pointed_state());
 }

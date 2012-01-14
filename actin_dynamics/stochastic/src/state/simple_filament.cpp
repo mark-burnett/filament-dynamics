@@ -22,16 +22,16 @@ SimpleFilament::SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop) {
     }
 }
 
-SimpleFilament::SimpleFilament(size_t number, unsigned int state) {
+SimpleFilament::SimpleFilament(size_t number, size_t state) {
     for (size_t i = 0; i < number; ++i) {
         states.push_back(state);
     }
 }
 
 // Simple queries about the filament state.
-size_t SimpleFilament::state_count(unsigned int state) const {
+size_t SimpleFilament::state_count(size_t state) const {
     size_t count = 0;
-    for (std::deque<unsigned int>::const_iterator i = states.begin();
+    for (std::deque<size_t>::const_iterator i = states.begin();
             i < states.end(); ++i) {
         if (*i == state) {
             ++count;
@@ -41,12 +41,12 @@ size_t SimpleFilament::state_count(unsigned int state) const {
     return count;
 }
 
-size_t SimpleFilament::boundary_count(unsigned int pointed_state,
-        unsigned int barbed_state) const {
+size_t SimpleFilament::boundary_count(size_t pointed_state,
+        size_t barbed_state) const {
     size_t count = 0;
 
-    std::deque<unsigned int>::const_iterator pointed = states.begin();
-    std::deque<unsigned int>::const_iterator barbed = states.begin();
+    std::deque<size_t>::const_iterator pointed = states.begin();
+    std::deque<size_t>::const_iterator barbed = states.begin();
     ++barbed;
     while (barbed < states.end()) {
         if (*pointed == pointed_state && *barbed == barbed_state) {
@@ -65,32 +65,32 @@ size_t SimpleFilament::length() const {
     return states.size();
 }
 
-unsigned int SimpleFilament::barbed_state() const {
+size_t SimpleFilament::barbed_state() const {
     return states.back();
 }
 
-unsigned int SimpleFilament::pointed_state() const {
+size_t SimpleFilament::pointed_state() const {
     return states.front();
 }
 
 
 // Add and remove subunits
-void SimpleFilament::append_barbed(unsigned int new_state) {
+void SimpleFilament::append_barbed(size_t new_state) {
     states.push_back(new_state);
 }
 
-void SimpleFilament::append_pointed(unsigned int new_state) {
+void SimpleFilament::append_pointed(size_t new_state) {
     states.push_front(new_state);
 }
 
-unsigned int SimpleFilament::pop_barbed() {
-    unsigned int state = states.back();
+size_t SimpleFilament::pop_barbed() {
+    size_t state = states.back();
     states.pop_back();
     return state;
 }
 
-unsigned int SimpleFilament::pop_pointed() {
-    unsigned int state = states.front();
+size_t SimpleFilament::pop_pointed() {
+    size_t state = states.front();
     states.pop_front();
     return state;
 }
@@ -98,9 +98,9 @@ unsigned int SimpleFilament::pop_pointed() {
 
 // Update states
 void SimpleFilament::update_state(size_t instance_number,
-        unsigned int old_state, unsigned int new_state) {
+        size_t old_state, size_t new_state) {
     size_t count = 0;
-    for (std::deque<unsigned int>::iterator i = states.begin();
+    for (std::deque<size_t>::iterator i = states.begin();
             i < states.end(); ++i) {
         if (*i == old_state) {
             if (count == instance_number) {
@@ -113,12 +113,12 @@ void SimpleFilament::update_state(size_t instance_number,
 }
 
 void SimpleFilament::update_boundary(size_t instance_number,
-        unsigned int old_pointed_state, unsigned int old_barbed_state,
-        unsigned int new_pointed_state, unsigned int new_barbed_state) {
+        size_t old_pointed_state, size_t old_barbed_state,
+        size_t new_pointed_state, size_t new_barbed_state) {
     size_t count = 0;
 
-    std::deque<unsigned int>::iterator pointed = states.begin();
-    std::deque<unsigned int>::iterator barbed = states.begin();
+    std::deque<size_t>::iterator pointed = states.begin();
+    std::deque<size_t>::iterator barbed = states.begin();
     ++barbed;
     while (barbed < states.end()) {
         if (*pointed == old_pointed_state && *barbed == old_barbed_state) {

@@ -1,5 +1,5 @@
-#ifndef _TRANSITIONS_RANDOM_HYDROLYSIS_H_
-#define _TRANSITIONS_RANDOM_HYDROLYSIS_H_
+#ifndef _TRANSITIONS_MIXINS_H_
+#define _TRANSITIONS_MIXINS_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -15,35 +15,18 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <vector>
-
-#include "concentrations/concentration.h"
-#include "state/filament.h"
-
 #include "transitions/transition.h"
 
 
-class RandomHydrolysis : public Transition {
+class WithByproduct {
     public:
-        RandomHydrolysis(size_t _old_state, size_t _new_state,
-                double _rate) : old_state(_old_state), new_state(_new_state),
-                                rate(_rate), count(0) {}
-        double R(double time,
-                    const boost::ptr_vector<Filament> &filaments,
-                    const boost::ptr_vector<Concentration> &concentrations);
+        WithByproduct(size_t byproduct) : _byproduct(byproduct) {}
         size_t perform(double time, double r,
                     boost::ptr_vector<Filament> &filaments,
                     boost::ptr_vector<Concentration> &concentrations);
     private:
-        size_t old_state;
-        size_t new_state;
-        double rate;
-
-        size_t count;
-
-        // cache
-        double previous_R;
-        std::vector<double> filament_Rs;
+        size_t _byproduct;
 };
 
-#endif // _TRANSITIONS_RANDOM_HYDROLYSIS_H_
+#endif // _TRANSITIONS_MIXINS_H_
+

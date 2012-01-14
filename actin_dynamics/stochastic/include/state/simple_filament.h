@@ -20,35 +20,35 @@
 
 #include "state/filament.h"
 
-typedef std::vector<unsigned int>::const_iterator _vector_ui_ci;
+typedef std::vector<size_t>::const_iterator _vector_ui_ci;
 
 class SimpleFilament : public Filament {
     public:
         SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop);
-        SimpleFilament(size_t number, unsigned int state);
+        SimpleFilament(size_t number, size_t state);
 
-        size_t state_count(unsigned int state) const;
-        size_t boundary_count(unsigned int pointed_state,
-                unsigned int barbed_state) const;
+        size_t state_count(size_t state) const;
+        size_t boundary_count(size_t pointed_state,
+                size_t barbed_state) const;
         size_t length() const;
 
-        unsigned int barbed_state() const;
-        unsigned int pointed_state() const;
+        size_t barbed_state() const;
+        size_t pointed_state() const;
 
-        void append_barbed(unsigned int new_state);
-        void append_pointed(unsigned int new_state);
+        void append_barbed(size_t new_state);
+        void append_pointed(size_t new_state);
 
-        unsigned int pop_barbed();
-        unsigned int pop_pointed();
+        size_t pop_barbed();
+        size_t pop_pointed();
 
         void update_state(size_t instance_number,
-                unsigned int old_state, unsigned int new_state);
+                size_t old_state, size_t new_state);
         void update_boundary(size_t instance_number,
-                unsigned int old_pointed_state, unsigned int old_barbed_state,
-                unsigned int new_pointed_state, unsigned int new_barbed_state);
+                size_t old_pointed_state, size_t old_barbed_state,
+                size_t new_pointed_state, size_t new_barbed_state);
 
     private:
-        std::deque<unsigned int> states;
+        std::deque<size_t> states;
 };
 
 #endif // _STATE_SIMPLE_FILAMENT_H_

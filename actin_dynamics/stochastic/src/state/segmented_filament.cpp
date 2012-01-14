@@ -17,7 +17,7 @@
 
 
 // Simple queries about the filament state.
-size_t SegmentedFilament::state_count(unsigned int state) const {
+size_t SegmentedFilament::state_count(size_t state) const {
     size_t count = 0;
     for (std::deque<Segment>::const_iterator i = segments.begin();
             i < segments.end(); ++i) {
@@ -29,8 +29,8 @@ size_t SegmentedFilament::state_count(unsigned int state) const {
     return count;
 }
 
-size_t SegmentedFilament::boundary_count(unsigned int pointed_state,
-        unsigned int barbed_state) const {
+size_t SegmentedFilament::boundary_count(size_t pointed_state,
+        size_t barbed_state) const {
     count = 0;
 
     std::deque<Segment>::const_iterator pointed = segments.begin();
@@ -60,20 +60,20 @@ size_t SegmentedFilament::length() const {
     return count;
 }
 
-unsigned int SegmentedFilament::barbed_state() const {
+size_t SegmentedFilament::barbed_state() const {
     return segments.back().state
 }
 
-unsigned int SegmentedFilament::pointed_state() const {
+size_t SegmentedFilament::pointed_state() const {
     return segments.front().state
 }
 
 // Add and remove subunits
-void SegmentedFilament::append_barbed(unsigned int new_state){
+void SegmentedFilament::append_barbed(size_t new_state){
     segments.push_back(Segment(1, new_state));
     _merge_segments(segments.rbegin(), 2)
 }
 
 void SegmentedFilament:update_state(size_t instance_number,
-        unsigned int new_state) {
+        size_t new_state) {
 }

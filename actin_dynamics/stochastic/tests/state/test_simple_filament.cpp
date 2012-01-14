@@ -24,7 +24,7 @@ using namespace boost::assign;
 #include "state/simple_filament.h"
 
 TEST(SimpleFilament, IteratorConstructor) {
-    std::vector<unsigned int> values;
+    std::vector<size_t> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
     SimpleFilament f(values.begin(), values.end());
@@ -61,7 +61,7 @@ TEST(SimpleFilament, Append) {
 TEST(SimpleFilament, Remove) {
     SimpleFilament f(20, 0);
 
-    unsigned int s = f.pop_barbed();
+    size_t s = f.pop_barbed();
     EXPECT_EQ(0, s);
     EXPECT_EQ(19, f.length());
 

@@ -20,32 +20,32 @@
 class Filament {
     public:
         // query filament status
-        virtual size_t state_count(unsigned int state) const = 0;
-        virtual size_t boundary_count(unsigned int pointed_state,
-                unsigned int barbed_state) const = 0;
+        virtual size_t state_count(size_t state) const = 0;
+        virtual size_t boundary_count(size_t pointed_state,
+                size_t barbed_state) const = 0;
         virtual size_t length() const = 0;
 
         // query tip states
-        virtual unsigned int barbed_state() const = 0;
-        virtual unsigned int pointed_state() const = 0;
+        virtual size_t barbed_state() const = 0;
+        virtual size_t pointed_state() const = 0;
 
         // add element to either end
-        virtual void append_barbed(unsigned int new_state) = 0;
-        virtual void append_pointed(unsigned int new_state) = 0;
+        virtual void append_barbed(size_t new_state) = 0;
+        virtual void append_pointed(size_t new_state) = 0;
 
         // remove element from either end
-        virtual unsigned int pop_barbed() = 0;
-        virtual unsigned int pop_pointed() = 0;
+        virtual size_t pop_barbed() = 0;
+        virtual size_t pop_pointed() = 0;
 
         // change nth specific state to *
         virtual void update_state(size_t instance_number,
-                unsigned int old_state, unsigned int new_state) = 0;
+                size_t old_state, size_t new_state) = 0;
         // change +/- element of nth specific boundary of type * to *
         virtual void update_boundary(size_t instance_number,
-                unsigned int old_pointed_state,
-                unsigned int old_barbed_state,
-                unsigned int new_pointed_state,
-                unsigned int new_barbed_state) = 0;
+                size_t old_pointed_state,
+                size_t old_barbed_state,
+                size_t new_pointed_state,
+                size_t new_barbed_state) = 0;
 };
 
 #endif // _STATE_FILAMENT_H_
