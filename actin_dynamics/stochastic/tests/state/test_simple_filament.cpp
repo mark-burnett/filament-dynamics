@@ -15,9 +15,28 @@
 
 #include <gtest/gtest.h>
 
+#include <vector>
+#include <boost/assign/std/vector.hpp>
+
+// Bring operator+= into the namespace
+using namespace boost::assign;
+
 #include "state/simple_filament.h"
 
-TEST(SimpleFilament, Constructor) {
+TEST(SimpleFilament, IteratorConstructor) {
+    std::vector<unsigned int> values;
+    values += 0, 1, 0, 0, 2, 1, 0, 1;
+
+    SimpleFilament f(values.begin(), values.end());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(4, f.state_count(0));
+    EXPECT_EQ(3, f.state_count(1));
+    EXPECT_EQ(1, f.state_count(2));
+    EXPECT_EQ(2, f.boundary_count(0, 1));
+}
+
+TEST(SimpleFilament, NumberStateConstructor) {
     SimpleFilament f(26, 0);
     EXPECT_EQ(26, f.length());
     EXPECT_EQ(26, f.state_count(0));

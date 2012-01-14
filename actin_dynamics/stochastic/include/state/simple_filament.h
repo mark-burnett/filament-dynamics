@@ -16,11 +16,15 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <deque>
+#include <vector>
 
 #include "state/filament.h"
 
+typedef std::vector<unsigned int>::const_iterator _vector_ui_ci;
+
 class SimpleFilament : public Filament {
     public:
+        SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop);
         SimpleFilament(size_t number, unsigned int state);
 
         size_t state_count(unsigned int state) const;
@@ -48,4 +52,3 @@ class SimpleFilament : public Filament {
 };
 
 #endif // _STATE_SIMPLE_FILAMENT_H_
-

@@ -15,6 +15,13 @@
 
 #include "state/simple_filament.h"
 
+SimpleFilament::SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop) {
+    while (start < stop) {
+        states.push_back(*start);
+        ++start;
+    }
+}
+
 SimpleFilament::SimpleFilament(size_t number, unsigned int state) {
     for (size_t i = 0; i < number; ++i) {
         states.push_back(state);

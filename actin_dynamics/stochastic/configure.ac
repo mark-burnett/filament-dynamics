@@ -44,22 +44,18 @@ AC_SUBST(GTEST_CFLAGS)
 AC_SUBST(GTEST_LIBS)
 
 # Boost program options library
-BOOST_PROGRAM_OPTIONS_CFLAGS=""
-BOOST_PROGRAM_OPTIONS_LIBS="-lboost_program_options-mt"
+#BOOST_PROGRAM_OPTIONS_CFLAGS=""
+#BOOST_PROGRAM_OPTIONS_LIBS="-lboost_program_options-mt"
+#
+#AC_SUBST(BOOST_PROGRAM_OPTIONS_CFLAGS)
+#AC_SUBST(BOOST_PROGRAM_OPTIONS_LIBS)
 
-AC_SUBST(BOOST_PROGRAM_OPTIONS_CFLAGS)
-AC_SUBST(BOOST_PROGRAM_OPTIONS_LIBS)
-
-CXXFLAGS="$CXXFLAGS -W -Wall -Werror" #-pg -DNDEBUG"
+CXXFLAGS="$CXXFLAGS -W -Wall -Werror -Wno-unused-parameter" #-pg -DNDEBUG"
 AC_SUBST(CXXFLAGS)
 
 # ---------------------------------------------------------------------
 # Checks for header files.
 # ---------------------------------------------------------------------
-# Project header files
-#FIXME this should probably be organized without an include dir
-PROJECT_INCLUDES=-I`pwd`/include
-AC_SUBST(PROJECT_INCLUDES)
 
 # ---------------------------------------------------------------------
 # Checks for typedefs, structures, and compiler characteristics.

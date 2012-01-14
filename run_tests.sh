@@ -20,6 +20,7 @@
 UNIT_TEST_COMMAND=bin/run_unit_tests.sh
 INTEGRATION_TEST_COMMAND=bin/run_integration_tests.sh
 
+DEFAULT_RUN_C_TESTS=true
 DEFAULT_RUN_UNIT_TESTS=true
 DEFAULT_RUN_INTEGRATION_TESTS=false
 
@@ -32,9 +33,18 @@ display_args() {
     echo "Options:"
     echo
     echo "    -u    Run unit tests."
+    echo "    -c    Run C++ tests."
     echo "    -i    Run integration tests."
     echo
     echo "    -h    Print this message."
+    echo
+}
+
+run_c_tests() {
+    echo "Running C++ tests..."
+    pushd actin_dynamics/stochastic > /dev/null
+    make check
+    popd > /dev/null
     echo
 }
 
@@ -52,6 +62,9 @@ run_integration_tests() {
 
 while getopts "uih" FLAG; do
     case $FLAG in
+        "c")
+            ARGUMENTS_RECEIVED=true
+            RUN_C_TESTS=true;;
         "u")
             ARGUMENTS_RECEIVED=true
             RUN_UNIT_TESTS=true;;
@@ -68,6 +81,9 @@ echo "Running automated tests."
 echo
 
 if $ARGUMENTS_RECEIVED; then
+    if $RUN_C_TESTS; then
+        run_c_tests
+    fi
     if $RUN_UNIT_TESTS; then
         run_unit_tests
     fi
@@ -76,6 +92,10 @@ if $ARGUMENTS_RECEIVED; then
         run_integration_tests
     fi
 else
+    if $DEFAULT_RUN_C_TESTS; then
+        run_c_tests
+    fi
+
     if $DEFAULT_RUN_UNIT_TESTS; then
         run_unit_tests
     fi
