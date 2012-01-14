@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -x
+aclocal -I config
+#autoheader
+libtoolize --force --copy
+autoconf
+automake --add-missing --copy --foreign --include-deps
+
+# go ahead and run the configure script
+CXXFLAGS="-O2 -DNDEBUG" ./configure --disable-static
