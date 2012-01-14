@@ -26,14 +26,15 @@
 class RandomHydrolysis : public Transition {
     public:
         RandomHydrolysis(State _old_filaments, State _new_filaments,
-                double _rate) : old_filaments(_old_filaments), new_filaments(_new_filaments),
+                double _rate) : old_filaments(_old_filaments),
+                                new_filaments(_new_filaments),
                                 rate(_rate), count(0) {}
         double R(double time,
-                    const boost::ptr_vector<Filament> &filaments,
-                    const boost::ptr_vector<Concentration> &concentrations);
+                    const filament_container_t &filaments,
+                    const concentration_container_t &concentrations);
         size_t perform(double time, double r,
-                    boost::ptr_vector<Filament> &filaments,
-                    boost::ptr_vector<Concentration> &concentrations);
+                    filament_container_t &filaments,
+                    concentration_container_t &concentrations);
     private:
         State old_filaments;
         State new_filaments;
@@ -54,8 +55,8 @@ class RandomHydrolysisWithByproduct : public RandomHydrolysis {
             _byproduct(byproduct) {}
 
         size_t perform(double time, double r,
-                    boost::ptr_vector<Filament> &filaments,
-                    boost::ptr_vector<Concentration> &concentrations) {
+                    filament_container_t &filaments,
+                    concentration_container_t &concentrations) {
             concentrations[_byproduct].add_monomer();
             return RandomHydrolysis::perform(time, r, filaments, concentrations);
         }

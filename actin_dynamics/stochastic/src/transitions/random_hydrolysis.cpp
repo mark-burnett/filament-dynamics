@@ -15,8 +15,8 @@
 
 #include "transitions/random_hydrolysis.h"
 
-double RandomHydrolysis::R(double time, const boost::ptr_vector<Filament> &filaments,
-        const boost::ptr_vector<Concentration> &concentrations) {
+double RandomHydrolysis::R(double time, const filament_container_t &filaments,
+        const concentration_container_t &concentrations) {
     filament_Rs.resize(filaments.size());
 
     double r;
@@ -31,8 +31,8 @@ double RandomHydrolysis::R(double time, const boost::ptr_vector<Filament> &filam
 }
 
 size_t RandomHydrolysis::perform(double time, double r,
-        boost::ptr_vector<Filament> &filaments,
-        boost::ptr_vector<Concentration> &concentrations) {
+        filament_container_t &filaments,
+        concentration_container_t &concentrations) {
     for (size_t i = 0; i < filaments.size(); ++i) {
         double filament_R = filament_Rs[i];
         if (r < filament_R) {

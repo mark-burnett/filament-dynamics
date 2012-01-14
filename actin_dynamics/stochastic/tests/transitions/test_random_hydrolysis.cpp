@@ -18,7 +18,6 @@
 #include <vector>
 
 #include <boost/assign/std/vector.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 
 // Bring operator+= into the namespace
 using namespace boost::assign;
@@ -33,10 +32,10 @@ TEST(RandomHydrolysis, SingleFilamentR) {
     std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
-    boost::ptr_vector<Filament> filaments;
+    filament_container_t filaments;
     filaments.push_back(new SimpleFilament(values.begin(), values.end()));
 
-    boost::ptr_vector<Concentration> concentrations;
+    concentration_container_t concentrations;
 
     RandomHydrolysis t_0(0, 7, 3);
     RandomHydrolysis t_1(1, 7, 2);
@@ -55,11 +54,11 @@ TEST(RandomHydrolysis, DoubleFilamentR) {
     std::vector<State> values2;
     values2 += 1, 1, 2, 0, 2, 0, 0, 1;
 
-    boost::ptr_vector<Filament> filaments;
+    filament_container_t filaments;
     filaments.push_back(new SimpleFilament(values1.begin(), values1.end()));
     filaments.push_back(new SimpleFilament(values2.begin(), values2.end()));
 
-    boost::ptr_vector<Concentration> concentrations;
+    concentration_container_t concentrations;
 
     RandomHydrolysis t_0(0, 7, 3);
     RandomHydrolysis t_1(1, 7, 2);
@@ -76,10 +75,10 @@ TEST(RandomHydrolysis, SingleFilamentPerform) {
     std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
-    boost::ptr_vector<Filament> filaments;
+    filament_container_t filaments;
     filaments.push_back(new SimpleFilament(values.begin(), values.end()));
 
-    boost::ptr_vector<Concentration> concentrations;
+    concentration_container_t concentrations;
 
     RandomHydrolysis t_0(0, 1, 3);
     RandomHydrolysis t_1(1, 2, 2);
@@ -115,11 +114,11 @@ TEST(RandomHydrolysis, DoubleFilamentPerform) {
     std::vector<State> values2;
     values2 += 1, 1, 2, 0, 2, 0, 0, 1;
 
-    boost::ptr_vector<Filament> filaments;
+    filament_container_t filaments;
     filaments.push_back(new SimpleFilament(values1.begin(), values1.end()));
     filaments.push_back(new SimpleFilament(values2.begin(), values2.end()));
 
-    boost::ptr_vector<Concentration> concentrations;
+    concentration_container_t concentrations;
 
     RandomHydrolysis t_0(0, 1, 3);
     RandomHydrolysis t_1(1, 2, 2);
@@ -141,10 +140,10 @@ TEST(RandomHydrolysisWithByproduct, SingleFilamentPerform) {
     std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
-    boost::ptr_vector<Filament> filaments;
+    filament_container_t filaments;
     filaments.push_back(new SimpleFilament(values.begin(), values.end()));
 
-    boost::ptr_vector<Concentration> concentrations;
+    concentration_container_t concentrations;
     concentrations.push_back(new FixedReagent(0, 3));
 
     RandomHydrolysisWithByproduct t_0(0, 1, 3, 0);

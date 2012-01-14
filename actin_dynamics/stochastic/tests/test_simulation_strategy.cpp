@@ -13,17 +13,20 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
+#include <gtest/gtest.h>
+
 #include "simulation_strategy.h"
 
-void SimulationStrategy::run() {
-    for (int i = 0; i < 10; ++i) {
-        std::cout << _random(i + 1) << std::endl;
-    }
-}
+TEST(SimulationStrategy, RNG) {
+    SimulationStrategy ss;
+//    transition_container_t transitions;
+//    concentration_container_t concentrations;
+//    measurement_container_t measurements;
+//    end_condition_container_t end_conditions;
+//    filament_container_t filaments;
+//
+//    SimulationStrategy ss(transitions, concentrations, measurements,
+//            end_conditions, filaments);
 
-// inline double SimulationStrategy::_random(double max) {
-//     _distribution_t d(0, max);
-//     _variate_t vg(_rng, d);
-//     return vg();
-// }
+    ss.run();
+}

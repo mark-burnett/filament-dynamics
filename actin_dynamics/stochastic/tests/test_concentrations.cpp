@@ -15,8 +15,6 @@
 
 #include <gtest/gtest.h>
 
-#include "state.h"
-
 #include "concentrations/fixed_concentration.h"
 #include "concentrations/fixed_reagent.h"
 
@@ -46,4 +44,3 @@ TEST(Concentrations, FixedReagent) {
 
     EXPECT_DOUBLE_EQ(6, c.value());
 }
-

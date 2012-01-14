@@ -15,20 +15,22 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <boost/utility.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "concentrations/concentration.h"
 #include "filaments/filament.h"
 
-
-class Transition {
+class Transition : public boost::noncopyable {
     public:
         virtual double R(double time,
-                    const boost::ptr_vector<Filament> &filaments,
-                    const boost::ptr_vector<Concentration> &concentrations) = 0;
+                    const filament_container_t &filaments,
+                    const concentration_container_t &concentrations) = 0;
         virtual size_t perform(double time, double r,
-                    boost::ptr_vector<Filament> &filaments,
-                    boost::ptr_vector<Concentration> &concentrations) = 0;
+                    filament_container_t &filaments,
+                    concentration_container_t &concentrations) = 0;
 };
+
+typedef boost::ptr_vector<Transition> transition_container_t;
 
 #endif // _TRANSITIONS_TRANSITION_H_

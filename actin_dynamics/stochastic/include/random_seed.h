@@ -1,5 +1,5 @@
-#ifndef _MEASUREMENTS_MEASUREMENT_H_
-#define _MEASUREMENTS_MEASUREMENT_H_
+#ifndef _RANDOM_SEED_H_
+#define _RANDOM_SEED_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -15,19 +15,19 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <fstream>
+#include <cstring>
 
-class Measurement {
-};
+unsigned int generate_random_seed() {
+    char buffer[sizeof(unsigned int)];
+    unsigned int seed;
 
-class ConcentrationMeasurement : public Measurement {
-    public:
-        virtual void store(double time, double value) = 0;
-};
+    std::ifstream f("/dev/urandom", std::ios::binary);
 
-class FilamentMeasurement : public Measurement {
-    public:
-        virtual void store(double time, double value,
-                size_t filament_index) = 0;
-};
+    f.read(buffer, sizeof(unsigned int));
+    memcpy(&seed, buffer, sizeof(unsigned int));
 
-#endif // _MEASUREMENTS_MEASUREMENT_H_
+    return seed;
+}
+
+#endif // _RANDOM_SEED_H_

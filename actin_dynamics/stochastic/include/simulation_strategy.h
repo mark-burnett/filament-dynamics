@@ -15,15 +15,53 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_real.hpp>
+#include <boost/random/variate_generator.hpp>
+
 #include "concentrations/concentration.h"
 #include "end_conditions/end_condition.h"
 #include "measurements/measurement.h"
 #include "filaments/filament.h"
 #include "transitions/transition.h"
 
+#include "random_seed.h"
+
 class SimulationStrategy {
-    SimulationStrategy();
+    public:
+        SimulationStrategy() : _rng(generate_random_seed()) {};
+
+//        SimulationStrategy(transition_container_t &transitions,
+//                concentration_container_t &concentrations,
+//                measurement_container_t &measurements,
+//                end_condition_container_t &end_conditions,
+//                filament_container_t &filaments) :
+//            _transitions(transitions.begin(), transitions.end()),
+//            _concentrations(concentrations, transitions.begin(), transitions.end()),
+//            _measurements(measurements.begin(), measurements.end()),
+//            _end_conditions(end_conditions.begin(), end_conditions.end()),
+//            _filaments(filaments.begin(), filaments.end()) {}
+
+        // XXX Fix return value (concentration and filament measurements)
+        void run();
+
+        inline double _random(double max) {
+            _distribution_t d(0, max);
+            _variate_t vg(_rng, d);
+            return vg();
+        };
+
+    private:
+//        transition_container_t _transitions;
+//        concentration_container_t _concentrations;
+//        measurement_container_t _measurements;
+//        end_condition_container_t _end_conditions;
+//        filament_container_t _filaments;
+
+        typedef boost::mt19937 _rng_t;
+        typedef boost::uniform_real<> _distribution_t;
+        typedef boost::variate_generator<_rng_t, _distribution_t> _variate_t;
+        _rng_t _rng;
 };
 
 #endif // _SIMULATION_STRATEGY_H_
-

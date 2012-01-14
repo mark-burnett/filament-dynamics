@@ -15,10 +15,13 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <boost/ptr_container/ptr_vector.hpp>
+
+#include <boost/utility.hpp>
 #include "state.h"
 
 // Abstract base class for filament implementations.
-class Filament {
+class Filament : public boost::noncopyable {
     public:
         // query filament status
         virtual size_t state_count(State state) const = 0;
@@ -48,5 +51,7 @@ class Filament {
                 State new_pointed_states,
                 State new_barbed_states) = 0;
 };
+
+typedef boost::ptr_vector<Filament> filament_container_t;
 
 #endif // _STATE_FILAMENT_H_

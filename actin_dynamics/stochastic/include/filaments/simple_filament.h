@@ -17,6 +17,7 @@
 
 #include <deque>
 #include <vector>
+#include <boost/utility.hpp>
 
 #include "state.h"
 #include "filaments/filament.h"

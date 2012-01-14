@@ -1,5 +1,5 @@
-#ifndef _END_CONDITIONS_END_CONDITION_H_
-#define _END_CONDITIONS_END_CONDITION_H_
+#ifndef _MEASUREMENTS_MEASUREMENT_H_
+#define _MEASUREMENTS_MEASUREMENT_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -15,21 +15,26 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <vector>
-
 #include <boost/utility.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
-#include "concentrations/concentration.h"
-#include "filaments/filament.h"
-
-class EndCondition : public boost::noncopyable {
-    public:
-        virtual bool satisfied(double time,
-                const filament_container_t &filaments,
-                const concentration_container_t &concentrations) = 0;
+class Measurement : public boost::noncopyable {
 };
 
-typedef boost::ptr_vector<EndCondition> end_condition_container_t;
+class ConcentrationMeasurement : public Measurement {
+    public:
+        virtual void store(double time, double value) = 0;
+};
 
-#endif // _END_CONDITIONS_END_CONDITION_H_
+class FilamentMeasurement : public Measurement {
+    public:
+        virtual void store(double time, double value,
+                size_t filament_index) = 0;
+};
+
+
+typedef boost::ptr_vector<Measurement> measurement_container_t;
+typedef boost::ptr_vector<ConcentrationMeasurement> concentration_measurement_container_t;
+typedef boost::ptr_vector<FilamentMeasurement> filament_measurement_container_t;
+
+#endif // _MEASUREMENTS_MEASUREMENT_H_
