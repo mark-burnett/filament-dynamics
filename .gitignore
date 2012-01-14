@@ -11,3 +11,9 @@ micro.py
 results/
 stop_jobs.sh
 push.sh
+Makefile.in
+*.o
+aclocal.m4
+autom4te.cache
+config
+configure
