@@ -1,5 +1,5 @@
-#ifndef _TRANSITIONS_MIXINS_H_
-#define _TRANSITIONS_MIXINS_H_
+#ifndef _CONCENTRATIONS_FIXED_REAGENT_H_
+#define _CONCENTRATIONS_FIXED_REAGENT_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -15,18 +15,17 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "transitions/transition.h"
+#include "concentration.h"
 
-
-class WithByproduct {
+class FixedReagent : public Concentration {
     public:
-        WithByproduct(size_t byproduct) : _byproduct(byproduct) {}
-        size_t perform(double time, double r,
-                    boost::ptr_vector<Filament> &filaments,
-                    boost::ptr_vector<Concentration> &concentrations);
+        FixedReagent(size_t number, double fnc) : _number(number), _fnc(fnc) {}
+        double value() const {return _number * _fnc;};
+        void add_monomer() { ++_number;};
+        void remove_monomer() { if (_number > 0) --_number;};
     private:
-        size_t _byproduct;
+        size_t _number;
+        double _fnc;
 };
 
-#endif // _TRANSITIONS_MIXINS_H_
-
+#endif // _CONCENTRATIONS_FIXED_REAGENT_H_

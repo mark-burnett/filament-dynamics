@@ -15,8 +15,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "concentration.h"
 
-class FixedConcentration {
+class FixedConcentration : public Concentration {
     public:
         FixedConcentration(double new_value) : _value(new_value) {}
         double value() const {return _value;};

@@ -46,4 +46,22 @@ class RandomHydrolysis : public Transition {
         std::vector<double> filament_Rs;
 };
 
+class RandomHydrolysisWithByproduct : public RandomHydrolysis {
+    public:
+        RandomHydrolysisWithByproduct(State old_filaments, State new_filaments,
+                double rate, State byproduct) :
+            RandomHydrolysis(old_filaments, new_filaments, rate),
+            _byproduct(byproduct) {}
+
+        size_t perform(double time, double r,
+                    boost::ptr_vector<Filament> &filaments,
+                    boost::ptr_vector<Concentration> &concentrations) {
+            concentrations[_byproduct].add_monomer();
+            return RandomHydrolysis::perform(time, r, filaments, concentrations);
+        }
+
+    private:
+        State _byproduct;
+};
+
 #endif // _TRANSITIONS_RANDOM_HYDROLYSIS_H_

@@ -27,7 +27,7 @@ using namespace boost::assign;
 
 #include "transitions/random_hydrolysis.h"
 #include "filaments/simple_filament.h"
-#include "concentrations/fixed_concentration.h"
+#include "concentrations/fixed_reagent.h"
 
 TEST(RandomHydrolysis, SingleFilamentR) {
     std::vector<State> values;
@@ -135,4 +135,22 @@ TEST(RandomHydrolysis, DoubleFilamentPerform) {
     EXPECT_DOUBLE_EQ(10, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(16, t_2.R(0, filaments, concentrations));
     EXPECT_EQ(2, filaments[1].pointed_state());
+}
+
+TEST(RandomHydrolysisWithByproduct, SingleFilamentPerform) {
+    std::vector<State> values;
+    values += 0, 1, 0, 0, 2, 1, 0, 1;
+
+    boost::ptr_vector<Filament> filaments;
+    filaments.push_back(new SimpleFilament(values.begin(), values.end()));
+
+    boost::ptr_vector<Concentration> concentrations;
+    concentrations.push_back(new FixedReagent(0, 3));
+
+    RandomHydrolysisWithByproduct t_0(0, 1, 3, 0);
+
+    EXPECT_DOUBLE_EQ(12, t_0.R(0, filaments, concentrations));
+    EXPECT_EQ(1, t_0.perform(0, 1, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(9, t_0.R(0, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(3, concentrations[0].value());
 }
