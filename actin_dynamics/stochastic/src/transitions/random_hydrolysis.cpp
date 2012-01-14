@@ -22,7 +22,7 @@ double RandomHydrolysis::R(double time, const boost::ptr_vector<Filament> &filam
     double r;
     previous_R = 0;
     for (size_t i = 0; i < filaments.size(); ++i) {
-        r = rate * filaments[i].filaments_count(old_filaments);
+        r = rate * filaments[i].state_count(old_filaments);
         filament_Rs[i] = r;
         previous_R += r;
     }
@@ -37,7 +37,7 @@ size_t RandomHydrolysis::perform(double time, double r,
         double filament_R = filament_Rs[i];
         if (r < filament_R) {
             size_t number = r / rate;
-            filaments[i].update_filaments(number, old_filaments, new_filaments);
+            filaments[i].update_state(number, old_filaments, new_filaments);
             return ++count;
         }
         r -= filament_R;

@@ -15,25 +15,27 @@
 
 #include "filaments/simple_filament.h"
 
+#include "state.h"
+
 SimpleFilament::SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop) {
     while (start < stop) {
-        filamentss.push_back(*start);
+        states.push_back(*start);
         ++start;
     }
 }
 
-SimpleFilament::SimpleFilament(size_t number, size_t filaments) {
+SimpleFilament::SimpleFilament(size_t number, State state) {
     for (size_t i = 0; i < number; ++i) {
-        filamentss.push_back(filaments);
+        states.push_back(state);
     }
 }
 
-// Simple queries about the filament filaments.
-size_t SimpleFilament::filaments_count(size_t filaments) const {
+// Simple queries about the filament state.
+size_t SimpleFilament::state_count(State state) const {
     size_t count = 0;
-    for (std::deque<size_t>::const_iterator i = filamentss.begin();
-            i < filamentss.end(); ++i) {
-        if (*i == filaments) {
+    for (std::deque<State>::const_iterator i = states.begin();
+            i < states.end(); ++i) {
+        if (*i == state) {
             ++count;
         }
     }
@@ -41,15 +43,15 @@ size_t SimpleFilament::filaments_count(size_t filaments) const {
     return count;
 }
 
-size_t SimpleFilament::boundary_count(size_t pointed_filaments,
-        size_t barbed_filaments) const {
+size_t SimpleFilament::boundary_count(State pointed_state,
+        State barbed_state) const {
     size_t count = 0;
 
-    std::deque<size_t>::const_iterator pointed = filamentss.begin();
-    std::deque<size_t>::const_iterator barbed = filamentss.begin();
+    std::deque<State>::const_iterator pointed = states.begin();
+    std::deque<State>::const_iterator barbed = states.begin();
     ++barbed;
-    while (barbed < filamentss.end()) {
-        if (*pointed == pointed_filaments && *barbed == barbed_filaments) {
+    while (barbed < states.end()) {
+        if (*pointed == pointed_state && *barbed == barbed_state) {
             ++count;
             ++pointed;
             ++barbed;
@@ -62,49 +64,49 @@ size_t SimpleFilament::boundary_count(size_t pointed_filaments,
 }
 
 size_t SimpleFilament::length() const {
-    return filamentss.size();
+    return states.size();
 }
 
-size_t SimpleFilament::barbed_filaments() const {
-    return filamentss.back();
+State SimpleFilament::barbed_state() const {
+    return states.back();
 }
 
-size_t SimpleFilament::pointed_filaments() const {
-    return filamentss.front();
+State SimpleFilament::pointed_state() const {
+    return states.front();
 }
 
 
 // Add and remove subunits
-void SimpleFilament::append_barbed(size_t new_filaments) {
-    filamentss.push_back(new_filaments);
+void SimpleFilament::append_barbed(State new_state) {
+    states.push_back(new_state);
 }
 
-void SimpleFilament::append_pointed(size_t new_filaments) {
-    filamentss.push_front(new_filaments);
+void SimpleFilament::append_pointed(State new_state) {
+    states.push_front(new_state);
 }
 
-size_t SimpleFilament::pop_barbed() {
-    size_t filaments = filamentss.back();
-    filamentss.pop_back();
-    return filaments;
+State SimpleFilament::pop_barbed() {
+    State state = states.back();
+    states.pop_back();
+    return state;
 }
 
-size_t SimpleFilament::pop_pointed() {
-    size_t filaments = filamentss.front();
-    filamentss.pop_front();
-    return filaments;
+State SimpleFilament::pop_pointed() {
+    State state = states.front();
+    states.pop_front();
+    return state;
 }
 
 
-// Update filamentss
-void SimpleFilament::update_filaments(size_t instance_number,
-        size_t old_filaments, size_t new_filaments) {
+// Update states
+void SimpleFilament::update_state(size_t instance_number,
+        State old_state, State new_state) {
     size_t count = 0;
-    for (std::deque<size_t>::iterator i = filamentss.begin();
-            i < filamentss.end(); ++i) {
-        if (*i == old_filaments) {
+    for (std::deque<State>::iterator i = states.begin();
+            i < states.end(); ++i) {
+        if (*i == old_state) {
             if (count == instance_number) {
-                *i = new_filaments;
+                *i = new_state;
                 return;
             }
             ++count;
@@ -113,18 +115,18 @@ void SimpleFilament::update_filaments(size_t instance_number,
 }
 
 void SimpleFilament::update_boundary(size_t instance_number,
-        size_t old_pointed_filaments, size_t old_barbed_filaments,
-        size_t new_pointed_filaments, size_t new_barbed_filaments) {
+        State old_pointed_state, State old_barbed_state,
+        State new_pointed_state, State new_barbed_state) {
     size_t count = 0;
 
-    std::deque<size_t>::iterator pointed = filamentss.begin();
-    std::deque<size_t>::iterator barbed = filamentss.begin();
+    std::deque<State>::iterator pointed = states.begin();
+    std::deque<State>::iterator barbed = states.begin();
     ++barbed;
-    while (barbed < filamentss.end()) {
-        if (*pointed == old_pointed_filaments && *barbed == old_barbed_filaments) {
+    while (barbed < states.end()) {
+        if (*pointed == old_pointed_state && *barbed == old_barbed_state) {
             if (count == instance_number) {
-                *pointed = new_pointed_filaments;
-                *barbed = new_barbed_filaments;
+                *pointed = new_pointed_state;
+                *barbed = new_barbed_state;
             }
             ++count;
             ++pointed;

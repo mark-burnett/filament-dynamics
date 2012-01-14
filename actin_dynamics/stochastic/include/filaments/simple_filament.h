@@ -18,37 +18,38 @@
 #include <deque>
 #include <vector>
 
+#include "state.h"
 #include "filaments/filament.h"
 
-typedef std::vector<size_t>::const_iterator _vector_ui_ci;
+typedef std::vector<State>::const_iterator _vector_ui_ci;
 
 class SimpleFilament : public Filament {
     public:
         SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop);
-        SimpleFilament(size_t number, size_t filaments);
+        SimpleFilament(size_t number, State state);
 
-        size_t filaments_count(size_t filaments) const;
-        size_t boundary_count(size_t pointed_filaments,
-                size_t barbed_filaments) const;
+        size_t state_count(State state) const;
+        size_t boundary_count(State pointed_state,
+                State barbed_state) const;
         size_t length() const;
 
-        size_t barbed_filaments() const;
-        size_t pointed_filaments() const;
+        State barbed_state() const;
+        State pointed_state() const;
 
-        void append_barbed(size_t new_filaments);
-        void append_pointed(size_t new_filaments);
+        void append_barbed(State new_state);
+        void append_pointed(State new_state);
 
-        size_t pop_barbed();
-        size_t pop_pointed();
+        State pop_barbed();
+        State pop_pointed();
 
-        void update_filaments(size_t instance_number,
-                size_t old_filaments, size_t new_filaments);
+        void update_state(size_t instance_number,
+                State old_state, State new_state);
         void update_boundary(size_t instance_number,
-                size_t old_pointed_filaments, size_t old_barbed_filaments,
-                size_t new_pointed_filaments, size_t new_barbed_filaments);
+                State old_pointed_state, State old_barbed_state,
+                State new_pointed_state, State new_barbed_state);
 
     private:
-        std::deque<size_t> filamentss;
+        std::deque<State> states;
 };
 
 #endif // _STATE_SIMPLE_FILAMENT_H_

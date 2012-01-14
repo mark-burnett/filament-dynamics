@@ -23,12 +23,14 @@
 // Bring operator+= into the namespace
 using namespace boost::assign;
 
+#include "state.h"
+
 #include "transitions/random_hydrolysis.h"
 #include "filaments/simple_filament.h"
 #include "concentrations/fixed_concentration.h"
 
 TEST(RandomHydrolysis, SingleFilamentR) {
-    std::vector<size_t> values;
+    std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
     boost::ptr_vector<Filament> filaments;
@@ -48,9 +50,9 @@ TEST(RandomHydrolysis, SingleFilamentR) {
 }
 
 TEST(RandomHydrolysis, DoubleFilamentR) {
-    std::vector<size_t> values1;
+    std::vector<State> values1;
     values1 += 0, 1, 0, 0, 2, 1, 0, 1;
-    std::vector<size_t> values2;
+    std::vector<State> values2;
     values2 += 1, 1, 2, 0, 2, 0, 0, 1;
 
     boost::ptr_vector<Filament> filaments;
@@ -71,7 +73,7 @@ TEST(RandomHydrolysis, DoubleFilamentR) {
 }
 
 TEST(RandomHydrolysis, SingleFilamentPerform) {
-    std::vector<size_t> values;
+    std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
     boost::ptr_vector<Filament> filaments;
@@ -92,25 +94,25 @@ TEST(RandomHydrolysis, SingleFilamentPerform) {
     EXPECT_DOUBLE_EQ(9, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(4, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(1, filaments[0].pointed_filaments());
+    EXPECT_EQ(1, filaments[0].pointed_state());
 
     EXPECT_EQ(2, t_0.perform(0, 8, filaments, concentrations));
     EXPECT_DOUBLE_EQ(6, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(10, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(4, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(1, filaments[0].barbed_filaments());
+    EXPECT_EQ(1, filaments[0].barbed_state());
 
     EXPECT_EQ(1, t_1.perform(0, 9, filaments, concentrations));
     EXPECT_DOUBLE_EQ(6, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(2, filaments[0].barbed_filaments());
+    EXPECT_EQ(2, filaments[0].barbed_state());
 }
 
 TEST(RandomHydrolysis, DoubleFilamentPerform) {
-    std::vector<size_t> values1;
+    std::vector<State> values1;
     values1 += 0, 1, 0, 0, 2, 1, 0, 1;
-    std::vector<size_t> values2;
+    std::vector<State> values2;
     values2 += 1, 1, 2, 0, 2, 0, 0, 1;
 
     boost::ptr_vector<Filament> filaments;
@@ -132,5 +134,5 @@ TEST(RandomHydrolysis, DoubleFilamentPerform) {
     EXPECT_DOUBLE_EQ(21, t_0.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(10, t_1.R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(16, t_2.R(0, filaments, concentrations));
-    EXPECT_EQ(2, filaments[1].pointed_filaments());
+    EXPECT_EQ(2, filaments[1].pointed_state());
 }

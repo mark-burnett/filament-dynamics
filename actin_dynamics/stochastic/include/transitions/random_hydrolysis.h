@@ -25,7 +25,7 @@
 
 class RandomHydrolysis : public Transition {
     public:
-        RandomHydrolysis(size_t _old_filaments, size_t _new_filaments,
+        RandomHydrolysis(State _old_filaments, State _new_filaments,
                 double _rate) : old_filaments(_old_filaments), new_filaments(_new_filaments),
                                 rate(_rate), count(0) {}
         double R(double time,
@@ -35,8 +35,8 @@ class RandomHydrolysis : public Transition {
                     boost::ptr_vector<Filament> &filaments,
                     boost::ptr_vector<Concentration> &concentrations);
     private:
-        size_t old_filaments;
-        size_t new_filaments;
+        State old_filaments;
+        State new_filaments;
         double rate;
 
         size_t count;
