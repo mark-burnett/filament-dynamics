@@ -20,37 +20,23 @@
 void SimulationStrategy::run() {
     double time = 0;
 
-    // Initialize measurements
-    for (measurement_container_t::iterator mi = _measurements.begin();
-            mi < _measurements.end(); ++mi) {
-        (*mi)->initialize(_filaments, _concentrations);
-    }
-    // Initialize end conditions
-    for (end_condition_container_t::iterator ei = _end_conditions.begin();
-            ei < _end_conditions.end(); ++ei) {
-        (*ei)->initialize(_filaments, _concentrations);
-    }
+    initialize_simulation();
 
     std::vector<double> transition_rates;
     transition_rates.resize(_transitions.size());
 
     while (end_conditions_not_met(time)) {
-        // Calculate total rate for the next timestep.
+        // Calculate rates for the next timestep.
         double R = 0;
         for (size_t ti = 0; ti < _transitions.size(); ++ti) {
             transition_rates[ti] = _transitions[ti]->R(time,
                     _filaments, _concentrations);
             R += transition_rates[ti];
         }
-        // if 0 == R no possible events, end simulation or take minimum time step?
 
         // First update the time & perform measurements
         time += log(1 / _random(1)) / R;
-
-        for (measurement_container_t::iterator mi = _measurements.begin();
-                mi < _measurements.end(); ++mi) {
-            (*mi)->perform(time, _filaments, _concentrations);
-        }
+        record_measurements(time);
 
         // Decide which transition to perform.
         double r = _random(R);
@@ -61,6 +47,28 @@ void SimulationStrategy::run() {
             }
             r -= transition_rates[ti];
         }
+    }
+
+    // report results
+}
+
+
+void SimulationStrategy::initialize_simulation() {
+    for (measurement_container_t::iterator mi = _measurements.begin();
+            mi < _measurements.end(); ++mi) {
+        (*mi)->initialize(_filaments, _concentrations);
+    }
+    // Initialize end conditions
+    for (end_condition_container_t::iterator ei = _end_conditions.begin();
+            ei < _end_conditions.end(); ++ei) {
+        (*ei)->initialize(_filaments, _concentrations);
+    }
+}
+
+void SimulationStrategy::record_measurements(double time) {
+    for (measurement_container_t::iterator mi = _measurements.begin();
+            mi < _measurements.end(); ++mi) {
+        (*mi)->perform(time, _filaments, _concentrations);
     }
 }
 
