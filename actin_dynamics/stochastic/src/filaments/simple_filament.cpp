@@ -17,7 +17,7 @@
 
 #include "state.h"
 
-SimpleFilament::SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop) {
+void SimpleFilament::_build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop) {
     while (start < stop) {
         states.push_back(*start);
         ++start;

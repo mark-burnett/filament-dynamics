@@ -21,6 +21,8 @@
 #include "filaments/filament.h"
 #include "concentrations/concentration.h"
 
+typedef std::vector<double> time_vector_t;
+
 class Measurement : private boost::noncopyable {
     public:
         virtual ~Measurement() {}

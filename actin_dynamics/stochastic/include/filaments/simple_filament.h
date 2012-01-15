@@ -27,7 +27,12 @@ typedef std::vector<State>::const_iterator _vector_ui_ci;
 class SimpleFilament : public Filament {
     public:
         ~SimpleFilament() {}
-        SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop);
+        SimpleFilament(const std::vector<State> &values) {
+            _build_from_iterators(values.begin(), values.end());
+        }
+        SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop) {
+            _build_from_iterators(start, stop);
+        }
         SimpleFilament(size_t number, const State &state);
 
         size_t state_count(const State &state) const;
@@ -51,6 +56,7 @@ class SimpleFilament : public Filament {
                 const State &new_pointed_state, const State &new_barbed_state);
 
     private:
+        void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
         std::deque<State> states;
 };
 

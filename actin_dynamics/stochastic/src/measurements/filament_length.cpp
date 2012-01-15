@@ -25,13 +25,17 @@ void FilamentLength::initialize(const filament_container_t &filaments,
         _lengths[fi].push_back(filaments[fi]->length());
     }
 
-    _times.push_back(0);
+    _previous_time = 0;
 }
 
 void FilamentLength::perform(double time,
         const filament_container_t &filaments,
         const concentration_container_t &concentrations) {
-    if (time - _times.back() > _sample_period) {
-        // XXX do measurement
+    size_t number_to_record = (time - _previous_time) / _sample_period;
+    for (size_t n = 0; n < number_to_record; ++n) {
+        for (size_t fi = 0; fi < filaments.size(); ++fi) {
+            _lengths[fi].push_back(filaments[fi]->length());
+        }
     }
+    _previous_time = (_lengths.front().size() - 1) * _sample_period;
 }
