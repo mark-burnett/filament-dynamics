@@ -24,14 +24,14 @@ SimpleFilament::SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop) {
     }
 }
 
-SimpleFilament::SimpleFilament(size_t number, State state) {
+SimpleFilament::SimpleFilament(size_t number, const State &state) {
     for (size_t i = 0; i < number; ++i) {
         states.push_back(state);
     }
 }
 
 // Simple queries about the filament state.
-size_t SimpleFilament::state_count(State state) const {
+size_t SimpleFilament::state_count(const State &state) const {
     size_t count = 0;
     for (std::deque<State>::const_iterator i = states.begin();
             i < states.end(); ++i) {
@@ -43,8 +43,8 @@ size_t SimpleFilament::state_count(State state) const {
     return count;
 }
 
-size_t SimpleFilament::boundary_count(State pointed_state,
-        State barbed_state) const {
+size_t SimpleFilament::boundary_count(const State &pointed_state,
+        const State &barbed_state) const {
     size_t count = 0;
 
     std::deque<State>::const_iterator pointed = states.begin();
@@ -77,11 +77,11 @@ State SimpleFilament::pointed_state() const {
 
 
 // Add and remove subunits
-void SimpleFilament::append_barbed(State new_state) {
+void SimpleFilament::append_barbed(const State &new_state) {
     states.push_back(new_state);
 }
 
-void SimpleFilament::append_pointed(State new_state) {
+void SimpleFilament::append_pointed(const State &new_state) {
     states.push_front(new_state);
 }
 
@@ -100,7 +100,7 @@ State SimpleFilament::pop_pointed() {
 
 // Update states
 void SimpleFilament::update_state(size_t instance_number,
-        State old_state, State new_state) {
+        const State &old_state, const State &new_state) {
     size_t count = 0;
     for (std::deque<State>::iterator i = states.begin();
             i < states.end(); ++i) {
@@ -115,8 +115,8 @@ void SimpleFilament::update_state(size_t instance_number,
 }
 
 void SimpleFilament::update_boundary(size_t instance_number,
-        State old_pointed_state, State old_barbed_state,
-        State new_pointed_state, State new_barbed_state) {
+        const State &old_pointed_state, const State &old_barbed_state,
+        const State &new_pointed_state, const State &new_barbed_state) {
     size_t count = 0;
 
     std::deque<State>::iterator pointed = states.begin();

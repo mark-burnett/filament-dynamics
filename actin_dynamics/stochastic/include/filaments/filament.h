@@ -26,9 +26,9 @@ class Filament : private boost::noncopyable {
         virtual ~Filament() {}
 
         // query filament status
-        virtual size_t state_count(State state) const = 0;
-        virtual size_t boundary_count(State pointed_state,
-                State barbed_state) const = 0;
+        virtual size_t state_count(const State &state) const = 0;
+        virtual size_t boundary_count(const State &pointed_state,
+                const State &barbed_state) const = 0;
         virtual size_t length() const = 0;
 
         // query tip states
@@ -36,8 +36,8 @@ class Filament : private boost::noncopyable {
         virtual State pointed_state() const = 0;
 
         // add element to either end
-        virtual void append_barbed(State new_state) = 0;
-        virtual void append_pointed(State new_state) = 0;
+        virtual void append_barbed(const State &new_state) = 0;
+        virtual void append_pointed(const State &new_state) = 0;
 
         // remove element from either end
         virtual size_t pop_barbed() = 0;
@@ -45,13 +45,13 @@ class Filament : private boost::noncopyable {
 
         // change nth specific state to *
         virtual void update_state(size_t instance_number,
-                State old_states, State new_states) = 0;
+                const State &old_states, const State &new_states) = 0;
         // change +/- element of nth specific boundary of type * to *
         virtual void update_boundary(size_t instance_number,
-                State old_pointed_states,
-                State old_barbed_states,
-                State new_pointed_states,
-                State new_barbed_states) = 0;
+                const State &old_pointed_states,
+                const State &old_barbed_states,
+                const State &new_pointed_states,
+                const State &new_barbed_states) = 0;
 };
 
 typedef boost::shared_ptr<Filament> filament_ptr_t;

@@ -25,9 +25,9 @@
 
 class RandomHydrolysis : public Transition {
     public:
-        RandomHydrolysis(State _old_filaments, State _new_filaments,
-                double _rate) : old_filaments(_old_filaments),
-                                new_filaments(_new_filaments),
+        RandomHydrolysis(const State &_old_state, const State &_new_state,
+                double _rate) : old_state(_old_state),
+                                new_state(_new_state),
                                 rate(_rate), count(0) {}
         double R(double time,
                     const filament_container_t &filaments,
@@ -35,10 +35,11 @@ class RandomHydrolysis : public Transition {
         size_t perform(double time, double r,
                     filament_container_t &filaments,
                     concentration_container_t &concentrations);
+
     private:
-        State old_filaments;
-        State new_filaments;
-        double rate;
+        const State old_state;
+        const State new_state;
+        const double rate;
 
         size_t count;
 
@@ -49,9 +50,10 @@ class RandomHydrolysis : public Transition {
 
 class RandomHydrolysisWithByproduct : public RandomHydrolysis {
     public:
-        RandomHydrolysisWithByproduct(State old_filaments, State new_filaments,
-                double rate, State byproduct) :
-            RandomHydrolysis(old_filaments, new_filaments, rate),
+        RandomHydrolysisWithByproduct(const State &old_state,
+                const State &new_state,
+                double rate, const State &byproduct) :
+            RandomHydrolysis(old_state, new_state, rate),
             _byproduct(byproduct) {}
 
         size_t perform(double time, double r,

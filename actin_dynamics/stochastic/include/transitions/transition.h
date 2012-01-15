@@ -31,6 +31,7 @@ class Transition : public boost::noncopyable {
                     concentration_container_t &concentrations) = 0;
 };
 
-typedef std::vector< boost::shared_ptr<Transition> > transition_container_t;
+typedef boost::shared_ptr<Transition> transition_ptr_t;
+typedef std::vector< transition_ptr_t > transition_container_t;
 
 #endif // _TRANSITIONS_TRANSITION_H_

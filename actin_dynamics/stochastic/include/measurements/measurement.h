@@ -24,23 +24,20 @@
 class Measurement : private boost::noncopyable {
     public:
         virtual ~Measurement() {}
-        virtual void initialize(filament_container_t &filaments,
-                concentration_container_t &concentrations) = 0;
-        virtual void perform(double time, filament_container_t &filaments,
-                concentration_container_t &concentrations) = 0;
+        virtual void initialize(const filament_container_t &filaments,
+                const concentration_container_t &concentrations) = 0;
+        virtual void perform(double time, const filament_container_t &filaments,
+                const concentration_container_t &concentrations) = 0;
 };
 
 class ConcentrationMeasurement : public Measurement {
     public:
-        virtual ~ConcentrationMeasurement();
-//        virtual void perform(double time, double value) = 0;
+        virtual ~ConcentrationMeasurement() {}
 };
 
 class FilamentMeasurement : public Measurement {
     public:
-        virtual ~FilamentMeasurement();
-//        virtual void perform(double time, double value,
-//                size_t filament_index) = 0;
+        virtual ~FilamentMeasurement() {}
 };
 
 typedef boost::shared_ptr<Measurement> measurement_ptr_t;

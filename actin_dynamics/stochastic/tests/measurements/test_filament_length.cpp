@@ -1,5 +1,3 @@
-#ifndef _STOCHASTIC_STATE_H_
-#define _STOCHASTIC_STATE_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -15,8 +13,10 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// XXX We will probably make these boost::flyweight<std::string> objects
-typedef size_t State;
-typedef const size_t const_State;
+#include <gtest/gtest.h>
 
-#endif // _STOCHASTIC_STATE_H_
+#include "measurements/filament_length.h"
+
+
+TEST(Measurements, FilamentLengthInitialize) {
+}

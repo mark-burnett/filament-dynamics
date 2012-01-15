@@ -28,27 +28,27 @@ class SimpleFilament : public Filament {
     public:
         ~SimpleFilament() {}
         SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop);
-        SimpleFilament(size_t number, State state);
+        SimpleFilament(size_t number, const State &state);
 
-        size_t state_count(State state) const;
-        size_t boundary_count(State pointed_state,
-                State barbed_state) const;
+        size_t state_count(const State &state) const;
+        size_t boundary_count(const State &pointed_state,
+                const State &barbed_state) const;
         size_t length() const;
 
         State barbed_state() const;
         State pointed_state() const;
 
-        void append_barbed(State new_state);
-        void append_pointed(State new_state);
+        void append_barbed(const State &new_state);
+        void append_pointed(const State &new_state);
 
         State pop_barbed();
         State pop_pointed();
 
         void update_state(size_t instance_number,
-                State old_state, State new_state);
+                const State &old_state, const State &new_state);
         void update_boundary(size_t instance_number,
-                State old_pointed_state, State old_barbed_state,
-                State new_pointed_state, State new_barbed_state);
+                const State &old_pointed_state, const State &old_barbed_state,
+                const State &new_pointed_state, const State &new_barbed_state);
 
     private:
         std::deque<State> states;

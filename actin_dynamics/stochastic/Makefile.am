@@ -6,7 +6,8 @@ INCLUDES = -Iinclude -Itests/include
 lib_LTLIBRARIES      = stochastic.la
 stochastic_la_SOURCES = src/filaments/simple_filament.cpp\
 						src/transitions/random_hydrolysis.cpp\
-						src/simulation_strategy.cpp
+						src/simulation_strategy.cpp\
+						src/measurements/filament_length.cpp
 stochastic_la_LDFLAGS = -module
 
 # --- Tests ---
@@ -15,7 +16,8 @@ test_SOURCES = tests/test_main.cpp\
 			   tests/filaments/test_simple_filament.cpp\
 			   tests/transitions/test_random_hydrolysis.cpp\
 			   tests/test_concentrations.cpp\
-			   tests/test_simulation_strategy.cpp
+			   tests/test_simulation_strategy.cpp\
+			   tests/measurements/test_filament_length.cpp
 
 test_LDADD   = stochastic.la
 
