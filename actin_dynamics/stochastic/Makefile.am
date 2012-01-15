@@ -17,7 +17,8 @@ test_SOURCES = tests/test_main.cpp\
 			   tests/transitions/test_random_hydrolysis.cpp\
 			   tests/test_concentrations.cpp\
 			   tests/test_simulation_strategy.cpp\
-			   tests/measurements/test_filament_length.cpp
+			   tests/measurements/test_filament_length.cpp\
+			   tests/test_end_conditions.cpp
 
 test_LDADD   = stochastic.la
 
