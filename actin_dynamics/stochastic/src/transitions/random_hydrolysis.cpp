@@ -20,14 +20,14 @@ double RandomHydrolysis::R(double time, const filament_container_t &filaments,
     filament_Rs.resize(filaments.size());
 
     double r;
-    previous_R = 0;
+    double R = 0;
     for (size_t i = 0; i < filaments.size(); ++i) {
         r = rate * filaments[i]->state_count(old_state);
         filament_Rs[i] = r;
-        previous_R += r;
+        R += r;
     }
 
-    return previous_R;
+    return R;
 }
 
 size_t RandomHydrolysis::perform(double time, double r,

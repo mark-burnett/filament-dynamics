@@ -19,19 +19,18 @@ double FixedRateDepolymerization::R(double time,
         const filament_container_t &filaments,
         const concentration_container_t &concentrations) {
     if (_disable_time > 0 && time > _disable_time) {
-        _previous_R = 0;
         return 0;
     }
 
-    _previous_R = 0;
+    double R = 0;
     for (filament_container_t::const_iterator fi = filaments.begin();
             fi < filaments.end(); ++fi) {
         if (_state == get_state(**fi)) {
-            _previous_R += _rate;
+            R += _rate;
         }
     }
 
-    return _previous_R;
+    return R;
 }
 
 size_t FixedRateDepolymerization::perform(double time, double r,

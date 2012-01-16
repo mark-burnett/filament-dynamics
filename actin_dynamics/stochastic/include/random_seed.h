@@ -15,19 +15,6 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <fstream>
-#include <cstring>
-
-unsigned int generate_random_seed() {
-    char buffer[sizeof(unsigned int)];
-    unsigned int seed;
-
-    std::ifstream f("/dev/urandom", std::ios::binary);
-
-    f.read(buffer, sizeof(unsigned int));
-    memcpy(&seed, buffer, sizeof(unsigned int));
-
-    return seed;
-}
+unsigned int generate_random_seed();
 
 #endif // _RANDOM_SEED_H_

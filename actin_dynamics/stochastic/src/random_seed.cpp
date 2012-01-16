@@ -1,5 +1,5 @@
-#ifndef _CONCENTRATIONS_FIXED_REAGENT_H_
-#define _CONCENTRATIONS_FIXED_REAGENT_H_
+#ifndef _RANDOM_SEED_H_
+#define _RANDOM_SEED_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -15,21 +15,19 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "concentration.h"
+#include <fstream>
+#include <cstring>
 
-class FixedReagent : public Concentration {
-    public:
-        FixedReagent(double concentration, double fnc, size_t number_of_filaments=1) :
-            _number(concentration * number_of_filaments /fnc), _fnc(fnc) {}
-        ~FixedReagent() {}
+unsigned int generate_random_seed() {
+    char buffer[sizeof(unsigned int)];
+    unsigned int seed;
 
-        double value() const {return _number * _fnc;};
-        void add_monomer() { ++_number;};
-        void remove_monomer() { if (_number > 0) --_number;};
-        size_t monomer_count() { return _number; }
-    private:
-        size_t _number;
-        double _fnc;
-};
+    std::ifstream f("/dev/urandom", std::ios::binary);
 
-#endif // _CONCENTRATIONS_FIXED_REAGENT_H_
+    f.read(buffer, sizeof(unsigned int));
+    memcpy(&seed, buffer, sizeof(unsigned int));
+
+    return seed;
+}
+
+#endif // _RANDOM_SEED_H_

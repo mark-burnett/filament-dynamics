@@ -10,13 +10,17 @@ stochastic_la_SOURCES = src/filaments/simple_filament.cpp\
 						src/transitions/polymerization.cpp\
 						src/simulation_strategy.cpp\
 						src/measurements/filament_length.cpp\
-						src/measurements/state_count.cpp
+						src/measurements/state_count.cpp\
+						src/random_seed.cpp\
+						src/filaments/cached_filament.cpp
+
 stochastic_la_LDFLAGS = -module
 
 # --- Tests ---
 check_PROGRAMS   = test
 test_SOURCES = tests/test_main.cpp\
 			   tests/filaments/test_simple_filament.cpp\
+			   tests/filaments/test_cached_filament.cpp\
 			   tests/transitions/test_random_hydrolysis.cpp\
 			   tests/transitions/test_depolymerization.cpp\
 			   tests/transitions/test_polymerization.cpp\
@@ -24,7 +28,8 @@ test_SOURCES = tests/test_main.cpp\
 			   tests/test_simulation_strategy.cpp\
 			   tests/measurements/test_filament_length.cpp\
 			   tests/measurements/test_state_count.cpp\
-			   tests/test_end_conditions.cpp
+			   tests/test_end_conditions.cpp\
+			   tests/test_old_integration.cpp
 
 test_LDADD   = stochastic.la
 

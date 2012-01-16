@@ -48,9 +48,6 @@ class FixedRateDepolymerization : public Transition {
         const double _disable_time;
 
         size_t _count;
-
-        // cache
-        double _previous_R;
 };
 
 class BarbedEndDepolymerization : public FixedRateDepolymerization {

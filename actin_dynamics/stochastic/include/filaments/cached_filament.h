@@ -1,5 +1,5 @@
-#ifndef _STATE_SIMPLE_FILAMENT_H_
-#define _STATE_SIMPLE_FILAMENT_H_
+#ifndef _STATE_CACHED_FILAMENT_H_
+#define _STATE_CACHED_FILAMENT_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -24,17 +24,20 @@
 
 typedef std::vector<State>::const_iterator _vector_ui_ci;
 
-class SimpleFilament : public Filament {
+
+class CachedFilament : public Filament {
     public:
-        SimpleFilament(const std::vector<State> &values) {
+        CachedFilament(const std::vector<State> &values) {
+            _initialize_counts();
             _build_from_iterators(values.begin(), values.end());
         }
-        SimpleFilament(_vector_ui_ci start, _vector_ui_ci stop) {
+        CachedFilament(_vector_ui_ci start, _vector_ui_ci stop) {
+            _initialize_counts();
             _build_from_iterators(start, stop);
         }
-        SimpleFilament(size_t number, const State &state);
+        CachedFilament(size_t number, const State &state);
 
-        ~SimpleFilament() {}
+        ~CachedFilament() {}
 
         size_t state_count(const State &state) const;
         size_t boundary_count(const State &pointed_state,
@@ -59,8 +62,15 @@ class SimpleFilament : public Filament {
         std::deque<State> get_states() const { return std::deque<State>(states); }
 
     private:
+        static const size_t STATE_COUNT_SIZE = 10;
+        void _initialize_counts();
         void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
+        void _update_state_and_cache(std::deque<State>::iterator &i,
+                State new_state);
+
         std::deque<State> states;
+        std::vector<size_t> _state_counts;
+        std::vector< std::vector<size_t> > _boundary_counts;
 };
 
-#endif // _STATE_SIMPLE_FILAMENT_H_
+#endif // _STATE_CACHED_FILAMENT_H_
