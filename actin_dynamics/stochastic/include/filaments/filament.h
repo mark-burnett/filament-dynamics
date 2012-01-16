@@ -41,8 +41,8 @@ class Filament : private boost::noncopyable {
         virtual void append_pointed(const State &new_state) = 0;
 
         // remove element from either end
-        virtual size_t pop_barbed() = 0;
-        virtual size_t pop_pointed() = 0;
+        virtual State pop_barbed() = 0;
+        virtual State pop_pointed() = 0;
 
         // change nth specific state to *
         virtual void update_state(size_t instance_number,

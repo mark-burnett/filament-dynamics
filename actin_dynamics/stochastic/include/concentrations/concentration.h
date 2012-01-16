@@ -26,6 +26,7 @@ class Concentration : private boost::noncopyable {
         virtual double value() const = 0;
         virtual void add_monomer() = 0;
         virtual void remove_monomer() = 0;
+        virtual size_t monomer_count() = 0;
 };
 
 typedef boost::shared_ptr<Concentration> concentration_ptr_t;

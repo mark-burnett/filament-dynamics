@@ -32,7 +32,7 @@ TEST(Concentrations, FixedConcentration) {
 }
 
 TEST(Concentrations, FixedReagent) {
-    FixedReagent c(4, 1.2);
+    FixedReagent c(4.8, 1.2);
 
     EXPECT_DOUBLE_EQ(4.8, c.value());
 

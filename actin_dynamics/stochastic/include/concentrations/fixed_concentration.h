@@ -25,6 +25,7 @@ class FixedConcentration : public Concentration {
         double value() const {return _value;};
         void add_monomer() {};
         void remove_monomer() {};
+        size_t monomer_count() { return 0; }
     private:
         double _value;
 };
