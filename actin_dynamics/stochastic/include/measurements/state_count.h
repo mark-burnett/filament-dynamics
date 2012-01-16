@@ -1,5 +1,5 @@
-#ifndef _MEASUREMENTS_FILAMENT_LENGTH_H_
-#define _MEASUREMENTS_FILAMENT_LENGTH_H_
+#ifndef _MEASUREMENTS_STATE_COUNT_H_
+#define _MEASUREMENTS_STATE_COUNT_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -22,12 +22,11 @@
 
 #include "measurements/measurement.h"
 
-class FilamentLength : public FilamentMeasurement {
+class StateCount : public FilamentMeasurement {
     public:
-        FilamentLength(double sample_period) :
-            _sample_period(sample_period),
+        StateCount(const State &state, double sample_period) :
+            _state(state), _sample_period(sample_period),
             _previous_time(0) {}
-        ~FilamentLength() {}
 
         void initialize(const filament_container_t &filaments,
                 const concentration_container_t &concentrations);
@@ -35,16 +34,16 @@ class FilamentLength : public FilamentMeasurement {
                 const concentration_container_t &concentrations);
 
         length_vector_t get_values() const {
-            return _lengths;
+            return _counts;
         }
         double get_sample_period() const { return _sample_period; }
         double get_previous_time() const { return _previous_time; }
 
     private:
-
+        const State _state; 
         double _sample_period;
         double _previous_time;
-        length_vector_t _lengths;
+        length_vector_t _counts;
 };
 
-#endif // _MEASUREMENTS_FILAMENT_LENGTH_H_
+#endif // _MEASUREMENTS_STATE_COUNT_H_

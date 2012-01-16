@@ -17,7 +17,8 @@
 
 #include "simulation_strategy.h"
 
-void SimulationStrategy::run() {
+
+measurement_container_t SimulationStrategy::run() {
     double time = 0;
 
     initialize_simulation();
@@ -49,7 +50,7 @@ void SimulationStrategy::run() {
         }
     }
 
-    // report results
+    return _measurements;
 }
 
 

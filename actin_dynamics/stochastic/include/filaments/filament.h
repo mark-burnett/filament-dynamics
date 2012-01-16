@@ -19,6 +19,7 @@
 #include <boost/utility.hpp>
 
 #include "state.h"
+#include <deque>
 
 // Abstract base class for filament implementations.
 class Filament : private boost::noncopyable {
@@ -52,6 +53,7 @@ class Filament : private boost::noncopyable {
                 const State &old_barbed_states,
                 const State &new_pointed_states,
                 const State &new_barbed_states) = 0;
+        virtual std::deque<State> get_states() const = 0;
 };
 
 typedef boost::shared_ptr<Filament> filament_ptr_t;

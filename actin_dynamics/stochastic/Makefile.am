@@ -7,7 +7,8 @@ lib_LTLIBRARIES      = stochastic.la
 stochastic_la_SOURCES = src/filaments/simple_filament.cpp\
 						src/transitions/random_hydrolysis.cpp\
 						src/simulation_strategy.cpp\
-						src/measurements/filament_length.cpp
+						src/measurements/filament_length.cpp\
+						src/measurements/state_count.cpp
 stochastic_la_LDFLAGS = -module
 
 # --- Tests ---

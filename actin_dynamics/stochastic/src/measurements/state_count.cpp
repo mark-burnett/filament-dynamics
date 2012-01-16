@@ -13,22 +13,23 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "measurements/filament_length.h"
+#include "measurements/state_count.h"
 
-void FilamentLength::initialize(const filament_container_t &filaments,
+void StateCount::initialize(const filament_container_t &filaments,
                 const concentration_container_t &concentrations) {
-    _lengths.reserve(filaments.size());
-    _lengths.resize(filaments.size());
+    _counts.reserve(filaments.size());
+    _counts.resize(filaments.size());
 
     for (size_t fi = 0; fi < filaments.size(); ++fi) {
         // XXX I could reserve and resize these right now if i knew the duration and sample time
-        _lengths[fi].push_back(filaments[fi]->length());
+        _counts[fi].clear();
+        _counts[fi].push_back(filaments[fi]->state_count(_state));
     }
 
     _previous_time = 0;
 }
 
-void FilamentLength::perform(double time,
+void StateCount::perform(double time,
         const filament_container_t &filaments,
         const concentration_container_t &concentrations) {
     size_t number_to_record;
@@ -39,8 +40,8 @@ void FilamentLength::perform(double time,
     }
     for (size_t n = 0; n < number_to_record; ++n) {
         for (size_t fi = 0; fi < filaments.size(); ++fi) {
-            _lengths[fi].push_back(filaments[fi]->length());
+            _counts[fi].push_back(filaments[fi]->state_count(_state));
         }
     }
-    _previous_time = (_lengths.front().size() - 1) * _sample_period;
+    _previous_time = (_counts.front().size() - 1) * _sample_period;
 }

@@ -21,7 +21,7 @@
 #include "filaments/filament.h"
 #include "concentrations/concentration.h"
 
-typedef std::vector<double> time_vector_t;
+typedef std::vector< std::vector<size_t> > length_vector_t;
 
 class Measurement : private boost::noncopyable {
     public:
@@ -30,6 +30,11 @@ class Measurement : private boost::noncopyable {
                 const concentration_container_t &concentrations) = 0;
         virtual void perform(double time, const filament_container_t &filaments,
                 const concentration_container_t &concentrations) = 0;
+
+        virtual length_vector_t get_values() const = 0;
+        virtual double get_sample_period() const = 0;
+        virtual double get_previous_time() const = 0;
+
 };
 
 class ConcentrationMeasurement : public Measurement {

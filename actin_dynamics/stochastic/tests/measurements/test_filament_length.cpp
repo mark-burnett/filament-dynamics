@@ -56,7 +56,7 @@ TEST_F(FilamentLengthTest, Initialize) {
     EXPECT_EQ(8, results[1][0]);
 }
 
-TEST_F(FilamentLengthTest, Perform) {
+TEST_F(FilamentLengthTest, PerformNormalPeriod) {
     FilamentLength m(0.5);
 
     m.initialize(filaments, concentrations);
@@ -108,4 +108,22 @@ TEST_F(FilamentLengthTest, Perform) {
     EXPECT_EQ(8, results4[0][1]);
     EXPECT_EQ(5, results4[1].size());
     EXPECT_EQ(8, results4[1][1]);
+}
+
+TEST_F(FilamentLengthTest, PerformZeroPeriod) {
+    FilamentLength m(0);
+
+    m.initialize(filaments, concentrations);
+
+    m.perform(0.1, filaments, concentrations);
+
+    length_vector_t results1(m.get_values());
+
+    EXPECT_EQ(0, m.get_previous_time());
+
+    EXPECT_EQ(2, results1.size());
+    EXPECT_EQ(2, results1[0].size());
+    EXPECT_EQ(8, results1[0][1]);
+    EXPECT_EQ(2, results1[1].size());
+    EXPECT_EQ(8, results1[1][1]);
 }

@@ -43,8 +43,7 @@ class SimulationStrategy {
             _filaments(filaments),
             _rng(generate_random_seed()) {}
 
-        // XXX Fix return value (concentration and filament measurements)
-        void run();
+        measurement_container_t run();
 
         inline double _random(double max) {
             _distribution_t d(0, max);
