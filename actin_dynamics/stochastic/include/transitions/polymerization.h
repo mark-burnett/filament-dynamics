@@ -85,4 +85,6 @@ class PointedEndPolymerization : public FixedRatePolymerization {
         }
 };
 
+typedef boost::shared_ptr<BarbedEndPolymerization> be_polymerization_ptr_t;
+
 #endif // _TRANSITIONS_POLYMERIZATION_H_

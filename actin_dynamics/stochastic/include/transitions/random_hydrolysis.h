@@ -69,4 +69,6 @@ class RandomHydrolysisWithByproduct : public RandomHydrolysis {
         State _byproduct;
 };
 
+typedef boost::shared_ptr<RandomHydrolysis> random_hydrolysis_ptr_t;
+
 #endif // _TRANSITIONS_RANDOM_HYDROLYSIS_H_

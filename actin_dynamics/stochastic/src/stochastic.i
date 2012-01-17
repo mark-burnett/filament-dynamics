@@ -15,6 +15,7 @@
  */
 
 %module stochastic
+%include <std_shared_ptr.i>
 
 %{
 #include "simulation_strategy.h"
@@ -48,6 +49,15 @@
 #include "transitions/vectorial_hydrolysis.h"
 %}
 
+/*
+%template(transition_ptr_t) boost::shared_ptr<Transition>;
+%template(be_polymerization_ptr_t) boost::shared_ptr<BarbedEndPolymerization>;
+%template(random_hydrolysis_ptr_t) boost::shared_ptr<RandomHydrolysis>;
+
+%template(concentration_ptr_t) boost::shared_ptr<Concentration>;
+%template(fixed_concentration_ptr_t) boost::shared_ptr<FixedConcentration>;
+*/
+
 %include "simulation_strategy.h"
 
 %include "state.h"
@@ -77,3 +87,12 @@
 %include "transitions/cooperative_hydrolysis.h"
 %include "transitions/random_hydrolysis.h"
 %include "transitions/vectorial_hydrolysis.h"
+
+/*
+SWIG_SHARED_PTR(Concentration, Concentration)
+SWIG_SHARED_PTR_DERIVED(FixedConcentration, Concentration, FixedConcentration)
+
+SWIG_SHARED_PTR(Transition, Transition)
+SWIG_SHARED_PTR_DERIVED(BarbedEndPolymerization, Transition, BarbedEndPolymerization)
+SWIG_SHARED_PTR_DERIVED(RandomHydrolysis, Transition, RandomHydrolysis)
+*/

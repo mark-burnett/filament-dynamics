@@ -30,4 +30,6 @@ class FixedConcentration : public Concentration {
         double _value;
 };
 
+typedef boost::shared_ptr<FixedConcentration> fixed_concentration_ptr_t;
+
 #endif // _CONCENTRATIONS_FIXED_CONCENTRATION_H_
