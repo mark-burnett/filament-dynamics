@@ -12,7 +12,8 @@ stochastic_la_SOURCES = src/filaments/simple_filament.cpp\
 						src/measurements/filament_length.cpp\
 						src/measurements/state_count.cpp\
 						src/random_seed.cpp\
-						src/filaments/cached_filament.cpp
+						src/filaments/cached_filament.cpp\
+						src/filaments/segmented_filament.cpp
 
 stochastic_la_LDFLAGS = -module
 
@@ -21,6 +22,7 @@ check_PROGRAMS = runtests
 runtests_SOURCES = tests/test_main.cpp\
 			   tests/filaments/test_simple_filament.cpp\
 			   tests/filaments/test_cached_filament.cpp\
+			   tests/filaments/test_segmented_filament.cpp\
 			   tests/transitions/test_random_hydrolysis.cpp\
 			   tests/transitions/test_depolymerization.cpp\
 			   tests/transitions/test_polymerization.cpp\

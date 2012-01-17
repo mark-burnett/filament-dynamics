@@ -26,11 +26,11 @@ using namespace boost::assign;
 #include "concentrations/fixed_reagent.h"
 #include "measurements/state_count.h"
 #include "measurements/filament_length.h"
-#include "filaments/cached_filament.h"
+#include "filaments/default_filament.h"
 #include "end_conditions/duration.h"
 
 TEST(Integration, OldBasicTest) {
-    const size_t number_of_filaments = 1000;
+    const size_t number_of_filaments = 100;
 
     transition_container_t transitions;
     concentration_container_t concentrations;
@@ -50,7 +50,7 @@ TEST(Integration, OldBasicTest) {
     measurements.push_back(measurement_ptr_t(new FilamentLength(0.1)));
 
     for (size_t i = 0; i < number_of_filaments; ++i) {
-        filaments.push_back(filament_ptr_t(new CachedFilament(6/0.0112, 1)));
+        filaments.push_back(filament_ptr_t(new DefaultFilament(6/0.0112, 1)));
     }
 
     concentrations.push_back(concentration_ptr_t(new FixedReagent(6, 0.0112,

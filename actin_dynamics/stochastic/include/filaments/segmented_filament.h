@@ -32,11 +32,9 @@ typedef std::vector<State>::const_iterator _vector_ui_ci;
 class SegmentedFilament : public Filament {
     public:
         SegmentedFilament(const std::vector<State> &values) {
-            _initialize_counts();
             _build_from_iterators(values.begin(), values.end());
         }
         SegmentedFilament(_vector_ui_ci start, _vector_ui_ci stop) {
-            _initialize_counts();
             _build_from_iterators(start, stop);
         }
         SegmentedFilament(size_t number, const State &state);
@@ -66,25 +64,17 @@ class SegmentedFilament : public Filament {
         std::deque<State> get_states() const {return std::deque<State>();} // { return std::deque<State>(states); }
 
     private:
-        static const size_t STATE_COUNT_SIZE = 10;
-        void _initialize_counts();
-        void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
-        void _merge_segments(
-                std::list<Segment>::iterator pointed_segment,
-                std::list<Segment>::iterator target_segment,
-                std::list<Segment>::iterator barbed_segment);
-        void _replace_single_segment(
-                std::list<Segment>::iterator target_segment,
-                const State &new_state);
-        void _fracture(
-                std::list<Segment>::iterator orignal_segment,
-                size_t protomer_index, const State &new_state);
+        typedef std::list<Segment> sl_t;
 
-        std::list<Segment> _segments;
+        static const size_t STATE_COUNT_SIZE = 10;
+        void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
+        void _fracture(sl_t::iterator i, size_t protomer_index,
+                const State &new_state);
+
+        sl_t _segments;
 
         size_t _length;
         std::vector<size_t> _state_counts;
-        std::vector< std::vector<size_t> > _boundary_counts;
 };
 
 #endif // _STATE_SEGMENTED_FILAMENT_H_

@@ -15,19 +15,12 @@
 
 #include "filaments/segmented_filament.h"
 
-#include <iostream>
-
-void SegmentedFilament::_initialize_counts() {
-    _state_counts.resize(STATE_COUNT_SIZE);
-    _boundary_counts.resize(STATE_COUNT_SIZE);
-    for (size_t i = 0; i < STATE_COUNT_SIZE; ++i) {
-        _boundary_counts[i].resize(STATE_COUNT_SIZE);
-    }
-}
-
 void SegmentedFilament::_build_from_iterators(_vector_ui_ci start,
         _vector_ui_ci stop) {
+    _state_counts.reserve(STATE_COUNT_SIZE);
+    _state_counts.resize(STATE_COUNT_SIZE);
     if (start == stop) {
+        _length = 0;
         return;
     }
 
@@ -41,14 +34,14 @@ void SegmentedFilament::_build_from_iterators(_vector_ui_ci start,
         if (*start == _segments.back().state) {
             ++_segments.back().number;
         } else {
-            ++_boundary_counts[_segments.back().state][*start];
             _segments.push_back(Segment(1, *start));
         }
     }
 }
 
 SegmentedFilament::SegmentedFilament(size_t number, const State &state) {
-    _initialize_counts();
+    _state_counts.reserve(STATE_COUNT_SIZE);
+    _state_counts.resize(STATE_COUNT_SIZE);
     _state_counts[state] = number;
     _segments.push_back(Segment(number, state));
     _length = number;
@@ -58,9 +51,24 @@ SegmentedFilament::SegmentedFilament(size_t number, const State &state) {
 size_t SegmentedFilament::state_count(const State &state) const {
     return _state_counts[state];
 }
+
+
 size_t SegmentedFilament::boundary_count(const State &pointed_state,
         const State &barbed_state) const {
-    return _boundary_counts[pointed_state][barbed_state];
+    sl_t::const_iterator barbed(_segments.begin());
+    sl_t::const_iterator pointed(_segments.begin());
+    ++barbed;
+
+    size_t count = 0;
+    while (barbed != _segments.end()) {
+        if (pointed_state == pointed->state &&
+                barbed_state == barbed->state) {
+            ++count;
+        }
+        ++barbed;
+        ++pointed;
+    }
+    return count;
 }
 
 size_t SegmentedFilament::length() const {
@@ -81,7 +89,6 @@ void SegmentedFilament::append_barbed(const State &new_state) {
         ++_segments.back().number;
     } else {
         _segments.push_back(Segment(1, new_state));
-        ++_boundary_counts[_segments.back().state][new_state];
     }
 
     ++_length;
@@ -93,7 +100,6 @@ void SegmentedFilament::append_pointed(const State &new_state) {
         ++_segments.front().number;
     } else {
         _segments.push_front(Segment(1, new_state));
-        ++_boundary_counts[new_state][_segments.front().state];
     }
 
     ++_length;
@@ -106,7 +112,6 @@ State SegmentedFilament::pop_barbed() {
 
     if (1 == seg.number) {
         _segments.pop_back();
-        --_boundary_counts[_segments.back().state][state];
     } else {
         --seg.number;
     }
@@ -123,7 +128,6 @@ State SegmentedFilament::pop_pointed() {
 
     if (1 == seg.number) {
         _segments.pop_front();
-        --_boundary_counts[state][_segments.front().state];
     } else {
         --seg.number;
     }
@@ -134,158 +138,60 @@ State SegmentedFilament::pop_pointed() {
     return state;
 }
 
-void SegmentedFilament::_merge_segments(
-        std::list<Segment>::iterator pointed_segment,
-        std::list<Segment>::iterator target_segment,
-        std::list<Segment>::iterator barbed_segment) {
-    if (pointed_segment->state == target_segment->state) {
-        ++pointed_segment->number;
-        _segments.erase(target_segment);
-        target_segment = pointed_segment;
-        if (barbed_segment->state == pointed_segment->state) {
-            pointed_segment->number += barbed_segment->number;
-            _segments.erase(barbed_segment);
-        } else {
-            ++_boundary_counts[pointed_segment->state][barbed_segment->state];
-        }
-    } else {
-        ++_boundary_counts[pointed_segment->state][target_segment->state];
-        if (barbed_segment->state == target_segment->state) {
-            ++barbed_segment->number;
-            _segments.erase(target_segment);
-        } else {
-            ++_boundary_counts[target_segment->state][barbed_segment->state];
-        }
-    }
-
-//    if (_segments.begin() != pointed_segment) {
-//        std::list<Segment>::iterator ppsi(pointed_segment);
-//        --ppsi;
-//        ++_boundary_counts[ppsi->state][pointed_segment->state];
-//    }
-//    std::list<Segment>::iterator bbsi(barbed_segment);
-//    ++bbsi;
-//    if (_segments.end() != bbsi) {
-//        ++_boundary_counts[barbed_segment->state][bbsi->state];
-//    }
-}
-
-void SegmentedFilament::_replace_single_segment(
-        std::list<Segment>::iterator target_segment,
-        const State &new_state) {
-    // Case of nearly empty filament
-    if (1 == _segments.size()) {
-        target_segment->state = new_state;
-    } else {
-        if (_segments.begin() != target_segment) {
-            std::list<Segment>::iterator pointed_segment(target_segment);
-            --pointed_segment;
-            --_boundary_counts[pointed_segment->state][target_segment->state];
-
-            std::list<Segment>::iterator barbed_segment(target_segment);
-            ++barbed_segment;
-            if (_segments.end() != barbed_segment) {
-                std::cout << "   rsr - normal path" << std::endl;
-                std::cout << "   rsr - old state = "
-                    << target_segment->state << " new state = "
-                    << new_state << std::endl;
-                // not at the front or back
-                // this is the main case
-                --_boundary_counts[target_segment->state][barbed_segment->state];
-                // status: currently cache has no information about this section
-                //  -> so we can merge them, and just count the boundaries
-                target_segment->state = new_state;
-                _merge_segments(pointed_segment, target_segment, barbed_segment);
-            } else {
-                // at the back, only have to deal with 2
-                if (new_state == pointed_segment->state) {
-                    ++pointed_segment->number;
-                    _segments.pop_back();
-                } else {
-                    target_segment->state = new_state;
-                    ++_boundary_counts[pointed_segment->state][new_state];
-                }
-            }
-        } else {
-            std::list<Segment>::iterator barbed_segment(target_segment);
-            ++barbed_segment;
-            // at the front, only have to deal with 2
-            --_boundary_counts[target_segment->state][barbed_segment->state];
-            if (new_state == barbed_segment->state) {
-                ++barbed_segment->number;
-                _segments.pop_front();
-            } else {
-                target_segment->state = new_state;
-                ++_boundary_counts[new_state][barbed_segment->state];
-            }
-        }
-    }
-}
-
-void SegmentedFilament::_fracture(
-        std::list<Segment>::iterator original_segment,
+void SegmentedFilament::_fracture(sl_t::iterator i,
         size_t protomer_index, const State &new_state) {
-    --_state_counts[original_segment->state];
-    ++_state_counts[new_state];
-    if (1 == original_segment->number) {
-        std::cout << "  replace single segment" << std::endl;
-        _replace_single_segment(original_segment, new_state);
+    size_t left = protomer_index;
+    size_t right = i->number - protomer_index - 1;
+    if (left > 0) {
+        _segments.insert(i, Segment(left, i->state));
+        _segments.insert(i, Segment(1, new_state));
     } else {
-        Segment new_segment(1, new_state);
-        if (0 == protomer_index) {
-            // add segment on barbed side, update barbed counts & "self"
-            --original_segment->number;
-            _segments.insert(++original_segment, new_segment);
-            // update cache
-        } else if (protomer_index + 1 == original_segment->number) {
-            // add segment on pointed side, update pointed counts & "self"
-            --original_segment->number;
-            _segments.insert(original_segment, new_segment);
-            // update cache
+        sl_t::iterator pointed_neighbor(i);
+        --pointed_neighbor;
+        if (new_state == pointed_neighbor->state) {
+            ++pointed_neighbor->number;
         } else {
-            std::cout << "  add 2 segments, update self" << std::endl;
-            // add 2 segments, update "self" counts
-            Segment pointed_segment(
-                    original_segment->number - protomer_index - 1,
-                    original_segment->state);
-            original_segment->number = protomer_index;
-            std::cout << "   segment numbers: "
-                << pointed_segment.number << " "
-                << new_segment.number << " "
-                << original_segment->number << std::endl;
-            std::cout << "   segment states: "
-                << pointed_segment.state << " "
-                << new_segment.state << " "
-                << original_segment->state << std::endl;
-            _segments.insert(original_segment, pointed_segment);
-            _segments.insert(original_segment, new_segment);
-
-            ++_boundary_counts[new_state][original_segment->state];
-            ++_boundary_counts[original_segment->state][new_state];
+            _segments.insert(i, Segment(1, new_state));
         }
+    }
+
+    if (right > 0) {
+        i->number = right;
+    } else {
+        sl_t::iterator pointed_neighbor(i);
+        --pointed_neighbor;
+        sl_t::iterator barbed_neighbor(i);
+        ++barbed_neighbor;
+
+        _segments.erase(i);
+
+        if (pointed_neighbor->state == barbed_neighbor->state) {
+            barbed_neighbor->number += pointed_neighbor->number;
+            _segments.erase(pointed_neighbor);
+        }
+
     }
 }
 
 void SegmentedFilament::update_state(size_t instance_number,
         const State &old_state, const State &new_state) {
-    size_t count = 0;
-    std::cout << "num segments: " << _segments.size() << std::endl;
-    for (std::list<Segment>::iterator si = _segments.begin();
-            si != _segments.end(); ++si) {
-        std::cout << si->number << " of " << si->state << std::endl;
-        if (old_state == si->state) {
-            count += si->number;
-        }
-        std::cout << " count = " << count
-            << " target " << instance_number
-            << std::endl;
-        if (instance_number <= count) {
-            _fracture(si, count - instance_number, new_state);
-            return;
+    --_state_counts[old_state];
+    ++_state_counts[new_state];
+
+    for (sl_t::iterator i = _segments.begin();
+            i != _segments.end(); ++i) {
+        if (old_state == i->state) {
+            if (instance_number < i->number) {
+                _fracture(i, instance_number, new_state);
+                return;
+            }
+            instance_number -= i->number;
         }
     }
 }
 
+
+// XXX This doesn't work at all.
 void SegmentedFilament::update_boundary(size_t instance_number,
         const State &old_pointed_state, const State &old_barbed_state,
         const State &new_barbed_state) {

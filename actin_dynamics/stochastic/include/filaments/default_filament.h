@@ -15,8 +15,13 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "filaments/cached_filament.h"
+#include "filaments/segmented_filament.h"
+typedef SegmentedFilament DefaultFilament;
 
-typedef CachedFilament DefaultFilament;
+// #include "filaments/cached_filament.h"
+// typedef CachedFilament DefaultFilament;
+
+// #include "filaments/simple_filament.h"
+// typedef SimpleFilament DefaultFilament;
 
 #endif // _STATE_DEFAULT_FILAMENT_H_
