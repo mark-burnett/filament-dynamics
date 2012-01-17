@@ -23,9 +23,13 @@
 
 class Transition : public boost::noncopyable {
     public:
-        virtual double R(double time,
+        virtual double initial_R(double time,
                     const filament_container_t &filaments,
                     const concentration_container_t &concentrations) = 0;
+        virtual double R(double time,
+                    const filament_container_t &filaments,
+                    const concentration_container_t &concentrations,
+                    size_t previous_filament_index) = 0;
         virtual size_t perform(double time, double r,
                     filament_container_t &filaments,
                     concentration_container_t &concentrations) = 0;

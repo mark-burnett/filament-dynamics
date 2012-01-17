@@ -29,12 +29,17 @@ class FixedRateDepolymerization : public Transition {
     public:
         FixedRateDepolymerization(const State &state, double rate,
                 double disable_time=-1.0) :
-            _state(state), _rate(rate), _disable_time(disable_time),
-            _count(0) {}
+            _state(state), _rate(rate), _disable_time(disable_time), _count(0) {}
+
+        double initial_R(double time,
+                    const filament_container_t &filaments,
+                    const concentration_container_t &concentrations);
 
         double R(double time,
                     const filament_container_t &filaments,
-                    const concentration_container_t &concentrations);
+                    const concentration_container_t &concentrations,
+                    size_t previous_filament_index);
+
         size_t perform(double time, double r,
                     filament_container_t &filaments,
                     concentration_container_t &concentrations);
@@ -46,8 +51,8 @@ class FixedRateDepolymerization : public Transition {
         const State _state;
         const double _rate;
         const double _disable_time;
-
         size_t _count;
+        std::vector<State> _states;
 };
 
 class BarbedEndDepolymerization : public FixedRateDepolymerization {

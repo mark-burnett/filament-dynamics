@@ -20,16 +20,17 @@
 class FixedReagent : public Concentration {
     public:
         FixedReagent(double concentration, double fnc, size_t number_of_filaments=1) :
-            _number(concentration * number_of_filaments /fnc), _fnc(fnc) {}
+            _number(concentration * number_of_filaments /fnc),
+            _volume(number_of_filaments / fnc) {}
         ~FixedReagent() {}
 
-        double value() const {return _number * _fnc;};
+        double value() const { return _number / _volume; }
         void add_monomer() { ++_number;};
         void remove_monomer() { if (_number > 0) --_number;};
         size_t monomer_count() { return _number; }
     private:
         size_t _number;
-        double _fnc;
+        double _volume;
 };
 
 #endif // _CONCENTRATIONS_FIXED_REAGENT_H_

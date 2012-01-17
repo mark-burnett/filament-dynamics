@@ -15,32 +15,51 @@
 
 #include "transitions/random_hydrolysis.h"
 
-double RandomHydrolysis::R(double time, const filament_container_t &filaments,
+double RandomHydrolysis::initial_R(double time,
+        const filament_container_t &filaments,
         const concentration_container_t &concentrations) {
-    filament_Rs.resize(filaments.size());
+    _filament_counts.reserve(filaments.size());
+    _filament_counts.resize(filaments.size());
 
-    double r;
-    double R = 0;
+    size_t fc;
     for (size_t i = 0; i < filaments.size(); ++i) {
-        r = rate * filaments[i]->state_count(old_state);
-        filament_Rs[i] = r;
-        R += r;
+        fc = filaments[i]->state_count(_old_state);
+        _filament_counts[i] = fc;
+        _count += fc;
     }
 
-    return R;
+    return _rate * _count;
+}
+
+double RandomHydrolysis::R(double time,
+        const filament_container_t &filaments,
+        const concentration_container_t &concentrations,
+        size_t previous_filament_index) {
+    size_t previous_count = _filament_counts[previous_filament_index];
+    size_t this_count = filaments[previous_filament_index]->state_count(_old_state);
+
+    _filament_counts[previous_filament_index] = this_count;
+
+    _count += this_count;
+    _count -= previous_count;
+
+    return _rate * _count;
 }
 
 size_t RandomHydrolysis::perform(double time, double r,
         filament_container_t &filaments,
         concentration_container_t &concentrations) {
-    for (size_t i = 0; i < filaments.size(); ++i) {
-        double filament_R = filament_Rs[i];
-        if (r < filament_R) {
-            size_t number = r / rate;
-            filaments[i]->update_state(number, old_state, new_state);
-            return ++count;
-        }
-        r -= filament_R;
+    size_t total_number = r / _rate;
+    size_t i = 0;
+//    for ( ; i < _filament_counts.size(); ++i) {
+//        if (total_number < _filament_counts[i])
+//            break;
+//        total_number -= _filament_counts[i];
+//    }
+    while (total_number >= _filament_counts[i]) {
+        total_number -= _filament_counts[i];
+        ++i;
     }
-    return 0;
+    filaments[i]->update_state(total_number, _old_state, _new_state);
+    return i;
 }

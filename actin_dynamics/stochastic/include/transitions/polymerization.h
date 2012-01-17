@@ -29,12 +29,17 @@ class FixedRatePolymerization : public Transition {
     public:
         FixedRatePolymerization(const State &state, double rate,
                 double disable_time=-1.0) :
-            _state(state), _rate(rate), _disable_time(disable_time),
-            _count(0) {}
+            _state(state), _rate(rate), _disable_time(disable_time) {}
+
+        double initial_R(double time,
+                    const filament_container_t &filaments,
+                    const concentration_container_t &concentrations);
 
         double R(double time,
                     const filament_container_t &filaments,
-                    const concentration_container_t &concentrations);
+                    const concentration_container_t &concentrations,
+                    size_t previous_filament_index);
+
         size_t perform(double time, double r,
                     filament_container_t &filaments,
                     concentration_container_t &concentrations);
@@ -48,8 +53,6 @@ class FixedRatePolymerization : public Transition {
     private:
         const double _rate;
         const double _disable_time;
-
-        size_t _count;
 };
 
 class BarbedEndPolymerization : public FixedRatePolymerization {

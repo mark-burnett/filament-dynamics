@@ -15,7 +15,8 @@
 
 #include "transitions/polymerization.h"
 
-double FixedRatePolymerization::R(double time,
+#include <iostream>
+double FixedRatePolymerization::initial_R(double time,
         const filament_container_t &filaments,
         const concentration_container_t &concentrations) {
     if (_disable_time > 0 && time > _disable_time) {
@@ -25,19 +26,19 @@ double FixedRatePolymerization::R(double time,
     return _rate * concentrations[_state]->value() * filaments.size();
 }
 
+double FixedRatePolymerization::R(double time,
+        const filament_container_t &filaments,
+        const concentration_container_t &concentrations,
+        size_t previous_filament_index) {
+    return initial_R(time, filaments, concentrations);
+}
+
 size_t FixedRatePolymerization::perform(double time, double r,
         filament_container_t &filaments,
         concentration_container_t &concentrations) {
     double filament_r = _rate * concentrations[_state]->value();
-    for (filament_container_t::const_iterator fi = filaments.begin();
-        fi < filaments.end(); ++fi) {
-        if (r < filament_r) {
-            append_state(**fi);
-            concentrations[_state]->remove_monomer();
-            return ++_count;
-        }
-        r -= filament_r;
-    }
-
-    return 0;
+    size_t number = r / filament_r;
+    append_state(*filaments[number]);
+    concentrations[_state]->remove_monomer();
+    return number;
 }

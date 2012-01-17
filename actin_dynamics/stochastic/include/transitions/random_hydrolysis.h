@@ -25,27 +25,29 @@
 
 class RandomHydrolysis : public Transition {
     public:
-        RandomHydrolysis(const State &_old_state, const State &_new_state,
-                double _rate) : old_state(_old_state),
-                                new_state(_new_state),
-                                rate(_rate), count(0) {}
-        double R(double time,
+        RandomHydrolysis(const State &old_state, const State &new_state,
+                double rate) : _old_state(old_state),
+                                _new_state(new_state),
+                                _rate(rate), _count(0) {}
+        double initial_R(double time,
                     const filament_container_t &filaments,
                     const concentration_container_t &concentrations);
+        double R(double time,
+                    const filament_container_t &filaments,
+                    const concentration_container_t &concentrations,
+                    size_t previous_filament_index);
         size_t perform(double time, double r,
                     filament_container_t &filaments,
                     concentration_container_t &concentrations);
 
     private:
-        const State old_state;
-        const State new_state;
-        const double rate;
-
-        size_t count;
+        const State _old_state;
+        const State _new_state;
+        const double _rate;
 
         // cache
-        double previous_R;
-        std::vector<double> filament_Rs;
+        double _count;
+        std::vector<size_t> _filament_counts;
 };
 
 class RandomHydrolysisWithByproduct : public RandomHydrolysis {

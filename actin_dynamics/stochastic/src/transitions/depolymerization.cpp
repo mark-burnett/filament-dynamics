@@ -15,38 +15,59 @@
 
 #include "transitions/depolymerization.h"
 
-double FixedRateDepolymerization::R(double time,
+double FixedRateDepolymerization::initial_R(double time,
         const filament_container_t &filaments,
         const concentration_container_t &concentrations) {
+    _states.reserve(filaments.size());
+    _states.resize(filaments.size());
     if (_disable_time > 0 && time > _disable_time) {
         return 0;
     }
 
-    double R = 0;
-    for (filament_container_t::const_iterator fi = filaments.begin();
-            fi < filaments.end(); ++fi) {
-        if (_state == get_state(**fi)) {
-            R += _rate;
+    size_t fi = 0;
+    for ( ; fi < filaments.size(); ++fi) {
+        State fstate = get_state(*filaments[fi]);
+        _states[fi] = fstate;
+        if (_state == fstate) {
+            ++_count;
         }
     }
 
-    return R;
+    return _rate * _count;
+}
+
+double FixedRateDepolymerization::R(double time,
+        const filament_container_t &filaments,
+        const concentration_container_t &concentrations,
+        size_t previous_filament_index) {
+    if (_disable_time > 0 && time > _disable_time) {
+        return 0;
+    }
+    State previous_state = _states[previous_filament_index];
+    State this_state = get_state(*filaments[previous_filament_index]);
+    if (_state == previous_state) {
+        --_count;
+    }
+    if (_state == this_state) {
+        ++_count;
+    }
+    return _rate * _count;
 }
 
 size_t FixedRateDepolymerization::perform(double time, double r,
         filament_container_t &filaments,
         concentration_container_t &concentrations) {
-    for (filament_container_t::const_iterator fi = filaments.begin();
-            fi < filaments.end(); ++fi) {
-        if (_state == get_state(**fi)) {
+    size_t fi = 0;
+    for ( ; fi < filaments.size(); ++fi) {
+        if (_state == get_state(*filaments[fi])) {
             if (r < _rate) {
-                remove_state(**fi);
+                remove_state(*filaments[fi]);
                 concentrations[_state]->add_monomer();
-                return ++_count;
+                return fi;
             }
             r -= _rate;
         }
     }
 
-    return 0;
+    return fi;
 }

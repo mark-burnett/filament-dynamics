@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 INCLUDES = -Iinclude -Itests/include
 
 # --- Libraries ---
-lib_LTLIBRARIES      = stochastic.la
+lib_LTLIBRARIES = stochastic.la
 stochastic_la_SOURCES = src/filaments/simple_filament.cpp\
 						src/transitions/random_hydrolysis.cpp\
 						src/transitions/depolymerization.cpp\
@@ -14,14 +14,11 @@ stochastic_la_SOURCES = src/filaments/simple_filament.cpp\
 						src/random_seed.cpp\
 						src/filaments/cached_filament.cpp
 
-#						src/filaments/segmented_filament.cpp
-
 stochastic_la_LDFLAGS = -module
 
 # --- Tests ---
-#			   tests/filaments/test_segmented_filament.cpp\
-check_PROGRAMS   = test
-test_SOURCES = tests/test_main.cpp\
+check_PROGRAMS = runtests
+runtests_SOURCES = tests/test_main.cpp\
 			   tests/filaments/test_simple_filament.cpp\
 			   tests/filaments/test_cached_filament.cpp\
 			   tests/transitions/test_random_hydrolysis.cpp\
@@ -34,11 +31,11 @@ test_SOURCES = tests/test_main.cpp\
 			   tests/test_end_conditions.cpp\
 			   tests/test_old_integration.cpp
 
-test_LDADD   = stochastic.la
+runtests_LDADD   = stochastic.la
 
 LIBS = $(GTEST_LIBS)
 
-TESTS = test
+TESTS = runtests
 
 # --- Cleanup ---
 MAINTAINERCLEANFILES = configure config.log config.status\

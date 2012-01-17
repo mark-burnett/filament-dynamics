@@ -37,7 +37,7 @@ TEST(SimulationStrategy, BasicSingleFilamentTest) {
 
     transitions.push_back(transition_ptr_t(new RandomHydrolysis(0, 1, 0.3)));
 
-    end_conditions.push_back(end_condition_ptr_t(new EventCount(4)));
+    end_conditions.push_back(end_condition_ptr_t(new EventCount(3)));
 
     measurements.push_back(measurement_ptr_t(new StateCount(0, 0)));
     measurements.push_back(measurement_ptr_t(new StateCount(1, 0)));

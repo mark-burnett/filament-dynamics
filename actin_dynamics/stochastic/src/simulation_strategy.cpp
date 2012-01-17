@@ -26,13 +26,42 @@ measurement_container_t SimulationStrategy::run() {
     std::vector<double> transition_rates;
     transition_rates.resize(_transitions.size());
 
+    size_t previous_filament_index;
+
+    // Calculate rates for the next timestep.
+    double R = 0;
+    for (size_t ti = 0; ti < _transitions.size(); ++ti) {
+        transition_rates[ti] = _transitions[ti]->initial_R(time,
+                _filaments, _concentrations);
+        R += transition_rates[ti];
+    }
+
+    // First update the time & perform measurements
+    time += log(1 / _random(1)) / R;
+    record_measurements(time);
+
+    // Decide which transition to perform.
+    double r = _random(R);
+
+    size_t ti = 0;
+    while (r >= transition_rates[ti]) {
+        r -= transition_rates[ti];
+        ++ti;
+    }
+    previous_filament_index = _transitions[ti]->perform(time, r,
+            _filaments, _concentrations);
+
+
     while (end_conditions_not_met(time)) {
         // Calculate rates for the next timestep.
-        double R = 0;
-        for (size_t ti = 0; ti < _transitions.size(); ++ti) {
-            transition_rates[ti] = _transitions[ti]->R(time,
-                    _filaments, _concentrations);
-            R += transition_rates[ti];
+        R = 0;
+        for (size_t tip = 0; tip < _transitions.size(); ++tip) {
+            transition_rates[tip] = _transitions[tip]->R(time,
+                    _filaments, _concentrations, previous_filament_index);
+            R += transition_rates[tip];
+        }
+        if (0 == R) {
+            break;
         }
 
         // First update the time & perform measurements
@@ -40,14 +69,14 @@ measurement_container_t SimulationStrategy::run() {
         record_measurements(time);
 
         // Decide which transition to perform.
-        double r = _random(R);
-        for (size_t ti = 0; ti < _transitions.size(); ++ti) {
-            if (r < transition_rates[ti]) {
-                _transitions[ti]->perform(time, r, _filaments, _concentrations);
-                break;
-            }
+        r = _random(R);
+        ti = 0;
+        while (!(r < transition_rates[ti])) {
             r -= transition_rates[ti];
+            ++ti;
         }
+        previous_filament_index = _transitions[ti]->perform(time, r,
+                _filaments, _concentrations);
     }
 
     return _measurements;

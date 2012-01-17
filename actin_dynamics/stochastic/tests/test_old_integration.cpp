@@ -1,8 +1,7 @@
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
+//    it under the terms of the GNU General Public License as published by //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
 //    This program is distributed in the hope that it will be useful,
@@ -31,7 +30,7 @@ using namespace boost::assign;
 #include "end_conditions/duration.h"
 
 TEST(Integration, OldBasicTest) {
-    const size_t number_of_filaments = 10;
+    const size_t number_of_filaments = 1000;
 
     transition_container_t transitions;
     concentration_container_t concentrations;
