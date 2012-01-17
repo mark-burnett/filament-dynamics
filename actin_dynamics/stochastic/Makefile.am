@@ -56,10 +56,12 @@ junkdir = $(libdir)
 junk_DATA = src/stochastic.py
 
 src/stochastic_wrap.cxx : src/stochastic.i
-	$(SWIG) $(SWIG_PYTHON_OPT) -classic $<
+	$(SWIG) $(SWIG_PYTHON_OPT) $(INCLUDES) -classic $<
 
 
 # --- Cleanup ---
+CLEANFILES = src/stochastic_wrap.cxx src/stochastic.py
+
 MAINTAINERCLEANFILES = configure config.log config.status\
 					   aclocal.m4 autom4te.cache Makefile.in\
 					   config/config.guess config/config.sub config/depcomp\

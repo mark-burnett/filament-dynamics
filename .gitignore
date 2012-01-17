@@ -27,3 +27,5 @@ libtool
 runtests
 *.lo
 *.la
+stochastic.py
+stochastic_wrap.cxx

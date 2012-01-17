@@ -48,7 +48,32 @@
 #include "transitions/vectorial_hydrolysis.h"
 %}
 
-class SimpleFilament {
-    public:
-        SimpleFilament(size_t number, const State &state);
-};
+%include "simulation_strategy.h"
+
+%include "state.h"
+%include "random_seed.h"
+
+%include "filaments/filament.h"
+%include "filaments/default_filament.h"
+%include "filaments/simple_filament.h"
+%include "filaments/cached_filament.h"
+%include "filaments/segmented_filament.h"
+
+%include "concentrations/concentration.h"
+%include "concentrations/fixed_concentration.h"
+%include "concentrations/fixed_reagent.h"
+
+%include "end_conditions/end_condition.h"
+%include "end_conditions/duration.h"
+%include "end_conditions/event_count.h"
+
+%include "measurements/measurement.h"
+%include "measurements/filament_length.h"
+%include "measurements/state_count.h"
+
+%include "transitions/transition.h"
+%include "transitions/depolymerization.h"
+%include "transitions/polymerization.h"
+%include "transitions/cooperative_hydrolysis.h"
+%include "transitions/random_hydrolysis.h"
+%include "transitions/vectorial_hydrolysis.h"
