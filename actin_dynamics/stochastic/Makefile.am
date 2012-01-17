@@ -14,9 +14,12 @@ stochastic_la_SOURCES = src/filaments/simple_filament.cpp\
 						src/random_seed.cpp\
 						src/filaments/cached_filament.cpp
 
+#						src/filaments/segmented_filament.cpp
+
 stochastic_la_LDFLAGS = -module
 
 # --- Tests ---
+#			   tests/filaments/test_segmented_filament.cpp\
 check_PROGRAMS   = test
 test_SOURCES = tests/test_main.cpp\
 			   tests/filaments/test_simple_filament.cpp\

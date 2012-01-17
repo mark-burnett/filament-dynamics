@@ -110,15 +110,15 @@ TEST(SimpleFilament, UpdateBoundary) {
     SimpleFilament f(20, 0);
 
     f.update_state(5, 0, 1);
-    f.update_boundary(0, 0, 1, 3, 2);
+    f.update_boundary(0, 0, 1, 3);
     EXPECT_EQ(1, f.boundary_count(0, 3));
-    EXPECT_EQ(1, f.boundary_count(3, 2));
-    EXPECT_EQ(1, f.boundary_count(2, 0));
+    EXPECT_EQ(1, f.boundary_count(3, 0));
 
     f.update_state(10, 0, 3);
     EXPECT_EQ(2, f.boundary_count(0, 3));
-    f.update_boundary(1, 0, 3, 4, 5);
+    f.update_boundary(1, 0, 3, 4);
     EXPECT_EQ(1, f.boundary_count(0, 3));
-    EXPECT_EQ(1, f.boundary_count(3, 2));
-    EXPECT_EQ(1, f.boundary_count(2, 0));
+    EXPECT_EQ(1, f.boundary_count(3, 0));
+    EXPECT_EQ(1, f.boundary_count(0, 4));
+    EXPECT_EQ(1, f.boundary_count(4, 0));
 }

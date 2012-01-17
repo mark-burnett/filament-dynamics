@@ -54,7 +54,8 @@ class SimpleFilament : public Filament {
                 const State &old_state, const State &new_state);
         void update_boundary(size_t instance_number,
                 const State &old_pointed_state, const State &old_barbed_state,
-                const State &new_pointed_state, const State &new_barbed_state);
+//                const State &new_pointed_state,
+                const State &new_barbed_state);
 
         std::deque<State> get_states() const { return std::deque<State>(states); }
 

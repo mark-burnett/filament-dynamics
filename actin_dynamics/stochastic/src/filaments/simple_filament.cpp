@@ -116,7 +116,8 @@ void SimpleFilament::update_state(size_t instance_number,
 
 void SimpleFilament::update_boundary(size_t instance_number,
         const State &old_pointed_state, const State &old_barbed_state,
-        const State &new_pointed_state, const State &new_barbed_state) {
+//        const State &new_pointed_state,
+        const State &new_barbed_state) {
     size_t count = 0;
 
     std::deque<State>::iterator pointed = states.begin();
@@ -125,7 +126,7 @@ void SimpleFilament::update_boundary(size_t instance_number,
     while (barbed < states.end()) {
         if (*pointed == old_pointed_state && *barbed == old_barbed_state) {
             if (count == instance_number) {
-                *pointed = new_pointed_state;
+//                *pointed = new_pointed_state;
                 *barbed = new_barbed_state;
             }
             ++count;

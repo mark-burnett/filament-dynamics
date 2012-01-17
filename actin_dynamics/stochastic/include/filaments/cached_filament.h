@@ -57,9 +57,10 @@ class CachedFilament : public Filament {
                 const State &old_state, const State &new_state);
         void update_boundary(size_t instance_number,
                 const State &old_pointed_state, const State &old_barbed_state,
-                const State &new_pointed_state, const State &new_barbed_state);
+//                const State &new_pointed_state,
+                const State &new_barbed_state);
 
-        std::deque<State> get_states() const { return std::deque<State>(states); }
+        std::deque<State> get_states() const { return std::deque<State>(_states); }
 
     private:
         static const size_t STATE_COUNT_SIZE = 10;
@@ -68,7 +69,7 @@ class CachedFilament : public Filament {
         void _update_state_and_cache(std::deque<State>::iterator &i,
                 State new_state);
 
-        std::deque<State> states;
+        std::deque<State> _states;
         std::vector<size_t> _state_counts;
         std::vector< std::vector<size_t> > _boundary_counts;
 };

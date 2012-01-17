@@ -15,44 +15,76 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <deque>
+#include <list>
 
 #include "filaments/filament.h"
 
 struct Segment {
-    Segment(size_t new_number, size_t new_filaments) :
-        number(new_number), filaments(new_filaments) {}
+    Segment(size_t new_number, size_t new_state) :
+        number(new_number), state(new_state) {}
 
     size_t number;
-    size_t filaments;
+    size_t state;
 };
+
+typedef std::vector<State>::const_iterator _vector_ui_ci;
 
 class SegmentedFilament : public Filament {
     public:
-        SegmentedFilament();
-        ~SegmentedFilament();
+        SegmentedFilament(const std::vector<State> &values) {
+            _initialize_counts();
+            _build_from_iterators(values.begin(), values.end());
+        }
+        SegmentedFilament(_vector_ui_ci start, _vector_ui_ci stop) {
+            _initialize_counts();
+            _build_from_iterators(start, stop);
+        }
+        SegmentedFilament(size_t number, const State &state);
 
-        size_t filaments_count(size_t filaments) const;
-        size_t boundary_count(size_t pointed_filaments,
-                size_t barbed_filaments) const;
+        ~SegmentedFilament() {}
+
+        size_t state_count(const State &state) const;
+        size_t boundary_count(const State &pointed_state,
+                const State &barbed_state) const;
         size_t length() const;
 
-        size_t barbed_filaments() const;
-        size_t pointed_filaments() const;
+        State barbed_state() const;
+        State pointed_state() const;
 
-        void append_barbed(size_t new_filaments);
-        void append_pointed(size_t new_filaments);
+        void append_barbed(const State &new_state);
+        void append_pointed(const State &new_state);
 
-        size_t pop_barbed();
-        size_t pop_pointed();
+        State pop_barbed();
+        State pop_pointed();
 
-        void update_filaments(size_t instance_number, size_t new_filaments);
+        void update_state(size_t instance_number,
+                const State &old_state, const State &new_state);
         void update_boundary(size_t instance_number,
-                size_t new_pointed_filaments,
-                size_t new_barbed_filaments);
+                const State &old_pointed_state, const State &old_barbed_state,
+                const State &new_barbed_state);
+
+        std::deque<State> get_states() const {return std::deque<State>();} // { return std::deque<State>(states); }
 
     private:
-        std::deque<Segment> segments;
+        static const size_t STATE_COUNT_SIZE = 10;
+        void _initialize_counts();
+        void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
+        void _merge_segments(
+                std::list<Segment>::iterator pointed_segment,
+                std::list<Segment>::iterator target_segment,
+                std::list<Segment>::iterator barbed_segment);
+        void _replace_single_segment(
+                std::list<Segment>::iterator target_segment,
+                const State &new_state);
+        void _fracture(
+                std::list<Segment>::iterator orignal_segment,
+                size_t protomer_index, const State &new_state);
+
+        std::list<Segment> _segments;
+
+        size_t _length;
+        std::vector<size_t> _state_counts;
+        std::vector< std::vector<size_t> > _boundary_counts;
 };
 
 #endif // _STATE_SEGMENTED_FILAMENT_H_
