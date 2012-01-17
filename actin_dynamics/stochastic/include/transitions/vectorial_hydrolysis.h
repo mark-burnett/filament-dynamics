@@ -1,5 +1,5 @@
-#ifndef _TRANSITIONS_RANDOM_HYDROLYSIS_H_
-#define _TRANSITIONS_RANDOM_HYDROLYSIS_H_
+#ifndef _TRANSITIONS_VECTORIAL_HYDROLYSIS_H_
+#define _TRANSITIONS_VECTORIAL_HYDROLYSIS_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -23,12 +23,12 @@
 #include "transitions/transition.h"
 
 
-class RandomHydrolysis : public Transition {
+class VectorialHydrolysis : public Transition {
     public:
-        RandomHydrolysis(const State &old_state, const State &new_state,
-                double rate) : _old_state(old_state),
-                                _new_state(new_state),
-                                _rate(rate), _count(0) {}
+        VectorialHydrolysis(const State &pointed_neighbor,
+                const State &old_state, const State &new_state, double rate) :
+            _pointed_neighbor(pointed_neighbor), _old_state(old_state),
+            _new_state(new_state), _rate(rate), _count(0) {}
         double initial_R(double time,
                     const filament_container_t &filaments,
                     const concentration_container_t &concentrations);
@@ -41,32 +41,34 @@ class RandomHydrolysis : public Transition {
                     concentration_container_t &concentrations);
 
     private:
+        const State _pointed_neighbor;
         const State _old_state;
         const State _new_state;
         const double _rate;
+
 
         // cache
         size_t _count;
         std::vector<size_t> _filament_counts;
 };
 
-class RandomHydrolysisWithByproduct : public RandomHydrolysis {
+class VectorialHydrolysisWithByproduct : public VectorialHydrolysis {
     public:
-        RandomHydrolysisWithByproduct(const State &old_state,
-                const State &new_state,
+        VectorialHydrolysisWithByproduct(const State &pointed_neighbor,
+                const State &old_state, const State &new_state,
                 double rate, const State &byproduct) :
-            RandomHydrolysis(old_state, new_state, rate),
+            VectorialHydrolysis(pointed_neighbor, old_state, new_state, rate),
             _byproduct(byproduct) {}
 
         size_t perform(double time, double r,
                     filament_container_t &filaments,
                     concentration_container_t &concentrations) {
             concentrations[_byproduct]->add_monomer();
-            return RandomHydrolysis::perform(time, r, filaments, concentrations);
+            return VectorialHydrolysis::perform(time, r, filaments, concentrations);
         }
 
     private:
         State _byproduct;
 };
 
-#endif // _TRANSITIONS_RANDOM_HYDROLYSIS_H_
+#endif // _TRANSITIONS_VECTORIAL_HYDROLYSIS_H_

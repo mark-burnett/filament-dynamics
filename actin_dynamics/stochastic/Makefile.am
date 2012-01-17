@@ -6,6 +6,7 @@ INCLUDES = -Iinclude -Itests/include
 lib_LTLIBRARIES = stochastic.la
 stochastic_la_SOURCES = src/filaments/simple_filament.cpp\
 						src/transitions/random_hydrolysis.cpp\
+						src/transitions/vectorial_hydrolysis.cpp\
 						src/transitions/depolymerization.cpp\
 						src/transitions/polymerization.cpp\
 						src/simulation_strategy.cpp\
@@ -24,6 +25,7 @@ runtests_SOURCES = tests/test_main.cpp\
 			   tests/filaments/test_cached_filament.cpp\
 			   tests/filaments/test_segmented_filament.cpp\
 			   tests/transitions/test_random_hydrolysis.cpp\
+			   tests/transitions/test_vectorial_hydrolysis.cpp\
 			   tests/transitions/test_depolymerization.cpp\
 			   tests/transitions/test_polymerization.cpp\
 			   tests/test_concentrations.cpp\
