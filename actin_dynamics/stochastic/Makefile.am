@@ -1,10 +1,11 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
-INCLUDES = -Iinclude -Itests/include
+INCLUDES = -Iinclude -Itests/include $(PYTHON_INCLUDE)
 
 # --- Libraries ---
-lib_LTLIBRARIES = stochastic.la
-stochastic_la_SOURCES = src/filaments/simple_filament.cpp\
+noinst_LTLIBRARIES = libstochastic.la
+libstochastic_la_SOURCES =\
+						src/filaments/simple_filament.cpp\
 						src/transitions/random_hydrolysis.cpp\
 						src/transitions/vectorial_hydrolysis.cpp\
 						src/transitions/cooperative_hydrolysis.cpp\
@@ -17,7 +18,7 @@ stochastic_la_SOURCES = src/filaments/simple_filament.cpp\
 						src/filaments/cached_filament.cpp\
 						src/filaments/segmented_filament.cpp
 
-stochastic_la_LDFLAGS = -module
+#libstochastic_la_LDFLAGS = -static
 
 # --- Tests ---
 check_PROGRAMS = runtests
@@ -37,11 +38,26 @@ runtests_SOURCES = tests/test_main.cpp\
 			   tests/test_end_conditions.cpp\
 			   tests/test_old_integration.cpp
 
-runtests_LDADD   = stochastic.la
+runtests_LDADD   = libstochastic.la
 
 LIBS = $(GTEST_LIBS)
 
 TESTS = runtests
+
+BUILT_SOURCES = src/stochastic_wrap.cxx
+
+# --- Python Extension ---
+lib_LTLIBRARIES = _stochastic.la
+_stochastic_la_LIBADD = libstochastic.la
+_stochastic_la_SOURCES = $(BUILT_SOURCES)
+_stochastic_la_LDFLAGS = -module
+
+junkdir = $(libdir)
+junk_DATA = src/stochastic.py
+
+src/stochastic_wrap.cxx : src/stochastic.i
+	$(SWIG) $(SWIG_PYTHON_OPT) -classic $<
+
 
 # --- Cleanup ---
 MAINTAINERCLEANFILES = configure config.log config.status\

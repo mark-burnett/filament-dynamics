@@ -8,4 +8,4 @@ autoconf
 automake --add-missing --copy --foreign --include-deps
 
 # go ahead and run the configure script
-CXXFLAGS="-O2 -DNDEBUG" ./configure --disable-static
+CXXFLAGS="-O3 -fPIC -DNDEBUG" ./configure --prefix=`pwd`/td --libdir=`pwd`/td --datadir=`pwd`/td

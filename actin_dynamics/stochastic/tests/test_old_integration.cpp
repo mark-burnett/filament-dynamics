@@ -30,7 +30,7 @@ using namespace boost::assign;
 #include "end_conditions/duration.h"
 
 TEST(Integration, OldBasicTest) {
-    const size_t number_of_filaments = 10;
+    const size_t number_of_filaments = 5;
 
     transition_container_t transitions;
     concentration_container_t concentrations;

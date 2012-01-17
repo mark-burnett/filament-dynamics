@@ -25,6 +25,7 @@ DEFAULT_RUN_UNIT_TESTS=true
 DEFAULT_RUN_INTEGRATION_TESTS=false
 
 # Below this point is real code, not options.
+RUN_C_TESTS=false
 RUN_UNIT_TESTS=false
 RUN_INTEGRATION_TESTS=false
 ARGUMENTS_RECEIVED=false

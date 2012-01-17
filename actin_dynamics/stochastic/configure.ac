@@ -16,9 +16,6 @@ AM_INIT_AUTOMAKE(test, 0.1)
 
 AC_PROG_LIBTOOL
 
-#AC_CONFIG_SRCDIR([code/nuclear/state.cpp])
-#AC_CONFIG_HEADER([config.h])
-
 # ---------------------------------------------------------------------
 # Basic checks for programs.
 # ---------------------------------------------------------------------
@@ -26,6 +23,18 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_LANG_CPLUSPLUS
 AM_SANITY_CHECK
+
+# ---------------------------------------------------------------------
+# SWIG
+# ---------------------------------------------------------------------
+AC_PROG_SWIG
+SWIG_ENABLE_CXX
+SWIG_PYTHON
+AC_DISABLE_STATIC # Do I need this?  Will it hinder profiling?
+
+AM_PATH_PYTHON
+PYTHON_INCLUDE="-I/usr/include/python2.6"
+AC_SUBST(PYTHON_INCLUDE)
 
 # ---------------------------------------------------------------------
 # Distrubtion related variables
@@ -43,14 +52,9 @@ GTEST_LIBS=`gtest-config --ldflags  --libs`
 AC_SUBST(GTEST_CFLAGS)
 AC_SUBST(GTEST_LIBS)
 
-# Boost program options library
-#BOOST_PROGRAM_OPTIONS_CFLAGS=""
-#BOOST_PROGRAM_OPTIONS_LIBS="-lboost_program_options-mt"
-#
-#AC_SUBST(BOOST_PROGRAM_OPTIONS_CFLAGS)
-#AC_SUBST(BOOST_PROGRAM_OPTIONS_LIBS)
-
-CXXFLAGS="$CXXFLAGS -W -Wall -Werror -Wno-unused-parameter" #-pg -DNDEBUG"
+# SWIG inadequacies require the following warning settings:
+# no-missing-field-initializers and -no-strict-aliasing
+CXXFLAGS="$CXXFLAGS -W -Wall -Werror -Wno-unused-parameter -Wno-missing-field-initializers -Wno-strict-aliasing" #-pg -DNDEBUG"
 AC_SUBST(CXXFLAGS)
 
 # ---------------------------------------------------------------------
@@ -67,7 +71,7 @@ AC_TYPE_SIZE_T
 # ---------------------------------------------------------------------
 # Checks for library functions.
 # ---------------------------------------------------------------------
-AC_CHECK_FUNCS([abs min max pow sqrt])
+# AC_CHECK_FUNCS([abs min max pow sqrt])
 
 # ---------------------------------------------------------------------
 # Files configure will be responsible for.

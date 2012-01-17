@@ -1,5 +1,3 @@
-#ifndef _RANDOM_SEED_H_
-#define _RANDOM_SEED_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -30,5 +28,3 @@ unsigned int generate_random_seed() {
 
     return seed;
 }
-
-#endif // _RANDOM_SEED_H_
