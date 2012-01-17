@@ -24,6 +24,6 @@ config.status
 libtool
 .deps
 .dirstamp
-test
+runtests
 *.lo
 *.la
