@@ -23,7 +23,7 @@ namespace concentrations {
 class FixedConcentration : public Concentration {
     public:
         FixedConcentration(double new_value) : _value(new_value) {}
-        ~FixedConcentration() {}
+        virtual ~FixedConcentration() {}
 
         double value() const {return _value;};
         void add_monomer() {};

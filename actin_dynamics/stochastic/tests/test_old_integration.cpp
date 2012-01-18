@@ -63,15 +63,15 @@ TEST(Integration, OldBasicTest) {
                     new filaments::DefaultFilament(6/0.0112, 1)));
     }
 
-    concentrations.push_back(concentrations::base_ptr_t(
+    concentrations[0] = concentrations::Concentration::ptr_t(
                 new concentrations::FixedReagent(6, 0.0112,
-                    number_of_filaments)));
-    concentrations.push_back(concentrations::base_ptr_t(
+                    number_of_filaments));
+    concentrations[1] = concentrations::Concentration::ptr_t(
                 new concentrations::FixedReagent(0, 0.0112,
-                    number_of_filaments)));
-    concentrations.push_back(concentrations::base_ptr_t(
+                    number_of_filaments));
+    concentrations[2] = concentrations::Concentration::ptr_t(
                 new concentrations::FixedReagent(0, 0.0112,
-                    number_of_filaments)));
+                    number_of_filaments));
 
     SimulationStrategy ss(transitions, concentrations, measurements,
             end_conditions, filaments);

@@ -44,10 +44,10 @@ class Polymerization : public testing::Test {
             filaments.push_back(filaments::base_ptr_t(
                         new filaments::SimpleFilament(values2)));
 
-            concentrations.push_back(concentrations::base_ptr_t(
-                        new concentrations::FixedReagent(6, 1)));
-            concentrations.push_back(concentrations::base_ptr_t(
-                        new concentrations::FixedReagent(4, 1)));
+            concentrations[0] = concentrations::Concentration::ptr_t(
+                        new concentrations::FixedReagent(6, 1));
+            concentrations[1] = concentrations::Concentration::ptr_t(
+                        new concentrations::FixedReagent(4, 1));
         }
         virtual void TearDown() {
             filaments.clear();

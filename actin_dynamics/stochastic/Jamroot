@@ -1,3 +1,5 @@
+local INSTALL_ROOT = "../.." ;
+
 using python ;
 
 project stochastic_module
@@ -54,4 +56,19 @@ python-extension stochasticpy
     <library>/usr/lib/libboost_python.so
   ;
 
-explicit runtests ;
+install install-extension
+  : stochasticpy
+  : <location>$(INSTALL_ROOT)/actin_dynamics
+  ;
+
+install install-library
+  : stochastic
+  : <location>$(INSTALL_ROOT)/lib
+  ;
+
+install install
+  : install-extension
+    install-library
+  ;
+
+explicit runtests install ;

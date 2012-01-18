@@ -25,12 +25,14 @@ using namespace stochastic::concentrations;
 // XXX I do not understand why i need shared_ptr as the storage type
 
 void concentrations_level_definitions() {
-    class_<Concentration, boost::noncopyable>(
+    object base_concentration = class_<Concentration, boost::noncopyable>(
             "Concentration", no_init)
         .def("value", &Concentration::value)
         .def("add_monomer", &Concentration::add_monomer)
         .def("remove_monomer", &Concentration::remove_monomer)
         .def("monomer_count", &Concentration::monomer_count);
+
+    scope().attr("ZeroConcentration") = base_concentration;
 
     class_<FixedConcentration, bases<Concentration>,
         boost::shared_ptr<FixedConcentration>,

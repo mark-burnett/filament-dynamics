@@ -15,25 +15,27 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <vector>
-
+#include <map>
 #include <boost/shared_ptr.hpp>
-#include <boost/utility.hpp>
+
+#include "state.h"
 
 namespace stochastic {
 namespace concentrations {
 
-class Concentration : private boost::noncopyable {
+class Concentration {
     public:
-        virtual ~Concentration() {};
-        virtual double value() const = 0;
-        virtual void add_monomer() = 0;
-        virtual void remove_monomer() = 0;
-        virtual size_t monomer_count() = 0;
+        virtual ~Concentration() {}
+        virtual double value() const { return 0; }
+        virtual void add_monomer() {}
+        virtual void remove_monomer() {}
+        virtual size_t monomer_count() { return 0; }
+        typedef boost::shared_ptr<Concentration> ptr_t;
 };
 
-typedef boost::shared_ptr<Concentration> base_ptr_t;
-typedef std::vector< base_ptr_t > container_t;
+typedef Concentration ZeroConcentration;
+
+typedef std::map<State, Concentration::ptr_t> container_t;
 
 } // namespace concentrations
 } // namespace stochastic

@@ -15,8 +15,25 @@
 
 #include <gtest/gtest.h>
 
+#include "concentrations/concentration.h"
 #include "concentrations/fixed_concentration.h"
 #include "concentrations/fixed_reagent.h"
+
+TEST(Concentrations, ZeroConcentration) {
+    stochastic::concentrations::ZeroConcentration c;
+
+    EXPECT_DOUBLE_EQ(0, c.value());
+    EXPECT_EQ(0, c.monomer_count());
+
+    c.remove_monomer();
+    EXPECT_DOUBLE_EQ(0, c.value());
+    EXPECT_EQ(0, c.monomer_count());
+
+
+    c.add_monomer();
+    EXPECT_DOUBLE_EQ(0, c.value());
+    EXPECT_EQ(0, c.monomer_count());
+}
 
 
 TEST(Concentrations, FixedConcentration) {

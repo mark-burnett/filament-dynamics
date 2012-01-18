@@ -43,14 +43,16 @@ class CooperativeHydrolysisTest : public testing::Test {
             filaments.push_back(filaments::base_ptr_t(
                         new filaments::SimpleFilament(values2)));
 
-            concentrations.push_back(concentrations::base_ptr_t(
-                        new concentrations::FixedReagent(0, 1)));
-            concentrations.push_back(concentrations::base_ptr_t(
-                        new concentrations::FixedReagent(0, 1)));
-            concentrations.push_back(concentrations::base_ptr_t(
-                        new concentrations::FixedReagent(0, 1)));
-            concentrations.push_back(concentrations::base_ptr_t(
-                        new concentrations::FixedReagent(0, 1)));
+            concentrations[0] = concentrations::Concentration::ptr_t(
+                        new concentrations::FixedReagent(0, 1));
+            concentrations[1] = concentrations::Concentration::ptr_t(
+                        new concentrations::FixedReagent(0, 1));
+            concentrations[2] = concentrations::Concentration::ptr_t(
+                        new concentrations::FixedReagent(0, 1));
+            concentrations[3] = concentrations::Concentration::ptr_t(
+                        new concentrations::FixedReagent(0, 1));
+            concentrations[4] = concentrations::Concentration::ptr_t(
+                        new concentrations::FixedReagent(0, 1));
         }
         virtual void TearDown() {
             filaments.clear();

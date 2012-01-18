@@ -153,8 +153,8 @@ TEST(RandomHydrolysisWithByproduct, SingleFilamentPerform) {
                 new filaments::SimpleFilament(values.begin(), values.end())));
 
     concentrations::container_t concentrations;
-    concentrations.push_back(concentrations::base_ptr_t(
-                new concentrations::FixedReagent(0, 3)));
+    concentrations[0] = concentrations::Concentration::ptr_t(
+                new concentrations::FixedReagent(0, 3));
 
     transitions::RandomHydrolysisWithByproduct t_0(0, 1, 3, 0);
 

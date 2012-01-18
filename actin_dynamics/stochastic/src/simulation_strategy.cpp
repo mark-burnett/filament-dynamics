@@ -49,6 +49,7 @@ measurements::container_t SimulationStrategy::run() {
         r -= transition_rates[ti];
         ++ti;
     }
+    assert(ti < transition_rates.size());
     previous_filament_index = _transitions[ti]->perform(time, r,
             _filaments, _concentrations);
 
