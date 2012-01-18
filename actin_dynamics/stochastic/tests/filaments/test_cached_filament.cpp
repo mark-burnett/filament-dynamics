@@ -24,11 +24,13 @@ using namespace boost::assign;
 #include "state.h"
 #include "filaments/cached_filament.h"
 
+using namespace stochastic;
+
 TEST(CachedFilament, IteratorConstructor) {
     std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
-    CachedFilament f(values.begin(), values.end());
+    filaments::CachedFilament f(values.begin(), values.end());
 
     EXPECT_EQ(8, f.length());
     EXPECT_EQ(4, f.state_count(0));
@@ -38,7 +40,7 @@ TEST(CachedFilament, IteratorConstructor) {
 }
 
 TEST(CachedFilament, NumberStateConstructor) {
-    CachedFilament f(26, 0);
+    filaments::CachedFilament f(26, 0);
     EXPECT_EQ(26, f.length());
     EXPECT_EQ(26, f.state_count(0));
     EXPECT_EQ(0, f.state_count(4));
@@ -46,7 +48,7 @@ TEST(CachedFilament, NumberStateConstructor) {
 }
 
 TEST(CachedFilament, Append) {
-    CachedFilament f(20, 0);
+    filaments::CachedFilament f(20, 0);
 
     f.append_barbed(1);
     EXPECT_EQ(21, f.length());
@@ -60,7 +62,7 @@ TEST(CachedFilament, Append) {
 }
 
 TEST(CachedFilament, Remove) {
-    CachedFilament f(20, 0);
+    filaments::CachedFilament f(20, 0);
 
     State s = f.pop_barbed();
     EXPECT_EQ(0, s);
@@ -83,7 +85,7 @@ TEST(CachedFilament, Remove) {
 }
 
 TEST(CachedFilament, UpdateState) {
-    CachedFilament f(20, 0);
+    filaments::CachedFilament f(20, 0);
 
     f.update_state(4, 0, 1);
     EXPECT_EQ(20, f.length());
@@ -107,7 +109,7 @@ TEST(CachedFilament, UpdateState) {
 }
 
 TEST(CachedFilament, UpdateBoundary) {
-    CachedFilament f(20, 0);
+    filaments::CachedFilament f(20, 0);
 
     f.update_state(5, 0, 1);
     f.update_boundary(0, 0, 1, 3);

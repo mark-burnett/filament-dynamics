@@ -21,33 +21,45 @@
 #include "filaments/filament.h"
 #include "concentrations/concentration.h"
 
+namespace stochastic {
+namespace measurements {
+
 typedef std::vector< std::vector<size_t> > length_vector_t;
 
 class Measurement : private boost::noncopyable {
     public:
+        Measurement(double _sample_period) :
+            sample_period(_sample_period), previous_time(0) {}
         virtual ~Measurement() {}
-        virtual void initialize(const filament_container_t &filaments,
-                const concentration_container_t &concentrations) = 0;
-        virtual void perform(double time, const filament_container_t &filaments,
-                const concentration_container_t &concentrations) = 0;
+        virtual void initialize(const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations) = 0;
+        virtual void perform(double time, const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations) = 0;
 
         virtual length_vector_t get_values() const = 0;
-        virtual double get_sample_period() const = 0;
-        virtual double get_previous_time() const = 0;
 
+        const double sample_period;
+        double previous_time;
 };
 
 class ConcentrationMeasurement : public Measurement {
     public:
+        ConcentrationMeasurement(double sample_period) :
+            Measurement(sample_period) {}
         virtual ~ConcentrationMeasurement() {}
 };
 
 class FilamentMeasurement : public Measurement {
     public:
+        FilamentMeasurement(double sample_period) :
+            Measurement(sample_period) {}
         virtual ~FilamentMeasurement() {}
 };
 
-typedef boost::shared_ptr<Measurement> measurement_ptr_t;
-typedef std::vector< measurement_ptr_t > measurement_container_t;
+typedef boost::shared_ptr<Measurement> base_ptr_t;
+typedef std::vector< base_ptr_t > container_t;
+
+} // namespace measurements
+} // namespace stochastic
 
 #endif // _MEASUREMENTS_MEASUREMENT_H_

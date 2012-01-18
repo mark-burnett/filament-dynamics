@@ -23,19 +23,25 @@
 #include "concentrations/concentration.h"
 #include "filaments/filament.h"
 
+namespace stochastic {
+namespace end_conditions {
+
 class EndCondition : public boost::noncopyable {
     public:
         virtual ~EndCondition() {}
 
-        virtual void initialize(const filament_container_t &filaments,
-                const concentration_container_t &concentrations) = 0;
+        virtual void initialize(const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations) = 0;
 
         virtual bool satisfied(double time,
-                const filament_container_t &filaments,
-                const concentration_container_t &concentrations) = 0;
+                const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations) = 0;
 };
 
-typedef boost::shared_ptr<EndCondition> end_condition_ptr_t;
-typedef std::vector< end_condition_ptr_t > end_condition_container_t;
+typedef boost::shared_ptr<EndCondition> base_ptr_t;
+typedef std::vector< base_ptr_t > container_t;
+
+} // namespace end_conditions
+} // namespace stochastic
 
 #endif // _END_CONDITIONS_END_CONDITION_H_

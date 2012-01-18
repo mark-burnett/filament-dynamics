@@ -20,20 +20,25 @@
 #include "concentrations/concentration.h"
 #include "filaments/filament.h"
 
+namespace stochastic {
+namespace end_conditions {
+
 class Duration : public EndCondition {
     public:
         Duration(double stop_time) : _stop_time(stop_time) {}
-        void initialize(const filament_container_t &filaments,
-                const concentration_container_t &concentrations) {};
+        void initialize(const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations) {};
 
         bool satisfied(double time,
-                const filament_container_t &filaments,
-                const concentration_container_t &concentrations) {
+                const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations) {
             return time > _stop_time;
         }
     private:
         double _stop_time;
 };
 
-#endif // _END_CONDITIONS_DURATION_H_
+} // namespace end_conditions
+} // namespace stochastic
 
+#endif // _END_CONDITIONS_DURATION_H_

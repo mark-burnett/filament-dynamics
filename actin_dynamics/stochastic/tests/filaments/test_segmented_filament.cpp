@@ -24,11 +24,13 @@ using namespace boost::assign;
 #include "state.h"
 #include "filaments/segmented_filament.h"
 
+using namespace stochastic;
+
 TEST(SegmentedFilament, IteratorConstructor) {
     std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
-    SegmentedFilament f(values.begin(), values.end());
+    filaments::SegmentedFilament f(values.begin(), values.end());
 
     EXPECT_EQ(8, f.length());
     EXPECT_EQ(4, f.state_count(0));
@@ -39,7 +41,7 @@ TEST(SegmentedFilament, IteratorConstructor) {
 }
 
 TEST(SegmentedFilament, NumberStateConstructor) {
-    SegmentedFilament f(26, 0);
+    filaments::SegmentedFilament f(26, 0);
     EXPECT_EQ(26, f.length());
     EXPECT_EQ(26, f.state_count(0));
     EXPECT_EQ(0, f.state_count(4));
@@ -47,7 +49,7 @@ TEST(SegmentedFilament, NumberStateConstructor) {
 }
 
 TEST(SegmentedFilament, Append) {
-    SegmentedFilament f(20, 0);
+    filaments::SegmentedFilament f(20, 0);
 
     f.append_barbed(1);
     EXPECT_EQ(21, f.length());
@@ -61,7 +63,7 @@ TEST(SegmentedFilament, Append) {
 }
 
 TEST(SegmentedFilament, Remove) {
-    SegmentedFilament f(20, 0);
+    filaments::SegmentedFilament f(20, 0);
 
     State s = f.pop_barbed();
     EXPECT_EQ(0, s);
@@ -84,7 +86,7 @@ TEST(SegmentedFilament, Remove) {
 }
 
 TEST(SegmentedFilament, UpdateState) {
-    SegmentedFilament f(20, 0);
+    filaments::SegmentedFilament f(20, 0);
 
     f.update_state(4, 0, 1);
     EXPECT_EQ(20, f.length());
@@ -111,7 +113,7 @@ TEST(SegmentedFilament, UpdateState) {
 
 /*
 TEST(SegmentedFilament, UpdateBoundary) {
-    SegmentedFilament f(20, 0);
+    filaments::SegmentedFilament f(20, 0);
 
     f.update_state(5, 0, 1);
     f.update_boundary(0, 0, 1, 3);

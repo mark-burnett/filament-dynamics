@@ -15,8 +15,11 @@
 
 #include "measurements/state_count.h"
 
-void StateCount::initialize(const filament_container_t &filaments,
-                const concentration_container_t &concentrations) {
+namespace stochastic {
+namespace measurements {
+
+void StateCount::initialize(const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations) {
     _counts.reserve(filaments.size());
     _counts.resize(filaments.size());
 
@@ -26,15 +29,15 @@ void StateCount::initialize(const filament_container_t &filaments,
         _counts[fi].push_back(filaments[fi]->state_count(_state));
     }
 
-    _previous_time = 0;
+    previous_time = 0;
 }
 
 void StateCount::perform(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations) {
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations) {
     size_t number_to_record;
-    if (_sample_period > 0) {
-        number_to_record = (time - _previous_time) / _sample_period;
+    if (sample_period > 0) {
+        number_to_record = (time - previous_time) / sample_period;
     } else {
         number_to_record = 1;
     }
@@ -43,5 +46,8 @@ void StateCount::perform(double time,
             _counts[fi].push_back(filaments[fi]->state_count(_state));
         }
     }
-    _previous_time = (_counts.front().size() - 1) * _sample_period;
+    previous_time = (_counts.front().size() - 1) * sample_period;
 }
+
+} // namespace measurements
+} // namespace stochastic

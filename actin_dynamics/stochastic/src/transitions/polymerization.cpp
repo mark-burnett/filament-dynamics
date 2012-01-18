@@ -15,10 +15,12 @@
 
 #include "transitions/polymerization.h"
 
-#include <iostream>
+namespace stochastic {
+namespace transitions {
+
 double FixedRatePolymerization::initial_R(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations) {
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations) {
     if (_disable_time > 0 && time > _disable_time) {
         return 0;
     }
@@ -27,18 +29,21 @@ double FixedRatePolymerization::initial_R(double time,
 }
 
 double FixedRatePolymerization::R(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations,
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations,
         size_t previous_filament_index) {
     return initial_R(time, filaments, concentrations);
 }
 
 size_t FixedRatePolymerization::perform(double time, double r,
-        filament_container_t &filaments,
-        concentration_container_t &concentrations) {
+        filaments::container_t &filaments,
+        concentrations::container_t &concentrations) {
     double filament_r = _rate * concentrations[_state]->value();
     size_t number = r / filament_r;
     append_state(*filaments[number]);
     concentrations[_state]->remove_monomer();
     return number;
 }
+
+} // namespace transitions
+} // namespace stochastic

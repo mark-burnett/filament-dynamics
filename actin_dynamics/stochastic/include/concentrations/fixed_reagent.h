@@ -17,6 +17,9 @@
 
 #include "concentration.h"
 
+namespace stochastic {
+namespace concentrations {
+
 class FixedReagent : public Concentration {
     public:
         FixedReagent(double concentration, double fnc, size_t number_of_filaments=1) :
@@ -32,5 +35,9 @@ class FixedReagent : public Concentration {
         size_t _number;
         double _volume;
 };
+
+
+} // namespace concentrations
+} // namespace stochastic
 
 #endif // _CONCENTRATIONS_FIXED_REAGENT_H_

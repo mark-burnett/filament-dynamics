@@ -17,8 +17,9 @@
 
 #include "simulation_strategy.h"
 
+namespace stochastic {
 
-measurement_container_t SimulationStrategy::run() {
+measurements::container_t SimulationStrategy::run() {
     double time = 0;
 
     initialize_simulation();
@@ -84,30 +85,32 @@ measurement_container_t SimulationStrategy::run() {
 
 
 void SimulationStrategy::initialize_simulation() {
-    for (measurement_container_t::iterator mi = _measurements.begin();
+    for (measurements::container_t::iterator mi = _measurements.begin();
             mi < _measurements.end(); ++mi) {
         (*mi)->initialize(_filaments, _concentrations);
     }
     // Initialize end conditions
-    for (end_condition_container_t::iterator ei = _end_conditions.begin();
+    for (end_conditions::container_t::iterator ei = _end_conditions.begin();
             ei < _end_conditions.end(); ++ei) {
         (*ei)->initialize(_filaments, _concentrations);
     }
 }
 
 void SimulationStrategy::record_measurements(double time) {
-    for (measurement_container_t::iterator mi = _measurements.begin();
+    for (measurements::container_t::iterator mi = _measurements.begin();
             mi < _measurements.end(); ++mi) {
         (*mi)->perform(time, _filaments, _concentrations);
     }
 }
 
 bool SimulationStrategy::end_conditions_not_met(double time) {
-    for (end_condition_container_t::iterator eci = _end_conditions.begin();
+    for (end_conditions::container_t::iterator eci = _end_conditions.begin();
             eci < _end_conditions.end(); ++eci) {
         if ((*eci)->satisfied(time, _filaments, _concentrations)) {
             return false;
         }
     }
     return true;
+}
+
 }

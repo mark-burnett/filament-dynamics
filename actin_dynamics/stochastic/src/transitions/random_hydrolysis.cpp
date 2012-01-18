@@ -15,9 +15,12 @@
 
 #include "transitions/random_hydrolysis.h"
 
+namespace stochastic {
+namespace transitions {
+
 double RandomHydrolysis::initial_R(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations) {
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations) {
     _filament_counts.reserve(filaments.size());
     _filament_counts.resize(filaments.size());
 
@@ -32,8 +35,8 @@ double RandomHydrolysis::initial_R(double time,
 }
 
 double RandomHydrolysis::R(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations,
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations,
         size_t previous_filament_index) {
     size_t previous_count = _filament_counts[previous_filament_index];
     size_t this_count = filaments[previous_filament_index]->state_count(_old_state);
@@ -47,15 +50,10 @@ double RandomHydrolysis::R(double time,
 }
 
 size_t RandomHydrolysis::perform(double time, double r,
-        filament_container_t &filaments,
-        concentration_container_t &concentrations) {
+        filaments::container_t &filaments,
+        concentrations::container_t &concentrations) {
     size_t total_number = r / _rate;
     size_t i = 0;
-//    for ( ; i < _filament_counts.size(); ++i) {
-//        if (total_number < _filament_counts[i])
-//            break;
-//        total_number -= _filament_counts[i];
-//    }
     while (total_number >= _filament_counts[i]) {
         total_number -= _filament_counts[i];
         ++i;
@@ -63,3 +61,6 @@ size_t RandomHydrolysis::perform(double time, double r,
     filaments[i]->update_state(total_number, _old_state, _new_state);
     return i;
 }
+
+} // namespace transitions
+} // namespace stochastic

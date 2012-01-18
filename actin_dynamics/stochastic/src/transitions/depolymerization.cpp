@@ -15,9 +15,12 @@
 
 #include "transitions/depolymerization.h"
 
+namespace stochastic {
+namespace transitions {
+
 double FixedRateDepolymerization::initial_R(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations) {
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations) {
     _states.reserve(filaments.size());
     _states.resize(filaments.size());
     if (_disable_time > 0 && time > _disable_time) {
@@ -37,8 +40,8 @@ double FixedRateDepolymerization::initial_R(double time,
 }
 
 double FixedRateDepolymerization::R(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations,
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations,
         size_t previous_filament_index) {
     if (_disable_time > 0 && time > _disable_time) {
         return 0;
@@ -55,8 +58,8 @@ double FixedRateDepolymerization::R(double time,
 }
 
 size_t FixedRateDepolymerization::perform(double time, double r,
-        filament_container_t &filaments,
-        concentration_container_t &concentrations) {
+        filaments::container_t &filaments,
+        concentrations::container_t &concentrations) {
     size_t fi = 0;
     for ( ; fi < filaments.size(); ++fi) {
         if (_state == get_state(*filaments[fi])) {
@@ -71,3 +74,6 @@ size_t FixedRateDepolymerization::perform(double time, double r,
 
     return fi;
 }
+
+} // namespace transitions
+} // namespace stochastic

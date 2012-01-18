@@ -22,6 +22,11 @@
 #include <deque>
 #include <vector>
 
+namespace stochastic {
+namespace filaments {
+
+typedef std::vector<State>::const_iterator _vector_ui_ci;
+
 // Abstract base class for filament implementations.
 class Filament : private boost::noncopyable {
     public:
@@ -52,12 +57,14 @@ class Filament : private boost::noncopyable {
         virtual void update_boundary(size_t instance_number,
                 const State &old_pointed_states,
                 const State &old_barbed_states,
-//                const State &new_pointed_states,
                 const State &new_barbed_states) = 0;
         virtual std::deque<State> get_states() const = 0;
 };
 
-typedef boost::shared_ptr<Filament> filament_ptr_t;
-typedef std::vector< filament_ptr_t > filament_container_t;
+typedef boost::shared_ptr<Filament> base_ptr_t;
+typedef std::vector< base_ptr_t > container_t;
+
+} // namespace filaments
+} // namespace stochastic
 
 #endif // _STATE_FILAMENT_H_

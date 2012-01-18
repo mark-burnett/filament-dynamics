@@ -15,6 +15,10 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace stochastic {
+
 unsigned int generate_random_seed();
+
+} // namespace stochastic
 
 #endif // _RANDOM_SEED_H_

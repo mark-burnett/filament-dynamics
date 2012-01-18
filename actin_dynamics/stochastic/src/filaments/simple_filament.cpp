@@ -17,6 +17,9 @@
 
 #include "state.h"
 
+namespace stochastic {
+namespace filaments {
+
 void SimpleFilament::_build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop) {
     while (start < stop) {
         states.push_back(*start);
@@ -137,3 +140,6 @@ void SimpleFilament::update_boundary(size_t instance_number,
         ++barbed;
     }
 }
+
+} // namespace filaments
+} // namespace stochastic

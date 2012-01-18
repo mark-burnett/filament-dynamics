@@ -16,12 +16,13 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "filaments/segmented_filament.h"
+
+namespace stochastic {
+namespace filaments {
+
 typedef SegmentedFilament DefaultFilament;
 
-// #include "filaments/cached_filament.h"
-// typedef CachedFilament DefaultFilament;
-
-// #include "filaments/simple_filament.h"
-// typedef SimpleFilament DefaultFilament;
+} // namespace filaments
+} // namespace stochastic
 
 #endif // _STATE_DEFAULT_FILAMENT_H_

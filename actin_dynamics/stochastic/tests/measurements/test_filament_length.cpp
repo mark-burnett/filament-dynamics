@@ -25,6 +25,8 @@ using namespace boost::assign;
 #include "filaments/simple_filament.h"
 #include "measurements/filament_length.h"
 
+using namespace stochastic;
+
 class FilamentLengthTest : public testing::Test {
     protected:
         virtual void SetUp() {
@@ -33,22 +35,24 @@ class FilamentLengthTest : public testing::Test {
             std::vector<State> values2;
             values2 += 1, 1, 2, 0, 2, 0, 0, 1;
 
-            filaments.push_back(filament_ptr_t(new SimpleFilament(values1)));
-            filaments.push_back(filament_ptr_t(new SimpleFilament(values2)));
+            filaments.push_back(filaments::base_ptr_t(
+                        new filaments::SimpleFilament(values1)));
+            filaments.push_back(filaments::base_ptr_t(
+                        new filaments::SimpleFilament(values2)));
         }
 
-        filament_container_t filaments;
-        concentration_container_t concentrations;
+        filaments::container_t filaments;
+        concentrations::container_t concentrations;
 };
 
 TEST_F(FilamentLengthTest, Initialize) {
-    FilamentLength m(0);
+    measurements::FilamentLength m(0);
 
     m.initialize(filaments, concentrations);
 
-    length_vector_t results(m.get_values());
+    measurements::length_vector_t results(m.get_values());
 
-    EXPECT_EQ(0, m.get_previous_time());
+    EXPECT_EQ(0, m.previous_time);
     EXPECT_EQ(2, results.size());
     EXPECT_EQ(1, results[0].size());
     EXPECT_EQ(8, results[0][0]);
@@ -57,16 +61,16 @@ TEST_F(FilamentLengthTest, Initialize) {
 }
 
 TEST_F(FilamentLengthTest, PerformNormalPeriod) {
-    FilamentLength m(0.5);
+    measurements::FilamentLength m(0.5);
 
     m.initialize(filaments, concentrations);
 
     // Measure before the next sample period
     m.perform(0.4, filaments, concentrations);
 
-    length_vector_t results1(m.get_values());
+    measurements::length_vector_t results1(m.get_values());
 
-    EXPECT_EQ(0, m.get_previous_time());
+    EXPECT_EQ(0, m.previous_time);
     EXPECT_EQ(2, results1.size());
     EXPECT_EQ(1, results1[0].size());
     EXPECT_EQ(8, results1[0][0]);
@@ -75,9 +79,9 @@ TEST_F(FilamentLengthTest, PerformNormalPeriod) {
 
     m.perform(0.7, filaments, concentrations);
 
-    length_vector_t results2(m.get_values());
+    measurements::length_vector_t results2(m.get_values());
 
-    EXPECT_DOUBLE_EQ(0.5, m.get_previous_time());
+    EXPECT_DOUBLE_EQ(0.5, m.previous_time);
     EXPECT_EQ(2, results2.size());
     EXPECT_EQ(2, results2[0].size());
     EXPECT_EQ(8, results2[0][1]);
@@ -87,9 +91,9 @@ TEST_F(FilamentLengthTest, PerformNormalPeriod) {
     // Skip multiple sample periods
     m.perform(1.7, filaments, concentrations);
 
-    length_vector_t results3(m.get_values());
+    measurements::length_vector_t results3(m.get_values());
 
-    EXPECT_DOUBLE_EQ(1.5, m.get_previous_time());
+    EXPECT_DOUBLE_EQ(1.5, m.previous_time);
     EXPECT_EQ(2, results3.size());
     EXPECT_EQ(4, results3[0].size());
     EXPECT_EQ(8, results3[0][1]);
@@ -100,9 +104,9 @@ TEST_F(FilamentLengthTest, PerformNormalPeriod) {
     // check edge case (time exactly on sample)
     m.perform(2, filaments, concentrations);
 
-    length_vector_t results4(m.get_values());
+    measurements::length_vector_t results4(m.get_values());
 
-    EXPECT_DOUBLE_EQ(2, m.get_previous_time());
+    EXPECT_DOUBLE_EQ(2, m.previous_time);
     EXPECT_EQ(2, results4.size());
     EXPECT_EQ(5, results4[0].size());
     EXPECT_EQ(8, results4[0][1]);
@@ -111,15 +115,15 @@ TEST_F(FilamentLengthTest, PerformNormalPeriod) {
 }
 
 TEST_F(FilamentLengthTest, PerformZeroPeriod) {
-    FilamentLength m(0);
+    measurements::FilamentLength m(0);
 
     m.initialize(filaments, concentrations);
 
     m.perform(0.1, filaments, concentrations);
 
-    length_vector_t results1(m.get_values());
+    measurements::length_vector_t results1(m.get_values());
 
-    EXPECT_EQ(0, m.get_previous_time());
+    EXPECT_EQ(0, m.previous_time);
 
     EXPECT_EQ(2, results1.size());
     EXPECT_EQ(2, results1[0].size());

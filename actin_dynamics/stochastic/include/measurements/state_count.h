@@ -22,28 +22,30 @@
 
 #include "measurements/measurement.h"
 
+namespace stochastic {
+namespace measurements {
+
 class StateCount : public FilamentMeasurement {
     public:
         StateCount(const State &state, double sample_period) :
-            _state(state), _sample_period(sample_period),
-            _previous_time(0) {}
+            FilamentMeasurement(sample_period),
+            _state(state) {}
 
-        void initialize(const filament_container_t &filaments,
-                const concentration_container_t &concentrations);
-        void perform(double time, const filament_container_t &filaments,
-                const concentration_container_t &concentrations);
+        void initialize(const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations);
+        void perform(double time, const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations);
 
         length_vector_t get_values() const {
             return _counts;
         }
-        double get_sample_period() const { return _sample_period; }
-        double get_previous_time() const { return _previous_time; }
 
     private:
         const State _state; 
-        double _sample_period;
-        double _previous_time;
         length_vector_t _counts;
 };
+
+} // namespace measurements
+} // namespace stochastic
 
 #endif // _MEASUREMENTS_STATE_COUNT_H_

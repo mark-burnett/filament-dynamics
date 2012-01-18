@@ -22,6 +22,8 @@
 
 #include "transitions/transition.h"
 
+namespace stochastic {
+namespace transitions {
 
 class RandomHydrolysis : public Transition {
     public:
@@ -30,15 +32,15 @@ class RandomHydrolysis : public Transition {
                                 _new_state(new_state),
                                 _rate(rate), _count(0) {}
         double initial_R(double time,
-                    const filament_container_t &filaments,
-                    const concentration_container_t &concentrations);
+                    const filaments::container_t &filaments,
+                    const concentrations::container_t &concentrations);
         double R(double time,
-                    const filament_container_t &filaments,
-                    const concentration_container_t &concentrations,
+                    const filaments::container_t &filaments,
+                    const concentrations::container_t &concentrations,
                     size_t previous_filament_index);
         size_t perform(double time, double r,
-                    filament_container_t &filaments,
-                    concentration_container_t &concentrations);
+                    filaments::container_t &filaments,
+                    concentrations::container_t &concentrations);
 
     private:
         const State _old_state;
@@ -59,8 +61,8 @@ class RandomHydrolysisWithByproduct : public RandomHydrolysis {
             _byproduct(byproduct) {}
 
         size_t perform(double time, double r,
-                    filament_container_t &filaments,
-                    concentration_container_t &concentrations) {
+                    filaments::container_t &filaments,
+                    concentrations::container_t &concentrations) {
             concentrations[_byproduct]->add_monomer();
             return RandomHydrolysis::perform(time, r, filaments, concentrations);
         }
@@ -68,5 +70,8 @@ class RandomHydrolysisWithByproduct : public RandomHydrolysis {
     private:
         State _byproduct;
 };
+
+} // namespace transitions
+} // namespace stochastic
 
 #endif // _TRANSITIONS_RANDOM_HYDROLYSIS_H_

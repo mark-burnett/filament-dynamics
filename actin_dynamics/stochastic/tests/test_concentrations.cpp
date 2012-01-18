@@ -20,7 +20,7 @@
 
 
 TEST(Concentrations, FixedConcentration) {
-    FixedConcentration c(3.1);
+    stochastic::concentrations::FixedConcentration c(3.1);
 
     EXPECT_DOUBLE_EQ(3.1, c.value());
 
@@ -32,7 +32,7 @@ TEST(Concentrations, FixedConcentration) {
 }
 
 TEST(Concentrations, FixedReagent) {
-    FixedReagent c(4.8, 1.2);
+    stochastic::concentrations::FixedReagent c(4.8, 1.2);
 
     EXPECT_DOUBLE_EQ(4.8, c.value());
 

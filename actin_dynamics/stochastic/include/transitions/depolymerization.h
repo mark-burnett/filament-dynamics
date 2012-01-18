@@ -24,6 +24,8 @@
 
 #include "transitions/transition.h"
 
+namespace stochastic {
+namespace transitions {
 
 class FixedRateDepolymerization : public Transition {
     public:
@@ -32,20 +34,20 @@ class FixedRateDepolymerization : public Transition {
             _state(state), _rate(rate), _disable_time(disable_time), _count(0) {}
 
         double initial_R(double time,
-                    const filament_container_t &filaments,
-                    const concentration_container_t &concentrations);
+                    const filaments::container_t &filaments,
+                    const concentrations::container_t &concentrations);
 
         double R(double time,
-                    const filament_container_t &filaments,
-                    const concentration_container_t &concentrations,
+                    const filaments::container_t &filaments,
+                    const concentrations::container_t &concentrations,
                     size_t previous_filament_index);
 
         size_t perform(double time, double r,
-                    filament_container_t &filaments,
-                    concentration_container_t &concentrations);
+                    filaments::container_t &filaments,
+                    concentrations::container_t &concentrations);
 
-        virtual State get_state(const Filament &filament) const = 0;
-        virtual State remove_state(Filament &filament) = 0;
+        virtual State get_state(const filaments::Filament &filament) const = 0;
+        virtual State remove_state(filaments::Filament &filament) = 0;
 
     private:
         const State _state;
@@ -61,11 +63,11 @@ class BarbedEndDepolymerization : public FixedRateDepolymerization {
                 double disable_time=-1.0) :
             FixedRateDepolymerization(state, rate, disable_time) {}
 
-        State get_state(const Filament &filament) const {
+        State get_state(const filaments::Filament &filament) const {
             return filament.barbed_state();
         }
 
-        State remove_state(Filament &filament) {
+        State remove_state(filaments::Filament &filament) {
             return filament.pop_barbed();
         }
 };
@@ -76,13 +78,16 @@ class PointedEndDepolymerization : public FixedRateDepolymerization {
                 double disable_time=-1.0) :
             FixedRateDepolymerization(state, rate, disable_time) {}
 
-        State get_state(const Filament &filament) const {
+        State get_state(const filaments::Filament &filament) const {
             return filament.pointed_state();
         }
 
-        State remove_state(Filament &filament) {
+        State remove_state(filaments::Filament &filament) {
             return filament.pop_pointed();
         }
 };
+
+} // namespace transitions
+} // namespace stochastic
 
 #endif // _TRANSITIONS_DEPOLYMERIZATION_H_

@@ -28,28 +28,35 @@ using namespace boost::assign;
 #include "filaments/simple_filament.h"
 #include "end_conditions/event_count.h"
 
+using namespace stochastic;
+
 TEST(SimulationStrategy, BasicSingleFilamentTest) {
-    transition_container_t transitions;
-    concentration_container_t concentrations;
-    measurement_container_t measurements;
-    end_condition_container_t end_conditions;
-    filament_container_t filaments;
+    transitions::container_t transitions;
+    concentrations::container_t concentrations;
+    measurements::container_t measurements;
+    end_conditions::container_t end_conditions;
+    filaments::container_t filaments;
 
-    transitions.push_back(transition_ptr_t(new RandomHydrolysis(0, 1, 0.3)));
+    transitions.push_back(transitions::base_ptr_t(
+                new transitions::RandomHydrolysis(0, 1, 0.3)));
 
-    end_conditions.push_back(end_condition_ptr_t(new EventCount(3)));
+    end_conditions.push_back(end_conditions::base_ptr_t(
+                new end_conditions::EventCount(3)));
 
-    measurements.push_back(measurement_ptr_t(new StateCount(0, 0)));
-    measurements.push_back(measurement_ptr_t(new StateCount(1, 0)));
+    measurements.push_back(measurements::base_ptr_t(
+                new measurements::StateCount(0, 0)));
+    measurements.push_back(measurements::base_ptr_t(
+                new measurements::StateCount(1, 0)));
 
     std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
-    filaments.push_back(filament_ptr_t(new SimpleFilament(values)));
+    filaments.push_back(filaments::base_ptr_t(
+                new filaments::SimpleFilament(values)));
 
     SimulationStrategy ss(transitions, concentrations, measurements,
             end_conditions, filaments);
 
-    measurement_container_t results(ss.run());
+    measurements::container_t results(ss.run());
 
     // 5 measurements means 4 events.
     EXPECT_EQ(5, results[0]->get_values()[0].size());

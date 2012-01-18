@@ -24,11 +24,13 @@ using namespace boost::assign;
 #include "state.h"
 #include "filaments/simple_filament.h"
 
+using namespace stochastic;
+
 TEST(SimpleFilament, IteratorConstructor) {
     std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
-    SimpleFilament f(values.begin(), values.end());
+    filaments::SimpleFilament f(values.begin(), values.end());
 
     EXPECT_EQ(8, f.length());
     EXPECT_EQ(4, f.state_count(0));
@@ -38,7 +40,7 @@ TEST(SimpleFilament, IteratorConstructor) {
 }
 
 TEST(SimpleFilament, NumberStateConstructor) {
-    SimpleFilament f(26, 0);
+    filaments::SimpleFilament f(26, 0);
     EXPECT_EQ(26, f.length());
     EXPECT_EQ(26, f.state_count(0));
     EXPECT_EQ(0, f.state_count(4));
@@ -46,7 +48,7 @@ TEST(SimpleFilament, NumberStateConstructor) {
 }
 
 TEST(SimpleFilament, Append) {
-    SimpleFilament f(20, 0);
+    filaments::SimpleFilament f(20, 0);
 
     f.append_barbed(1);
     EXPECT_EQ(21, f.length());
@@ -60,7 +62,7 @@ TEST(SimpleFilament, Append) {
 }
 
 TEST(SimpleFilament, Remove) {
-    SimpleFilament f(20, 0);
+    filaments::SimpleFilament f(20, 0);
 
     State s = f.pop_barbed();
     EXPECT_EQ(0, s);
@@ -83,7 +85,7 @@ TEST(SimpleFilament, Remove) {
 }
 
 TEST(SimpleFilament, UpdateState) {
-    SimpleFilament f(20, 0);
+    filaments::SimpleFilament f(20, 0);
 
     f.update_state(4, 0, 1);
     EXPECT_EQ(20, f.length());
@@ -107,7 +109,7 @@ TEST(SimpleFilament, UpdateState) {
 }
 
 TEST(SimpleFilament, UpdateBoundary) {
-    SimpleFilament f(20, 0);
+    filaments::SimpleFilament f(20, 0);
 
     f.update_state(5, 0, 1);
     f.update_boundary(0, 0, 1, 3);

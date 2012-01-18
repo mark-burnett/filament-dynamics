@@ -22,7 +22,8 @@
 #include "state.h"
 #include "filaments/filament.h"
 
-typedef std::vector<State>::const_iterator _vector_ui_ci;
+namespace stochastic {
+namespace filaments {
 
 class SimpleFilament : public Filament {
     public:
@@ -54,7 +55,6 @@ class SimpleFilament : public Filament {
                 const State &old_state, const State &new_state);
         void update_boundary(size_t instance_number,
                 const State &old_pointed_state, const State &old_barbed_state,
-//                const State &new_pointed_state,
                 const State &new_barbed_state);
 
         std::deque<State> get_states() const { return std::deque<State>(states); }
@@ -63,5 +63,8 @@ class SimpleFilament : public Filament {
         void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
         std::deque<State> states;
 };
+
+} // namespace filaments
+} // namespace stochastic
 
 #endif // _STATE_SIMPLE_FILAMENT_H_

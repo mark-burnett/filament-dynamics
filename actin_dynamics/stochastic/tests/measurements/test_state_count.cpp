@@ -25,6 +25,8 @@ using namespace boost::assign;
 #include "filaments/simple_filament.h"
 #include "measurements/state_count.h"
 
+using namespace stochastic;
+
 class StateCountTest : public testing::Test {
     protected:
         virtual void SetUp() {
@@ -33,23 +35,25 @@ class StateCountTest : public testing::Test {
             std::vector<State> values2;
             values2 += 1, 1, 2, 0, 2, 0, 0, 1;
 
-            filaments.push_back(filament_ptr_t(new SimpleFilament(values1)));
-            filaments.push_back(filament_ptr_t(new SimpleFilament(values2)));
+            filaments.push_back(filaments::base_ptr_t(
+                        new filaments::SimpleFilament(values1)));
+            filaments.push_back(filaments::base_ptr_t(
+                        new filaments::SimpleFilament(values2)));
         }
 
-        filament_container_t filaments;
-        concentration_container_t concentrations;
+        filaments::container_t filaments;
+        concentrations::container_t concentrations;
 };
 
 TEST_F(StateCountTest, Perform) {
-    StateCount m(0, 0.5);
+    measurements::StateCount m(0, 0.5);
 
     m.initialize(filaments, concentrations);
     m.perform(0.8, filaments, concentrations);
 
-    length_vector_t results(m.get_values());
+    measurements::length_vector_t results(m.get_values());
 
-    EXPECT_DOUBLE_EQ(0.5, m.get_previous_time());
+    EXPECT_DOUBLE_EQ(0.5, m.previous_time);
     EXPECT_EQ(2, results.size());
     EXPECT_EQ(2, results[0].size());
     EXPECT_EQ(4, results[0][0]);

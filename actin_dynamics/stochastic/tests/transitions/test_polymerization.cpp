@@ -29,6 +29,8 @@ using namespace boost::assign;
 #include "filaments/simple_filament.h"
 #include "concentrations/fixed_reagent.h"
 
+using namespace stochastic;
+
 class Polymerization : public testing::Test {
     protected:
         virtual void SetUp() {
@@ -37,27 +39,31 @@ class Polymerization : public testing::Test {
             std::vector<State> values2;
             values2 += 1, 1, 2, 0, 2, 0, 0, 0;
 
-            filaments.push_back(filament_ptr_t(new SimpleFilament(values1)));
-            filaments.push_back(filament_ptr_t(new SimpleFilament(values2)));
+            filaments.push_back(filaments::base_ptr_t(
+                        new filaments::SimpleFilament(values1)));
+            filaments.push_back(filaments::base_ptr_t(
+                        new filaments::SimpleFilament(values2)));
 
-            concentrations.push_back(concentration_ptr_t(new FixedReagent(6, 1)));
-            concentrations.push_back(concentration_ptr_t(new FixedReagent(4, 1)));
+            concentrations.push_back(concentrations::base_ptr_t(
+                        new concentrations::FixedReagent(6, 1)));
+            concentrations.push_back(concentrations::base_ptr_t(
+                        new concentrations::FixedReagent(4, 1)));
         }
         virtual void TearDown() {
             filaments.clear();
             concentrations.clear();
         }
 
-        filament_container_t filaments;
-        concentration_container_t concentrations;
+        filaments::container_t filaments;
+        concentrations::container_t concentrations;
 };
 
 
 TEST_F(Polymerization, Basic) {
-    BarbedEndPolymerization t_b0(0, 1);
-    BarbedEndPolymerization t_b1(1, 2);
-    PointedEndPolymerization t_p0(0, 3);
-    PointedEndPolymerization t_p1(1, 4);
+    transitions::BarbedEndPolymerization t_b0(0, 1);
+    transitions::BarbedEndPolymerization t_b1(1, 2);
+    transitions::PointedEndPolymerization t_p0(0, 3);
+    transitions::PointedEndPolymerization t_p1(1, 4);
 
     EXPECT_DOUBLE_EQ(12, t_b0.initial_R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(16, t_b1.initial_R(0, filaments, concentrations));
@@ -91,10 +97,10 @@ TEST_F(Polymerization, Basic) {
 }
 
 TEST_F(Polymerization, DisableTime) {
-    BarbedEndPolymerization t_b0(0, 1, 4);
-    BarbedEndPolymerization t_b1(1, 2, 3);
-    PointedEndPolymerization t_p0(0, 3, 2);
-    PointedEndPolymerization t_p1(1, 4, 1);
+    transitions::BarbedEndPolymerization t_b0(0, 1, 4);
+    transitions::BarbedEndPolymerization t_b1(1, 2, 3);
+    transitions::PointedEndPolymerization t_p0(0, 3, 2);
+    transitions::PointedEndPolymerization t_p1(1, 4, 1);
 
     EXPECT_DOUBLE_EQ(12, t_b0.initial_R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(16, t_b1.initial_R(0, filaments, concentrations));
@@ -125,5 +131,4 @@ TEST_F(Polymerization, DisableTime) {
     EXPECT_DOUBLE_EQ( 0, t_b1.R(5, filaments, concentrations, 0));
     EXPECT_DOUBLE_EQ( 0, t_p0.R(5, filaments, concentrations, 0));
     EXPECT_DOUBLE_EQ( 0, t_p1.R(5, filaments, concentrations, 0));
-
 }

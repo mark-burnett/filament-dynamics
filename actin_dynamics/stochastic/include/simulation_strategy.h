@@ -27,15 +27,16 @@
 
 #include "random_seed.h"
 
+namespace stochastic {
+
 class SimulationStrategy {
     public:
-//        SimulationStrategy() : _rng(generate_random_seed()) {}
-
-        SimulationStrategy(transition_container_t &transitions,
-                concentration_container_t &concentrations,
-                measurement_container_t &measurements,
-                end_condition_container_t &end_conditions,
-                filament_container_t &filaments) :
+        SimulationStrategy(
+                transitions::container_t &transitions,
+                concentrations::container_t &concentrations,
+                measurements::container_t &measurements,
+                end_conditions::container_t &end_conditions,
+                filaments::container_t &filaments) :
             _transitions(transitions),
             _concentrations(concentrations),
             _measurements(measurements),
@@ -43,7 +44,7 @@ class SimulationStrategy {
             _filaments(filaments),
             _rng(generate_random_seed()) {}
 
-        measurement_container_t run();
+        measurements::container_t run();
 
         inline double _random(double max) {
             _distribution_t d(0, max);
@@ -52,11 +53,11 @@ class SimulationStrategy {
         };
 
     private:
-        transition_container_t _transitions;
-        concentration_container_t _concentrations;
-        measurement_container_t _measurements;
-        end_condition_container_t _end_conditions;
-        filament_container_t _filaments;
+        transitions::container_t _transitions;
+        concentrations::container_t _concentrations;
+        measurements::container_t _measurements;
+        end_conditions::container_t _end_conditions;
+        filaments::container_t _filaments;
 
         typedef boost::mt19937 _rng_t;
         typedef boost::uniform_real<> _distribution_t;
@@ -67,5 +68,7 @@ class SimulationStrategy {
         void record_measurements(double time);
         bool end_conditions_not_met(double time);
 };
+
+} // namespace stochastic
 
 #endif // _SIMULATION_STRATEGY_H_

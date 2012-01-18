@@ -20,6 +20,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 
+namespace stochastic {
+namespace concentrations {
+
 class Concentration : private boost::noncopyable {
     public:
         virtual ~Concentration() {};
@@ -29,10 +32,10 @@ class Concentration : private boost::noncopyable {
         virtual size_t monomer_count() = 0;
 };
 
-typedef boost::shared_ptr<Concentration> concentration_ptr_t;
-typedef std::vector< concentration_ptr_t > concentration_container_t;
+typedef boost::shared_ptr<Concentration> base_ptr_t;
+typedef std::vector< base_ptr_t > container_t;
 
-typedef boost::shared_ptr<const Concentration> const_concentration_ptr_t;
-typedef const std::vector< const_concentration_ptr_t > const_concentration_container_t;
+} // namespace concentrations
+} // namespace stochastic
 
 #endif // _CONCENTRATIONS_CONCENTRATION_H_

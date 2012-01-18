@@ -21,21 +21,27 @@
 #include "concentrations/concentration.h"
 #include "filaments/filament.h"
 
+namespace stochastic {
+namespace transitions {
+
 class Transition : public boost::noncopyable {
     public:
         virtual double initial_R(double time,
-                    const filament_container_t &filaments,
-                    const concentration_container_t &concentrations) = 0;
+                    const filaments::container_t &filaments,
+                    const concentrations::container_t &concentrations) = 0;
         virtual double R(double time,
-                    const filament_container_t &filaments,
-                    const concentration_container_t &concentrations,
+                    const filaments::container_t &filaments,
+                    const concentrations::container_t &concentrations,
                     size_t previous_filament_index) = 0;
         virtual size_t perform(double time, double r,
-                    filament_container_t &filaments,
-                    concentration_container_t &concentrations) = 0;
+                    filaments::container_t &filaments,
+                    concentrations::container_t &concentrations) = 0;
 };
 
-typedef boost::shared_ptr<Transition> transition_ptr_t;
-typedef std::vector< transition_ptr_t > transition_container_t;
+typedef boost::shared_ptr<Transition> base_ptr_t;
+typedef std::vector< base_ptr_t > container_t;
+
+} // namespace transitions
+} // namespace stochastic
 
 #endif // _TRANSITIONS_TRANSITION_H_

@@ -22,6 +22,8 @@
 #include "transitions/random_hydrolysis.h"
 #include "transitions/vectorial_hydrolysis.h"
 
+namespace stochastic {
+namespace transitions {
 
 class CooperativeHydrolysis : public Transition {
     public:
@@ -31,15 +33,15 @@ class CooperativeHydrolysis : public Transition {
             _vectorial_transition(pointed_state, old_state, new_state,
                     (cooperativity - 1) * rate) {}
         double initial_R(double time,
-                    const filament_container_t &filaments,
-                    const concentration_container_t &concentrations);
+                    const filaments::container_t &filaments,
+                    const concentrations::container_t &concentrations);
         double R(double time,
-                    const filament_container_t &filaments,
-                    const concentration_container_t &concentrations,
+                    const filaments::container_t &filaments,
+                    const concentrations::container_t &concentrations,
                     size_t previous_filament_index);
         size_t perform(double time, double r,
-                    filament_container_t &filaments,
-                    concentration_container_t &concentrations);
+                    filaments::container_t &filaments,
+                    concentrations::container_t &concentrations);
 
     private:
         RandomHydrolysis _random_transition;
@@ -58,8 +60,8 @@ class CooperativeHydrolysisWithByproduct : public CooperativeHydrolysis {
             _byproduct(byproduct) {}
 
         size_t perform(double time, double r,
-                    filament_container_t &filaments,
-                    concentration_container_t &concentrations) {
+                    filaments::container_t &filaments,
+                    concentrations::container_t &concentrations) {
             concentrations[_byproduct]->add_monomer();
             return CooperativeHydrolysis::perform(time, r, filaments, concentrations);
         }
@@ -67,5 +69,8 @@ class CooperativeHydrolysisWithByproduct : public CooperativeHydrolysis {
     private:
         State _byproduct;
 };
+
+} // namespace transitions
+} // namespace stochastic
 
 #endif // _TRANSITIONS_COOPERATIVE_HYDROLYSIS_H_

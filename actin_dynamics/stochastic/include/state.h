@@ -15,8 +15,12 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace stochastic {
+
 // XXX We will probably make these boost::flyweight<std::string> objects
 typedef size_t State;
 typedef const size_t const_State;
+
+} // namespace stochastic
 
 #endif // _STOCHASTIC_STATE_H_

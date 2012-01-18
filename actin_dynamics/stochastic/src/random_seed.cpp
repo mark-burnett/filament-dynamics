@@ -16,6 +16,8 @@
 #include <fstream>
 #include <cstring>
 
+namespace stochastic {
+
 unsigned int generate_random_seed() {
     char buffer[sizeof(unsigned int)];
     unsigned int seed;
@@ -28,3 +30,5 @@ unsigned int generate_random_seed() {
 
     return seed;
 }
+
+} // namespace stochastic

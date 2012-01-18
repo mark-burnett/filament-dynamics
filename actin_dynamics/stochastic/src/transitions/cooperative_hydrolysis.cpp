@@ -15,9 +15,12 @@
 
 #include "transitions/cooperative_hydrolysis.h"
 
+namespace stochastic {
+namespace transitions {
+
 double CooperativeHydrolysis::initial_R(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations) {
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations) {
     _random_R = _random_transition.initial_R(time, filaments, concentrations);
     _vectorial_R = _vectorial_transition.initial_R(time, filaments,
             concentrations);
@@ -25,8 +28,8 @@ double CooperativeHydrolysis::initial_R(double time,
 }
 
 double CooperativeHydrolysis::R(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations,
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations,
         size_t previous_filament_index) {
     _random_R = _random_transition.R(time, filaments, concentrations,
             previous_filament_index);
@@ -36,11 +39,14 @@ double CooperativeHydrolysis::R(double time,
 }
 
 size_t CooperativeHydrolysis::perform(double time, double r,
-        filament_container_t &filaments,
-        concentration_container_t &concentrations) {
+        filaments::container_t &filaments,
+        concentrations::container_t &concentrations) {
     if (r < _random_R) {
         return _random_transition.perform(time, r, filaments, concentrations);
     }
     return _vectorial_transition.perform(time, r - _random_R,
             filaments, concentrations);
 }
+
+} // namespace transitions
+} // namespace stochastic

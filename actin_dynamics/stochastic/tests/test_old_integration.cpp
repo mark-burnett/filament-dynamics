@@ -29,39 +29,52 @@ using namespace boost::assign;
 #include "filaments/default_filament.h"
 #include "end_conditions/duration.h"
 
+using namespace stochastic;
+
 TEST(Integration, OldBasicTest) {
     const size_t number_of_filaments = 5;
 
-    transition_container_t transitions;
-    concentration_container_t concentrations;
-    measurement_container_t measurements;
-    end_condition_container_t end_conditions;
-    filament_container_t filaments;
+    transitions::container_t transitions;
+    concentrations::container_t concentrations;
+    measurements::container_t measurements;
+    end_conditions::container_t end_conditions;
+    filaments::container_t filaments;
 
     transitions.push_back(
-            transition_ptr_t(new RandomHydrolysisWithByproduct(0, 1, 0.3, 2)));
-    transitions.push_back(transition_ptr_t(new BarbedEndPolymerization(0, 10)));
+            transitions::base_ptr_t(
+                new transitions::RandomHydrolysisWithByproduct(0, 1, 0.3, 2)));
+    transitions.push_back(transitions::base_ptr_t(
+                new transitions::BarbedEndPolymerization(0, 10)));
 
-    end_conditions.push_back(end_condition_ptr_t(new Duration(40)));
+    end_conditions.push_back(end_conditions::base_ptr_t(
+                new end_conditions::Duration(40)));
 
-    measurements.push_back(measurement_ptr_t(new StateCount(0, 0.1)));
-    measurements.push_back(measurement_ptr_t(new StateCount(1, 0.1)));
-    measurements.push_back(measurement_ptr_t(new StateCount(2, 0.1)));
-    measurements.push_back(measurement_ptr_t(new FilamentLength(0.1)));
+    measurements.push_back(measurements::base_ptr_t(
+                new measurements::StateCount(0, 0.1)));
+    measurements.push_back(measurements::base_ptr_t(
+                new measurements::StateCount(1, 0.1)));
+    measurements.push_back(measurements::base_ptr_t(
+                new measurements::StateCount(2, 0.1)));
+    measurements.push_back(measurements::base_ptr_t(
+                new measurements::FilamentLength(0.1)));
 
     for (size_t i = 0; i < number_of_filaments; ++i) {
-        filaments.push_back(filament_ptr_t(new DefaultFilament(6/0.0112, 1)));
+        filaments.push_back(filaments::base_ptr_t(
+                    new filaments::DefaultFilament(6/0.0112, 1)));
     }
 
-    concentrations.push_back(concentration_ptr_t(new FixedReagent(6, 0.0112,
+    concentrations.push_back(concentrations::base_ptr_t(
+                new concentrations::FixedReagent(6, 0.0112,
                     number_of_filaments)));
-    concentrations.push_back(concentration_ptr_t(new FixedReagent(0, 0.0112,
+    concentrations.push_back(concentrations::base_ptr_t(
+                new concentrations::FixedReagent(0, 0.0112,
                     number_of_filaments)));
-    concentrations.push_back(concentration_ptr_t(new FixedReagent(0, 0.0112,
+    concentrations.push_back(concentrations::base_ptr_t(
+                new concentrations::FixedReagent(0, 0.0112,
                     number_of_filaments)));
 
     SimulationStrategy ss(transitions, concentrations, measurements,
             end_conditions, filaments);
 
-    measurement_container_t results(ss.run());
+    measurements::container_t results(ss.run());
 }

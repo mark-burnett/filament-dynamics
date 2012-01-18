@@ -22,10 +22,10 @@
 #include "filaments/filament.h"
 
 TEST(EndConditions, Duration) {
-    Duration ec(4.3);
+    stochastic::end_conditions::Duration ec(4.3);
 
-    concentration_container_t concentrations;
-    filament_container_t filaments;
+    stochastic::concentrations::container_t concentrations;
+    stochastic::filaments::container_t filaments;
 
     EXPECT_FALSE(ec.satisfied(0, filaments, concentrations));
     EXPECT_FALSE(ec.satisfied(1.3, filaments, concentrations));
@@ -36,10 +36,10 @@ TEST(EndConditions, Duration) {
 }
 
 TEST(EndConditions, EventCount) {
-    EventCount ec(3);
+    stochastic::end_conditions::EventCount ec(3);
 
-    concentration_container_t concentrations;
-    filament_container_t filaments;
+    stochastic::concentrations::container_t concentrations;
+    stochastic::filaments::container_t filaments;
 
     EXPECT_FALSE(ec.satisfied(0, filaments, concentrations));
     EXPECT_FALSE(ec.satisfied(1.3, filaments, concentrations));

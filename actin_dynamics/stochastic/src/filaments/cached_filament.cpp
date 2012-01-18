@@ -17,6 +17,9 @@
 
 #include "state.h"
 
+namespace stochastic {
+namespace filaments {
+
 void CachedFilament::_initialize_counts() {
     _state_counts.resize(STATE_COUNT_SIZE);
     _boundary_counts.resize(STATE_COUNT_SIZE);
@@ -172,3 +175,6 @@ void CachedFilament::update_boundary(size_t instance_number,
         ++barbed;
     }
 }
+
+} // namespace filaments
+} // namespace stochastic

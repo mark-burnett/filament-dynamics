@@ -22,29 +22,28 @@
 
 #include "measurements/measurement.h"
 
+namespace stochastic {
+namespace measurements {
+
 class FilamentLength : public FilamentMeasurement {
     public:
         FilamentLength(double sample_period) :
-            _sample_period(sample_period),
-            _previous_time(0) {}
-        ~FilamentLength() {}
+            FilamentMeasurement(sample_period) {}
 
-        void initialize(const filament_container_t &filaments,
-                const concentration_container_t &concentrations);
-        void perform(double time, const filament_container_t &filaments,
-                const concentration_container_t &concentrations);
+        void initialize(const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations);
+        void perform(double time, const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations);
 
         length_vector_t get_values() const {
             return _lengths;
         }
-        double get_sample_period() const { return _sample_period; }
-        double get_previous_time() const { return _previous_time; }
 
     private:
-
-        double _sample_period;
-        double _previous_time;
         length_vector_t _lengths;
 };
+
+} // namespace measurements
+} // namespace stochastic
 
 #endif // _MEASUREMENTS_FILAMENT_LENGTH_H_

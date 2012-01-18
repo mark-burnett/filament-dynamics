@@ -15,8 +15,11 @@
 
 #include "measurements/filament_length.h"
 
-void FilamentLength::initialize(const filament_container_t &filaments,
-                const concentration_container_t &concentrations) {
+namespace stochastic {
+namespace measurements {
+
+void FilamentLength::initialize(const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations) {
     _lengths.reserve(filaments.size());
     _lengths.resize(filaments.size());
 
@@ -25,15 +28,15 @@ void FilamentLength::initialize(const filament_container_t &filaments,
         _lengths[fi].push_back(filaments[fi]->length());
     }
 
-    _previous_time = 0;
+    previous_time = 0;
 }
 
 void FilamentLength::perform(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations) {
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations) {
     size_t number_to_record;
-    if (_sample_period > 0) {
-        number_to_record = (time - _previous_time) / _sample_period;
+    if (sample_period > 0) {
+        number_to_record = (time - previous_time) / sample_period;
     } else {
         number_to_record = 1;
     }
@@ -42,5 +45,8 @@ void FilamentLength::perform(double time,
             _lengths[fi].push_back(filaments[fi]->length());
         }
     }
-    _previous_time = (_lengths.front().size() - 1) * _sample_period;
+    previous_time = (_lengths.front().size() - 1) * sample_period;
 }
+
+} // namespace measurements
+} // namespace stochastic

@@ -18,7 +18,6 @@
 #include <vector>
 
 #include <boost/assign/std/vector.hpp>
-#include <boost/shared_ptr.hpp>
 
 // Bring operator+= into the namespace
 using namespace boost::assign;
@@ -29,19 +28,22 @@ using namespace boost::assign;
 #include "filaments/simple_filament.h"
 #include "concentrations/fixed_reagent.h"
 
+using namespace stochastic;
+
 TEST(RandomHydrolysis, SingleFilamentR) {
     std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
-    filament_container_t filaments;
-    filaments.push_back(filament_ptr_t(new SimpleFilament(values.begin(), values.end())));
+    filaments::container_t filaments;
+    filaments.push_back(filaments::base_ptr_t(
+                new filaments::SimpleFilament(values.begin(), values.end())));
 
-    concentration_container_t concentrations;
+    concentrations::container_t concentrations;
 
-    RandomHydrolysis t_0(0, 7, 3);
-    RandomHydrolysis t_1(1, 7, 2);
-    RandomHydrolysis t_2(2, 7, 4);
-    RandomHydrolysis t_3(3, 7, 9);
+    transitions::RandomHydrolysis t_0(0, 7, 3);
+    transitions::RandomHydrolysis t_1(1, 7, 2);
+    transitions::RandomHydrolysis t_2(2, 7, 4);
+    transitions::RandomHydrolysis t_3(3, 7, 9);
 
     EXPECT_DOUBLE_EQ(12, t_0.initial_R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ( 6, t_1.initial_R(0, filaments, concentrations));
@@ -55,16 +57,18 @@ TEST(RandomHydrolysis, DoubleFilamentR) {
     std::vector<State> values2;
     values2 += 1, 1, 2, 0, 2, 0, 0, 1;
 
-    filament_container_t filaments;
-    filaments.push_back(filament_ptr_t(new SimpleFilament(values1.begin(), values1.end())));
-    filaments.push_back(filament_ptr_t(new SimpleFilament(values2.begin(), values2.end())));
+    filaments::container_t filaments;
+    filaments.push_back(filaments::base_ptr_t(
+                new filaments::SimpleFilament(values1.begin(), values1.end())));
+    filaments.push_back(filaments::base_ptr_t(
+                new filaments::SimpleFilament(values2.begin(), values2.end())));
 
-    concentration_container_t concentrations;
+    concentrations::container_t concentrations;
 
-    RandomHydrolysis t_0(0, 7, 3);
-    RandomHydrolysis t_1(1, 7, 2);
-    RandomHydrolysis t_2(2, 7, 4);
-    RandomHydrolysis t_3(3, 7, 9);
+    transitions::RandomHydrolysis t_0(0, 7, 3);
+    transitions::RandomHydrolysis t_1(1, 7, 2);
+    transitions::RandomHydrolysis t_2(2, 7, 4);
+    transitions::RandomHydrolysis t_3(3, 7, 9);
 
     EXPECT_DOUBLE_EQ(21, t_0.initial_R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(12, t_1.initial_R(0, filaments, concentrations));
@@ -76,14 +80,15 @@ TEST(RandomHydrolysis, SingleFilamentPerform) {
     std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
-    filament_container_t filaments;
-    filaments.push_back(filament_ptr_t(new SimpleFilament(values.begin(), values.end())));
+    filaments::container_t filaments;
+    filaments.push_back(filaments::base_ptr_t(
+                new filaments::SimpleFilament(values.begin(), values.end())));
 
-    concentration_container_t concentrations;
+    concentrations::container_t concentrations;
 
-    RandomHydrolysis t_0(0, 1, 3);
-    RandomHydrolysis t_1(1, 2, 2);
-    RandomHydrolysis t_2(2, 7, 4);
+    transitions::RandomHydrolysis t_0(0, 1, 3);
+    transitions::RandomHydrolysis t_1(1, 2, 2);
+    transitions::RandomHydrolysis t_2(2, 7, 4);
 
     // Must call R before perform
     EXPECT_DOUBLE_EQ(12, t_0.initial_R(0, filaments, concentrations));
@@ -115,15 +120,17 @@ TEST(RandomHydrolysis, DoubleFilamentPerform) {
     std::vector<State> values2;
     values2 += 1, 1, 2, 0, 2, 0, 0, 1;
 
-    filament_container_t filaments;
-    filaments.push_back(filament_ptr_t(new SimpleFilament(values1.begin(), values1.end())));
-    filaments.push_back(filament_ptr_t(new SimpleFilament(values2.begin(), values2.end())));
+    filaments::container_t filaments;
+    filaments.push_back(filaments::base_ptr_t(
+                new filaments::SimpleFilament(values1.begin(), values1.end())));
+    filaments.push_back(filaments::base_ptr_t(
+                new filaments::SimpleFilament(values2.begin(), values2.end())));
 
-    concentration_container_t concentrations;
+    concentrations::container_t concentrations;
 
-    RandomHydrolysis t_0(0, 1, 3);
-    RandomHydrolysis t_1(1, 2, 2);
-    RandomHydrolysis t_2(2, 3, 4);
+    transitions::RandomHydrolysis t_0(0, 1, 3);
+    transitions::RandomHydrolysis t_1(1, 2, 2);
+    transitions::RandomHydrolysis t_2(2, 3, 4);
 
     // Must call R before perform
     EXPECT_DOUBLE_EQ(21, t_0.initial_R(0, filaments, concentrations));
@@ -141,13 +148,15 @@ TEST(RandomHydrolysisWithByproduct, SingleFilamentPerform) {
     std::vector<State> values;
     values += 0, 1, 0, 0, 2, 1, 0, 1;
 
-    filament_container_t filaments;
-    filaments.push_back(filament_ptr_t(new SimpleFilament(values.begin(), values.end())));
+    filaments::container_t filaments;
+    filaments.push_back(filaments::base_ptr_t(
+                new filaments::SimpleFilament(values.begin(), values.end())));
 
-    concentration_container_t concentrations;
-    concentrations.push_back(concentration_ptr_t(new FixedReagent(0, 3)));
+    concentrations::container_t concentrations;
+    concentrations.push_back(concentrations::base_ptr_t(
+                new concentrations::FixedReagent(0, 3)));
 
-    RandomHydrolysisWithByproduct t_0(0, 1, 3, 0);
+    transitions::RandomHydrolysisWithByproduct t_0(0, 1, 3, 0);
 
     EXPECT_DOUBLE_EQ(12, t_0.initial_R(0, filaments, concentrations));
 

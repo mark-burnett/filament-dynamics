@@ -15,9 +15,12 @@
 
 #include "transitions/vectorial_hydrolysis.h"
 
+namespace stochastic {
+namespace transitions {
+
 double VectorialHydrolysis::initial_R(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations) {
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations) {
     _filament_counts.reserve(filaments.size());
     _filament_counts.resize(filaments.size());
 
@@ -32,8 +35,8 @@ double VectorialHydrolysis::initial_R(double time,
 }
 
 double VectorialHydrolysis::R(double time,
-        const filament_container_t &filaments,
-        const concentration_container_t &concentrations,
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations,
         size_t previous_filament_index) {
     size_t previous_count = _filament_counts[previous_filament_index];
     size_t this_count = filaments[previous_filament_index]->boundary_count(
@@ -48,8 +51,8 @@ double VectorialHydrolysis::R(double time,
 }
 
 size_t VectorialHydrolysis::perform(double time, double r,
-        filament_container_t &filaments,
-        concentration_container_t &concentrations) {
+        filaments::container_t &filaments,
+        concentrations::container_t &concentrations) {
     size_t total_number = r / _rate;
     size_t i = 0;
     while (total_number >= _filament_counts[i]) {
@@ -59,3 +62,6 @@ size_t VectorialHydrolysis::perform(double time, double r,
     filaments[i]->update_boundary(total_number, _pointed_neighbor, _old_state, _new_state);
     return i;
 }
+
+} // namespace transitions
+} // namespace stochastic

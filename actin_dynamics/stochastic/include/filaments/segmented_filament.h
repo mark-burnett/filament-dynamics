@@ -19,6 +19,9 @@
 
 #include "filaments/filament.h"
 
+namespace stochastic {
+namespace filaments {
+
 struct Segment {
     Segment(size_t new_number, size_t new_state) :
         number(new_number), state(new_state) {}
@@ -26,8 +29,6 @@ struct Segment {
     size_t number;
     size_t state;
 };
-
-typedef std::vector<State>::const_iterator _vector_ui_ci;
 
 class SegmentedFilament : public Filament {
     public:
@@ -61,6 +62,7 @@ class SegmentedFilament : public Filament {
                 const State &old_pointed_state, const State &old_barbed_state,
                 const State &new_barbed_state);
 
+        // XXX Do something with this
         std::deque<State> get_states() const {return std::deque<State>();} // { return std::deque<State>(states); }
 
     private:
@@ -76,5 +78,8 @@ class SegmentedFilament : public Filament {
         size_t _length;
         std::vector<size_t> _state_counts;
 };
+
+} // namespace filaments
+} // namespace stochastic
 
 #endif // _STATE_SEGMENTED_FILAMENT_H_

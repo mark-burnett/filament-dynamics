@@ -15,6 +15,9 @@
 
 #include "filaments/segmented_filament.h"
 
+namespace stochastic {
+namespace filaments {
+
 void SegmentedFilament::_build_from_iterators(_vector_ui_ci start,
         _vector_ui_ci stop) {
     _state_counts.reserve(STATE_COUNT_SIZE);
@@ -215,3 +218,5 @@ void SegmentedFilament::update_boundary(size_t instance_number,
     }
 }
 
+} // namespace filaments
+} // namespace stochastic

@@ -17,6 +17,9 @@
 
 #include "concentration.h"
 
+namespace stochastic {
+namespace concentrations {
+
 class FixedConcentration : public Concentration {
     public:
         FixedConcentration(double new_value) : _value(new_value) {}
@@ -29,5 +32,8 @@ class FixedConcentration : public Concentration {
     private:
         double _value;
 };
+
+} // namespace concentrations
+} // namespace stochastic
 
 #endif // _CONCENTRATIONS_FIXED_CONCENTRATION_H_

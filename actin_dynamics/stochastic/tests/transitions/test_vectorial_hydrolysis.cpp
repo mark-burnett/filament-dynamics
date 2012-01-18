@@ -18,7 +18,6 @@
 #include <vector>
 
 #include <boost/assign/std/vector.hpp>
-#include <boost/shared_ptr.hpp>
 
 // Bring operator+= into the namespace
 using namespace boost::assign;
@@ -29,6 +28,8 @@ using namespace boost::assign;
 #include "filaments/simple_filament.h"
 #include "concentrations/fixed_reagent.h"
 
+using namespace stochastic;
+
 class VectorialHydrolysisTest : public testing::Test {
     protected:
         virtual void SetUp() {
@@ -37,29 +38,36 @@ class VectorialHydrolysisTest : public testing::Test {
             std::vector<State> values2;
             values2 += 1, 1, 2, 0, 2, 0, 0, 0;
 
-            filaments.push_back(filament_ptr_t(new SimpleFilament(values1)));
-            filaments.push_back(filament_ptr_t(new SimpleFilament(values2)));
+            filaments.push_back(filaments::base_ptr_t(
+                        new filaments::SimpleFilament(values1)));
+            filaments.push_back(filaments::base_ptr_t(
+                        new filaments::SimpleFilament(values2)));
 
-            concentrations.push_back(concentration_ptr_t(new FixedReagent(0, 1)));
-            concentrations.push_back(concentration_ptr_t(new FixedReagent(0, 1)));
-            concentrations.push_back(concentration_ptr_t(new FixedReagent(0, 1)));
-            concentrations.push_back(concentration_ptr_t(new FixedReagent(0, 1)));
-            concentrations.push_back(concentration_ptr_t(new FixedReagent(0, 1)));
+            concentrations.push_back(concentrations::base_ptr_t(
+                        new concentrations::FixedReagent(0, 1)));
+            concentrations.push_back(concentrations::base_ptr_t(
+                        new concentrations::FixedReagent(0, 1)));
+            concentrations.push_back(concentrations::base_ptr_t(
+                        new concentrations::FixedReagent(0, 1)));
+            concentrations.push_back(concentrations::base_ptr_t(
+                        new concentrations::FixedReagent(0, 1)));
+            concentrations.push_back(concentrations::base_ptr_t(
+                        new concentrations::FixedReagent(0, 1)));
         }
         virtual void TearDown() {
             filaments.clear();
             concentrations.clear();
         }
 
-        filament_container_t filaments;
-        concentration_container_t concentrations;
+        filaments::container_t filaments;
+        concentrations::container_t concentrations;
 };
 
 TEST_F(VectorialHydrolysisTest, initial_R) {
-    VectorialHydrolysis t_01_2(0, 1, 2, 3);
-    VectorialHydrolysis t_02_3(0, 2, 3, 4);
-    VectorialHydrolysis t_12_3(1, 2, 3, 5);
-    VectorialHydrolysis t_21_3(2, 1, 3, 6);
+    transitions::VectorialHydrolysis t_01_2(0, 1, 2, 3);
+    transitions::VectorialHydrolysis t_02_3(0, 2, 3, 4);
+    transitions::VectorialHydrolysis t_12_3(1, 2, 3, 5);
+    transitions::VectorialHydrolysis t_21_3(2, 1, 3, 6);
 
     EXPECT_DOUBLE_EQ(6, t_01_2.initial_R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_02_3.initial_R(0, filaments, concentrations));
@@ -68,10 +76,10 @@ TEST_F(VectorialHydrolysisTest, initial_R) {
 }
 
 TEST_F(VectorialHydrolysisTest, Perform) {
-    VectorialHydrolysis t_01_2(0, 1, 2, 3);
-    VectorialHydrolysis t_02_3(0, 2, 3, 4);
-    VectorialHydrolysis t_12_3(1, 2, 3, 5);
-    VectorialHydrolysis t_21_3(2, 1, 3, 6);
+    transitions::VectorialHydrolysis t_01_2(0, 1, 2, 3);
+    transitions::VectorialHydrolysis t_02_3(0, 2, 3, 4);
+    transitions::VectorialHydrolysis t_12_3(1, 2, 3, 5);
+    transitions::VectorialHydrolysis t_21_3(2, 1, 3, 6);
 
     EXPECT_DOUBLE_EQ(6, t_01_2.initial_R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_02_3.initial_R(0, filaments, concentrations));
@@ -92,10 +100,10 @@ TEST_F(VectorialHydrolysisTest, Perform) {
 }
 
 TEST_F(VectorialHydrolysisTest, ByproductPerform) {
-    VectorialHydrolysisWithByproduct t_01_2(0, 1, 2, 3, 4);
-    VectorialHydrolysisWithByproduct t_02_3(0, 2, 3, 4, 4);
-    VectorialHydrolysisWithByproduct t_12_3(1, 2, 3, 5, 4);
-    VectorialHydrolysisWithByproduct t_21_3(2, 1, 3, 6, 4);
+    transitions::VectorialHydrolysisWithByproduct t_01_2(0, 1, 2, 3, 4);
+    transitions::VectorialHydrolysisWithByproduct t_02_3(0, 2, 3, 4, 4);
+    transitions::VectorialHydrolysisWithByproduct t_12_3(1, 2, 3, 5, 4);
+    transitions::VectorialHydrolysisWithByproduct t_21_3(2, 1, 3, 6, 4);
 
     EXPECT_DOUBLE_EQ(6, t_01_2.initial_R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(8, t_02_3.initial_R(0, filaments, concentrations));

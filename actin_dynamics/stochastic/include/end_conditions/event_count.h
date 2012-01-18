@@ -20,18 +20,21 @@
 #include "concentrations/concentration.h"
 #include "filaments/filament.h"
 
+namespace stochastic {
+namespace end_conditions {
+
 class EventCount : public EndCondition {
     public:
         EventCount(size_t max_events) : _max_events(max_events),
             _event_count(0) {}
-        void initialize(const filament_container_t &filaments,
-                const concentration_container_t &concentrations) {
+        void initialize(const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations) {
             _event_count = 0;
         };
 
         bool satisfied(double time,
-                const filament_container_t &filaments,
-                const concentration_container_t &concentrations) {
+                const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations) {
             ++_event_count;
             return _event_count > _max_events;
         }
@@ -40,6 +43,8 @@ class EventCount : public EndCondition {
         size_t _event_count;
 };
 
+} // namespace end_conditions
+} // namespace stochastic
+
+
 #endif // _END_CONDITIONS_EVENT_COUNT_H_
-
-
