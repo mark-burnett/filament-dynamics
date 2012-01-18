@@ -18,7 +18,6 @@ lib stochastic
     src/filaments/cached_filament.cpp
     src/filaments/segmented_filament.cpp
   : <include>include
-    <link>static
   ;
 
 exe runtests
@@ -43,9 +42,15 @@ exe runtests
   ;
 
 python-extension stochasticpy
-  : pyext/stochastic_boost_python.cpp
+  : pyext/root.cpp
+    pyext/concentrations.cpp
+    pyext/end_conditions.cpp
+    pyext/filaments.cpp
+    pyext/measurements.cpp
+    pyext/transitions.cpp
     stochastic
   : <include>include
+    <include>pyext
     <library>/usr/lib/libboost_python.so
   ;
 
