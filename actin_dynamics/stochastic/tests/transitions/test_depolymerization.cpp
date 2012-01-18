@@ -24,6 +24,8 @@ using namespace boost::assign;
 
 #include "state.h"
 
+#include "test_states.h"
+
 #include "transitions/depolymerization.h"
 #include "filaments/simple_filament.h"
 #include "concentrations/fixed_reagent.h"
@@ -34,18 +36,18 @@ class Depolymerization : public testing::Test {
     protected:
         virtual void SetUp() {
             std::vector<State> values1;
-            values1 += 0, 1, 0, 0, 2, 1, 0, 1;
+            values1 += zero, one, zero, zero, two, one, zero, one;
             std::vector<State> values2;
-            values2 += 1, 1, 2, 0, 2, 0, 0, 0;
+            values2 += one, one, two, zero, two, zero, zero, zero;
 
             filaments.push_back(filaments::base_ptr_t(
                         new filaments::SimpleFilament(values1)));
             filaments.push_back(filaments::base_ptr_t(
                         new filaments::SimpleFilament(values2)));
 
-            concentrations[0] = concentrations::Concentration::ptr_t(
+            concentrations[zero] = concentrations::Concentration::ptr_t(
                         new concentrations::FixedReagent(0, 1));
-            concentrations[1] = concentrations::Concentration::ptr_t(
+            concentrations[one] = concentrations::Concentration::ptr_t(
                         new concentrations::FixedReagent(0, 1));
         }
         virtual void TearDown() {
@@ -59,17 +61,17 @@ class Depolymerization : public testing::Test {
 
 
 TEST_F(Depolymerization, Basic) {
-    transitions::BarbedEndDepolymerization t_b0(0, 1);
-    transitions::BarbedEndDepolymerization t_b1(1, 2);
-    transitions::PointedEndDepolymerization t_p0(0, 3);
-    transitions::PointedEndDepolymerization t_p1(1, 4);
+    transitions::BarbedEndDepolymerization t_b0(zero, 1);
+    transitions::BarbedEndDepolymerization t_b1(one, 2);
+    transitions::PointedEndDepolymerization t_p0(zero, 3);
+    transitions::PointedEndDepolymerization t_p1(one, 4);
 
     EXPECT_DOUBLE_EQ(1, t_b0.initial_R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(2, t_b1.initial_R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(3, t_p0.initial_R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(4, t_p1.initial_R(0, filaments, concentrations));
-    EXPECT_EQ(0, concentrations[0]->monomer_count());
-    EXPECT_EQ(0, concentrations[1]->monomer_count());
+    EXPECT_EQ(0, concentrations[zero]->monomer_count());
+    EXPECT_EQ(0, concentrations[one]->monomer_count());
 
     EXPECT_EQ(0, t_p0.perform(0, 0.3, filaments, concentrations));
     EXPECT_EQ(7, filaments[0]->length());
@@ -78,8 +80,8 @@ TEST_F(Depolymerization, Basic) {
     EXPECT_DOUBLE_EQ(2, t_b1.R(0, filaments, concentrations, 0));
     EXPECT_DOUBLE_EQ(0, t_p0.R(0, filaments, concentrations, 0));
     EXPECT_DOUBLE_EQ(8, t_p1.R(0, filaments, concentrations, 0));
-    EXPECT_EQ(1, concentrations[0]->monomer_count());
-    EXPECT_EQ(0, concentrations[1]->monomer_count());
+    EXPECT_EQ(1, concentrations[zero]->monomer_count());
+    EXPECT_EQ(0, concentrations[one]->monomer_count());
 
     EXPECT_EQ(1, t_p1.perform(0, 5.3, filaments, concentrations));
     EXPECT_EQ(7, filaments[0]->length());
@@ -88,8 +90,8 @@ TEST_F(Depolymerization, Basic) {
     EXPECT_DOUBLE_EQ(2, t_b1.R(0, filaments, concentrations, 1));
     EXPECT_DOUBLE_EQ(0, t_p0.R(0, filaments, concentrations, 1));
     EXPECT_DOUBLE_EQ(8, t_p1.R(0, filaments, concentrations, 1));
-    EXPECT_EQ(1, concentrations[0]->monomer_count());
-    EXPECT_EQ(1, concentrations[1]->monomer_count());
+    EXPECT_EQ(1, concentrations[zero]->monomer_count());
+    EXPECT_EQ(1, concentrations[one]->monomer_count());
 
     EXPECT_EQ(1, t_p1.perform(0, 5.3, filaments, concentrations));
     EXPECT_EQ(7, filaments[0]->length());
@@ -98,15 +100,15 @@ TEST_F(Depolymerization, Basic) {
     EXPECT_DOUBLE_EQ(2, t_b1.R(0, filaments, concentrations, 1));
     EXPECT_DOUBLE_EQ(0, t_p0.R(0, filaments, concentrations, 1));
     EXPECT_DOUBLE_EQ(4, t_p1.R(0, filaments, concentrations, 1));
-    EXPECT_EQ(1, concentrations[0]->monomer_count());
-    EXPECT_EQ(2, concentrations[1]->monomer_count());
+    EXPECT_EQ(1, concentrations[zero]->monomer_count());
+    EXPECT_EQ(2, concentrations[one]->monomer_count());
 }
 
 TEST_F(Depolymerization, DisableTime) {
-    transitions::BarbedEndDepolymerization t_b0(0, 1, 4);
-    transitions::BarbedEndDepolymerization t_b1(1, 2, 3);
-    transitions::PointedEndDepolymerization t_p0(0, 3, 2);
-    transitions::PointedEndDepolymerization t_p1(1, 4, 1);
+    transitions::BarbedEndDepolymerization t_b0(zero, 1, 4);
+    transitions::BarbedEndDepolymerization t_b1(one, 2, 3);
+    transitions::PointedEndDepolymerization t_p0(zero, 3, 2);
+    transitions::PointedEndDepolymerization t_p1(one, 4, 1);
 
     EXPECT_DOUBLE_EQ(1, t_b0.initial_R(0, filaments, concentrations));
     EXPECT_DOUBLE_EQ(2, t_b1.initial_R(0, filaments, concentrations));

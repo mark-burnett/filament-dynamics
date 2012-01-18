@@ -1,5 +1,5 @@
-#ifndef _STOCHASTIC_STATE_H_
-#define _STOCHASTIC_STATE_H_
+#ifndef _TESTS_TEST_STATES_H_
+#define _TESTS_TEST_STATES_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -15,14 +15,12 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string>
-#include <boost/flyweight.hpp>
-#include <boost/flyweight/no_locking.hpp>
+#include "state.h"
 
-namespace stochastic {
+static stochastic::State zero("0");
+static stochastic::State one("1");
+static stochastic::State two("2");
+static stochastic::State three("3");
+static stochastic::State four("4");
 
-typedef boost::flyweight<std::string, boost::flyweights::no_locking> State;
-
-} // namespace stochastic
-
-#endif // _STOCHASTIC_STATE_H_
+#endif // _TESTS_TEST_STATES_H_

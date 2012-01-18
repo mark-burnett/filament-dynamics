@@ -19,6 +19,8 @@
 // Bring operator+= into the namespace
 using namespace boost::assign;
 
+#include "test_states.h"
+
 #include "simulation_strategy.h"
 
 #include "transitions/random_hydrolysis.h"
@@ -42,34 +44,35 @@ TEST(Integration, OldBasicTest) {
 
     transitions.push_back(
             transitions::base_ptr_t(
-                new transitions::RandomHydrolysisWithByproduct(0, 1, 0.3, 2)));
+                new transitions::RandomHydrolysisWithByproduct(zero, one,
+                    0.3, two)));
     transitions.push_back(transitions::base_ptr_t(
-                new transitions::BarbedEndPolymerization(0, 10)));
+                new transitions::BarbedEndPolymerization(zero, 10)));
 
     end_conditions.push_back(end_conditions::base_ptr_t(
                 new end_conditions::Duration(40)));
 
     measurements.push_back(measurements::base_ptr_t(
-                new measurements::StateCount(0, 0.1)));
+                new measurements::StateCount(zero, 0.1)));
     measurements.push_back(measurements::base_ptr_t(
-                new measurements::StateCount(1, 0.1)));
+                new measurements::StateCount(one, 0.1)));
     measurements.push_back(measurements::base_ptr_t(
-                new measurements::StateCount(2, 0.1)));
+                new measurements::StateCount(two, 0.1)));
     measurements.push_back(measurements::base_ptr_t(
                 new measurements::FilamentLength(0.1)));
 
     for (size_t i = 0; i < number_of_filaments; ++i) {
         filaments.push_back(filaments::base_ptr_t(
-                    new filaments::DefaultFilament(6/0.0112, 1)));
+                    new filaments::DefaultFilament(6/0.0112, one)));
     }
 
-    concentrations[0] = concentrations::Concentration::ptr_t(
+    concentrations[zero] = concentrations::Concentration::ptr_t(
                 new concentrations::FixedReagent(6, 0.0112,
                     number_of_filaments));
-    concentrations[1] = concentrations::Concentration::ptr_t(
+    concentrations[one] = concentrations::Concentration::ptr_t(
                 new concentrations::FixedReagent(0, 0.0112,
                     number_of_filaments));
-    concentrations[2] = concentrations::Concentration::ptr_t(
+    concentrations[two] = concentrations::Concentration::ptr_t(
                 new concentrations::FixedReagent(0, 0.0112,
                     number_of_filaments));
 

@@ -48,7 +48,11 @@ SegmentedFilament::SegmentedFilament(size_t number, const State &state) {
 
 // Simple queries about the filament state.
 size_t SegmentedFilament::state_count(const State &state) const {
-    return _state_counts.find(state)->second;
+    _count_t::const_iterator i(_state_counts.find(state));
+    if (i != _state_counts.end()) {
+        return i->second;
+    }
+    return 0;
 }
 
 

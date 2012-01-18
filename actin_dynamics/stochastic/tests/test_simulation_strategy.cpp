@@ -20,6 +20,8 @@
 // Bring operator+= into the namespace
 using namespace boost::assign;
 
+#include "test_states.h"
+
 #include "simulation_strategy.h"
 
 #include "transitions/random_hydrolysis.h"
@@ -38,18 +40,19 @@ TEST(SimulationStrategy, BasicSingleFilamentTest) {
     filaments::container_t filaments;
 
     transitions.push_back(transitions::base_ptr_t(
-                new transitions::RandomHydrolysis(0, 1, 0.3)));
+                new transitions::RandomHydrolysis(zero, one, 0.3)));
 
     end_conditions.push_back(end_conditions::base_ptr_t(
                 new end_conditions::EventCount(3)));
 
     measurements.push_back(measurements::base_ptr_t(
-                new measurements::StateCount(0, 0)));
+                new measurements::StateCount(zero, 0)));
     measurements.push_back(measurements::base_ptr_t(
-                new measurements::StateCount(1, 0)));
+                new measurements::StateCount(one, 0)));
 
     std::vector<State> values;
-    values += 0, 1, 0, 0, 2, 1, 0, 1;
+    values += zero, one, zero, zero, two, one, zero, one;
+
     filaments.push_back(filaments::base_ptr_t(
                 new filaments::SimpleFilament(values)));
 

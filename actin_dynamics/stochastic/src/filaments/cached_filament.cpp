@@ -48,8 +48,13 @@ CachedFilament::CachedFilament(size_t number, const State &state) {
 
 // Cached queries about the filament state.
 size_t CachedFilament::state_count(const State &state) const {
-    return _state_counts.find(state)->second;
+    _count_t::const_iterator i(_state_counts.find(state));
+    if (i != _state_counts.end()) {
+        return i->second;
+    }
+    return 0;
 }
+
 
 size_t CachedFilament::boundary_count(const State &pointed_state,
         const State &barbed_state) const {

@@ -21,6 +21,8 @@
 // Bring operator+= into the namespace
 using namespace boost::assign;
 
+#include "test_states.h"
+
 #include "concentrations/concentration.h"
 #include "filaments/simple_filament.h"
 #include "measurements/state_count.h"
@@ -31,9 +33,9 @@ class StateCountTest : public testing::Test {
     protected:
         virtual void SetUp() {
             std::vector<State> values1;
-            values1 += 0, 1, 0, 0, 2, 1, 0, 1;
+            values1 += zero, one, zero, zero, two, one, zero, one;
             std::vector<State> values2;
-            values2 += 1, 1, 2, 0, 2, 0, 0, 1;
+            values2 += one, one, two, zero, two, zero, zero, one;
 
             filaments.push_back(filaments::base_ptr_t(
                         new filaments::SimpleFilament(values1)));
@@ -46,7 +48,7 @@ class StateCountTest : public testing::Test {
 };
 
 TEST_F(StateCountTest, Perform) {
-    measurements::StateCount m(0, 0.5);
+    measurements::StateCount m(zero, 0.5);
 
     m.initialize(filaments, concentrations);
     m.perform(0.8, filaments, concentrations);

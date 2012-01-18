@@ -69,6 +69,7 @@ class SegmentedFilament : public Filament {
 
     private:
         typedef std::list<Segment> sl_t;
+        typedef std::map<State, size_t> _count_t;
 
         void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
         void _fracture(sl_t::iterator i, size_t protomer_index,
@@ -77,7 +78,6 @@ class SegmentedFilament : public Filament {
         sl_t _segments;
 
         size_t _length;
-        typedef std::map<State, size_t> _count_t;
         _count_t _state_counts;
 };
 
