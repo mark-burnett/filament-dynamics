@@ -13,8 +13,11 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <string>
 #include <boost/python.hpp>
+#include <boost/python/implicit.hpp>
 
+#include "state.h"
 #include "simulation_strategy.h"
 
 #include "concentrations/concentration.h"
@@ -33,6 +36,13 @@ void measurements_level_definitions();
 void transitions_level_definitions();
 
 void package_level_definitions() {
+    // import state
+    class_<State>("State", init<const std::string &>());
+
+    // add conversions for string <-> flyweight
+    implicitly_convertible<std::string, State>();
+    implicitly_convertible<State, std::string>();
+
     class_<SimulationStrategy>("SimulationStrategy", init<
             transitions::container_t &, concentrations::container_t &,
             measurements::container_t &, end_conditions::container_t &,

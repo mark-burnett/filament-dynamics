@@ -15,11 +15,16 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <string>
+#include <boost/flyweight.hpp>
+
 namespace stochastic {
 
 // XXX We will probably make these boost::flyweight<std::string> objects
-typedef size_t State;
-typedef const size_t const_State;
+// typedef size_t State;
+// typedef const size_t const_State;
+
+typedef boost::flyweight<std::string> State;
 
 } // namespace stochastic
 

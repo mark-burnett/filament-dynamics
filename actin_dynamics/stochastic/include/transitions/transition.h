@@ -16,7 +16,6 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <boost/shared_ptr.hpp>
-#include <boost/utility.hpp>
 
 #include "concentrations/concentration.h"
 #include "filaments/filament.h"
@@ -24,7 +23,7 @@
 namespace stochastic {
 namespace transitions {
 
-class Transition : public boost::noncopyable {
+class Transition {
     public:
         virtual double initial_R(double time,
                     const filaments::container_t &filaments,

@@ -20,19 +20,11 @@
 namespace stochastic {
 namespace filaments {
 
-void CachedFilament::_initialize_counts() {
-    _state_counts.resize(STATE_COUNT_SIZE);
-    _boundary_counts.resize(STATE_COUNT_SIZE);
-    for (size_t i = 0; i < STATE_COUNT_SIZE; ++i) {
-        _boundary_counts[i].resize(STATE_COUNT_SIZE);
-    }
-}
-
 void CachedFilament::_build_from_iterators(_vector_ui_ci start,
         _vector_ui_ci stop) {
     bool first = true;
     State pointed_state;
-    State barbed_state = 0;
+    State barbed_state("");
     while (start < stop) {
         _states.push_back(*start);
         pointed_state = barbed_state;
@@ -47,7 +39,6 @@ void CachedFilament::_build_from_iterators(_vector_ui_ci start,
 }
 
 CachedFilament::CachedFilament(size_t number, const State &state) {
-    _initialize_counts();
     _state_counts[state] = number;
     _boundary_counts[state][state] = number - 1;
     for (size_t i = 0; i < number; ++i) {
@@ -57,12 +48,13 @@ CachedFilament::CachedFilament(size_t number, const State &state) {
 
 // Cached queries about the filament state.
 size_t CachedFilament::state_count(const State &state) const {
-    return _state_counts[state];
+    return _state_counts.find(state)->second;
 }
 
 size_t CachedFilament::boundary_count(const State &pointed_state,
         const State &barbed_state) const {
-    return _boundary_counts[pointed_state][barbed_state];
+    return _boundary_counts.find(pointed_state)->second
+        .find(barbed_state)->second;
 }
 
 size_t CachedFilament::length() const {

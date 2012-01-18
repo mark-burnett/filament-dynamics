@@ -17,6 +17,7 @@
 
 #include <deque>
 #include <vector>
+#include <map>
 #include <boost/utility.hpp>
 
 #include "state.h"
@@ -28,11 +29,9 @@ namespace filaments {
 class CachedFilament : public Filament {
     public:
         CachedFilament(const std::vector<State> &values) {
-            _initialize_counts();
             _build_from_iterators(values.begin(), values.end());
         }
         CachedFilament(_vector_ui_ci start, _vector_ui_ci stop) {
-            _initialize_counts();
             _build_from_iterators(start, stop);
         }
         CachedFilament(size_t number, const State &state);
@@ -62,15 +61,14 @@ class CachedFilament : public Filament {
         std::deque<State> get_states() const { return std::deque<State>(_states); }
 
     private:
-        static const size_t STATE_COUNT_SIZE = 10;
-        void _initialize_counts();
         void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
         void _update_state_and_cache(std::deque<State>::iterator &i,
                 State new_state);
 
         std::deque<State> _states;
-        std::vector<size_t> _state_counts;
-        std::vector< std::vector<size_t> > _boundary_counts;
+        typedef std::map<State, size_t> _count_t;
+        _count_t _state_counts;
+        std::map<State,  _count_t > _boundary_counts;
 };
 
 } // namespace filaments

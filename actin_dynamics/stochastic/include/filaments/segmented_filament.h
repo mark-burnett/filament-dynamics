@@ -16,18 +16,20 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <list>
+#include <map>
 
+#include "state.h"
 #include "filaments/filament.h"
 
 namespace stochastic {
 namespace filaments {
 
 struct Segment {
-    Segment(size_t new_number, size_t new_state) :
+    Segment(size_t new_number, State new_state) :
         number(new_number), state(new_state) {}
 
     size_t number;
-    size_t state;
+    State state;
 };
 
 class SegmentedFilament : public Filament {
@@ -68,7 +70,6 @@ class SegmentedFilament : public Filament {
     private:
         typedef std::list<Segment> sl_t;
 
-        static const size_t STATE_COUNT_SIZE = 10;
         void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
         void _fracture(sl_t::iterator i, size_t protomer_index,
                 const State &new_state);
@@ -76,7 +77,8 @@ class SegmentedFilament : public Filament {
         sl_t _segments;
 
         size_t _length;
-        std::vector<size_t> _state_counts;
+        typedef std::map<State, size_t> _count_t;
+        _count_t _state_counts;
 };
 
 } // namespace filaments

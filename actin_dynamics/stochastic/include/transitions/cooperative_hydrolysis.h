@@ -15,6 +15,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "state.h"
+
 #include "concentrations/concentration.h"
 #include "filaments/filament.h"
 
@@ -32,6 +34,8 @@ class CooperativeHydrolysis : public Transition {
             _random_transition(old_state, new_state, rate),
             _vectorial_transition(pointed_state, old_state, new_state,
                     (cooperativity - 1) * rate) {}
+        ~CooperativeHydrolysis() {}
+
         double initial_R(double time,
                     const filaments::container_t &filaments,
                     const concentrations::container_t &concentrations);

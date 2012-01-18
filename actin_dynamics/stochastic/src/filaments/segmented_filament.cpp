@@ -20,8 +20,6 @@ namespace filaments {
 
 void SegmentedFilament::_build_from_iterators(_vector_ui_ci start,
         _vector_ui_ci stop) {
-    _state_counts.reserve(STATE_COUNT_SIZE);
-    _state_counts.resize(STATE_COUNT_SIZE);
     if (start == stop) {
         _length = 0;
         return;
@@ -43,8 +41,6 @@ void SegmentedFilament::_build_from_iterators(_vector_ui_ci start,
 }
 
 SegmentedFilament::SegmentedFilament(size_t number, const State &state) {
-    _state_counts.reserve(STATE_COUNT_SIZE);
-    _state_counts.resize(STATE_COUNT_SIZE);
     _state_counts[state] = number;
     _segments.push_back(Segment(number, state));
     _length = number;
@@ -52,7 +48,7 @@ SegmentedFilament::SegmentedFilament(size_t number, const State &state) {
 
 // Simple queries about the filament state.
 size_t SegmentedFilament::state_count(const State &state) const {
-    return _state_counts[state];
+    return _state_counts.find(state)->second;
 }
 
 

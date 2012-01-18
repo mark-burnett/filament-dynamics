@@ -49,6 +49,7 @@ class Polymerization : public testing::Test {
             concentrations[1] = concentrations::Concentration::ptr_t(
                         new concentrations::FixedReagent(4, 1));
         }
+
         virtual void TearDown() {
             filaments.clear();
             concentrations.clear();

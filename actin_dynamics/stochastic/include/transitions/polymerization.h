@@ -32,6 +32,7 @@ class FixedRatePolymerization : public Transition {
         FixedRatePolymerization(const State &state, double rate,
                 double disable_time=-1.0) :
             _state(state), _rate(rate), _disable_time(disable_time) {}
+        ~FixedRatePolymerization() {}
 
         double initial_R(double time,
                     const filaments::container_t &filaments,

@@ -32,6 +32,7 @@ class FixedRateDepolymerization : public Transition {
         FixedRateDepolymerization(const State &state, double rate,
                 double disable_time=-1.0) :
             _state(state), _rate(rate), _disable_time(disable_time), _count(0) {}
+        ~FixedRateDepolymerization() {}
 
         double initial_R(double time,
                     const filaments::container_t &filaments,
