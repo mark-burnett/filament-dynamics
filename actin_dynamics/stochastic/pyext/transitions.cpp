@@ -84,6 +84,7 @@ void transitions_level_definitions() {
             .def("R", &Transition::R)
             .def("perform", &Transition::perform);
 
+
     // Polymerization Transitions
     class_<FixedRatePolymerization, bases<Transition>,
         boost::noncopyable>("FixedRatePolymerization", no_init)
@@ -107,6 +108,8 @@ void transitions_level_definitions() {
             .def("R", &Transition::R)
             .def("perform", &Transition::perform);
 
+
+    // Depolymerization Transitions
     class_<FixedRateDepolymerization, bases<Transition>,
         boost::noncopyable>("FixedRateDepolymerization", no_init)
             .def("initial_R", &Transition::initial_R)
