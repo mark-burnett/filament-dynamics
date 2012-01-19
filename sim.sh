@@ -66,7 +66,7 @@ fi
 
 echo "Starting job runners..."
 for ((SIMNUM=1; SIMNUM <= NUM_PROCESSES; ++SIMNUM)); do
-    nice bin/worker.py $CONFIG_COMMAND >& /dev/null &
+    LD_LIBRARY_PATH=./lib nice bin/worker.py $CONFIG_COMMAND >& /dev/null &
     echo "Started process #$SIMNUM"
 done
 

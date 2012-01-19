@@ -30,6 +30,9 @@ RUN_UNIT_TESTS=false
 RUN_INTEGRATION_TESTS=false
 ARGUMENTS_RECEIVED=false
 
+LD_LIBRARY_PATH=./lib
+export LD_LIBRARY_PATH
+
 display_args() {
     echo "Options:"
     echo

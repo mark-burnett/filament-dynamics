@@ -18,6 +18,8 @@
 #include <list>
 #include <map>
 
+#include <boost/pool/pool_alloc.hpp>
+
 #include "state.h"
 #include "filaments/filament.h"
 
@@ -41,6 +43,8 @@ class SegmentedFilament : public Filament {
             _build_from_iterators(start, stop);
         }
         SegmentedFilament(size_t number, const State &state);
+        SegmentedFilament(double seed_concentration, double fnc,
+                const State &state);
 
         ~SegmentedFilament() {}
 
@@ -68,10 +72,11 @@ class SegmentedFilament : public Filament {
         std::deque<State> get_states() const {return std::deque<State>();} // { return std::deque<State>(states); }
 
     private:
-        typedef std::list<Segment> sl_t;
+        typedef std::list<Segment, boost::fast_pool_allocator<Segment> > sl_t;
         typedef std::map<State, size_t> _count_t;
 
         void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
+        void _init_number_state(size_t number, const State &state);
         void _fracture(sl_t::iterator i, size_t protomer_index,
                 const State &new_state);
 

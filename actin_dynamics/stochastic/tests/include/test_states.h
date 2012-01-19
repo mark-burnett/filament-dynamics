@@ -23,4 +23,10 @@ static stochastic::State two("2");
 static stochastic::State three("3");
 static stochastic::State four("4");
 
+// static stochastic::State zero(0);
+// static stochastic::State one(1);
+// static stochastic::State two(2);
+// static stochastic::State three(3);
+// static stochastic::State four(4);
+
 #endif // _TESTS_TEST_STATES_H_

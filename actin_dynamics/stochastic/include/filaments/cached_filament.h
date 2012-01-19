@@ -35,6 +35,8 @@ class CachedFilament : public Filament {
             _build_from_iterators(start, stop);
         }
         CachedFilament(size_t number, const State &state);
+        CachedFilament(double seed_concentration, double fnc,
+                const State &state);
 
         ~CachedFilament() {}
 
@@ -62,6 +64,7 @@ class CachedFilament : public Filament {
 
     private:
         void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
+        void _init_number_state(size_t number, const State &state);
         void _update_state_and_cache(std::deque<State>::iterator &i,
                 State new_state);
 

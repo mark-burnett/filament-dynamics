@@ -45,7 +45,7 @@ void filaments_level_definitions() {
 
     class_<CachedFilament, bases<Filament>,
         boost::shared_ptr<CachedFilament>, boost::noncopyable>(
-            "CachedFilament", init<size_t, const stochastic::State &>())
+            "CachedFilament", init<double, double, const stochastic::State &>())
         .def("state_count", &CachedFilament::state_count)
         .def("boundary_count", &CachedFilament::boundary_count)
         .def("length", &CachedFilament::length)
@@ -61,7 +61,8 @@ void filaments_level_definitions() {
 
     object segmented_filament = class_<SegmentedFilament, bases<Filament>,
         boost::shared_ptr<SegmentedFilament>, boost::noncopyable>(
-            "SegmentedFilament", init<size_t, const stochastic::State &>())
+                "SegmentedFilament", init<double, double,
+            const stochastic::State &>())
         .def("state_count", &SegmentedFilament::state_count)
         .def("boundary_count", &SegmentedFilament::boundary_count)
         .def("length", &SegmentedFilament::length)
@@ -80,7 +81,7 @@ void filaments_level_definitions() {
 
     class_<SimpleFilament, bases<Filament>,
         boost::shared_ptr<SimpleFilament>, boost::noncopyable>(
-            "SimpleFilament", init<size_t, const stochastic::State &>())
+            "SimpleFilament", init<double, double, const stochastic::State &>())
         .def("state_count", &SimpleFilament::state_count)
         .def("boundary_count", &SimpleFilament::boundary_count)
         .def("length", &SimpleFilament::length)

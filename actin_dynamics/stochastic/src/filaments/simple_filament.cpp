@@ -28,10 +28,21 @@ void SimpleFilament::_build_from_iterators(_vector_ui_ci start, _vector_ui_ci st
 }
 
 SimpleFilament::SimpleFilament(size_t number, const State &state) {
+    _init_number_state(number, state);
+}
+
+SimpleFilament::SimpleFilament(double seed_concentration, double fnc,
+        const State &state) {
+    size_t number = seed_concentration / fnc;
+    _init_number_state(number, state);
+}
+
+void SimpleFilament::_init_number_state(size_t number, const State &state) {
     for (size_t i = 0; i < number; ++i) {
         states.push_back(state);
     }
 }
+
 
 // Simple queries about the filament state.
 size_t SimpleFilament::state_count(const State &state) const {

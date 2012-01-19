@@ -34,6 +34,8 @@ class SimpleFilament : public Filament {
             _build_from_iterators(start, stop);
         }
         SimpleFilament(size_t number, const State &state);
+        SimpleFilament(double seed_concentration, double fnc,
+                const State &state);
 
         ~SimpleFilament() {}
 
@@ -61,6 +63,7 @@ class SimpleFilament : public Filament {
 
     private:
         void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
+        void _init_number_state(size_t number, const State &state);
         std::deque<State> states;
 };
 

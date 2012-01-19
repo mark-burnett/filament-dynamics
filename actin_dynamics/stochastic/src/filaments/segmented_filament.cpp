@@ -41,6 +41,16 @@ void SegmentedFilament::_build_from_iterators(_vector_ui_ci start,
 }
 
 SegmentedFilament::SegmentedFilament(size_t number, const State &state) {
+    _init_number_state(number, state);
+}
+
+SegmentedFilament::SegmentedFilament(double seed_concentration, double fnc,
+        const State &state) {
+    size_t number = seed_concentration / fnc;
+    _init_number_state(number, state);
+}
+
+void SegmentedFilament::_init_number_state(size_t number, const State &state) {
     _state_counts[state] = number;
     _segments.push_back(Segment(number, state));
     _length = number;
@@ -143,36 +153,57 @@ State SegmentedFilament::pop_pointed() {
 
 void SegmentedFilament::_fracture(sl_t::iterator i,
         size_t protomer_index, const State &new_state) {
+    // Handle case of single (look for joins)
+    if (1 == i->number) {
+        sl_t::iterator pn(i);
+        --pn;
+        sl_t::iterator bn(i);
+        ++bn;
+
+        if ((_segments.end() != pn) && (new_state == pn->state)) {
+            ++pn->number;
+            if ((_segments.end() != bn) && (new_state == bn->state)) {
+                pn->number += bn->number;
+                _segments.erase(bn);
+            }
+            _segments.erase(i);
+        } else {
+            if ((_segments.end() != bn) && (new_state == bn->state)) {
+                ++bn->number;
+                _segments.erase(i);
+            } else {
+                i->state = new_state;
+            }
+        }
+
+        return;
+    }
+
+    // Non 1 length cases:
     size_t left = protomer_index;
     size_t right = i->number - protomer_index - 1;
+
     if (left > 0) {
-        _segments.insert(i, Segment(left, i->state));
+        sl_t::iterator pn(i);
+        --pn;
+        if ((_segments.end() != pn) && (i->state == pn->state)) {
+            pn->number += left;
+        } else {
+            _segments.insert(i, Segment(left, i->state));
+        }
+    }
+    if (right > 0) {
         _segments.insert(i, Segment(1, new_state));
+        i->number = right;
     } else {
-        sl_t::iterator pointed_neighbor(i);
-        --pointed_neighbor;
-        if (new_state == pointed_neighbor->state) {
-            ++pointed_neighbor->number;
+        sl_t::iterator bn(i);
+        ++bn;
+        if ((_segments.end() != bn) && (new_state == bn->state)) {
+            ++bn->number;
         } else {
             _segments.insert(i, Segment(1, new_state));
         }
-    }
-
-    if (right > 0) {
-        i->number = right;
-    } else {
-        sl_t::iterator pointed_neighbor(i);
-        --pointed_neighbor;
-        sl_t::iterator barbed_neighbor(i);
-        ++barbed_neighbor;
-
         _segments.erase(i);
-
-        if (pointed_neighbor->state == barbed_neighbor->state) {
-            barbed_neighbor->number += pointed_neighbor->number;
-            _segments.erase(pointed_neighbor);
-        }
-
     }
 }
 

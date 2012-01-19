@@ -24,7 +24,7 @@ void CachedFilament::_build_from_iterators(_vector_ui_ci start,
         _vector_ui_ci stop) {
     bool first = true;
     State pointed_state;
-    State barbed_state("");
+    State barbed_state;
     while (start < stop) {
         _states.push_back(*start);
         pointed_state = barbed_state;
@@ -39,6 +39,16 @@ void CachedFilament::_build_from_iterators(_vector_ui_ci start,
 }
 
 CachedFilament::CachedFilament(size_t number, const State &state) {
+    _init_number_state(number, state);
+}
+
+CachedFilament::CachedFilament(double seed_concentration, double fnc,
+        const State &state) {
+    size_t number = seed_concentration / fnc;
+    _init_number_state(number, state);
+}
+
+void CachedFilament::_init_number_state(size_t number, const State &state) {
     _state_counts[state] = number;
     _boundary_counts[state][state] = number - 1;
     for (size_t i = 0; i < number; ++i) {

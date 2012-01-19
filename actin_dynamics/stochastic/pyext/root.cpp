@@ -13,9 +13,13 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <vector>
 #include <string>
+
 #include <boost/python.hpp>
-#include <boost/python/implicit.hpp>
+// #include <boost/python/implicit.hpp>
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 #include "state.h"
 #include "simulation_strategy.h"
@@ -39,9 +43,21 @@ void package_level_definitions() {
     // import state
     class_<State>("State", init<const std::string &>());
 
+    // create some vector types
+    class_< concentrations::container_t >("ConcentrationContainer")
+        .def(map_indexing_suite< concentrations::container_t >());
+    class_< end_conditions::container_t >("EndConditionContainer")
+        .def(vector_indexing_suite< end_conditions::container_t >());
+    class_< filaments::container_t >("FilamentContainer")
+        .def(vector_indexing_suite< filaments::container_t >());
+    class_< measurements::container_t >("MeasurementContainer")
+        .def(vector_indexing_suite< measurements::container_t >());
+    class_< transitions::container_t >("TransitionContainer")
+        .def(vector_indexing_suite< transitions::container_t >());
+
     // add conversions for string <-> flyweight
-    implicitly_convertible<std::string, State>();
-    implicitly_convertible<State, std::string>();
+//    implicitly_convertible<std::string, State>();
+//    implicitly_convertible<State, std::string>();
 
     class_<SimulationStrategy>("SimulationStrategy", init<
             transitions::container_t &, concentrations::container_t &,
