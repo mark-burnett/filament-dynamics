@@ -59,9 +59,9 @@ class TipHydrolysis : public Transition {
         std::vector<State> _states;
 };
 
-class BarbedEndTipHydrolysis : public TipHydrolysis {
+class BarbedTipHydrolysis : public TipHydrolysis {
     public:
-        BarbedEndTipHydrolysis(const State &old_state,
+        BarbedTipHydrolysis(const State &old_state,
                 const State &new_state, double rate):
             TipHydrolysis(old_state, new_state, rate) {}
 
@@ -75,9 +75,9 @@ class BarbedEndTipHydrolysis : public TipHydrolysis {
         }
 };
 
-class PointedEndTipHydrolysis : public TipHydrolysis {
+class PointedTipHydrolysis : public TipHydrolysis {
     public:
-        PointedEndTipHydrolysis(const State &old_state,
+        PointedTipHydrolysis(const State &old_state,
                 const State &new_state, double rate):
             TipHydrolysis(old_state, new_state, rate) {}
 
@@ -91,17 +91,17 @@ class PointedEndTipHydrolysis : public TipHydrolysis {
         }
 };
 
-class BarbedEndTipHydrolysisWithByproduct : public BarbedEndTipHydrolysis {
+class BarbedTipHydrolysisWithByproduct : public BarbedTipHydrolysis {
     public:
-        BarbedEndTipHydrolysisWithByproduct(const State &old_state,
+        BarbedTipHydrolysisWithByproduct(const State &old_state,
                 const State &new_state, double rate, const State &byproduct):
-            BarbedEndTipHydrolysis(old_state, new_state, rate),
+            BarbedTipHydrolysis(old_state, new_state, rate),
             _byproduct(byproduct) {}
         size_t perform(double time, double r,
                     filaments::container_t &filaments,
                     concentrations::container_t &concentrations) {
             concentrations[_byproduct]->add_monomer();
-            return BarbedEndTipHydrolysis::perform(time, r,
+            return BarbedTipHydrolysis::perform(time, r,
                     filaments, concentrations);
         }
 
@@ -109,17 +109,17 @@ class BarbedEndTipHydrolysisWithByproduct : public BarbedEndTipHydrolysis {
         State _byproduct;
 };
 
-class PointedEndTipHydrolysisWithByproduct : public PointedEndTipHydrolysis {
+class PointedTipHydrolysisWithByproduct : public PointedTipHydrolysis {
     public:
-        PointedEndTipHydrolysisWithByproduct(const State &old_state,
+        PointedTipHydrolysisWithByproduct(const State &old_state,
                 const State &new_state, double rate, const State &byproduct):
-            PointedEndTipHydrolysis(old_state, new_state, rate),
+            PointedTipHydrolysis(old_state, new_state, rate),
             _byproduct(byproduct) {}
         size_t perform(double time, double r,
                     filaments::container_t &filaments,
                     concentrations::container_t &concentrations) {
             concentrations[_byproduct]->add_monomer();
-            return PointedEndTipHydrolysis::perform(time, r,
+            return PointedTipHydrolysis::perform(time, r,
                     filaments, concentrations);
         }
 
@@ -127,10 +127,10 @@ class PointedEndTipHydrolysisWithByproduct : public PointedEndTipHydrolysis {
         State _byproduct;
 };
 
-// typedef WithByproduct<BarbedEndTipHydrolysis>
-//     BarbedEndTipHydrolysisWithByproduct;
-// typedef WithByproduct<PointedEndTipHydrolysis>
-//     PointedEndTipHydrolysisWithByproduct;
+// typedef WithByproduct<BarbedTipHydrolysis>
+//     BarbedTipHydrolysisWithByproduct;
+// typedef WithByproduct<PointedTipHydrolysis>
+//     PointedTipHydrolysisWithByproduct;
 
 } // namespace transitions
 } // namespace stochastic

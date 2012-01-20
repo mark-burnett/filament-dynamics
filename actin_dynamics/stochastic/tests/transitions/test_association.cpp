@@ -26,13 +26,13 @@ using namespace boost::assign;
 
 #include "test_states.h"
 
-#include "transitions/tip_hydrolysis.h"
+#include "transitions/association.h"
 #include "filaments/simple_filament.h"
 #include "concentrations/fixed_reagent.h"
 
 using namespace stochastic;
 
-class TipHydrolysisTest : public testing::Test {
+class AssociationTest : public testing::Test {
     protected:
         virtual void SetUp() {
             std::vector<State> values1;
@@ -52,7 +52,7 @@ class TipHydrolysisTest : public testing::Test {
             concentrations[two] = concentrations::Concentration::ptr_t(
                         new concentrations::FixedReagent(0, 1));
             concentrations[three] = concentrations::Concentration::ptr_t(
-                        new concentrations::FixedReagent(0, 1));
+                        new concentrations::FixedReagent(4, 1));
         }
 
         virtual void TearDown() {
@@ -64,36 +64,23 @@ class TipHydrolysisTest : public testing::Test {
         concentrations::container_t concentrations;
 };
 
-TEST_F(TipHydrolysisTest, BETipHydrolysis) {
-    transitions::BarbedTipHydrolysis be_12(one, two, 3);
+TEST_F(AssociationTest, initial_R) {
+    transitions::Association a_3_12(three, one, two, 3);
+    transitions::Association a_3_01(three, zero, one, 2);
 
-    EXPECT_DOUBLE_EQ(3, be_12.initial_R(0, filaments, concentrations));
-    EXPECT_EQ(0, be_12.perform(0, 0.2, filaments, concentrations));
-    EXPECT_DOUBLE_EQ(0, be_12.R(0, filaments, concentrations, 0));
+    EXPECT_DOUBLE_EQ(60, a_3_12.initial_R(0, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(64, a_3_01.initial_R(0, filaments, concentrations));
 }
 
-TEST_F(TipHydrolysisTest, PETipHydrolysis) {
-    transitions::PointedTipHydrolysis pe_12(one, two, 3);
+TEST_F(AssociationTest, perform) {
+    transitions::Association a_3_12(three, one, two, 3);
+    transitions::Association a_3_01(three, zero, one, 2);
 
-    EXPECT_DOUBLE_EQ(3, pe_12.initial_R(0, filaments, concentrations));
-    EXPECT_EQ(1, pe_12.perform(0, 0.2, filaments, concentrations));
-    EXPECT_DOUBLE_EQ(0, pe_12.R(0, filaments, concentrations, 1));
-}
+    EXPECT_DOUBLE_EQ(60, a_3_12.initial_R(0, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(64, a_3_01.initial_R(0, filaments, concentrations));
 
-TEST_F(TipHydrolysisTest, BETipHydrolysisWB) {
-    transitions::BarbedTipHydrolysisWithByproduct be_12(one, two, 3, three);
-
-    EXPECT_DOUBLE_EQ(3, be_12.initial_R(0, filaments, concentrations));
-    EXPECT_EQ(0, be_12.perform(0, 0.2, filaments, concentrations));
-    EXPECT_DOUBLE_EQ(0, be_12.R(0, filaments, concentrations, 0));
-    EXPECT_EQ(1, concentrations[three]->monomer_count());
-}
-
-TEST_F(TipHydrolysisTest, PETipHydrolysisWB) {
-    transitions::PointedTipHydrolysisWithByproduct pe_12(one, two, 3, three);
-
-    EXPECT_DOUBLE_EQ(3, pe_12.initial_R(0, filaments, concentrations));
-    EXPECT_EQ(1, pe_12.perform(0, 0.2, filaments, concentrations));
-    EXPECT_DOUBLE_EQ(0, pe_12.R(0, filaments, concentrations, 1));
-    EXPECT_EQ(1, concentrations[three]->monomer_count());
+    EXPECT_EQ(1, a_3_12.perform(0, 41, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(36, a_3_12.R(0, filaments, concentrations, 1));
+    EXPECT_DOUBLE_EQ(48, a_3_01.R(0, filaments, concentrations, 1));
+    EXPECT_EQ(3, concentrations[three]->monomer_count());
 }

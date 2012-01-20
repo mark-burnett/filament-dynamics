@@ -36,6 +36,7 @@ _measurements_lookup = {
         'StateCount': ['state', 'sample_period'] }
 
 _transitions_lookup = {
+        'Association': ['associating_state', 'old_state', 'new_state', 'rate'],
         'CooperativeHydrolysis': ['pointed_neighbor', 'old_state',
             'new_state', 'rate', 'cooperativity'],
         'CooperativeHydrolysisWithByproduct': ['pointed_neighbor', 'old_state',
@@ -48,11 +49,11 @@ _transitions_lookup = {
             'rate', 'cooperativity'],
         'RandomHydrolysisWithByproduct': ['old_state', 'new_state',
             'rate', 'byproduct'],
-        'BarbedEndTipHydroylsis': ['old_state', 'new_state', 'rate'],
-        'PointedEndTipHydroylsis': ['old_state', 'new_state', 'rate'],
-        'BarbedEndTipHydroylsisWithByproduct': ['old_state', 'new_state',
+        'BarbedTipHydroylsis': ['old_state', 'new_state', 'rate'],
+        'PointedTipHydroylsis': ['old_state', 'new_state', 'rate'],
+        'BarbedTipHydroylsisWithByproduct': ['old_state', 'new_state',
             'rate', 'byproduct'],
-        'PointedEndTipHydroylsisWithByproduct': ['old_state', 'new_state',
+        'PointedTipHydroylsisWithByproduct': ['old_state', 'new_state',
             'rate', 'byproduct'],
         'VectorialHydrolysis': ['pointed_neighbor', 'old_state',
             'new_state', 'rate'],
