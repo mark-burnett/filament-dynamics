@@ -15,6 +15,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <string>
+#include <map>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 
@@ -23,8 +26,6 @@
 
 namespace stochastic {
 namespace measurements {
-
-typedef std::vector< std::vector<size_t> > length_vector_t;
 
 class Measurement : private boost::noncopyable {
     public:
@@ -36,28 +37,17 @@ class Measurement : private boost::noncopyable {
         virtual void perform(double time, const filaments::container_t &filaments,
                 const concentrations::container_t &concentrations) = 0;
 
-        virtual length_vector_t get_values() const = 0;
+        virtual std::vector<double> get_times() const = 0;
+        virtual std::vector<double> get_means() const = 0;
+
 
         const double sample_period;
         double previous_time;
 };
 
-class ConcentrationMeasurement : public Measurement {
-    public:
-        ConcentrationMeasurement(double sample_period) :
-            Measurement(sample_period) {}
-        virtual ~ConcentrationMeasurement() {}
-};
-
-class FilamentMeasurement : public Measurement {
-    public:
-        FilamentMeasurement(double sample_period) :
-            Measurement(sample_period) {}
-        virtual ~FilamentMeasurement() {}
-};
-
 typedef boost::shared_ptr<Measurement> base_ptr_t;
-typedef std::vector< base_ptr_t > container_t;
+typedef std::map< std::string,
+        boost::shared_ptr< measurements::Measurement > > container_t;
 
 } // namespace measurements
 } // namespace stochastic

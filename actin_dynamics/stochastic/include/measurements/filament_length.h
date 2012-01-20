@@ -20,27 +20,27 @@
 #include "filaments/filament.h"
 #include "concentrations/concentration.h"
 
-#include "measurements/measurement.h"
+#include "measurements/filament_measurement.h"
 
 namespace stochastic {
 namespace measurements {
 
-class FilamentLength : public FilamentMeasurement {
+class FilamentLength : public FilamentMeasurement<size_t> {
     public:
         FilamentLength(double sample_period) :
-            FilamentMeasurement(sample_period) {}
+            FilamentMeasurement<size_t>(sample_period) {}
 
         void initialize(const filaments::container_t &filaments,
                 const concentrations::container_t &concentrations);
         void perform(double time, const filaments::container_t &filaments,
                 const concentrations::container_t &concentrations);
 
-        length_vector_t get_values() const {
+        FilamentMeasurement<size_t>::result_type get_values() const {
             return _lengths;
         }
 
     private:
-        length_vector_t _lengths;
+        FilamentMeasurement<size_t>::result_type _lengths;
 };
 
 } // namespace measurements

@@ -15,37 +15,56 @@
 
 #include <boost/python.hpp>
 
+#include "state.h"
+
 #include "measurements/measurement.h"
+#include "measurements/concentration.h"
 #include "measurements/filament_length.h"
 #include "measurements/state_count.h"
 
 using namespace boost::python;
+using namespace stochastic;
 using namespace stochastic::measurements;
 
 void measurements_level_definitions() {
-    class_<Measurement, boost::noncopyable>("Measurement", no_init)
+    class_<Measurement, boost::shared_ptr<Measurement>,
+        boost::noncopyable>("Measurement", no_init)
         .def("initialize", &Measurement::initialize)
-        .def("perform", &Measurement::perform)
-        .def("get_values", &Measurement::get_values);
-//        .def_readonly("sample_period", &Measurement::sample_period)
-//        .def_readonly("previous_time", &Measurement::previous_time);
+        .def("perform",    &Measurement::perform)
+        .def("get_times",  &Measurement::get_times)
+        .def("get_means",  &Measurement::get_means);
 
-    class_<FilamentLength, bases<Measurement>,
+    class_<Concentration, bases<Measurement>,
+        boost::shared_ptr<Concentration>,
+        boost::noncopyable>("Concentration",
+                init<const State &, double>())
+            .def("initialize", &Concentration::initialize)
+            .def("perform",    &Concentration::perform)
+            .def("get_times",  &Concentration::get_times)
+            .def("get_means",  &Concentration::get_means);
+
+    class_<FilamentMeasurement<size_t>, bases<Measurement>,
+        boost::shared_ptr<FilamentMeasurement<size_t> >,
+        boost::noncopyable>("_FilamentMeasurement_double", no_init)
+            .def("initialize", &FilamentMeasurement<size_t>::initialize)
+            .def("perform", &FilamentMeasurement<size_t>::perform)
+            .def("get_times", &FilamentMeasurement<size_t>::get_times)
+            .def("get_means", &FilamentMeasurement<size_t>::get_means);
+
+    class_<FilamentLength, bases<FilamentMeasurement<size_t> >,
         boost::shared_ptr<FilamentLength>,
         boost::noncopyable>("FilamentLength", init<double>())
             .def("initialize", &FilamentLength::initialize)
             .def("perform", &FilamentLength::perform)
-            .def("get_values", &FilamentLength::get_values);
-//            .def_readonly("sample_period", &FilamentLength::sample_period)
-//            .def_readonly("previous_time", &FilamentLength::previous_time);
+            .def("get_times", &FilamentLength::get_times)
+            .def("get_means", &FilamentLength::get_means);
 
-    class_<StateCount, bases<Measurement>,
+    class_<StateCount, bases<FilamentMeasurement<size_t> >,
         boost::shared_ptr<StateCount>,
         boost::noncopyable>("StateCount",
                 init<const stochastic::State&, double>())
             .def("initialize", &StateCount::initialize)
             .def("perform", &StateCount::perform)
-            .def("get_values", &StateCount::get_values);
-//            .def_readonly("sample_period", &StateCount::sample_period)
-//            .def_readonly("previous_time", &StateCount::previous_time);;
+            .def("get_times", &StateCount::get_times)
+            .def("get_means", &StateCount::get_means);
 }

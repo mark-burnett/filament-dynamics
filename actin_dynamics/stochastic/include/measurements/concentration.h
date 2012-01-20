@@ -1,5 +1,5 @@
-#ifndef _MEASUREMENTS_STATE_COUNT_H_
-#define _MEASUREMENTS_STATE_COUNT_H_
+#ifndef _MEASUREMENTS_CONCENTRATION_H_
+#define _MEASUREMENTS_CONCENTRATION_H_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -20,32 +20,31 @@
 #include "filaments/filament.h"
 #include "concentrations/concentration.h"
 
-#include "measurements/filament_measurement.h"
+#include "measurements/measurement.h"
 
 namespace stochastic {
 namespace measurements {
 
-class StateCount : public FilamentMeasurement<size_t> {
+class Concentration : public Measurement {
+    private:
+        const State _state;
+        std::vector<double> _values;
+
     public:
-        StateCount(const State &state, double sample_period) :
-            FilamentMeasurement<size_t>(sample_period),
-            _state(state) {}
+        Concentration(const State &state, double sample_period) :
+            Measurement(sample_period), _state(state) {}
+        ~Concentration() {}
 
         void initialize(const filaments::container_t &filaments,
                 const concentrations::container_t &concentrations);
         void perform(double time, const filaments::container_t &filaments,
                 const concentrations::container_t &concentrations);
 
-        FilamentMeasurement<size_t>::result_type get_values() const {
-            return _counts;
-        }
-
-    private:
-        const State _state; 
-        FilamentMeasurement<size_t>::result_type _counts;
+        std::vector<double> get_times() const;
+        std::vector<double> get_means() const;
 };
 
 } // namespace measurements
 } // namespace stochastic
 
-#endif // _MEASUREMENTS_STATE_COUNT_H_
+#endif // _MEASUREMENTS_CONCENTRATION_H_

@@ -30,21 +30,6 @@ from actin_dynamics.numerical import interpolation
 from actin_dynamics.numerical import measurements
 
 
-SEM = analyses.registry['StandardErrorMean']
-
-def raw_sem_factory(measurement, label):
-    return measurement
-
-def get_measurement(raw_results, parameters, measurement_type=None,
-                    measurement_name=None, scale_by=1, subtract=0):
-    sem = SEM(sample_period=parameters['sample_period'],
-              stop_time=parameters['duration'],
-              interpolation_method='linear',
-              measurement_name=measurement_name,
-              measurement_type=measurement_type,
-              scale_by=scale_by, subtract=subtract)
-    return sem.perform(raw_results, raw_sem_factory)
-
 
 def load_kinsim(filename, sample_period, duration):
     time, factin_d, pi_d, atp_d = io.data.load_data(filename)
@@ -63,14 +48,6 @@ def load_kinsim(filename, sample_period, duration):
 
 
 
-# Helper code taken from old accessor stuff.
-def get_scaled(parameter_set, name):
-    basic = parameter_set['sem'][name]
-    return measurements.scale(basic,
-            parameter_set['parameters']['filament_tip_concentration'])
-
-
-
 class TestKinsim(unittest.TestCase):
     def setUp(self):
         self.data_sets = [
@@ -79,7 +56,7 @@ class TestKinsim(unittest.TestCase):
                  'integration_tests/kinsim/pollard_kinsim.dat')]
 
         self.percent_error = 0.01
-        self.epsilon = 0.02
+        self.epsilon = 0.01
 
 
     def test_vs_kinsim(self):
@@ -87,27 +64,16 @@ class TestKinsim(unittest.TestCase):
             og   = io.object_graph.parse_object_graph_file(open(og_file))
             parameters = yaml.load(open(par_file))
 
-            raw_results = []
-            for i in xrange(parameters['number_of_simulations']):
-                simulation = factories.simulations.make_object_graph(og,
-                        parameters)
-                raw_results.append(simulation.run())
+            simulation = factories.simulations.make_object_graph(og,
+                    parameters)
+            simulation_results = simulation.run()
 
-            length_sim = get_measurement(raw_results, parameters,
-                                         measurement_type='filament',
-                                         measurement_name='length',
-                                         scale_by=parameters[
-                                             'filament_tip_concentration'],
-                                         subtract=parameters[
-                                             'seed_concentration'])
-            pi_sim     = get_measurement(raw_results, parameters,
-                                         measurement_type='concentration',
-                                         measurement_name='Pi')
-            atp_sim    = get_measurement(raw_results, parameters,
-                                         measurement_type='filament',
-                                         measurement_name='atp_count',
-                                         scale_by=parameters[
-                                             'filament_tip_concentration'])
+            length_sim = self.extract_measurement(simulation_results, 'length', parameters,
+                    scale_by=parameters['filament_tip_concentration'],
+                    subtract=parameters['seed_concentration'])
+            pi_sim = self.extract_measurement(simulation_results, 'Pi', parameters)
+            atp_sim = self.extract_measurement(simulation_results, 'atp_count', parameters,
+                    scale_by=parameters['filament_tip_concentration'])
 
             factin_kin, pi_kin, atp_kin = load_kinsim(k_file,
                     parameters['sample_period'], parameters['duration'])
@@ -116,8 +82,22 @@ class TestKinsim(unittest.TestCase):
             self.assert_acceptable(pi_sim, pi_kin)
             self.assert_acceptable(atp_sim, atp_kin)
 
+    def extract_measurement(self, simulation_results, measurement_name, parameters,
+        scale_by=1, subtract=0):
+        m_results = simulation_results[measurement_name]
+        times = m_results.get_times()
+
+        means = m_results.get_means()
+        means = [m * scale_by - subtract for m in means]
+
+        sqrt_n_m_1 = 1 / numpy.sqrt(parameters['number_of_filaments'])
+        errors = [m * sqrt_n_m_1 for m in means]
+
+        return (times, means, errors)
+
     def assert_acceptable(self, sim, kin):
         for i, (t, v, e) in enumerate(zip(*sim)):
+#            print t, v, kin[1][i]
             self.assert_within(kin[1][i], v, e)
 
 

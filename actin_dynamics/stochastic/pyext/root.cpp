@@ -30,6 +30,8 @@
 #include "measurements/measurement.h"
 #include "transitions/transition.h"
 
+#include <pyext_utility.h>
+
 using namespace boost::python;
 using namespace stochastic;
 
@@ -39,21 +41,45 @@ void filaments_level_definitions();
 void measurements_level_definitions();
 void transitions_level_definitions();
 
+
 void package_level_definitions() {
+    class_< std::vector<std::string> >("_StringVector")
+        .def(vector_indexing_suite< std::vector<std::string>, true >())
+        .def("__iter__", iterator< std::vector<std::string> >());
+
+    class_< std::vector<double> >("_DoubleVector")
+        .def(vector_indexing_suite< std::vector<double>, true >())
+        .def("__iter__", iterator< std::vector<double> >());
+
     // import state
     class_<State>("State", init<const std::string &>());
 
     // create some vector types
     class_< concentrations::container_t >("ConcentrationContainer")
-        .def(map_indexing_suite< concentrations::container_t >());
+        .def(map_indexing_suite< concentrations::container_t, true >())
+        .def("__iter__", iterator< concentrations::container_t >());
+
     class_< end_conditions::container_t >("EndConditionContainer")
-        .def(vector_indexing_suite< end_conditions::container_t >());
+        .def(vector_indexing_suite< end_conditions::container_t, true >())
+        .def("__iter__", iterator< end_conditions::container_t >());
+
     class_< filaments::container_t >("FilamentContainer")
-        .def(vector_indexing_suite< filaments::container_t >());
+        .def(vector_indexing_suite< filaments::container_t, true >())
+        .def("__iter__", iterator< filaments::container_t >());
+
     class_< measurements::container_t >("MeasurementContainer")
-        .def(vector_indexing_suite< measurements::container_t >());
+        .def("keys", get_keys<measurements::container_t>)
+        .def(map_indexing_suite< measurements::container_t, true >())
+        .def("__iter__", iterator< measurements::container_t >());
+
     class_< transitions::container_t >("TransitionContainer")
-        .def(vector_indexing_suite< transitions::container_t >());
+        .def(vector_indexing_suite< transitions::container_t, true >())
+        .def("__iter__", iterator< transitions::container_t >());
+
+
+//    class_< simulation_result_t >("SimulationResultContainer")
+//        .def("keys", get_keys<simulation_result_t>)
+//        .def(map_indexing_suite< simulation_result_t >());
 
     // add conversions for string <-> flyweight
 //    implicitly_convertible<std::string, State>();

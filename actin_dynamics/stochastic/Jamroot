@@ -14,6 +14,7 @@ lib stochastic
     src/transitions/depolymerization.cpp
     src/transitions/polymerization.cpp
     src/simulation_strategy.cpp
+    src/measurements/concentration.cpp
     src/measurements/filament_length.cpp
     src/measurements/state_count.cpp
     src/random_seed.cpp
@@ -34,6 +35,7 @@ exe runtests
     tests/transitions/test_polymerization.cpp
     tests/test_concentrations.cpp
     tests/test_simulation_strategy.cpp
+    tests/measurements/test_concentration.cpp
     tests/measurements/test_filament_length.cpp
     tests/measurements/test_state_count.cpp
     tests/test_end_conditions.cpp

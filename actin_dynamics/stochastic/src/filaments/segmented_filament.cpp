@@ -161,7 +161,7 @@ void SegmentedFilament::_fracture(sl_t::iterator i,
         ++bn;
 
         if ((_segments.end() != pn) && (new_state == pn->state)) {
-            ++pn->number;
+            ++(pn->number);
             if ((_segments.end() != bn) && (new_state == bn->state)) {
                 pn->number += bn->number;
                 _segments.erase(bn);
@@ -169,7 +169,7 @@ void SegmentedFilament::_fracture(sl_t::iterator i,
             _segments.erase(i);
         } else {
             if ((_segments.end() != bn) && (new_state == bn->state)) {
-                ++bn->number;
+                ++(bn->number);
                 _segments.erase(i);
             } else {
                 i->state = new_state;
@@ -199,7 +199,7 @@ void SegmentedFilament::_fracture(sl_t::iterator i,
         sl_t::iterator bn(i);
         ++bn;
         if ((_segments.end() != bn) && (new_state == bn->state)) {
-            ++bn->number;
+            ++(bn->number);
         } else {
             _segments.insert(i, Segment(1, new_state));
         }
@@ -225,7 +225,6 @@ void SegmentedFilament::update_state(size_t instance_number,
 }
 
 
-// XXX This doesn't work at all.
 void SegmentedFilament::update_boundary(size_t instance_number,
         const State &old_pointed_state, const State &old_barbed_state,
         const State &new_barbed_state) {
@@ -234,16 +233,15 @@ void SegmentedFilament::update_boundary(size_t instance_number,
     std::list<Segment>::iterator pointed_segment(_segments.begin());
     if (!_segments.empty()) {
         ++barbed_segment;
-    }
-
-    while (barbed_segment != _segments.end()) {
-        if (old_pointed_state == pointed_segment->state &&
-                old_barbed_state == barbed_segment->state) {
-            ++count;
-            if (instance_number == count) {
-                _fracture(barbed_segment, barbed_segment->number - 1,
-                        new_barbed_state);
-                return;
+        while (barbed_segment != _segments.end()) {
+            if (old_pointed_state == pointed_segment->state &&
+                    old_barbed_state == barbed_segment->state) {
+                if (instance_number == count) {
+                    _fracture(barbed_segment, 0, //barbed_segment->number - 1,
+                            new_barbed_state);
+                    return;
+                }
+                ++count;
             }
         }
     }

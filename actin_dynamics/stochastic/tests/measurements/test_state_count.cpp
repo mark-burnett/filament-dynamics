@@ -47,6 +47,7 @@ class StateCountTest : public testing::Test {
         concentrations::container_t concentrations;
 };
 
+/*
 TEST_F(StateCountTest, Perform) {
     measurements::StateCount m(zero, 0.5);
 
@@ -62,3 +63,4 @@ TEST_F(StateCountTest, Perform) {
     EXPECT_EQ(2, results[1].size());
     EXPECT_EQ(3, results[1][0]);
 }
+*/

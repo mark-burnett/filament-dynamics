@@ -60,13 +60,21 @@ measurements:
         fixed_arguments:
             state: ADP
 
+    Pi:
+        class_name: Concentration
+        variable_arguments:
+            sample_period: sample_period
+        fixed_arguments:
+            state: Pi
+
+
 transitions:
     # Polymerization
     atp_polymerization:
         class_name: BarbedEndPolymerization
         fixed_arguments:
             state: ATP
-            disable_time: 0
+            disable_time: -1
         variable_arguments:
             rate: barbed_atp_polymerization_rate
 

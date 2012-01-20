@@ -52,14 +52,14 @@ TEST(Integration, OldBasicTest) {
     end_conditions.push_back(end_conditions::base_ptr_t(
                 new end_conditions::Duration(40)));
 
-    measurements.push_back(measurements::base_ptr_t(
-                new measurements::StateCount(zero, 0.1)));
-    measurements.push_back(measurements::base_ptr_t(
-                new measurements::StateCount(one, 0.1)));
-    measurements.push_back(measurements::base_ptr_t(
-                new measurements::StateCount(two, 0.1)));
-    measurements.push_back(measurements::base_ptr_t(
-                new measurements::FilamentLength(0.1)));
+    measurements["a"] = measurements::base_ptr_t(
+                new measurements::StateCount(zero, 0.1));
+    measurements["b"] = measurements::base_ptr_t(
+                new measurements::StateCount(one, 0.1));
+    measurements["c"] = measurements::base_ptr_t(
+                new measurements::StateCount(two, 0.1));
+    measurements["d"] = measurements::base_ptr_t(
+                new measurements::FilamentLength(0.1));
 
     for (size_t i = 0; i < number_of_filaments; ++i) {
         filaments.push_back(filaments::base_ptr_t(

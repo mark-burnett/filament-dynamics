@@ -31,6 +31,7 @@ _filaments_lookup = {
             'filament_tip_concentration', 'state'] }
 
 _measurements_lookup = {
+        'Concentration': ['state', 'sample_period'],
         'FilamentLength': ['sample_period'],
         'StateCount': ['state', 'sample_period'] }
 
@@ -117,7 +118,6 @@ def build_dict(definition, parameters, module, lookup):
             if kwargs.get(an) is not None]
 
     result = getattr(module, class_name)(*arguments)
-    print result
     return result
 
 def make_dicts(definitions, parameters, module, lookup):
@@ -152,11 +152,10 @@ def dict_filaments(object_graph, parameters):
     return filaments
 
 def dict_measurements(object_graph, parameters):
-    labels, definitions = zip(*object_graph.iteritems())
     result = stochasticpy.MeasurementContainer()
-    for item in make_dicts(definitions, parameters,
-            stochasticpy.measurements, _measurements_lookup):
-        result.append(item)
+    for label, definition in object_graph.iteritems():
+        result[label] = build_dict(definition, parameters,
+                stochasticpy.measurements, _measurements_lookup)
     return result
 
 def dict_transitions(object_graph, parameters):

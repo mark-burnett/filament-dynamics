@@ -87,8 +87,8 @@ measurements::container_t SimulationStrategy::run() {
 
 void SimulationStrategy::initialize_simulation() {
     for (measurements::container_t::iterator mi = _measurements.begin();
-            mi < _measurements.end(); ++mi) {
-        (*mi)->initialize(_filaments, _concentrations);
+            mi != _measurements.end(); ++mi) {
+        mi->second->initialize(_filaments, _concentrations);
     }
     // Initialize end conditions
     for (end_conditions::container_t::iterator ei = _end_conditions.begin();
@@ -99,8 +99,8 @@ void SimulationStrategy::initialize_simulation() {
 
 void SimulationStrategy::record_measurements(double time) {
     for (measurements::container_t::iterator mi = _measurements.begin();
-            mi < _measurements.end(); ++mi) {
-        (*mi)->perform(time, _filaments, _concentrations);
+            mi != _measurements.end(); ++mi) {
+        mi->second->perform(time, _filaments, _concentrations);
     }
 }
 

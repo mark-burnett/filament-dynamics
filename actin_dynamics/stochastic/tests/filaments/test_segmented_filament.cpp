@@ -115,21 +115,19 @@ TEST(SegmentedFilament, UpdateState) {
     EXPECT_EQ(1, f.state_count(three));
 }
 
-/*
 TEST(SegmentedFilament, UpdateBoundary) {
-    filaments::SegmentedFilament f(20, 0);
+    filaments::SegmentedFilament f(20, zero);
 
-    f.update_state(5, 0, 1);
-    f.update_boundary(0, 0, 1, 3);
-    EXPECT_EQ(1, f.boundary_count(0, 3));
-    EXPECT_EQ(1, f.boundary_count(3, 0));
+    f.update_state(5, zero, one);
+    f.update_boundary(0, zero, one, three);
+    EXPECT_EQ(1, f.boundary_count(zero, three));
+    EXPECT_EQ(1, f.boundary_count(three, zero));
 
-    f.update_state(10, 0, 3);
-    EXPECT_EQ(2, f.boundary_count(0, 3));
-    f.update_boundary(1, 0, 3, 4);
-    EXPECT_EQ(1, f.boundary_count(0, 3));
-    EXPECT_EQ(1, f.boundary_count(3, 0));
-    EXPECT_EQ(1, f.boundary_count(0, 4));
-    EXPECT_EQ(1, f.boundary_count(4, 0));
+    f.update_state(10, zero, three);
+    EXPECT_EQ(2, f.boundary_count(zero, three));
+    f.update_boundary(1, zero, three, four);
+    EXPECT_EQ(1, f.boundary_count(zero, three));
+    EXPECT_EQ(1, f.boundary_count(three, zero));
+    EXPECT_EQ(1, f.boundary_count(zero, four));
+    EXPECT_EQ(1, f.boundary_count(four, zero));
 }
-*/
