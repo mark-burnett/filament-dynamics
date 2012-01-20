@@ -43,6 +43,8 @@ _transitions_lookup = {
             'new_state', 'rate', 'byproduct', 'cooperativity'],
         'BarbedEndDepolymerization': ['state', 'rate', 'disable_time'],
         'PointedEndDepolymerization': ['state', 'rate', 'disable_time'],
+        'Monomer': ['old_state', 'new_state', 'rate'],
+        'MonomerWithByproduct': ['old_state', 'new_state', 'rate', 'byproduct'],
         'BarbedEndPolymerization': ['state', 'rate', 'disable_time'],
         'PointedEndPolymerization': ['state', 'rate', 'disable_time'],
         'RandomHydrolysis': ['old_state', 'new_state',

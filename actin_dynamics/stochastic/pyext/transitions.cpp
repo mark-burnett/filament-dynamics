@@ -18,6 +18,7 @@
 #include "transitions/transition.h"
 #include "transitions/association.h"
 #include "transitions/cooperative_hydrolysis.h"
+#include "transitions/monomer.h"
 #include "transitions/polymerization.h"
 #include "transitions/depolymerization.h"
 #include "transitions/random_hydrolysis.h"
@@ -42,6 +43,20 @@ void transitions_level_definitions() {
             .def("initial_R", &Association::initial_R)
             .def("R", &Association::R)
             .def("perform", &Association::perform);
+
+    class_<Monomer, bases<Transition>
+        >("Monomer", init<
+                const State&, const State&, double>())
+            .def("initial_R", &Monomer::initial_R)
+            .def("R", &Monomer::R)
+            .def("perform", &Monomer::perform);
+
+    class_<MonomerWithByproduct, bases<Monomer>
+        >("MonomerWithByproduct", init<
+                const State&, const State&, double, const State &>())
+            .def("initial_R", &MonomerWithByproduct::initial_R)
+            .def("R", &MonomerWithByproduct::R)
+            .def("perform", &MonomerWithByproduct::perform);
 
 
     // Hydrolysis Transitions

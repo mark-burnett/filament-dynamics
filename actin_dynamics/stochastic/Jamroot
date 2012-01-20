@@ -13,6 +13,7 @@ lib stochastic
     src/transitions/association.cpp
     src/transitions/cooperative_hydrolysis.cpp
     src/transitions/depolymerization.cpp
+    src/transitions/monomer.cpp
     src/transitions/polymerization.cpp
     src/transitions/random_hydrolysis.cpp
     src/transitions/tip_hydrolysis.cpp
@@ -33,6 +34,7 @@ exe runtests
     tests/transitions/test_association.cpp
     tests/transitions/test_cooperative_hydrolysis.cpp
     tests/transitions/test_depolymerization.cpp
+    tests/transitions/test_monomer.cpp
     tests/transitions/test_polymerization.cpp
     tests/transitions/test_random_hydrolysis.cpp
     tests/transitions/test_tip_hydrolysis.cpp
