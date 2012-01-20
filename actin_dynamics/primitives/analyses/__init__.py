@@ -16,7 +16,7 @@
 from registry import analysis_registry as registry
 
 #from standard_error_of_mean import *
-from new_sem import *
+from cpp_sem import *
 from tip_diffusion import *
 from individual_filaments import *
 from tip_state_autocorrelation import *

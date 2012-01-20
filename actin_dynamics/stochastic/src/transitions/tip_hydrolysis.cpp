@@ -13,55 +13,59 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "transitions/random_hydrolysis.h"
+#include "transitions/tip_hydrolysis.h"
 
 namespace stochastic {
 namespace transitions {
 
-double RandomHydrolysis::initial_R(double time,
+double TipHydrolysis::initial_R(double time,
         const filaments::container_t &filaments,
         const concentrations::container_t &concentrations) {
-    _filament_counts.reserve(filaments.size());
-    _filament_counts.resize(filaments.size());
-
-    size_t fc;
-    for (size_t i = 0; i < filaments.size(); ++i) {
-        fc = filaments[i]->state_count(_old_state);
-        _filament_counts[i] = fc;
-        _count += fc;
+    _states.reserve(filaments.size());
+    _states.resize(filaments.size());
+    size_t fi = 0;
+    for ( ; fi < filaments.size(); ++fi) {
+        State fstate = get_state(*filaments[fi]);
+        _states[fi] = fstate;
+        if (_old_state == fstate) {
+            ++_count;
+        }
     }
 
     return _rate * _count;
 }
 
-double RandomHydrolysis::R(double time,
+double TipHydrolysis::R(double time,
         const filaments::container_t &filaments,
         const concentrations::container_t &concentrations,
         size_t previous_filament_index) {
-    size_t previous_count = _filament_counts[previous_filament_index];
-    size_t this_count = filaments[previous_filament_index]
-        ->state_count(_old_state);
-
-    _filament_counts[previous_filament_index] = this_count;
-
-    _count += this_count;
-    _count -= previous_count;
+    State previous_state = _states[previous_filament_index];
+    State this_state = get_state(*filaments[previous_filament_index]);
+    if (_old_state == previous_state) {
+        --_count;
+    }
+    if (_old_state == this_state) {
+        ++_count;
+    }
 
     return _rate * _count;
 }
 
-size_t RandomHydrolysis::perform(double time, double r,
+size_t TipHydrolysis::perform(double time, double r,
         filaments::container_t &filaments,
         concentrations::container_t &concentrations) {
-    size_t total_number = r / _rate;
-    for (size_t i = 0; i < _filament_counts.size(); ++i) {
-        if (total_number < _filament_counts[i]) {
-            filaments[i]->update_state(total_number, _old_state, _new_state);
-            return i;
+    size_t fi = 0;
+    for ( ; fi < filaments.size(); ++fi) {
+        if (_old_state == get_state(*filaments[fi])) {
+            if (r < _rate) {
+                perform_filament(*filaments[fi]);
+                return fi;
+            }
+            r -= _rate;
         }
-        total_number -= _filament_counts[i];
     }
-    return 0;
+
+    return fi;
 }
 
 } // namespace transitions

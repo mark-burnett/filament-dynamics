@@ -6,7 +6,7 @@ cleavage_rate: 0.3
 
 # Initial Strand
 seed_concentration: 6
-number_of_filaments: 1000
+number_of_filaments: 100
 
 # Concentrations
 filament_tip_concentration: 0.0112

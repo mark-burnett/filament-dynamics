@@ -13,7 +13,6 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
 #include "measurements/concentration.h"
 
 namespace stochastic {
@@ -32,9 +31,6 @@ void Concentration::perform(double time,
     size_t number_to_record;
     if (sample_period > 0) {
         number_to_record = (time - previous_time) / sample_period;
-        if (number_to_record > 1) {
-            std::cout << "recording " << number_to_record << std::endl;
-        }
     } else {
         number_to_record = 1;
     }

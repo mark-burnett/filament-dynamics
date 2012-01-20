@@ -15,8 +15,6 @@
 
 #include "transitions/polymerization.h"
 
-#include <iostream>
-
 namespace stochastic {
 namespace transitions {
 
@@ -27,7 +25,8 @@ double FixedRatePolymerization::initial_R(double time,
         return 0;
     }
 
-    return _rate * concentrations.find(_state)->second->value() * filaments.size();
+    return _rate * concentrations.find(_state)->second->value()
+        * filaments.size();
 }
 
 double FixedRatePolymerization::R(double time,
