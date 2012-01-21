@@ -39,21 +39,21 @@ TEST(SimulationStrategy, BasicSingleFilamentTest) {
     end_conditions::container_t end_conditions;
     filaments::container_t filaments;
 
-    transitions.push_back(transitions::base_ptr_t(
+    transitions.push_back(transitions::Transition::ptr_t(
                 new transitions::RandomHydrolysis(zero, one, 0.3)));
 
-    end_conditions.push_back(end_conditions::base_ptr_t(
+    end_conditions.push_back(end_conditions::EndCondition::ptr_t(
                 new end_conditions::EventCount(3)));
 
-    measurements["a"] = measurements::base_ptr_t(
+    measurements["a"] = measurements::Measurement::ptr_t(
                 new measurements::StateCount(zero, 0));
-    measurements["b"] = measurements::base_ptr_t(
+    measurements["b"] = measurements::Measurement::ptr_t(
                 new measurements::StateCount(one, 0));
 
     std::vector<State> values;
     values += zero, one, zero, zero, two, one, zero, one;
 
-    filaments.push_back(filaments::base_ptr_t(
+    filaments.push_back(filaments::Filament::ptr_t(
                 new filaments::SimpleFilament(values)));
 
     SimulationStrategy ss(transitions, concentrations, measurements,

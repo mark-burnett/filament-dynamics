@@ -43,26 +43,26 @@ TEST(Integration, OldBasicTest) {
     filaments::container_t filaments;
 
     transitions.push_back(
-            transitions::base_ptr_t(
+            transitions::end_condition::ptr_t(
                 new transitions::RandomHydrolysisWithByproduct(zero, one,
                     0.3, two)));
-    transitions.push_back(transitions::base_ptr_t(
+    transitions.push_back(transitions::Transition::ptr_t(
                 new transitions::BarbedEndPolymerization(zero, 10)));
 
-    end_conditions.push_back(end_conditions::base_ptr_t(
+    end_conditions.push_back(end_conditions::EndCondition::ptr_t(
                 new end_conditions::Duration(40)));
 
-    measurements["a"] = measurements::base_ptr_t(
+    measurements["a"] = measurements::Measurement::ptr_t(
                 new measurements::StateCount(zero, 0.1));
-    measurements["b"] = measurements::base_ptr_t(
+    measurements["b"] = measurements::Measurement::ptr_t(
                 new measurements::StateCount(one, 0.1));
-    measurements["c"] = measurements::base_ptr_t(
+    measurements["c"] = measurements::Measurement::ptr_t(
                 new measurements::StateCount(two, 0.1));
-    measurements["d"] = measurements::base_ptr_t(
+    measurements["d"] = measurements::Measurement::ptr_t(
                 new measurements::FilamentLength(0.1));
 
     for (size_t i = 0; i < number_of_filaments; ++i) {
-        filaments.push_back(filaments::base_ptr_t(
+        filaments.push_back(filaments::Filament::ptr_t(
                     new filaments::DefaultFilament(6/0.0112, one)));
     }
 

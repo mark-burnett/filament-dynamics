@@ -40,12 +40,12 @@ class RandomHydrolysisTest : public testing::Test {
             std::vector<State> values2;
             values2 += one, one, two, zero, two, zero, zero, one;
 
-            one_filament.push_back(filaments::base_ptr_t(
+            one_filament.push_back(filaments::Filament::ptr_t(
                         new filaments::SimpleFilament(values1)));
 
-            two_filaments.push_back(filaments::base_ptr_t(
+            two_filaments.push_back(filaments::Filament::ptr_t(
                         new filaments::SimpleFilament(values1)));
-            two_filaments.push_back(filaments::base_ptr_t(
+            two_filaments.push_back(filaments::Filament::ptr_t(
                         new filaments::SimpleFilament(values2)));
 
             concentrations[zero] = concentrations::Concentration::ptr_t(

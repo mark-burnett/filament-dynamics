@@ -46,9 +46,9 @@ class VectorialHydrolysisTest : public testing::Test {
             std::vector<State> values2;
             values2 += one, one, two, zero, two, zero, zero, zero;
 
-            filaments.push_back(filaments::base_ptr_t(
+            filaments.push_back(filaments::Filament::ptr_t(
                         new filaments::SimpleFilament(values1)));
-            filaments.push_back(filaments::base_ptr_t(
+            filaments.push_back(filaments::Filament::ptr_t(
                         new filaments::SimpleFilament(values2)));
 
             concentrations[zero] = concentrations::Concentration::ptr_t(
