@@ -59,10 +59,11 @@ class Filament : private boost::noncopyable {
                 const State &old_barbed_states,
                 const State &new_barbed_states) = 0;
         virtual std::deque<State> get_states() const = 0;
+
+    typedef boost::shared_ptr<Filament> ptr_t;
 };
 
-typedef boost::shared_ptr<Filament> base_ptr_t;
-typedef std::vector< base_ptr_t > container_t;
+typedef std::vector< Filament::ptr_t > container_t;
 
 } // namespace filaments
 } // namespace stochastic

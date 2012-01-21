@@ -46,14 +46,19 @@ double FixedRateDepolymerization::R(double time,
     if (_disable_time > 0 && time > _disable_time) {
         return 0;
     }
+
     State previous_state = _states[previous_filament_index];
     State this_state = get_state(*filaments[previous_filament_index]);
-    if (_state == previous_state) {
-        --_count;
-    }
+    _states[previous_filament_index] = this_state;
+
     if (_state == this_state) {
         ++_count;
     }
+
+    if (_state == previous_state) {
+        --_count;
+    }
+
     return _rate * _count;
 }
 

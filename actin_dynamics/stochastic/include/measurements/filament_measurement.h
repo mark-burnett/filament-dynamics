@@ -15,6 +15,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <algorithm>
+#include <cmath>
 #include "measurements/measurement.h"
 
 namespace stochastic {
@@ -62,9 +64,34 @@ class FilamentMeasurement : public Measurement {
             return results;
         }
 
+        std::vector<double> get_errors(size_t number_of_filaments) const {
+
+            std::vector<double> means = get_means();
+            std::vector<double> results;
+
+            result_type values = get_values();
+            if (!values.empty()) {
+                const size_t num_filaments = values.size();
+                const size_t num_samples = values[0].size();
+
+                double factor = static_cast<double>(1) / (
+                        std::max(num_filaments, (size_t)2) - 1);
+
+                results.reserve(num_samples);
+                results.resize(num_samples);
+                for (size_t si = 0; si < num_samples; ++si) {
+                    double total = 0;
+                    for (size_t fi = 0; fi < num_filaments; ++fi) {
+                        total += std::pow((values[fi][si] - means[si]), 2);
+                    }
+                    results[si] = factor * std::sqrt(total);
+                }
+            }
+            return results;
+        }
+
         virtual result_type get_values() const = 0;
 };
-
 
 } // namespace measurements
 } // namespace stochastic

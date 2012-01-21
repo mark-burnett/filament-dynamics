@@ -24,14 +24,15 @@ log = logger.getLogger(__file__)
 
 def run_job(job, db_session):
     run = job.run
-    num_sims = int(run.all_parameters['number_of_simulations'])
-    log.info('Staring job %s: %s simulations of run %s.', job.id,
-             num_sims, job.run_id)
-    results = []
-    for i in xrange(num_sims):
-        log.debug('Starting job %s simulation %s.', job.id, i + 1)
-        simulation = factories.simulations.make_run(run)
-        results.append(simulation.run())
+    log.info('Staring job %s: simulation of run %s.', job.id, job.run_id)
+    simulation = factories.simulations.make_run(run)
+    print 'simulation created'
+    try:
+        results = simulation.run()
+    except object as e:
+        print 'simulation failed:'
+        print e
+    print 'simulation finished'
 
     for analysis in run.experiment.analysis_list:
         log.debug('Analysing job %s: %s.', job.id, analysis.label)
@@ -50,24 +51,5 @@ def run_job(job, db_session):
         o.perform(job.run, objective)
         log.debug('Storing summary of %s for job %s (%s).',
                   objective.bind.label, job.id, objective.value)
-# XXX For now drop slice information
-#        store_summary_information(objective)
 
     log.info('Finished job %s.', job.id)
-
-def store_summary_information(objective):
-    parameters = objective.all_parameters
-    values = dict((col_name, parameters[par_name])
-                  for par_name, col_name in
-    # XXX Stupid 0....
-                      objective.bind.slice_definition[0].column_map.iteritems())
-#    log.debug('Storing value = %s for objective_id = %s',
-#              objective.value, objective.id)
-    values['objective_id'] = objective.id
-    values['value'] = objective.value
-
-    # XXX Stupid 0....
-    table = schema.Table(objective.bind.slice_definition[0].table_name,
-                         database.global_state.metadata,
-                         autoload=True)
-    table.insert(values).execute()

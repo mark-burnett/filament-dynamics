@@ -243,6 +243,8 @@ void SegmentedFilament::update_boundary(size_t instance_number,
                 }
                 ++count;
             }
+            ++pointed_segment;
+            ++barbed_segment;
         }
     }
 }

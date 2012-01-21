@@ -35,10 +35,11 @@ class Transition {
         virtual size_t perform(double time, double r,
                     filaments::container_t &filaments,
                     concentrations::container_t &concentrations) = 0;
+
+    typedef boost::shared_ptr<Transition> ptr_t;
 };
 
-typedef boost::shared_ptr<Transition> base_ptr_t;
-typedef std::vector< base_ptr_t > container_t;
+typedef std::vector< Transition::ptr_t > container_t;
 
 } // namespace transitions
 } // namespace stochastic

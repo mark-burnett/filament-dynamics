@@ -1,7 +1,8 @@
 models:
     transitions:
         pi_release_in_solution:
-            class_name: ConcentrationChangeWithByproduct
+            class_name: MonomerWithByproduct
+#            class_name: ConcentrationChangeWithByproduct
             variable_arguments:
                 rate: solution_pi_release_rate
             fixed_arguments:

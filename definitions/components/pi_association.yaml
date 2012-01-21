@@ -1,11 +1,12 @@
 models:
     transitions:
         reverse_release:
-            class_name: ReverseRelease
+#            class_name: ReverseRelease
+            class_name: Association
             fixed_arguments:
                 old_state: ADP
                 new_state: ADPPi
-                concentration: Pi
+                associating_state: Pi
             variable_arguments:
                 rate: reverse_release_rate
 

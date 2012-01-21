@@ -1,7 +1,7 @@
 models:
     transitions:
         tagged_barbed_end_pi_release:
-            class_name: BarbedEndHydrolysisWithByproduct
+            class_name: BarbedTipHydrolysisWithByproduct
             fixed_arguments:
                 old_state: ADPPi_tagged
                 new_state: ADP
@@ -10,7 +10,7 @@ models:
                 rate: barbed_tip_release_rate
 
         tagged_pointed_end_pi_release:
-            class_name: PointedEndHydrolysisWithByproduct
+            class_name: PointedTipHydrolysisWithByproduct
             fixed_arguments:
                 old_state: ADPPi_tagged
                 new_state: ADP

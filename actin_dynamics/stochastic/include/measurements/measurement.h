@@ -39,15 +39,17 @@ class Measurement : private boost::noncopyable {
 
         virtual std::vector<double> get_times() const = 0;
         virtual std::vector<double> get_means() const = 0;
+        virtual std::vector<double> get_errors(
+                size_t number_of_filaments) const = 0;
 
 
         const double sample_period;
         double previous_time;
+
+    typedef boost::shared_ptr<Measurement> ptr_t;
 };
 
-typedef boost::shared_ptr<Measurement> base_ptr_t;
-typedef std::map< std::string,
-        boost::shared_ptr< measurements::Measurement > > container_t;
+typedef std::map< std::string, Measurement::ptr_t > container_t;
 
 } // namespace measurements
 } // namespace stochastic

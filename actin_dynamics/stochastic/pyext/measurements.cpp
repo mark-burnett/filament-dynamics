@@ -32,7 +32,8 @@ void measurements_level_definitions() {
         .def("initialize", &Measurement::initialize)
         .def("perform",    &Measurement::perform)
         .def("get_times",  &Measurement::get_times)
-        .def("get_means",  &Measurement::get_means);
+        .def("get_means",  &Measurement::get_means)
+        .def("get_errors",  &Measurement::get_errors);
 
     class_<Concentration, bases<Measurement>,
         boost::shared_ptr<Concentration>,
@@ -41,7 +42,8 @@ void measurements_level_definitions() {
             .def("initialize", &Concentration::initialize)
             .def("perform",    &Concentration::perform)
             .def("get_times",  &Concentration::get_times)
-            .def("get_means",  &Concentration::get_means);
+            .def("get_means",  &Concentration::get_means)
+            .def("get_errors",  &Measurement::get_errors);
 
     class_<FilamentMeasurement<size_t>, bases<Measurement>,
         boost::shared_ptr<FilamentMeasurement<size_t> >,
@@ -49,7 +51,8 @@ void measurements_level_definitions() {
             .def("initialize", &FilamentMeasurement<size_t>::initialize)
             .def("perform", &FilamentMeasurement<size_t>::perform)
             .def("get_times", &FilamentMeasurement<size_t>::get_times)
-            .def("get_means", &FilamentMeasurement<size_t>::get_means);
+            .def("get_means", &FilamentMeasurement<size_t>::get_means)
+            .def("get_errors",  &Measurement::get_errors);
 
     class_<FilamentLength, bases<FilamentMeasurement<size_t> >,
         boost::shared_ptr<FilamentLength>,
@@ -57,7 +60,8 @@ void measurements_level_definitions() {
             .def("initialize", &FilamentLength::initialize)
             .def("perform", &FilamentLength::perform)
             .def("get_times", &FilamentLength::get_times)
-            .def("get_means", &FilamentLength::get_means);
+            .def("get_means", &FilamentLength::get_means)
+            .def("get_errors",  &Measurement::get_errors);
 
     class_<StateCount, bases<FilamentMeasurement<size_t> >,
         boost::shared_ptr<StateCount>,
@@ -66,5 +70,6 @@ void measurements_level_definitions() {
             .def("initialize", &StateCount::initialize)
             .def("perform", &StateCount::perform)
             .def("get_times", &StateCount::get_times)
-            .def("get_means", &StateCount::get_means);
+            .def("get_means", &StateCount::get_means)
+            .def("get_errors",  &Measurement::get_errors);
 }

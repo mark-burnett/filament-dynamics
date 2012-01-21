@@ -1,4 +1,4 @@
-name: 'Melki Timecourse, rho_v = 1000000'
+name: '(C++) Melki Timecourse, rho_v = 1000000'
 
 import:
     - 'melki/timecourse_base.yaml'

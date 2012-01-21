@@ -2,45 +2,51 @@ models:
     transitions:
         # Polymerization
         pointed_atp_polymerization:
-            class_name: PointedPolymerization
+            class_name: PointedEndPolymerization
             fixed_arguments:
                 state: ATP
+                disable_time: -1
             variable_arguments:
                 rate: pointed_atp_polymerization_rate
 
         pointed_adppi_polymerization:
-            class_name: PointedPolymerization
+            class_name: PointedEndPolymerization
             fixed_arguments:
                 state: ADPPi
+                disable_time: -1
             variable_arguments:
                 rate: pointed_adppi_polymerization_rate
 
         pointed_adp_polymerization:
-            class_name: PointedPolymerization
+            class_name: PointedEndPolymerization
             fixed_arguments:
                 state: ADP
+                disable_time: -1
             variable_arguments:
                 rate: pointed_adp_polymerization_rate
 
 
         # Depolymerization
         pointed_atp_depolymerization:
-            class_name: PointedDepolymerization
+            class_name: PointedEndDepolymerization
             fixed_arguments:
                 state: ATP
+                disable_time: -1
             variable_arguments:
                 rate: pointed_atp_depolymerization_rate
 
         pointed_adppi_depolymerization:
-            class_name: PointedDepolymerization
+            class_name: PointedEndDepolymerization
             fixed_arguments:
                 state: ADPPi
+                disable_time: -1
             variable_arguments:
                 rate: pointed_adppi_depolymerization_rate
 
         pointed_adp_depolymerization:
-            class_name: PointedDepolymerization
+            class_name: PointedEndDepolymerization
             fixed_arguments:
                 state: ADP
+                disable_time: -1
             variable_arguments:
                 rate: pointed_adp_depolymerization_rate

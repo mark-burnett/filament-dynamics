@@ -36,10 +36,10 @@ class EndCondition : public boost::noncopyable {
         virtual bool satisfied(double time,
                 const filaments::container_t &filaments,
                 const concentrations::container_t &concentrations) = 0;
+    typedef boost::shared_ptr<EndCondition> ptr_t;
 };
 
-typedef boost::shared_ptr<EndCondition> base_ptr_t;
-typedef std::vector< base_ptr_t > container_t;
+typedef std::vector< EndCondition::ptr_t > container_t;
 
 } // namespace end_conditions
 } // namespace stochastic

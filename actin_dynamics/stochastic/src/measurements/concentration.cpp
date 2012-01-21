@@ -13,6 +13,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <cmath>
 #include "measurements/concentration.h"
 
 namespace stochastic {
@@ -52,6 +53,21 @@ std::vector<double> Concentration::get_times() const {
 
 std::vector<double> Concentration::get_means() const {
     return _values;
+}
+
+std::vector<double> Concentration::get_errors(
+        size_t number_of_filaments) const {
+    std::vector<double> result;
+    result.reserve(_values.size());
+    result.resize(_values.size());
+
+    double factor = 1 / std::sqrt(number_of_filaments);
+
+    for (size_t i = 0; i < _values.size(); ++i) {
+        result[i] = _values[i] * factor;
+    }
+
+    return result;
 }
 
 } // namespace measurements

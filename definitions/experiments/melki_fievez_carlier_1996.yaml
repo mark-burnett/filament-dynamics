@@ -3,11 +3,9 @@ experiments:
         simulation:
             filaments:
                 filament_factory:
-#                    class_name: SingleStateFixedLengthFromConcentrations
                     class_name: DefaultFilament
                     variable_arguments:
-                        number: number_of_filaments
-                        concentration: seed_concentration
+                        seed_concentration: seed_concentration
                         filament_tip_concentration: filament_tip_concentration
                     fixed_arguments:
                         state: ADP
@@ -16,26 +14,23 @@ experiments:
                 ATP:
                     class_name: FixedReagent
                     variable_arguments:
-                        sample_period: sample_period
                         initial_concentration: initial_concentration
                         filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
+                        number_of_filaments: number_of_filaments
 
                 ADPPi:
                     class_name: FixedReagent
                     variable_arguments:
-                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
+                        number_of_filaments: number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 
                 ADP:
                     class_name: FixedReagent
                     variable_arguments:
-                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
+                        number_of_filaments: number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -43,9 +38,8 @@ experiments:
                 Pi:
                     class_name: FixedReagent
                     variable_arguments:
-                        sample_period: sample_period
                         filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
+                        number_of_filaments: number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 

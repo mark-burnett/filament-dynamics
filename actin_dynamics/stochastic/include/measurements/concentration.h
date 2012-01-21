@@ -42,6 +42,7 @@ class Concentration : public Measurement {
 
         std::vector<double> get_times() const;
         std::vector<double> get_means() const;
+        std::vector<double> get_errors(size_t number_of_filaments) const;
 };
 
 } // namespace measurements

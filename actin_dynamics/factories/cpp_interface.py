@@ -16,64 +16,135 @@
 from actin_dynamics import stochasticpy
 
 _concentrations_lookup = {
-        'FixedConcentration': ['concentration'],
-        'FixedReagent': ['initial_concentration',
-            'filament_tip_concentration', 'number_of_filaments'] }
+        'FixedConcentration': [
+            (float, 'concentration')],
+        'FixedReagent': [
+            (float, 'initial_concentration'),
+            (float, 'filament_tip_concentration'),
+            (int, 'number_of_filaments')] }
 
 _end_conditions_lookup = {
-        'Duration': ['duration'],
-        'EventCount': ['max_events'] }
+        'Duration': [
+            (float, 'duration')],
+        'EventCount': [
+            (int, 'max_events')] }
 
 _filaments_lookup = {
-        'SegmentedFilament': ['seed_concentration',
-            'filament_tip_concentration', 'state'],
-        'DefaultFilament': ['seed_concentration',
-            'filament_tip_concentration', 'state'] }
+        'SegmentedFilament': [
+            (float, 'seed_concentration'),
+            (float, 'filament_tip_concentration'),
+            (str, 'state')],
+        'DefaultFilament': [
+            (float, 'seed_concentration'),
+            (float, 'filament_tip_concentration'),
+            (str, 'state')] }
 
 _measurements_lookup = {
-        'Concentration': ['state', 'sample_period'],
-        'FilamentLength': ['sample_period'],
-        'StateCount': ['state', 'sample_period'] }
+        'Concentration': [
+            (str, 'state'),
+            (float, 'sample_period')],
+        'FilamentLength': [
+            (float, 'sample_period')],
+        'StateCount': [
+            (str, 'state'),
+            (float, 'sample_period')] }
 
 _transitions_lookup = {
-        'Association': ['associating_state', 'old_state', 'new_state', 'rate'],
-        'CooperativeHydrolysis': ['pointed_neighbor', 'old_state',
-            'new_state', 'rate', 'cooperativity'],
-        'CooperativeHydrolysisWithByproduct': ['pointed_neighbor', 'old_state',
-            'new_state', 'rate', 'byproduct', 'cooperativity'],
-        'BarbedEndDepolymerization': ['state', 'rate', 'disable_time'],
-        'PointedEndDepolymerization': ['state', 'rate', 'disable_time'],
-        'Monomer': ['old_state', 'new_state', 'rate'],
-        'MonomerWithByproduct': ['old_state', 'new_state', 'rate', 'byproduct'],
-        'BarbedEndPolymerization': ['state', 'rate', 'disable_time'],
-        'PointedEndPolymerization': ['state', 'rate', 'disable_time'],
-        'RandomHydrolysis': ['old_state', 'new_state',
-            'rate', 'cooperativity'],
-        'RandomHydrolysisWithByproduct': ['old_state', 'new_state',
-            'rate', 'byproduct'],
-        'BarbedTipHydroylsis': ['old_state', 'new_state', 'rate'],
-        'PointedTipHydroylsis': ['old_state', 'new_state', 'rate'],
-        'BarbedTipHydroylsisWithByproduct': ['old_state', 'new_state',
-            'rate', 'byproduct'],
-        'PointedTipHydroylsisWithByproduct': ['old_state', 'new_state',
-            'rate', 'byproduct'],
-        'VectorialHydrolysis': ['pointed_neighbor', 'old_state',
-            'new_state', 'rate'],
-        'VectorialHydrolysisWithByproduct': ['pointed_neighbor', 'old_state',
-            'new_state', 'rate', 'byproduct'] }
+        'Association': [
+            (str, 'associating_state'),
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate')],
+        'CooperativeHydrolysis': [
+            (str, 'pointed_neighbor'),
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate'),
+            (float, 'cooperativity')],
+        'CooperativeHydrolysisWithByproduct': [
+            (str, 'pointed_neighbor'),
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate'),
+            (str, 'byproduct'),
+            (float, 'cooperativity')],
+        'BarbedEndDepolymerization': [
+            (str, 'state'),
+            (float, 'rate'),
+            (float, 'disable_time')],
+        'PointedEndDepolymerization': [
+            (str, 'state'),
+            (float, 'rate'),
+            (float, 'disable_time')],
+        'Monomer': [
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate')],
+        'MonomerWithByproduct': [
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate'),
+            (str, 'byproduct')],
+        'BarbedEndPolymerization': [
+            (str, 'state'),
+            (float, 'rate'),
+            (float, 'disable_time')],
+        'PointedEndPolymerization': [
+            (str, 'state'),
+            (float, 'rate'),
+            (float, 'disable_time')],
+        'RandomHydrolysis': [
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate'),
+            (float, 'cooperativity')],
+        'RandomHydrolysisWithByproduct': [
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate'),
+            (str, 'byproduct')],
+        'BarbedTipHydrolysis': [
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate')],
+        'PointedTipHydrolysis': [
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate')],
+        'BarbedTipHydrolysisWithByproduct': [
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate'),
+            (str, 'byproduct')],
+        'PointedTipHydrolysisWithByproduct': [
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate'),
+            (str, 'byproduct')],
+        'VectorialHydrolysis': [
+            (str, 'pointed_neighbor'),
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate')],
+        'VectorialHydrolysisWithByproduct': [
+            (str, 'pointed_neighbor'),
+            (str, 'old_state'),
+            (str, 'new_state'),
+            (float, 'rate'),
+            (str, 'byproduct')] }
 
 def build_binding(binding, parameters, module, lookup):
+    class_name = binding.class_name
     var_args = dict((local_name, parameters[global_name])
-          for local_name, global_name in bind.variable_arguments.iteritems())
+          for local_name, global_name in
+              binding.variable_arguments.iteritems())
 
     kwargs = dict(var_args)
     kwargs['label'] = binding.label
     kwargs.update(binding.fixed_arguments)
-    # maybe?
-#    kwargs.update(parameters)
 
     argument_names = lookup[class_name]
-    arguments = [kwargs.get(an) for an in argument_names
+    arguments = [ctor(kwargs.get(an)) for ctor, an in argument_names
             if kwargs.get(an) is not None]
 
     return getattr(module, binding.class_name)(*arguments)
@@ -89,28 +160,45 @@ def make_bindings(bindings, parameters, module, lookup):
 def bind_concentrations(bindings, parameters):
     states = [b.label for b in bindings]
 
-    object_list = bind_bindings(bindings, parameters,
+    result = stochasticpy.ConcentrationContainer()
+    object_list = make_bindings(bindings, parameters,
             stochasticpy.concentrations, _concentrations_lookup)
-    return dict(zip(states, object_list))
+    for s, o in zip(states, object_list):
+        result[s] = o
+    return result
 
 def bind_end_conditions(bindings, parameters):
-    return bind_bindings(bindings, parameters,
-            stochasticpy.end_conditions, _end_conditions_lookup)
+    result = stochasticpy.EndConditionContainer()
+    for item in make_bindings(bindings, parameters,
+            stochasticpy.end_conditions, _end_conditions_lookup):
+        result.append(item)
+    return result
 
 def bind_filaments(bindings, parameters):
-    filaments = []
-    for i in xrange(parameters['number_of_filaments']):
+    filaments = stochasticpy.FilamentContainer()
+    for i in xrange(int(parameters['number_of_filaments'])):
         filaments.append(build_binding(bindings[0], parameters,
             stochasticpy.filaments, _filaments_lookup))
     return filaments
 
 def bind_measurements(bindings, parameters):
-    return bind_bindings(bindings, parameters,
+    labels = [b.label for b in bindings]
+    result = stochasticpy.MeasurementContainer()
+    object_list = make_bindings(bindings, parameters,
             stochasticpy.measurements, _measurements_lookup)
+    for l, o in zip(labels, object_list):
+        result[l] = o
+    return result
 
 def bind_transitions(bindings, parameters):
-    return bind_bindings(bindings, parameters,
-            stochasticpy.transitions, _transitions_lookup)
+    for i, b in enumerate(bindings):
+        print i, b.label
+
+    result = stochasticpy.TransitionContainer()
+    for item in make_bindings(bindings, parameters,
+            stochasticpy.transitions, _transitions_lookup):
+        result.append(item)
+    return result
 
 
 def build_dict(definition, parameters, module, lookup):
@@ -123,11 +211,11 @@ def build_dict(definition, parameters, module, lookup):
     kwargs.update(definition.get('fixed_arguments', {}))
 
     argument_names = lookup[class_name]
-    arguments = [kwargs.get(an) for an in argument_names
+    arg_constructors = [kwargs.get(an) for an in argument_names
             if kwargs.get(an) is not None]
+    arguments = [c(d) for c, d in arg_constructors]
 
-    result = getattr(module, class_name)(*arguments)
-    return result
+    return getattr(module, class_name)(*arguments)
 
 def make_dicts(definitions, parameters, module, lookup):
     return [build_dict(d, parameters, module, lookup)
@@ -155,9 +243,8 @@ def dict_filaments(object_graph, parameters):
     labels, definitions = zip(*object_graph.iteritems())
     filaments = stochasticpy.FilamentContainer()
     for i in xrange(parameters['number_of_filaments']):
-        f = build_dict(definitions[0], parameters,
-                stochasticpy.filaments, _filaments_lookup)
-        filaments.append(f)
+        filaments.append(build_dict(definitions[0], parameters,
+                stochasticpy.filaments, _filaments_lookup))
     return filaments
 
 def dict_measurements(object_graph, parameters):

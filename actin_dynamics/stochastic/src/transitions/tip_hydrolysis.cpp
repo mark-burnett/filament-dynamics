@@ -41,6 +41,8 @@ double TipHydrolysis::R(double time,
         size_t previous_filament_index) {
     State previous_state = _states[previous_filament_index];
     State this_state = get_state(*filaments[previous_filament_index]);
+    _states[previous_filament_index] = this_state;
+
     if (_old_state == previous_state) {
         --_count;
     }
@@ -54,8 +56,7 @@ double TipHydrolysis::R(double time,
 size_t TipHydrolysis::perform(double time, double r,
         filaments::container_t &filaments,
         concentrations::container_t &concentrations) {
-    size_t fi = 0;
-    for ( ; fi < filaments.size(); ++fi) {
+    for (size_t fi = 0; fi < filaments.size(); ++fi) {
         if (_old_state == get_state(*filaments[fi])) {
             if (r < _rate) {
                 perform_filament(*filaments[fi]);
@@ -65,7 +66,7 @@ size_t TipHydrolysis::perform(double time, double r,
         }
     }
 
-    return fi;
+    return 0;
 }
 
 } // namespace transitions

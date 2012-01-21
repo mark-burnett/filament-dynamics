@@ -64,6 +64,12 @@ python-extension stochasticpy
     <library>/usr/lib/libboost_python.so
   ;
 
+exe measure
+  : src/profile.cpp
+    stochastic
+  : <include>include
+  ;
+
 install install-extension
   : stochasticpy
   : <location>$(INSTALL_ROOT)/actin_dynamics

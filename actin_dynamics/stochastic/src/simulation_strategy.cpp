@@ -27,7 +27,7 @@ measurements::container_t SimulationStrategy::run() {
     std::vector<double> transition_rates;
     transition_rates.resize(_transitions.size());
 
-    size_t previous_filament_index;
+    size_t previous_filament_index = 0;
 
     // Calculate rates for the next timestep.
     double R = 0;
@@ -39,20 +39,22 @@ measurements::container_t SimulationStrategy::run() {
 
     // First update the time & perform measurements
     time += log(1 / _random(1)) / R;
+
     record_measurements(time);
 
     // Decide which transition to perform.
     double r = _random(R);
 
-    size_t ti = 0;
-    while (r >= transition_rates[ti]) {
+    for (size_t ti = 0; ti < transition_rates.size(); ++ti) {
+        if (r < transition_rates[ti]) {
+//            std::cout << "ti = " << ti << " of " << _transitions.size()
+//                << std::endl;
+            previous_filament_index = _transitions[ti]->perform(time, r,
+                    _filaments, _concentrations);
+            break;
+        }
         r -= transition_rates[ti];
-        ++ti;
     }
-    assert(ti < transition_rates.size());
-    previous_filament_index = _transitions[ti]->perform(time, r,
-            _filaments, _concentrations);
-
 
     while (end_conditions_not_met(time)) {
         // Calculate rates for the next timestep.
@@ -61,6 +63,7 @@ measurements::container_t SimulationStrategy::run() {
             transition_rates[tip] = _transitions[tip]->R(time,
                     _filaments, _concentrations, previous_filament_index);
             R += transition_rates[tip];
+//            std::cout << tip << " -> " << transition_rates[tip] << std::endl;
         }
         if (0 == R) {
             break;
@@ -72,13 +75,21 @@ measurements::container_t SimulationStrategy::run() {
 
         // Decide which transition to perform.
         r = _random(R);
-        ti = 0;
-        while (!(r < transition_rates[ti])) {
+
+//        std::cout << "r = " << r << " of " << R << std::endl;
+
+        for (size_t ti = 0; ti < transition_rates.size(); ++ti) {
+            if (r < transition_rates[ti]) {
+//                std::cout << "ti = " << ti << " of " << _transitions.size()
+//                    << std::endl;
+                previous_filament_index = _transitions[ti]->perform(time, r,
+                        _filaments, _concentrations);
+                break;
+            }
             r -= transition_rates[ti];
-            ++ti;
         }
-        previous_filament_index = _transitions[ti]->perform(time, r,
-                _filaments, _concentrations);
+
+//        std::cout << "lap, pfi = " << previous_filament_index << std::endl;
     }
 
     return _measurements;

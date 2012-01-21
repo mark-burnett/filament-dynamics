@@ -54,13 +54,15 @@ size_t VectorialHydrolysis::perform(double time, double r,
         filaments::container_t &filaments,
         concentrations::container_t &concentrations) {
     size_t total_number = r / _rate;
-    size_t i = 0;
-    while (total_number >= _filament_counts[i]) {
+    for (size_t i = 0; i < _filament_counts.size(); ++i) {
+        if (total_number < _filament_counts[i]) {
+            filaments[i]->update_boundary(total_number,
+                    _pointed_neighbor, _old_state, _new_state);
+            return i;
+        }
         total_number -= _filament_counts[i];
-        ++i;
     }
-    filaments[i]->update_boundary(total_number, _pointed_neighbor, _old_state, _new_state);
-    return i;
+    return 0;
 }
 
 } // namespace transitions
