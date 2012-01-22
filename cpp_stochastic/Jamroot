@@ -1,4 +1,4 @@
-local INSTALL_ROOT = "../.." ;
+local INSTALL_ROOT = ".." ;
 
 using python ;
 

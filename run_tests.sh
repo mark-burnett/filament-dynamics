@@ -46,8 +46,8 @@ display_args() {
 
 run_c_tests() {
     echo "Running C++ tests..."
-    pushd actin_dynamics/stochastic > /dev/null
-    make check
+    pushd cpp_stochastic > /dev/null
+    bjam -q runtests && ./runtests
     popd > /dev/null
     echo
 }
@@ -64,7 +64,7 @@ run_integration_tests() {
     echo
 }
 
-while getopts "uih" FLAG; do
+while getopts "cuih" FLAG; do
     case $FLAG in
         "c")
             ARGUMENTS_RECEIVED=true

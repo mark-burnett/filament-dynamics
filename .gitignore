@@ -14,5 +14,5 @@ push.sh
 runtests
 lib/
 actin_dynamics/stochasticpy.so
-actin_dynamics/stochastic/bin
-actin_dynamics/stochastic/install
+cpp_stochastic/bin
+cpp_stochastic/install
