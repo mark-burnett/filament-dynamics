@@ -15,10 +15,7 @@
 
 from registry import end_condition_registry as registry
 
-from duration import *
 from threshold import *
 from length import *
-
-del duration
 
 del base_classes
