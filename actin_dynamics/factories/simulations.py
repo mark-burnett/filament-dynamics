@@ -13,29 +13,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#from . import bindings
-#
-#from ..simulation_strategy import Simulation
-
-#def make_run(run):
-#    parameters = run.all_parameters
-#
-#    filament_factories = bindings.db_multiple(run.filaments,      parameters)
-#    transitions        = bindings.db_multiple(run.transitions,    parameters)
-#    measurements       = bindings.db_multiple(run.measurements,   parameters)
-#    end_conditions     = bindings.db_multiple(run.end_conditions, parameters)
-#    concentration_list = bindings.db_multiple(run.concentrations, parameters)
-#
-#    filaments = []
-#    for ff in filament_factories:
-#        filaments.extend(ff.create())
-#
-#    concentrations = dict((c.label, c) for c in concentration_list)
-#
-#    return Simulation(transitions=transitions, concentrations=concentrations,
-#                      measurements=measurements, end_conditions=end_conditions,
-#                      filaments=filaments)
-
 from actin_dynamics import stochasticpy
 
 from . import cpp_interface
