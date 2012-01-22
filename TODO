@@ -1,102 +1,17 @@
-[ --- Immediate Steps --- ] 
-
-to code/configure:
-    depolymerization bulk pyrene stuff
-        (done) disable transitions at concentration threshold
-        (done) configuration files
-        (done) run with flat pyrene coefs
-        (not now) floating fit (for chi^2 v rho curve)
-            2 free parameters (* scale, + background) & time adjustment
-        
-        (not now) try it with 4 state random model?
-
-to explore:
-    make sure that large rho depoly timecourses look like vectorial
-    (not now) run pyrene depoly sim with large num filaments per sim
-        statistical spread may explain bulk depoly timecourse
-
-to run:
-    fit melki rates for lots of cooperativities
-    fnc variation sims for a few rhos
-    depoly timecourse sims for (rho 1, 1000, vectorial) for both par sets
-    copoly sims for power of 10 rhos
-    pi variation sims for all rhos
-    tagged pi variation sims for (all) rhos
-
-to write:
-    sections:
-        intro
-        analysis of past experiments
-        proposed experiments
-        conclusions/discussion
-
-    extend results
-    make sure global fit discussion says "bulk and single-filament data"
-
-    everything else
-
-[ --- First paper goals --- ]
-
-*error estimation
-    - make sure the SEM new model is a o k
-        * are we doing concentration SEMs right? (there is not std per run)
-
-    - figure out how to calculate the error in the halftime
-        SEM of [Pi] / d[Pi]/dt @ [Pi] halftime
-            average SEM of containing points
-        * check that this works
-            e.g. regenerate melki random timecourse timecourse
-
-    - propagate error estimate to rate
-        SEM of halftime / sensitivity
-        
-
-*halftime sensitivity (various cooperativities)
-    propagate error estimate
-
-
-rate - cooperativity relationship (from melki)
-
-
-fnc variation
-    - use carlier86 conditions
-    - show carlier86 points
-    - show random, vectorial, carlier86 "bounding"/fitting cooperative traces
-    + carlier86 halftime is 1000s
-        is it simply the FNC & [G-actin]?
-        is this because of nucleation?
-        is there a problem with the experiment?
-
-
-*depolymerization timecourse/profile (recent carlier)
-    - plot data + lots of light single filament traces
-    - plot chi^2 fit to pyrene time courses vs rho
-        fit figure 2D of 2011 data with Frank's pyrene coefficients
-        be sure to look at individual pyrene timecourses
-
-
-copoly spread
-    - add P & W points (to see how they look)
-
-
-pi variation
-
-
 [ --- Framework Thoughts --- ]
 
 Missing features:
     nucleation, filament deletion, severing, and annealing
     "multi-stage" simulations
-    derived parameters
+    derived parameters (e.g. volume)
     monitoring/completion estimates
     job continuation/extension (more stats or restarting)
         also easy additional analysis on previous sims
 
 Misc problems/thoughts:
-    it's probably reasonable to store much more data than I am now
     visualization/analysis code is kind of terrible
         perhaps it should be thought of as more ad hoc, with the core
-            framework only generating actually timecourses?
+            framework only generating actual timecourses?
 
 Key components:
     - job control
@@ -122,14 +37,3 @@ Other shiny things:
     require worker code revision to match controller code revision
         (have setting to require clean/no modifications?)
     get delete cascading correct
-
-[ ------------------------- ]
-
-delete unused visualization code
-
-Fix up database cascading.
-
-Add database constraints for 1 or more experiments per session, runs per experiment?
-
-Add validation for config files (separate program to check file set).
-    Pretty sure most of this code exists in main branch.

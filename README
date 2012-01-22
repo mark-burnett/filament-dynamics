@@ -19,6 +19,8 @@ summer, as I refactor the project to a global fit paradigm.
 
 CPython version 2.6 or later (Not 3.x ready yet.)
 
+The Boost c++ library, and build system (bjam).
+
 mysql
     you can just use sqlite for testing, but for the real deal, use
     mysql (postgresql should also work)
@@ -42,20 +44,21 @@ matplotlib
 ------------------------------------------------------------------------
 - Setup                                                                -
 ------------------------------------------------------------------------
+    First, you must compile the C++ component of this package:
+
+cd cpp_stochastic
+bjam -q install
+cd ..
+    
     Before you bother running any simulations, I highly recommend that
 you perform all the unit tests and integration tests:
 
-./run_tests.sh -ui
+./run_tests.sh -cui
 
     If they do not all pass, you should make sure that all required packages
-are installed, then start hunting for the problem.  If you need help getting
-the software to run, please check the project's Google Code site (especially
-the wiki).
+are installed, then start hunting for the problem.
 
 # XXX add discussion about database setup
-
-    If you have found a portability issue or other bug, please submit a ticket
-on the project's Google Code site.
 
 ------------------------------------------------------------------------
 - Running                                                              -
