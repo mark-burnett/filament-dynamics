@@ -13,7 +13,6 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
 #include <cmath>
 
 #include "simulation_strategy.h"
@@ -48,16 +47,12 @@ measurements::container_t SimulationStrategy::run() {
 
     for (size_t ti = 0; ti < transition_rates.size(); ++ti) {
         if (r < transition_rates[ti]) {
-//            std::cout << "ti = " << ti << " of " << _transitions.size()
-//                << std::endl;
             previous_filament_index = _transitions[ti]->perform(time, r,
                     _filaments, _concentrations);
             break;
         }
         r -= transition_rates[ti];
     }
-
-    double print_time = 0;
 
     while (end_conditions_not_met(time)) {
         // Calculate rates for the next timestep.
@@ -66,7 +61,6 @@ measurements::container_t SimulationStrategy::run() {
             transition_rates[tip] = _transitions[tip]->R(time,
                     _filaments, _concentrations, previous_filament_index);
             R += transition_rates[tip];
-//            std::cout << tip << " -> " << transition_rates[tip] << std::endl;
         }
         if (0 == R) {
             break;
@@ -74,21 +68,13 @@ measurements::container_t SimulationStrategy::run() {
 
         // First update the time & perform measurements
         time += log(1 / _random(1)) / R;
-        if (time > print_time) {
-            std::cerr << "time = " << time << std::endl;
-            print_time += 1;
-        }
         record_measurements(time);
 
         // Decide which transition to perform.
         r = _random(R);
 
-//        std::cout << "r = " << r << " of " << R << std::endl;
-
         for (size_t ti = 0; ti < transition_rates.size(); ++ti) {
             if (r < transition_rates[ti]) {
-//                std::cout << "ti = " << ti << " of " << _transitions.size()
-//                    << std::endl;
                 previous_filament_index = _transitions[ti]->perform(time, r,
                         _filaments, _concentrations);
                 break;
@@ -96,7 +82,6 @@ measurements::container_t SimulationStrategy::run() {
             r -= transition_rates[ti];
         }
 
-//        std::cout << "lap, pfi = " << previous_filament_index << std::endl;
     }
 
     return _measurements;

@@ -42,17 +42,14 @@ class SimulationStrategy {
             _measurements(measurements),
             _end_conditions(end_conditions),
             _filaments(filaments),
-            _rng(generate_random_seed()),
-            _vg(_rng, boost::uniform_real<>(0, 1)) {}
+            _rng(generate_random_seed()) {}
 
         measurements::container_t run();
 
-        // XXX There must be a cleaner way to do this.
         inline double _random(double max) {
-            return _vg() * max;
-//            _distribution_t d(0, max);
-//            _variate_t vg(_rng, d);
-//            return vg();
+            _distribution_t d(0, max);
+            _variate_t vg(_rng, d);
+            return vg();
         }
 
     private:
@@ -64,9 +61,8 @@ class SimulationStrategy {
 
         typedef boost::mt19937 _rng_t;
         typedef boost::uniform_real<> _distribution_t;
-        typedef boost::variate_generator<_rng_t, _distribution_t> _variate_t;
+        typedef boost::variate_generator<_rng_t &, _distribution_t> _variate_t;
         _rng_t _rng;
-        _variate_t _vg;
 
         void initialize_simulation();
         void record_measurements(double time);
