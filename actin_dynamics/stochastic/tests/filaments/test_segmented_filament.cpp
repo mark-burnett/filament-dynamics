@@ -99,11 +99,13 @@ TEST(SegmentedFilament, UpdateState) {
     EXPECT_EQ(1, f.boundary_count(one, zero));
 
     f.update_state(3, zero, one);
+    EXPECT_EQ(20, f.length());
     EXPECT_EQ(2, f.state_count(one));
     EXPECT_EQ(1, f.boundary_count(zero, one));
     EXPECT_EQ(1, f.boundary_count(one, zero));
 
     f.update_state(1, one, two);
+    EXPECT_EQ(20, f.length());
     EXPECT_EQ(1, f.state_count(one));
     EXPECT_EQ(1, f.state_count(two));
     EXPECT_EQ(1, f.boundary_count(zero, one));
@@ -111,6 +113,7 @@ TEST(SegmentedFilament, UpdateState) {
     EXPECT_EQ(1, f.boundary_count(two, zero));
 
     f.update_state(0, zero, three);
+    EXPECT_EQ(20, f.length());
     EXPECT_EQ(three, f.pointed_state());
     EXPECT_EQ(1, f.state_count(three));
 }
@@ -131,3 +134,447 @@ TEST(SegmentedFilament, UpdateBoundary) {
     EXPECT_EQ(1, f.boundary_count(zero, four));
     EXPECT_EQ(1, f.boundary_count(four, zero));
 }
+
+// Specific SegmentedFilament cases to test
+TEST(SegmentedFilament, FractureSingleCasePointedEndMerge) {
+    std::vector<State> values;
+    values += zero, one, zero, zero, two, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += one, one, zero, zero, two, one, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(0, zero, one);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(1, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    EXPECT_EQ(1, f.boundary_count(zero, two));
+    EXPECT_EQ(1, f.boundary_count(two, one));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureSingleCasePointedEndNoMerge) {
+    std::vector<State> values;
+    values += zero, one, zero, zero, two, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += two, one, zero, zero, two, one, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(0, zero, two);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(1, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    EXPECT_EQ(1, f.boundary_count(zero, two));
+    EXPECT_EQ(2, f.boundary_count(two, one));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureSingleCaseBarbedEndMerge) {
+    std::vector<State> values;
+    values += zero, one, zero, zero, two, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += zero, one, zero, zero, two, one, zero, zero;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(2, one, zero);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(1, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    EXPECT_EQ(1, f.boundary_count(zero, two));
+    EXPECT_EQ(1, f.boundary_count(two, one));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureSingleCaseBarbedEndNoMerge) {
+    std::vector<State> values;
+    values += zero, one, zero, zero, two, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += zero, one, zero, zero, two, one, zero, two;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(2, one, two);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(1, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    EXPECT_EQ(2, f.boundary_count(zero, two));
+    EXPECT_EQ(1, f.boundary_count(two, one));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureSingleCaseNoEndLeftMerge) {
+    std::vector<State> values;
+    values += zero, one, zero, zero, two, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += zero, one, zero, zero, zero, one, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(0, two, zero);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(3, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    EXPECT_EQ(0, f.boundary_count(zero, two));
+    EXPECT_EQ(0, f.boundary_count(two, one));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureSingleCaseNoEndRightMerge) {
+    std::vector<State> values;
+    values += zero, one, zero, zero, two, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += zero, one, zero, zero, one, one, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(0, two, one);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(3, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    EXPECT_EQ(0, f.boundary_count(zero, two));
+    EXPECT_EQ(0, f.boundary_count(two, one));
+
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureSingleCaseNoEndNoMerge) {
+    std::vector<State> values;
+    values += zero, one, zero, zero, two, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += zero, one, zero, zero, three, one, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(0, two, three);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(2, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    EXPECT_EQ(0, f.boundary_count(zero, two));
+    EXPECT_EQ(0, f.boundary_count(two, one));
+
+    EXPECT_EQ(1, f.boundary_count(zero, three));
+    EXPECT_EQ(1, f.boundary_count(three, one));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureSingleCaseNoEndMergeAll) {
+    std::vector<State> values;
+    values += zero, one, zero, zero, two, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += zero, zero, zero, zero, two, one, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(0, one, zero);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(1, f.boundary_count(zero, one));
+    EXPECT_EQ(1, f.boundary_count(one, zero));
+
+    EXPECT_EQ(1, f.boundary_count(zero, two));
+    EXPECT_EQ(1, f.boundary_count(two, one));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+
+TEST(SegmentedFilament, FractureMultipleCaseLeftEdgeNoEndMerge) {
+    std::vector<State> values;
+    values += zero, one, zero, one, one, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += zero, one, zero, zero, one, one, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(1, one, zero);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(3, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureMultipleCaseLeftEdgeNoEndNoMerge) {
+    std::vector<State> values;
+    values += zero, one, zero, one, one, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += zero, one, zero, two, one, one, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(1, one, two);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(2, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    EXPECT_EQ(1, f.boundary_count(zero, two));
+    EXPECT_EQ(1, f.boundary_count(two, one));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureMultipleCaseRightEdgeNoEndMerge) {
+    std::vector<State> values;
+    values += zero, one, zero, one, one, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += zero, one, zero, one, one, zero, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(3, one, zero);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(3, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureMultipleCaseRightEdgeNoEndNoMerge) {
+    std::vector<State> values;
+    values += zero, one, zero, one, one, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += zero, one, zero, one, one, two, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(3, one, two);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(3, f.boundary_count(zero, one));
+    EXPECT_EQ(1, f.boundary_count(one, zero));
+
+    EXPECT_EQ(0, f.boundary_count(zero, two));
+    EXPECT_EQ(0, f.boundary_count(two, one));
+
+    EXPECT_EQ(1, f.boundary_count(one, two));
+    EXPECT_EQ(1, f.boundary_count(two, zero));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureMultipleCaseMiddle) {
+    std::vector<State> values;
+    values += zero, one, zero, one, one, one, zero, one;
+
+    std::vector<State> expected_result;
+    expected_result += zero, one, zero, one, two, one, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(2, one, two);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(3, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    EXPECT_EQ(0, f.boundary_count(zero, two));
+    EXPECT_EQ(0, f.boundary_count(two, zero));
+
+    EXPECT_EQ(1, f.boundary_count(one, two));
+    EXPECT_EQ(1, f.boundary_count(two, one));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+/*
+TEST(SegmentedFilament, FractureMultipleCaseRightEdgeBarbedEnd) {
+    std::vector<State> values;
+    values += zero, zero, one, one, zero, one, zero, zero;
+
+    std::vector<State> expected_result;
+    expected_result += zero, zero, one, one, zero, one, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(4, zero, one);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(3, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureMultipleCaseLeftEdgePointedEnd) {
+    std::vector<State> values;
+    values += zero, zero, one, one, zero, one, zero, zero;
+
+    std::vector<State> expected_result;
+    expected_result += one, zero, one, one, zero, one, zero, zero;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(0, zero, one);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(2, f.boundary_count(zero, one));
+    EXPECT_EQ(3, f.boundary_count(one, zero));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureMultipleCaseLeftEdgeBarbedEndMerge) {
+    std::vector<State> values;
+    values += zero, zero, one, one, zero, one, zero, zero;
+
+    std::vector<State> expected_result;
+    expected_result += zero, zero, one, one, zero, one, one, zero;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(3, zero, one);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(2, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureMultipleCaseLeftEdgeBarbedEndNoMerge) {
+    std::vector<State> values;
+    values += zero, zero, one, one, zero, one, zero, zero;
+
+    std::vector<State> expected_result;
+    expected_result += zero, zero, one, one, zero, one, two, zero;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(3, zero, two);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(2, f.boundary_count(zero, one));
+    EXPECT_EQ(1, f.boundary_count(one, zero));
+
+    EXPECT_EQ(1, f.boundary_count(two, zero));
+    EXPECT_EQ(0, f.boundary_count(zero, two));
+
+    EXPECT_EQ(0, f.boundary_count(two, one));
+    EXPECT_EQ(1, f.boundary_count(one, two));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+*/

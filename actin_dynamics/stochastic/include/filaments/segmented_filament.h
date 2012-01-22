@@ -68,8 +68,7 @@ class SegmentedFilament : public Filament {
                 const State &old_pointed_state, const State &old_barbed_state,
                 const State &new_barbed_state);
 
-        // XXX Do something with this
-        std::deque<State> get_states() const {return std::deque<State>();} // { return std::deque<State>(states); }
+        std::vector<State> get_states() const;
 
     private:
         typedef std::list<Segment, boost::fast_pool_allocator<Segment> > sl_t;
@@ -77,13 +76,19 @@ class SegmentedFilament : public Filament {
 
         void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
         void _init_number_state(size_t number, const State &state);
+        void _fracture_length_one(sl_t::iterator i, size_t protomer_index,
+                const State &new_state);
         void _fracture(sl_t::iterator i, size_t protomer_index,
                 const State &new_state);
+
+        size_t _direct_boundary_count(const State &pointed_state,
+                const State &barbed_state) const;
 
         sl_t _segments;
 
         size_t _length;
         _count_t _state_counts;
+        std::map< State, _count_t > _boundary_counts;
 };
 
 } // namespace filaments

@@ -16,13 +16,13 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
-// #include <boost/flyweight.hpp>
-// #include <boost/flyweight/no_locking.hpp>
+#include <boost/flyweight.hpp>
+#include <boost/flyweight/no_locking.hpp>
 
 namespace stochastic {
 
-// typedef boost::flyweight<std::string, boost::flyweights::no_locking> State;
-typedef std::string State;
+typedef boost::flyweight<std::string, boost::flyweights::no_locking> State;
+// typedef std::string State;
 // typedef size_t State;
 
 } // namespace stochastic

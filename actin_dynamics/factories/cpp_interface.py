@@ -191,9 +191,6 @@ def bind_measurements(bindings, parameters):
     return result
 
 def bind_transitions(bindings, parameters):
-    for i, b in enumerate(bindings):
-        print i, b.label
-
     result = stochasticpy.TransitionContainer()
     for item in make_bindings(bindings, parameters,
             stochasticpy.transitions, _transitions_lookup):
@@ -211,9 +208,8 @@ def build_dict(definition, parameters, module, lookup):
     kwargs.update(definition.get('fixed_arguments', {}))
 
     argument_names = lookup[class_name]
-    arg_constructors = [kwargs.get(an) for an in argument_names
+    arguments = [ctor(kwargs.get(an)) for ctor, an in argument_names
             if kwargs.get(an) is not None]
-    arguments = [c(d) for c, d in arg_constructors]
 
     return getattr(module, class_name)(*arguments)
 
@@ -222,13 +218,10 @@ def make_dicts(definitions, parameters, module, lookup):
             for d in definitions]
 
 def dict_concentrations(object_graph, parameters):
-    labels, definitions = zip(*object_graph.iteritems())
-
-    object_list = make_dicts(definitions, parameters,
-            stochasticpy.concentrations, _concentrations_lookup)
     result = stochasticpy.ConcentrationContainer()
-    for l, o in zip(labels, object_list):
-        result[l] = o
+    for l, d in object_graph.iteritems():
+        result[l] = build_dict(d, parameters, stochasticpy.concentrations,
+                _concentrations_lookup)
     return result
 
 def dict_end_conditions(object_graph, parameters):

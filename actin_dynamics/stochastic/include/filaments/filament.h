@@ -58,7 +58,8 @@ class Filament : private boost::noncopyable {
                 const State &old_pointed_states,
                 const State &old_barbed_states,
                 const State &new_barbed_states) = 0;
-        virtual std::deque<State> get_states() const = 0;
+
+        virtual std::vector<State> get_states() const = 0;
 
     typedef boost::shared_ptr<Filament> ptr_t;
 };

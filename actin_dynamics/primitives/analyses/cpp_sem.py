@@ -33,7 +33,7 @@ class StandardErrorMean(base_classes.Analysis):
 
         self.number_of_filaments = number_of_filaments
 
-        _base_classes.Analysis.__init__(self, label=label, **kwargs)
+        base_classes.Analysis.__init__(self, label=label, **kwargs)
 
     def perform(self, simulation_results, result_factory):
         measurement = simulation_results[self.measurement_name]
@@ -47,4 +47,4 @@ class StandardErrorMean(base_classes.Analysis):
         errors = numpy.array(measurement.get_errors(self.number_of_filaments))
         errors *= self.scale_by
 
-        return result_factory((times, means, errors))
+        return result_factory((times, means, errors), self.label)

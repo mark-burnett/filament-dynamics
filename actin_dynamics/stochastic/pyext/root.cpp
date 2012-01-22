@@ -77,13 +77,9 @@ void package_level_definitions() {
         .def("__iter__", iterator< transitions::container_t >());
 
 
-//    class_< simulation_result_t >("SimulationResultContainer")
-//        .def("keys", get_keys<simulation_result_t>)
-//        .def(map_indexing_suite< simulation_result_t >());
-
     // add conversions for string <-> flyweight
-//    implicitly_convertible<std::string, State>();
-//    implicitly_convertible<State, std::string>();
+    implicitly_convertible<std::string, State>();
+    implicitly_convertible<State, std::string>();
 
     class_<SimulationStrategy>("SimulationStrategy", init<
             transitions::container_t &, concentrations::container_t &,

@@ -26,13 +26,7 @@ def run_job(job, db_session):
     run = job.run
     log.info('Staring job %s: simulation of run %s.', job.id, job.run_id)
     simulation = factories.simulations.make_run(run)
-    print 'simulation created'
-    try:
-        results = simulation.run()
-    except object as e:
-        print 'simulation failed:'
-        print e
-    print 'simulation finished'
+    results = simulation.run()
 
     for analysis in run.experiment.analysis_list:
         log.debug('Analysing job %s: %s.', job.id, analysis.label)

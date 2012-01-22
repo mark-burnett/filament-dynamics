@@ -13,6 +13,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <iostream>
 #include <cmath>
 
 #include "simulation_strategy.h"
@@ -56,6 +57,8 @@ measurements::container_t SimulationStrategy::run() {
         r -= transition_rates[ti];
     }
 
+    double print_time = 0;
+
     while (end_conditions_not_met(time)) {
         // Calculate rates for the next timestep.
         R = 0;
@@ -71,6 +74,10 @@ measurements::container_t SimulationStrategy::run() {
 
         // First update the time & perform measurements
         time += log(1 / _random(1)) / R;
+        if (time > print_time) {
+            std::cerr << "time = " << time << std::endl;
+            print_time += 1;
+        }
         record_measurements(time);
 
         // Decide which transition to perform.

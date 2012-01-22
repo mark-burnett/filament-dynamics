@@ -145,6 +145,7 @@ int main(int argc, char *argv[]) {
                 new transitions::BarbedTipHydrolysisWithByproduct(adppi, adp,
                     b_tip_pi_dissoc_rate, pi)));
 
+
     transitions.push_back(transitions::Transition::ptr_t(
                 new transitions::Monomer(adppi, adp,
                     sol_pi_dissoc_rate)));
