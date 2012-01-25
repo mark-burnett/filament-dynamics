@@ -36,8 +36,10 @@ export LD_LIBRARY_PATH
 display_args() {
     echo "Options:"
     echo
-    echo "    -u    Run unit tests."
-    echo "    -c    Run C++ tests."
+    echo "    -a    Run all tests."
+    echo
+    echo "    -p    Run Python unit tests."
+    echo "    -c    Run C++ unit tests."
     echo "    -i    Run integration tests."
     echo
     echo "    -h    Print this message."
@@ -45,7 +47,7 @@ display_args() {
 }
 
 run_c_tests() {
-    echo "Running C++ tests..."
+    echo "Running C++ Python unit..."
     pushd cpp_stochastic > /dev/null
     bjam -q runtests && ./runtests
     popd > /dev/null
@@ -53,7 +55,7 @@ run_c_tests() {
 }
 
 run_unit_tests() {
-    echo "Running unit tests..."
+    echo "Running Python unit tests..."
     $UNIT_TEST_COMMAND
     echo
 }
@@ -64,12 +66,18 @@ run_integration_tests() {
     echo
 }
 
-while getopts "cuih" FLAG; do
+while getopts "acpih" FLAG; do
     case $FLAG in
+        "a")
+            ARGUMENTS_RECEIVED=true
+            RUN_C_TESTS=true
+            RUN_UNIT_TESTS=true
+            RUN_INTEGRATION_TESTS=true
+            break;;
         "c")
             ARGUMENTS_RECEIVED=true
             RUN_C_TESTS=true;;
-        "u")
+        "p")
             ARGUMENTS_RECEIVED=true
             RUN_UNIT_TESTS=true;;
         "i")

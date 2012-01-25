@@ -15,123 +15,133 @@
 
 from actin_dynamics import stochasticpy
 
+from actin_dynamics import logger as _logger
+log = _logger.getLogger(__file__)
+
 _concentrations_lookup = {
         'FixedConcentration': [
-            (float, 'concentration')],
+            (float, 'concentration', None)],
         'FixedReagent': [
-            (float, 'initial_concentration'),
-            (float, 'filament_tip_concentration'),
-            (int, 'number_of_filaments')] }
+            (float, 'initial_concentration', None),
+            (float, 'filament_tip_concentration', None),
+            (int, 'number_of_filaments', None),
+            (float, 'scale_concentration', 1),
+            (float, 'subtract_fraction', 0)] }
 
 _end_conditions_lookup = {
         'Duration': [
-            (float, 'duration')],
+            (float, 'duration', None)],
         'EventCount': [
-            (int, 'max_events')] }
+            (int, 'max_events', None)],
+        'Threshold': [
+            (str, 'concentration_name', None),
+            (float, 'value', None),
+            (float, 'scaled_by', 1),
+            (float, 'subtract_fraction', 0)] }
 
 _filaments_lookup = {
         'SegmentedFilament': [
-            (float, 'seed_concentration'),
-            (float, 'filament_tip_concentration'),
-            (str, 'state')],
+            (float, 'seed_concentration', None),
+            (float, 'filament_tip_concentration', None),
+            (str, 'state', None)],
         'DefaultFilament': [
-            (float, 'seed_concentration'),
-            (float, 'filament_tip_concentration'),
-            (str, 'state')] }
+            (float, 'seed_concentration', None),
+            (float, 'filament_tip_concentration', None),
+            (str, 'state', None)] }
 
 _measurements_lookup = {
         'Concentration': [
-            (str, 'state'),
-            (float, 'sample_period')],
+            (str, 'state', None),
+            (float, 'sample_period', None)],
         'FilamentLength': [
-            (float, 'sample_period')],
+            (float, 'sample_period', None)],
         'StateCount': [
-            (str, 'state'),
-            (float, 'sample_period')] }
+            (str, 'state', None),
+            (float, 'sample_period', None)] }
 
 _transitions_lookup = {
         'Association': [
-            (str, 'associating_state'),
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate')],
+            (str, 'associating_state', None),
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None)],
         'CooperativeHydrolysis': [
-            (str, 'pointed_neighbor'),
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate'),
-            (float, 'cooperativity')],
+            (str, 'pointed_neighbor', None),
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None),
+            (float, 'cooperativity', None)],
         'CooperativeHydrolysisWithByproduct': [
-            (str, 'pointed_neighbor'),
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate'),
-            (str, 'byproduct'),
-            (float, 'cooperativity')],
+            (str, 'pointed_neighbor', None),
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None),
+            (str, 'byproduct', None),
+            (float, 'cooperativity', None)],
         'BarbedEndDepolymerization': [
-            (str, 'state'),
-            (float, 'rate'),
-            (float, 'disable_time')],
+            (str, 'state', None),
+            (float, 'rate', None),
+            (float, 'disable_time', -1)],
         'PointedEndDepolymerization': [
-            (str, 'state'),
-            (float, 'rate'),
-            (float, 'disable_time')],
+            (str, 'state', None),
+            (float, 'rate', None),
+            (float, 'disable_time', -1)],
         'Monomer': [
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate')],
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None)],
         'MonomerWithByproduct': [
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate'),
-            (str, 'byproduct')],
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None),
+            (str, 'byproduct', None)],
         'BarbedEndPolymerization': [
-            (str, 'state'),
-            (float, 'rate'),
-            (float, 'disable_time')],
+            (str, 'state', None),
+            (float, 'rate', None),
+            (float, 'disable_time', -1)],
         'PointedEndPolymerization': [
-            (str, 'state'),
-            (float, 'rate'),
-            (float, 'disable_time')],
+            (str, 'state', None),
+            (float, 'rate', None),
+            (float, 'disable_time', -1)],
         'RandomHydrolysis': [
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate'),
-            (float, 'cooperativity')],
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None),
+            (float, 'cooperativity', None)],
         'RandomHydrolysisWithByproduct': [
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate'),
-            (str, 'byproduct')],
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None),
+            (str, 'byproduct', None)],
         'BarbedTipHydrolysis': [
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate')],
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None)],
         'PointedTipHydrolysis': [
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate')],
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None)],
         'BarbedTipHydrolysisWithByproduct': [
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate'),
-            (str, 'byproduct')],
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None),
+            (str, 'byproduct', None)],
         'PointedTipHydrolysisWithByproduct': [
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate'),
-            (str, 'byproduct')],
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None),
+            (str, 'byproduct', None)],
         'VectorialHydrolysis': [
-            (str, 'pointed_neighbor'),
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate')],
+            (str, 'pointed_neighbor', None),
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None)],
         'VectorialHydrolysisWithByproduct': [
-            (str, 'pointed_neighbor'),
-            (str, 'old_state'),
-            (str, 'new_state'),
-            (float, 'rate'),
-            (str, 'byproduct')] }
+            (str, 'pointed_neighbor', None),
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None),
+            (str, 'byproduct', None)] }
 
 def build_binding(binding, parameters, module, lookup):
     class_name = binding.class_name
@@ -144,8 +154,12 @@ def build_binding(binding, parameters, module, lookup):
     kwargs.update(binding.fixed_arguments)
 
     argument_names = lookup[class_name]
-    arguments = [ctor(kwargs.get(an)) for ctor, an in argument_names
-            if kwargs.get(an) is not None]
+    arguments = [ctor(kwargs.get(an, default_value))
+                    for ctor, an, default_value in argument_names
+            if kwargs.get(an, default_value) is not None]
+
+    log.debug('module = %s, class name = %s', module, class_name)
+    log.debug('args = %s', arguments)
 
     return getattr(module, binding.class_name)(*arguments)
 
@@ -208,8 +222,9 @@ def build_dict(definition, parameters, module, lookup):
     kwargs.update(definition.get('fixed_arguments', {}))
 
     argument_names = lookup[class_name]
-    arguments = [ctor(kwargs.get(an)) for ctor, an in argument_names
-            if kwargs.get(an) is not None]
+    arguments = [ctor(kwargs.get(an, default_value))
+                    for ctor, an, default_value in argument_names
+            if kwargs.get(an, default_value) is not None]
 
     return getattr(module, class_name)(*arguments)
 

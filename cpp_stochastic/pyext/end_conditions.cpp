@@ -18,11 +18,10 @@
 #include "end_conditions/end_condition.h"
 #include "end_conditions/duration.h"
 #include "end_conditions/event_count.h"
+#include "end_conditions/threshold.h"
 
 using namespace boost::python;
 using namespace stochastic::end_conditions;
-
-// XXX I do not understand why i need shared_ptr as the storage type
 
 void end_conditions_level_definitions() {
     class_<EndCondition, boost::noncopyable>(
@@ -41,4 +40,11 @@ void end_conditions_level_definitions() {
         boost::noncopyable >("EventCount", init<size_t>())
             .def("initialize", &EventCount::initialize)
             .def("satisfied", &EventCount::satisfied);
+
+    class_<Threshold, bases<EndCondition>,
+        boost::shared_ptr<Threshold>,
+        boost::noncopyable >("Threshold",
+                init<const stochastic::State&, double, double, double>())
+            .def("initialize", &Threshold::initialize)
+            .def("satisfied", &Threshold::satisfied);
 }

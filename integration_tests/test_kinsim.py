@@ -24,6 +24,7 @@ from actin_dynamics import io
 import yaml
 
 from actin_dynamics.primitives import analyses
+import actin_dynamics.factories.simulations
 from actin_dynamics import factories
 
 from actin_dynamics.numerical import interpolation

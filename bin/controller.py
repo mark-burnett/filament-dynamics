@@ -21,6 +21,8 @@ from actin_dynamics.configuration import command_line_parsers
 from actin_dynamics.configuration import ini_parsers
 
 from actin_dynamics import job_control, mesh_controller
+
+import actin_dynamics.factories.controllers
 from actin_dynamics import factories, database
 
 logger = logging.getLogger()

@@ -16,8 +16,7 @@ experiments:
             simulation_duration: 500
             sample_period: 0.1
 
-            number_of_simulations: 100
-            number_of_filaments: 1
+            number_of_filaments: 1000
 
 parameter_specifications:
     adp_copoly:

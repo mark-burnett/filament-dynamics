@@ -22,8 +22,6 @@
 using namespace boost::python;
 using namespace stochastic::concentrations;
 
-// XXX I do not understand why i need shared_ptr as the storage type
-
 void concentrations_level_definitions() {
     object base_concentration = class_<Concentration, boost::noncopyable>(
             "Concentration", no_init)
@@ -44,7 +42,8 @@ void concentrations_level_definitions() {
 
     class_<FixedReagent, bases<Concentration>,
         boost::shared_ptr<FixedReagent>,
-        boost::noncopyable >("FixedReagent", init<double, double, size_t>())
+        boost::noncopyable >("FixedReagent",
+                init<double, double, size_t, double, double>())
             .def("value", &FixedReagent::value)
             .def("add_monomer", &FixedReagent::add_monomer)
             .def("remove_monomer", &FixedReagent::remove_monomer)

@@ -23,8 +23,11 @@ namespace concentrations {
 class FixedReagent : public Concentration {
     public:
         FixedReagent(double concentration, double fnc,
-                size_t number_of_filaments=1) :
-            _number(concentration * number_of_filaments / fnc),
+                size_t number_of_filaments=1,
+                double scale_concentration=1,
+                double subtract_fraction=0) :
+            _number((scale_concentration - subtract_fraction)
+                    * concentration * number_of_filaments / fnc),
             _volume(number_of_filaments / fnc) {}
         ~FixedReagent() {}
 
@@ -34,7 +37,7 @@ class FixedReagent : public Concentration {
         size_t monomer_count() { return _number; }
     private:
         size_t _number;
-        double _volume;
+        const double _volume;
 };
 
 

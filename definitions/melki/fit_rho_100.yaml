@@ -9,7 +9,11 @@ global_parameters:
     release_cooperativity: 100
 
 parameter_specifications:
-    melki_fievez_carlier_1996:
+    melki_fit:
         simulation:
             release_rate:
-                guess: 2.1e-4
+#                guess: 1.4e-4
+                lower_bound: 7.0e-5
+                upper_bound: 0.0006
+                mesh_type: linear
+                num_points: 100

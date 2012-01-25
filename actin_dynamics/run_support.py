@@ -15,6 +15,9 @@
 
 from sqlalchemy import schema
 
+import actin_dynamics.factories.analysis
+import actin_dynamics.factories.bindings
+import actin_dynamics.factories.simulations
 from . import factories
 
 from . import database

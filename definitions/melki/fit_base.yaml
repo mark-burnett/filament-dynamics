@@ -9,8 +9,7 @@ import:
 
 
 global_parameters:
-    number_of_simulations: 50
-    number_of_filaments: 1
+    number_of_filaments: 100
 
     simulation_duration: 2500.1
 
