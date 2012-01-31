@@ -32,7 +32,8 @@ def main():
 #            right_label=True) as figure:
 #        melki_rate_plot(figure)
 #        melki_rate_error_plot(figure)
-    melki_timecourses()
+#    melki_timecourses()
+    single_timecourse()
 #    stupid_melki_timecourses()
 
 
@@ -206,6 +207,30 @@ def melki_timecourses():
 
         contexts.add_legend(axes, loc='lower right')
 
+def single_timecourse():
+    sim = data.load_data('results/timecourses.dat')
+    stime, sfactin, spi = sim
+
+    f_data = data.load_data(
+            'experimental_data/melki_fievez_carlier_1996/factin_concentration.dat')
+    p_data = data.load_data(
+            'experimental_data/melki_fievez_carlier_1996/phosphate_concentration.dat')
+    fd_cdot, fd_f = f_data
+    pd_cdot, pd_p = p_data
+
+    with contexts.basic_figure('plots/crazy_timecourses.eps',
+            x_label=r'Time [s]',
+            y_label=r'Phosphate Concentration [$\mu$M]') as axes:
+        contexts.plot(axes, 'plot', pd_cdot, pd_p, 'r-', label='Data [Pi]')
+        contexts.plot(axes, 'plot', stime, spi, 'r:', label='Simulated [Pi]')
+
+        contexts.plot(axes, 'plot', fd_cdot, fd_f, 'k-', label='Data [F-actin]')
+        contexts.plot(axes, 'plot', stime, sfactin, 'k:', label='Simulated [F-actin]')
+
+        axes.set_xlim([0, 2500])
+        axes.set_ylim([0, 35])
+
+        contexts.add_legend(axes, loc='lower right')
 
 
 def _scale_data_to(data, final_value):

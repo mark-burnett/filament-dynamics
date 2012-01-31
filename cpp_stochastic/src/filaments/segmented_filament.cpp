@@ -13,6 +13,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <iostream>
+
 #include "filaments/segmented_filament.h"
 
 namespace stochastic {
@@ -138,37 +140,51 @@ void SegmentedFilament::append_pointed(const State &new_state) {
 }
 
 State SegmentedFilament::pop_barbed() {
-    Segment &seg = _segments.back();
-    State state = seg.state;
+    if (_length > 0) {
+        Segment &seg = _segments.back();
+        State state = seg.state;
 
-    if (1 == seg.number) {
-        _segments.pop_back();
-        --_boundary_counts[_segments.back().state][state];
+        if (1 == seg.number) {
+            _segments.pop_back();
+            if (_length > 1) {
+                --_boundary_counts[_segments.back().state][state];
+            }
+        } else {
+            --seg.number;
+        }
+
+        --_length;
+        --_state_counts[state];
+
+        return state;
     } else {
-        --seg.number;
+        // We shouldn't get here, but silently comply.
+        return State();
     }
-
-    --_length;
-    --_state_counts[state];
-
-    return state;
 }
 
 State SegmentedFilament::pop_pointed() {
-    Segment &seg = _segments.front();
-    State state = seg.state;
+    if (_length > 0) {
+        Segment &seg = _segments.front();
+        State state = seg.state;
 
-    if (1 == seg.number) {
-        _segments.pop_front();
-        --_boundary_counts[state][_segments.front().state];
+        if (1 == seg.number) {
+            _segments.pop_front();
+            if (_length > 1) {
+                --_boundary_counts[state][_segments.front().state];
+            }
+        } else {
+            --seg.number;
+        }
+
+        --_length;
+        --_state_counts[state];
+
+        return state;
     } else {
-        --seg.number;
+        // We shouldn't get here, but silently comply.
+        return State();
     }
-
-    --_length;
-    --_state_counts[state];
-
-    return state;
 }
 
 // fracture for case where segment number is 1

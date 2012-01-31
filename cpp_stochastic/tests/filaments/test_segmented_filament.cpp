@@ -89,6 +89,23 @@ TEST(SegmentedFilament, Remove) {
 
 }
 
+TEST(SegmentedFilament, RemoveEmpty) {
+    filaments::SegmentedFilament f(1, zero);
+
+    State s = f.pop_barbed();
+    EXPECT_EQ(zero, s);
+    EXPECT_EQ(0, f.length());
+    EXPECT_EQ(0, f.state_count(zero));
+
+    f.pop_barbed();
+    EXPECT_EQ(0, f.length());
+    EXPECT_EQ(0, f.state_count(zero));
+
+    f.pop_pointed();
+    EXPECT_EQ(0, f.length());
+    EXPECT_EQ(0, f.state_count(zero));
+}
+
 TEST(SegmentedFilament, UpdateState) {
     filaments::SegmentedFilament f(20, zero);
 

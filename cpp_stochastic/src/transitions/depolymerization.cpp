@@ -28,6 +28,7 @@ double FixedRateDepolymerization::initial_R(double time,
     }
 
     size_t fi = 0;
+    _count = 0;
     for ( ; fi < filaments.size(); ++fi) {
         State fstate = get_state(*filaments[fi]);
         _states[fi] = fstate;

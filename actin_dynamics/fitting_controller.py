@@ -88,10 +88,10 @@ log = logger.getLogger(__file__)
 
 
 class SimplePopulation(object):
-    def __init__(self, parameter_guess=None, gaussian_width_fraction=0.1,
+    def __init__(self, parameter_guess=None, gaussian_width_fraction=0.06/2,
             parameter_name=None, objective_name=None, dbs=None,
             session=None, process=None, plot=False, max_population_size=None,
-            parameter_tolerance=0.001, parameter_distance_fraction=0.2):
+            parameter_tolerance=0.00001, parameter_distance_fraction=0.1):
         self.dbs = dbs
         self.session = session
 
@@ -290,8 +290,8 @@ class SimplePopulation(object):
 
 class SimpleFitController(object):
     def __init__(self, dbs=None, session=None, process=None, population=None,
-            min_queue_size=0, max_queue_size=10, initial_population_size=20,
-            polling_period=5, min_iterations=5, max_iterations=100):
+            min_queue_size=0, max_queue_size=200, initial_population_size=100,
+            polling_period=5, min_iterations=5, max_iterations=1):
         self.dbs = dbs
         self.session = session
 
@@ -318,44 +318,44 @@ class SimpleFitController(object):
         queued_job_ids = self.population.create_jobs(
                 self.initial_population_size)
 
-        for iteration in xrange(self.max_iterations):
-            # Wait until we drop below our queue size threshold
-            current_queue_size = self.min_queue_size + 1
-            while current_queue_size > self.min_queue_size:
-                time.sleep(self.polling_period)
-
-                current_queue_size = self.dbs.query(database.Job
-                        ).filter_by(creator=self.process
-                        ).filter_by(worker=None
-                        ).filter_by(complete=False).count()
-
-                # While waiting, add the completed jobs to the population
-                newly_completed_jobs = _get_finished_jobs(self.dbs,
-                        queued_job_ids)
-                for job in newly_completed_jobs:
-                    queued_job_ids.discard(job.id)
-                self.population.add_completed_jobs(newly_completed_jobs)
-            
-            # If this fit is good enough, then break.
-            if (iteration >= self.min_iterations
-                    and self.population.acceptable_fit()):
-                break
-
-            # Otherwise, make more jobs
-            newly_queued_job_ids = self.population.create_jobs(
-                    self.max_queue_size - current_queue_size)
-            for new_job_id in newly_queued_job_ids:
-                queued_job_ids.add(new_job_id)
-            log.info('Added %s jobs to the queue.', len(newly_queued_job_ids))
-
-        t_final = datetime.datetime.now()
-
-        total_runtime = t_final - t_initial
-        self.population.log_report()
-        log.critical('Completed %s iterations in %s.',
-                iteration + 1, total_runtime)
-
-        return self.population.parabola_peak
+#        for iteration in xrange(self.max_iterations):
+#            # Wait until we drop below our queue size threshold
+#            current_queue_size = self.min_queue_size + 1
+#            while current_queue_size > self.min_queue_size:
+#                time.sleep(self.polling_period)
+#
+#                current_queue_size = self.dbs.query(database.Job
+#                        ).filter_by(creator=self.process
+#                        ).filter_by(worker=None
+#                        ).filter_by(complete=False).count()
+#
+#                # While waiting, add the completed jobs to the population
+#                newly_completed_jobs = _get_finished_jobs(self.dbs,
+#                        queued_job_ids)
+#                for job in newly_completed_jobs:
+#                    queued_job_ids.discard(job.id)
+#                self.population.add_completed_jobs(newly_completed_jobs)
+#            
+#            # If this fit is good enough, then break.
+#            if (iteration >= self.min_iterations
+#                    and self.population.acceptable_fit()):
+#                break
+#
+#            # Otherwise, make more jobs
+#            newly_queued_job_ids = self.population.create_jobs(
+#                    self.max_queue_size - current_queue_size)
+#            for new_job_id in newly_queued_job_ids:
+#                queued_job_ids.add(new_job_id)
+#            log.info('Added %s jobs to the queue.', len(newly_queued_job_ids))
+#
+#        t_final = datetime.datetime.now()
+#
+#        total_runtime = t_final - t_initial
+#        self.population.log_report()
+#        log.critical('Completed %s iterations in %s.',
+#                iteration + 1, total_runtime)
+#
+#        return self.population.parabola_peak
 
 
 def _create_initial_jobs(dbs, model=None, experiment=None,

@@ -25,7 +25,7 @@ log = logger.getLogger(__file__)
 
 class SimpleDataFit(_Objective):
     def __init__(self, measurement=None, residual_type=None,
-                 interpolate_simulation=True, label=None,
+                 interpolate_simulation=False, label=None,
                  skip_beginning=0, scale_simulation_by=1):
         self.residual_function      = getattr(_residuals, residual_type)
         self.measurement_name       = measurement

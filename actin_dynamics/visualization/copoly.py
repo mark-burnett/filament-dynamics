@@ -33,10 +33,11 @@ def save_timecourse(session_id, experiment_index=0, run_index=0,
     ftc = run.all_parameters['filament_tip_concentration']
     seed_concentration = run.all_parameters['seed_concentration']
     
-    length_data = run.analyses['length']
-    # convert to  [factin]
-    factin_data = measurements.add_number(measurements.scale(length_data, ftc),
-            -seed_concentration)
+#    length_data = run.analyses['length']
+#    # convert to  [factin]
+#    factin_data = measurements.add_number(measurements.scale(length_data, ftc),
+#            -seed_concentration)
+    factin_data = run.analyses['factin']
 
     pi_data = run.analyses['Pi']
 

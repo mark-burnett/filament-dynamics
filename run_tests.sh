@@ -22,7 +22,7 @@ INTEGRATION_TEST_COMMAND=bin/run_integration_tests.sh
 
 DEFAULT_RUN_C_TESTS=true
 DEFAULT_RUN_UNIT_TESTS=true
-DEFAULT_RUN_INTEGRATION_TESTS=false
+DEFAULT_RUN_INTEGRATION_TESTS=true
 
 # Below this point is real code, not options.
 RUN_C_TESTS=false

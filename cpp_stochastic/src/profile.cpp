@@ -41,7 +41,7 @@
 
 using namespace stochastic;
 
-const size_t number_of_filaments = 100;
+const size_t number_of_filaments = 10;
 
 const double fnc = 0.00179;
 const double seed_concentration = 6;

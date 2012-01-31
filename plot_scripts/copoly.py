@@ -97,7 +97,7 @@ def copoly_adp_only(figure):
         axes.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5])
         axes.set_xticklabels(new_x_tick_labels)
 
-        axes.set_ylim(0, 450)
+        axes.set_ylim(0, 550)
 
 
 #def copoly_halftime_plot(figure):

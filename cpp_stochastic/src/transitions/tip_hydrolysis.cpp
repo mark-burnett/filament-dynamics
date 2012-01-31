@@ -24,6 +24,7 @@ double TipHydrolysis::initial_R(double time,
     _states.reserve(filaments.size());
     _states.resize(filaments.size());
     size_t fi = 0;
+    _count = 0;
     for ( ; fi < filaments.size(); ++fi) {
         State fstate = get_state(*filaments[fi]);
         _states[fi] = fstate;

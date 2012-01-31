@@ -25,6 +25,7 @@ double VectorialHydrolysis::initial_R(double time,
     _filament_counts.resize(filaments.size());
 
     size_t fc;
+    _count = 0;
     for (size_t i = 0; i < filaments.size(); ++i) {
         fc = filaments[i]->boundary_count(_pointed_neighbor, _old_state);
         _filament_counts[i] = fc;

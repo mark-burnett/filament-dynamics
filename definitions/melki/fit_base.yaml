@@ -9,8 +9,8 @@ import:
 
 
 global_parameters:
-    number_of_filaments: 100
+    number_of_filaments: 5000
 
-    simulation_duration: 2500.1
+    simulation_duration: 2500.01
 
     sample_period: 1

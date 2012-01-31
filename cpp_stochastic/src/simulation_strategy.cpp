@@ -63,7 +63,17 @@ measurements::container_t SimulationStrategy::run() {
             R += transition_rates[tip];
         }
         if (0 == R) {
-            break;
+            // We should never really get here.
+            // If we do, try to recover by re-initializing rates.
+            R = 0;
+            for (size_t tip = 0; tip < _transitions.size(); ++tip) {
+                transition_rates[tip] = _transitions[tip]->initial_R(time,
+                        _filaments, _concentrations);
+                R += transition_rates[tip];
+            }
+            if (0 == R) {
+                break;
+            }
         }
 
         // First update the time & perform measurements
