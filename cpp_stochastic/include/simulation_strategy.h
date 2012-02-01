@@ -46,12 +46,6 @@ class SimulationStrategy {
 
         measurements::container_t run();
 
-        inline double _random(double max) {
-            _distribution_t d(0, max);
-            _variate_t vg(_rng, d);
-            return vg();
-        }
-
     private:
         transitions::container_t _transitions;
         concentrations::container_t _concentrations;
@@ -64,9 +58,16 @@ class SimulationStrategy {
         typedef boost::variate_generator<_rng_t &, _distribution_t> _variate_t;
         _rng_t _rng;
 
+        std::vector<double> _transition_rates;
+
         void initialize_simulation();
+        double calculate_initial_R(double time);
+        double calculate_R(double time, size_t previous_filament_index);
         void record_measurements(double time);
+        size_t perform_transition(double time, double r);
         bool end_conditions_not_met(double time);
+
+        double _random(double max);
 };
 
 } // namespace stochastic

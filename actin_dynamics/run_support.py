@@ -28,14 +28,21 @@ log = logger.getLogger(__file__)
 def run_job(job, db_session):
     run = job.run
     log.info('Staring job %s: simulation of run %s.', job.id, job.run_id)
+#    log.warn('Duration: %s', run.all_parameters['simulation_duration'])
     simulation = factories.simulations.make_run(run)
     results = simulation.run()
 
-    for analysis in run.experiment.analysis_list:
-        log.debug('Analysing job %s: %s.', job.id, analysis.label)
-        a = factories.bindings.db_single(analysis, run.all_parameters)
-        analysis_result = a.perform(results, factories.analysis.make_result)
-        analysis_result.run = run
+    expected_no_samples = int(run.all_parameters['simulation_duration'] /
+            run.all_parameters['sample_period'])
+    for analysis_bind in run.experiment.analysis_list:
+#        log.warn('analysis_bind = %r', analysis_bind)
+        log.debug('Analysing job %s: %s.', job.id, analysis_bind.label)
+        analysis = factories.bindings.db_single(analysis_bind, run.all_parameters)
+        analysis.run_id = run.id
+        analysis_result = analysis.perform(results, factories.analysis.make_result)
+        analysis_result.run_id = run.id
+        if analysis_result.measurement[0][-1] < expected_no_samples:
+            log.warn('Failed analysis: %s for run_id %s', analysis_bind.label, run.id)
         db_session.add(analysis_result)
 
     log.debug('Calculating %s objectives for job %s.',

@@ -24,19 +24,10 @@ measurements::container_t SimulationStrategy::run() {
 
     initialize_simulation();
 
-    std::vector<double> transition_rates;
-    transition_rates.resize(_transitions.size());
-
     size_t previous_filament_index = 0;
 
     // Calculate rates for the next timestep.
-    double R = 0;
-    for (size_t ti = 0; ti < _transitions.size(); ++ti) {
-        transition_rates[ti] = _transitions[ti]->initial_R(time,
-                _filaments, _concentrations);
-        R += transition_rates[ti];
-    }
-
+    double R = calculate_initial_R(time);
     // First update the time & perform measurements
     time += log(1 / _random(1)) / R;
 
@@ -45,33 +36,18 @@ measurements::container_t SimulationStrategy::run() {
     // Decide which transition to perform.
     double r = _random(R);
 
-    for (size_t ti = 0; ti < transition_rates.size(); ++ti) {
-        if (r < transition_rates[ti]) {
-            previous_filament_index = _transitions[ti]->perform(time, r,
-                    _filaments, _concentrations);
-            break;
-        }
-        r -= transition_rates[ti];
-    }
+    previous_filament_index = perform_transition(time, r);
 
     while (end_conditions_not_met(time)) {
         // Calculate rates for the next timestep.
-        R = 0;
-        for (size_t tip = 0; tip < _transitions.size(); ++tip) {
-            transition_rates[tip] = _transitions[tip]->R(time,
-                    _filaments, _concentrations, previous_filament_index);
-            R += transition_rates[tip];
-        }
+        R = calculate_R(time, previous_filament_index);
         if (0 == R) {
             // We should never really get here.
             // If we do, try to recover by re-initializing rates.
-            R = 0;
-            for (size_t tip = 0; tip < _transitions.size(); ++tip) {
-                transition_rates[tip] = _transitions[tip]->initial_R(time,
-                        _filaments, _concentrations);
-                R += transition_rates[tip];
-            }
+//            std::cerr << "R = 0, retry" << std::endl;
+            R = calculate_initial_R(time);
             if (0 == R) {
+//                std::cerr << "R = 0, exit!" << std::endl;
                 break;
             }
         }
@@ -83,22 +59,18 @@ measurements::container_t SimulationStrategy::run() {
         // Decide which transition to perform.
         r = _random(R);
 
-        for (size_t ti = 0; ti < transition_rates.size(); ++ti) {
-            if (r < transition_rates[ti]) {
-                previous_filament_index = _transitions[ti]->perform(time, r,
-                        _filaments, _concentrations);
-                break;
-            }
-            r -= transition_rates[ti];
-        }
-
+        previous_filament_index = perform_transition(time, r);
     }
+//    std::cerr << "Exitting." << std::endl;
 
     return _measurements;
 }
 
 
 void SimulationStrategy::initialize_simulation() {
+    _transition_rates.reserve(_transitions.size());
+    _transition_rates.resize(_transitions.size());
+
     for (measurements::container_t::iterator mi = _measurements.begin();
             mi != _measurements.end(); ++mi) {
         mi->second->initialize(_filaments, _concentrations);
@@ -110,11 +82,42 @@ void SimulationStrategy::initialize_simulation() {
     }
 }
 
+double SimulationStrategy::calculate_initial_R(double time) {
+    double R = 0;
+    for (size_t ti = 0; ti < _transitions.size(); ++ti) {
+        _transition_rates[ti] = _transitions[ti]->initial_R(time,
+                _filaments, _concentrations);
+        R += _transition_rates[ti];
+    }
+    return R;
+}
+
+double SimulationStrategy::calculate_R(double time,
+        size_t previous_filament_index) {
+    double R = 0;
+    for (size_t ti = 0; ti < _transitions.size(); ++ti) {
+        _transition_rates[ti] = _transitions[ti]->R(time,
+                _filaments, _concentrations, previous_filament_index);
+        R += _transition_rates[ti];
+    }
+    return R;
+}
+
 void SimulationStrategy::record_measurements(double time) {
     for (measurements::container_t::iterator mi = _measurements.begin();
             mi != _measurements.end(); ++mi) {
         mi->second->perform(time, _filaments, _concentrations);
     }
+}
+
+size_t SimulationStrategy::perform_transition(double time, double r) {
+    for (size_t ti = 0; ti < _transition_rates.size(); ++ti) {
+        if (r < _transition_rates[ti]) {
+            return _transitions[ti]->perform(time, r, _filaments, _concentrations);
+        }
+        r -= _transition_rates[ti];
+    }
+    return 0;
 }
 
 bool SimulationStrategy::end_conditions_not_met(double time) {
@@ -125,6 +128,12 @@ bool SimulationStrategy::end_conditions_not_met(double time) {
         }
     }
     return true;
+}
+
+double SimulationStrategy::_random(double max) {
+    _distribution_t d(0, max);
+    _variate_t vg(_rng, d);
+    return vg();
 }
 
 }

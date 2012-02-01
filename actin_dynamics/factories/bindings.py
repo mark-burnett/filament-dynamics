@@ -22,13 +22,7 @@ def db_single(bind, parameters):
     registry = getattr(primitives, bind.module_name).registry
     cls = registry[bind.class_name]
 
-#    log.warn('bind: id=%s, label=%s, class_name=%s',
-#             bind.id, bind.label, bind.class_name)
-#    log.warn('_va: %s', bind._variable_arguments)
-#    log.warn('_fa: %s', bind._fixed_arguments)
-#    log.warn('bind: %s', bind)
-#    log.warn('bind.fa: %s', bind.fixed_arguments)
-#    log.warn('bind.va: %s', bind.variable_arguments)
+    log.debug('bind: %s', bind)
 
 
     var_args = dict((local_name, parameters[global_name])

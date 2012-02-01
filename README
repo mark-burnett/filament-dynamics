@@ -20,6 +20,7 @@ summer, as I refactor the project to a global fit paradigm.
 CPython version 2.6 or later (Not 3.x ready yet.)
 
 The Boost c++ library, and build system (bjam).
+The Google Test c++ library (libgtest).
 
 mysql
     you can just use sqlite for testing, but for the real deal, use
@@ -41,24 +42,43 @@ numpy
 scipy
 matplotlib
 
+
 ------------------------------------------------------------------------
 - Setup                                                                -
 ------------------------------------------------------------------------
-    First, you must compile the C++ component of this package:
+First, you must compile the C++ component of this package.  This may require
+some editing of the cpp_stochastic/Jamroot file so that boost build can find
+your system libraries.  To build, type:
 
 cd cpp_stochastic
 bjam -q install
 cd ..
     
-    Before you bother running any simulations, I highly recommend that
-you perform all the unit tests and integration tests:
+Before you bother running any simulations, I highly recommend that you perform
+all the unit tests and integration tests:
 
-./run_tests.sh -cpi
+./run_tests.sh -a
 
-    If they do not all pass, you should make sure that all required packages
-are installed, then start hunting for the problem.
+If they do not all pass, you should make sure that all required packages are
+installed, then start hunting for the problem.
 
-# XXX add discussion about database setup
+This package requires a (mysql) database server to interact with.  The mysql
+username and password can be edited in the config.ini file (if you aren't using
+the defaults, you may want to edit the bin/create_db_user.sh and
+bin/reset_db.sh files).
+
+To just run with the defaults:
+
+bin/create_db_user.sh
+bin/reset_db.sh
+
+The reset command will give you an error saying it couldn't drop the database,
+because it doesn't exist.  That's no problem.
+
+If you are going to have worker process running on machines other than the one
+hosting your database, make sure the database server is setup to accept outside
+connections.
+
 
 ------------------------------------------------------------------------
 - Running                                                              -
