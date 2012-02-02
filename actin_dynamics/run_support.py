@@ -25,35 +25,53 @@ from . import database
 from . import logger
 log = logger.getLogger(__file__)
 
-def run_job(job, db_session):
-    run = job.run
-    log.info('Staring job %s: simulation of run %s.', job.id, job.run_id)
-#    log.warn('Duration: %s', run.all_parameters['simulation_duration'])
+def perform_simulation(run, db_session):
     simulation = factories.simulations.make_run(run)
     results = simulation.run()
 
     expected_no_samples = int(run.all_parameters['simulation_duration'] /
             run.all_parameters['sample_period'])
-    for analysis_bind in run.experiment.analysis_list:
-#        log.warn('analysis_bind = %r', analysis_bind)
-        log.debug('Analysing job %s: %s.', job.id, analysis_bind.label)
-        analysis = factories.bindings.db_single(analysis_bind, run.all_parameters)
-        analysis.run_id = run.id
-        analysis_result = analysis.perform(results, factories.analysis.make_result)
-        analysis_result.run_id = run.id
-        if analysis_result.measurement[0][-1] < expected_no_samples:
-            log.warn('Failed analysis: %s for run_id %s', analysis_bind.label, run.id)
-        db_session.add(analysis_result)
 
-    log.debug('Calculating %s objectives for job %s.',
-              len(run.objectives), job.id)
-    for objective in run.objectives:
-        log.debug('Calculating objective %s for job %s.',
-                  objective.bind.label, job.id)
-        o = factories.bindings.db_single(objective.bind,
-                                         objective.all_parameters)
-        o.perform(job.run, objective)
-        log.debug('Storing summary of %s for job %s (%s).',
-                  objective.bind.label, job.id, objective.value)
+    try:
+        with db_session.transaction as transaction:
+            log.debug('inside transaction')
+            for analysis_bind in run.experiment.analysis_list:
+                log.debug('Analysing run %s: %s.', run.id, analysis_bind.label)
+                analysis = factories.bindings.db_single(analysis_bind,
+                        run.all_parameters)
+                analysis.run_id = run.id
+                analysis_result = analysis.perform(results,
+                        factories.analysis.make_result)
+                analysis_result.run_id = run.id
+                if analysis_result.measurement[0][-1] < expected_no_samples:
+                    log.warn('Failed analysis: %s for run_id %s',
+                            analysis_bind.label, run.id)
+                    raise RuntimeError('Failed analysis')
+                db_session.add(analysis_result)
 
-    log.info('Finished job %s.', job.id)
+            log.debug('Calculating %s objectives for run %s.',
+                      len(run.objectives), run.id)
+            for objective in run.objectives:
+                log.debug('Calculating objective %s for run %s.',
+                          objective.bind.label, run.id)
+                o = factories.bindings.db_single(objective.bind,
+                                                 objective.all_parameters)
+                o.perform(run, objective)
+                log.debug('Storing summary of %s for run %s (%s).',
+                          objective.bind.label, run.id, objective.value)
+    except RuntimeError:
+        return False
+
+    return True
+
+
+def run_job(job, db_session, tries=3):
+    run = job.run
+    log.info('Staring job %s: simulation of run %s.', job.id, job.run_id)
+
+    for i in xrange(tries):
+        if perform_simulation(run, db_session):
+            break
+        log.warn('Job failed, retrying %s more times', tries - i - 1)
+
+    log.info('End job %s.', job.id)
