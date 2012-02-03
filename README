@@ -77,7 +77,7 @@ because it doesn't exist.  That's no problem.
 
 If you are going to have worker process running on machines other than the one
 hosting your database, make sure the database server is setup to accept outside
-connections.
+connections.  You also may need to change the maximum number of connections.
 
 
 ------------------------------------------------------------------------

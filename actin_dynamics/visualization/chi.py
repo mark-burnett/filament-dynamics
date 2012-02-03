@@ -15,123 +15,17 @@
 
 import csv
 
-import math
 import operator
 import numpy
 import scipy
+import scipy.optimize
 import scipy.stats
 
+import scikits.statsmodels.api as sm
+
 from actin_dynamics.io import data
-
 from actin_dynamics import database
-from actin_dynamics.numerical import utils
 
-MAX_AT_ZERO = 876.3
-MAX_AT_INF = 99.96
-
-INITIAL_B = 0.0003
-INITIAL_D = 0.03
-
-def _func(x, b, d):
-    return (MAX_AT_ZERO * numpy.exp(-x / b) +
-            MAX_AT_INF * (1 - numpy.exp(-x / d)))
-
-def _fit_func(pars, x_values, y_values):
-    b, d = pars
-    f_values = _func(x_values, b, d)
-    return ((f_values - y_values)**2).sum()
-
-def _minimum(pars):
-    b, d = pars
-    x = b * d / (d - b) * numpy.log(MAX_AT_ZERO * d / (MAX_AT_INF * b))
-    y = _func(x, b, d)
-
-    return x, y
-
-def error_roots(coeffs, number_of_filaments, delta=0.01):
-    a, b, c = coeffs
-    best_parameter = -b / (2 * a)
-    best_error = float(scipy.polyval(coeffs, best_parameter))
-
-    par_minus = best_parameter * (1 - delta)
-    par_plus = best_parameter * (1 + delta)
-
-#    print 'pm', par_minus
-#    print 'bp', best_parameter
-#    print 'pp', par_plus
-
-    cval_plus = float(scipy.polyval(coeffs, par_plus))
-
-    cval_minus = float(scipy.polyval(coeffs, par_minus))
-
-    dx = best_parameter * delta
-#    print 'dy', cval_plus - best_error
-#    print 'dx', dx
-    sens_plus = (cval_plus - best_error) / dx
-    sens_minus = (cval_minus - best_error) / dx
-
-    sens = min(sens_plus, sens_minus)
-
-    y_error = 1 / numpy.sqrt(number_of_filaments)
-#    print 'yerr', y_error, best_error
-    pct_error = y_error / sens
-    return pct_error
-#    print 'eps', epsilon
-#    print 'pct error', epsilon / best_parameter
-
-    return best_parameter - epsilon, best_parameter + epsilon
-
-
-    return low, high
-
-def fmin_objective(c, a, b, x_values, y_values):
-    '''For fitting a parabola with minimum fixed at x = minimum
-    '''
-    return ((y_values - scipy.polyval([a, b, c], x_values))**2).sum()
-
-def regula_objective(parameter, coeffs, alpha_target, n, x_values, y_values):
-    '''For fitting parameter such that alpha = alpha_target.
-    '''
-    a, base_b, c = coeffs
-    b = - 2 * a * parameter
-    par, fv, numiter, funcalls, warnflag = scipy.optimize.fmin(
-            fmin_objective, c, args=(a, b, x_values, y_values),
-            full_output=1, disp=0)
-
-    ro_alpha = scipy.stats.chi2.cdf(fv, n)
-#    print 'at', alpha_target, 'ra', ro_alpha
-    v = alpha_target - ro_alpha
-#    print 'v', v
-    return v
-    
-
-def fit_errors(best_coeffs, alpha, n, x_values, y_values):
-    best_par = - best_coeffs[1] / (2 * best_coeffs[0])
-    min_par = scipy.optimize.ridder(regula_objective,
-            0.5 * best_par, best_par,
-            args=(best_coeffs, alpha, n, x_values, y_values),
-            disp=False)
-    max_par = scipy.optimize.ridder(regula_objective,
-            best_par, 2 * best_par,
-            args=(best_coeffs, alpha, n, x_values, y_values),
-            disp=False)
-
-    return min_par, max_par
-
-def get_fits(session_ids, alpha=0.1, output_filename='results/chifits.dat'):
-    results = []
-    for sid in session_ids:
-        vals = smart_fit(sid, alpha=alpha)
-        if vals is not None:
-            results.append(vals)
-
-    results.sort()
-
-    _small_writer(output_filename, results,
-            ['Cooperativity', 'Best Rate', 'Bottom CI', 'Top CI', 'Chi^2'],
-            header='# alpha = %s\n' %alpha)
-
-    return results
 
 def _small_writer(filename, results, names, header=None):
     with open(filename, 'w') as f:
@@ -146,15 +40,18 @@ def _small_writer(filename, results, names, header=None):
         w.writerows(results)
 
 
+def save_xy(session_id, output_filename='rtest.dat'):
+    x, y = get_xy(session_id)
+    _small_writer(output_filename, zip(x,y), [])
+
+
 def get_xy(session_id):
     dbs = database.DBSession()
     session = dbs.query(database.Session).get(session_id)
     runs = session.experiments[0].runs
 
     pairs = sorted([(r.get_objective('pi_fit'), r.parameters['release_rate'])
-            for r in runs if (r.get_objective('pi_fit') is not None
-                and not math.isnan(r.get_objective('pi_fit'))
-                and r.get_objective('pi_fit') < 6)],
+            for r in runs if r.get_objective('pi_fit') is not None],
             key = operator.itemgetter(1))
 
     y_values, x_values = zip(*pairs)
@@ -163,96 +60,78 @@ def get_xy(session_id):
 
     return x_values, y_values
 
-
-def smart_fit(session_id, alpha=0.1):
+def get_parameter(session_id, parameter_name):
     dbs = database.DBSession()
     session = dbs.query(database.Session).get(session_id)
     runs = session.experiments[0].runs
-
-    pairs = sorted([(r.get_objective('pi_fit'), r.parameters['release_rate'])
-            for r in runs if (r.get_objective('pi_fit') is not None
-                and not math.isnan(r.get_objective('pi_fit'))
-                and r.get_objective('pi_fit') < 6)],
-            key = operator.itemgetter(1))
-    if 10 > len(pairs):
-        return None
-
-    y_values, x_values = zip(*pairs)
-    x_values = numpy.array(x_values)
-    y_values = numpy.array(y_values)
-
-    coeffs, R2, n, svs, rcond = scipy.polyfit(x_values, y_values, 2, full=True)
-#    print 'coeffs', coeffs
-#    print 'best R2', R2
-
-#    alpha = float(scipy.stats.chi2.cdf(R2, n))
-#    print 'extracted alpha =', alpha
-
-    best_parameter = - coeffs[1] / (2 * coeffs[0])
-    best_error = scipy.polyval(coeffs, best_parameter)
-
-#    num_filaments = runs[0].all_parameters['number_of_filaments']
-#    pct_error = error_roots(coeffs, num_filaments)
-#    print 'percent error of rate =', 100 * pct_error
-
-#    par_guess = (coeffs[0], coeffs[2])
-
-#    print 'alpha_target = 0.1 -> R2 =', scipy.stats.chi2.ppf(0.1, n)
-
-    min_par, max_par = fit_errors(coeffs, alpha, n, x_values, y_values)
-
-    cooperativity = runs[0].all_parameters.get('release_cooperativity', None)
-
-    return cooperativity, best_parameter, min_par, max_par, best_error
-
-#    print 'best par', best_parameter
-#    print 'CI', min_par, max_par
-
-##    new_coeffs = regula_objective(
-##            0.97 * best_parameter, coeffs, 0.1, n, x_values, y_values)
-##    print 'new_coeffs', new_coeffs
-#
-#    f_values = scipy.polyval(coeffs, x_values)
-#
-#
-#    f_fit_diff = (f_values - y_values)
-##    print 'mean =', numpy.mean(f_fit_diff)
-##    print 'avg variance =', numpy.var(f_fit_diff)
-##    print 'expected variance =', numpy.mean(f_values**2 / num_filaments)
-#
-#    # Divide by the actual standard deviation
-#    f_fit_diff /= numpy.std(f_fit_diff)
-#    f_fit_diff = f_fit_diff**2
-#
-#    # Divide by the expected variance
-##    f_fit_diff /= (f_values**2 / num_filaments)
-#
-#    f_fit_diff.sort()
-#
-#    chi_cdf = numpy.array(list(utils.running_total(f_fit_diff)))/len(f_fit_diff)
-#    cdf = scipy.stats.chi2.cdf(f_fit_diff, n)
-#
-#    import matplotlib.pyplot
-#    pyplot = matplotlib.pyplot
-#    pyplot.subplot(2, 1, 1)
-#    pyplot.plot(x_values, y_values, 'r.')
-#    pyplot.plot(x_values, f_values, 'b-')
-##    pyplot.plot(x_values, scipy.polyval(new_coeffs, x_values), 'g-')
-#
-#    pyplot.axvline(best_parameter, 0, 1,
-#            color='g', linestyle=':', linewidth=0.5)
-#
-#    a2 = pyplot.subplot(2, 1, 2)
-##    a2.set_yscale('log')
-#
-#    pyplot.plot(f_fit_diff, chi_cdf, 'r-')
-#    pyplot.plot(f_fit_diff, cdf, 'b-')
-#
-#    pyplot.show()
+    return runs[0].all_parameters.get(parameter_name, None)
 
 
-def dump_fit_quality(session_ids):
-    dbs = database.DBSession()
+def linear_fit(session_id, alpha, method='OLS'):
+    x_values, y_values = get_xy(session_id)
 
-    sessions = [dbs.query(database.Session).get(session_id)
-            for session_id in session_ids]
+    xp = numpy.vander(x_values, 3)
+    model = getattr(sm, method)(y_values, xp)
+    fitresult = model.fit('qr')
+    a, b, c = fitresult.params
+    aci, bci, cci = fitresult.conf_int(alpha=alpha)
+
+    rate = -b / (2 * a)
+
+    # Remember max(bci) will give the min(abs(bci))
+    min_rate = -max(bci) / (2 * max(aci))
+    max_rate = -min(bci) / (2 * min(aci))
+
+    pct_error =  100 * (max_rate - rate) / rate
+
+    chi2 = scipy.polyval(fitresult.params, rate)
+
+    cooperativity = get_parameter(session_id, 'release_cooperativity')
+
+    return cooperativity, rate, min_rate, max_rate, pct_error, chi2
+
+
+def covariance_fit(session_id, alpha):
+    x_values, y_values = get_xy(session_id)
+    guess_coeffs = scipy.polyfit(x_values, y_values, 2)
+
+    # Calculate good starting parameter guesses for curve_fit
+    guess_r = - guess_coeffs[1] / (2 * guess_coeffs[0])
+    guess_k = guess_coeffs[0]
+    guess_c = float(scipy.polyval(guess_coeffs, guess_r))
+
+    def f(x, r, k, c):
+        return k * (x - r)**2 + c
+
+    cf_pars, cf_cov = scipy.optimize.curve_fit(f, x_values, y_values,
+            (guess_r, guess_k, guess_c))
+
+    rate = cf_pars[0]
+
+    std_err = numpy.sqrt(cf_cov[0,0])
+    t = scipy.stats.t.ppf(1 - alpha/2, len(x_values) - 3)
+
+    min_rate = rate - std_err * t
+    max_rate = rate + std_err * t
+
+    pct_error =  100 * (max_rate - rate) / rate
+    cooperativity = get_parameter(session_id, 'release_cooperativity')
+
+    return cooperativity, rate, min_rate, max_rate, pct_error, cf_pars[2]
+
+
+def save_fits(cooperative_ids, vectorial_id, alpha=0.05,
+        cooperative_filename='results/melki_cooperative_fit.dat',
+        vectorial_filename='results/melki_vectorial_fit.dat'):
+    coop_results = []
+    for cid in cooperative_ids:
+        coop_results.append(covariance_fit(cid, alpha=alpha))
+    coop_results.sort()
+    _small_writer(output_filename, coop_results,
+            ['Cooperativity', 'Rate', 'Min Rate', 'Max Rate', '% Error', 'Chi^2'],
+            header='# Fit of cooperative models to Melki data\n# alpha = %s' % alpha)
+
+    vec_results = [covariance_fit(vectorial_id, alpha=alpha)[1:]]
+    _small_writer(output_filename, vec_results,
+            ['Rate', 'Min Rate', 'Max Rate', '% Error', 'Chi^2'],
+            header='# Fit of vectorial model to Melki data\n# alpha = %s' % alpha)

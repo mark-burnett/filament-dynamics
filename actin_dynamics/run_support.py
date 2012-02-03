@@ -72,6 +72,9 @@ def run_job(job, db_session, tries=3):
     for i in xrange(tries):
         if perform_simulation(run, db_session):
             break
-        log.warn('Job failed, retrying %s more times', tries - i - 1)
+        if tries - 1 == i:
+            log.error('Job failed %s times.', tries)
+        else:
+            log.warn('Job failed, retrying %s more times', tries - i - 1)
 
     log.info('End job %s.', job.id)

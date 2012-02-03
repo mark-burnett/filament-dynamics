@@ -42,3 +42,5 @@ from . import sensitivity
 from . import carlier
 
 from . import poly_velocity
+
+from . import chi
