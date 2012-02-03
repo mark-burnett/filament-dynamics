@@ -107,17 +107,64 @@ def covariance_fit(session_id, alpha):
             (guess_r, guess_k, guess_c))
 
     rate = cf_pars[0]
+    c = cf_pars[2]
 
-    std_err = numpy.sqrt(cf_cov[0,0])
+    rate_std_err = numpy.sqrt(cf_cov[0,0])
+    c_std_err = numpy.sqrt(cf_cov[2,2])
     t = scipy.stats.t.ppf(1 - alpha/2, len(x_values) - 3)
 
-    min_rate = rate - std_err * t
-    max_rate = rate + std_err * t
+    min_rate = rate - rate_std_err * t
+    max_rate = rate + rate_std_err * t
+    rate_pct_error =  100 * t * rate_std_err / rate
+
+    min_c = c - c_std_err * t
+    max_c = c + c_std_err * t
+    c_pct_error =  100 * t * c_std_err / c
+
+    cooperativity = get_parameter(session_id, 'release_cooperativity')
+
+    return cooperativity, rate, min_rate, max_rate, rate_pct_error, c, min_c, max_c, c_pct_error
+
+
+def manual_fit(session_id, alpha):
+    x_values, y_values = get_xy(session_id)
+
+    coeffs = scipy.polyfit(x_values, y_values, 2)
+
+    x4 = (x_values**4).sum()
+    x3 = (x_values**3).sum()
+    x2 = (x_values**2).sum()
+    x1 = x_values.sum()
+    n = len(x_values)
+
+    A = numpy.array([[ n, x1, x2],
+                     [x1, x2, x3],
+                     [x2, x3, x4]])
+
+    Ai = numpy.linalg.inv(A)
+
+    yvar = ((y_values - scipy.polyval(coeffs, x_values))**2).sum() / (n - 3)
+
+    vcv = yvar * Ai
+
+    a, b, c = coeffs
+
+    d = numpy.array([[0],
+                     [-1/(2*a)],
+                     [b/(2*a**2)]])
+    std_err = float(numpy.sqrt(numpy.dot(d.transpose(), numpy.dot(vcv, d))))
+    t = scipy.stats.t.ppf(1 - alpha/2, len(x_values) - 3)
+    rate = -b/(2*a)
+    
+    min_rate = rate - t * std_err
+    max_rate = rate + t * std_err
 
     pct_error =  100 * (max_rate - rate) / rate
     cooperativity = get_parameter(session_id, 'release_cooperativity')
 
-    return cooperativity, rate, min_rate, max_rate, pct_error, cf_pars[2]
+    chi2 = scipy.polyval(coeffs, rate)
+
+    return cooperativity, rate, min_rate, max_rate, pct_error, chi2
 
 
 def save_fits(cooperative_ids, vectorial_id, alpha=0.05,
