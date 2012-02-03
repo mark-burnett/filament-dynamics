@@ -67,31 +67,7 @@ def get_parameter(session_id, parameter_name):
     return runs[0].all_parameters.get(parameter_name, None)
 
 
-def linear_fit(session_id, alpha, method='OLS'):
-    x_values, y_values = get_xy(session_id)
-
-    xp = numpy.vander(x_values, 3)
-    model = getattr(sm, method)(y_values, xp)
-    fitresult = model.fit('qr')
-    a, b, c = fitresult.params
-    aci, bci, cci = fitresult.conf_int(alpha=alpha)
-
-    rate = -b / (2 * a)
-
-    # Remember max(bci) will give the min(abs(bci))
-    min_rate = -max(bci) / (2 * max(aci))
-    max_rate = -min(bci) / (2 * min(aci))
-
-    pct_error =  100 * (max_rate - rate) / rate
-
-    chi2 = scipy.polyval(fitresult.params, rate)
-
-    cooperativity = get_parameter(session_id, 'release_cooperativity')
-
-    return cooperativity, rate, min_rate, max_rate, pct_error, chi2
-
-
-def covariance_fit(session_id, alpha):
+def direct_fit(session_id, alpha):
     x_values, y_values = get_xy(session_id)
     guess_coeffs = scipy.polyfit(x_values, y_values, 2)
 
@@ -126,59 +102,27 @@ def covariance_fit(session_id, alpha):
     return cooperativity, rate, min_rate, max_rate, rate_pct_error, c, min_c, max_c, c_pct_error
 
 
-def manual_fit(session_id, alpha):
-    x_values, y_values = get_xy(session_id)
-
-    coeffs = scipy.polyfit(x_values, y_values, 2)
-
-    x4 = (x_values**4).sum()
-    x3 = (x_values**3).sum()
-    x2 = (x_values**2).sum()
-    x1 = x_values.sum()
-    n = len(x_values)
-
-    A = numpy.array([[ n, x1, x2],
-                     [x1, x2, x3],
-                     [x2, x3, x4]])
-
-    Ai = numpy.linalg.inv(A)
-
-    yvar = ((y_values - scipy.polyval(coeffs, x_values))**2).sum() / (n - 3)
-
-    vcv = yvar * Ai
-
-    a, b, c = coeffs
-
-    d = numpy.array([[0],
-                     [-1/(2*a)],
-                     [b/(2*a**2)]])
-    std_err = float(numpy.sqrt(numpy.dot(d.transpose(), numpy.dot(vcv, d))))
-    t = scipy.stats.t.ppf(1 - alpha/2, len(x_values) - 3)
-    rate = -b/(2*a)
-    
-    min_rate = rate - t * std_err
-    max_rate = rate + t * std_err
-
-    pct_error =  100 * (max_rate - rate) / rate
-    cooperativity = get_parameter(session_id, 'release_cooperativity')
-
-    chi2 = scipy.polyval(coeffs, rate)
-
-    return cooperativity, rate, min_rate, max_rate, pct_error, chi2
-
 
 def save_fits(cooperative_ids, vectorial_id, alpha=0.05,
         cooperative_filename='results/melki_cooperative_fit.dat',
         vectorial_filename='results/melki_vectorial_fit.dat'):
     coop_results = []
     for cid in cooperative_ids:
-        coop_results.append(covariance_fit(cid, alpha=alpha))
+        try:
+            coop_results.append(direct_fit(cid, alpha=alpha))
+        except ValueError:
+            pass
     coop_results.sort()
-    _small_writer(output_filename, coop_results,
-            ['Cooperativity', 'Rate', 'Min Rate', 'Max Rate', '% Error', 'Chi^2'],
+    _small_writer(cooperative_filename, coop_results,
+            ['Cooperativity', 'Rate', 'Min Rate', 'Max Rate', 'Rate % Error',
+                'Chi^2', 'Min Chi^2', 'Max Chi^2', 'Chi^2 % Error'],
             header='# Fit of cooperative models to Melki data\n# alpha = %s' % alpha)
 
-    vec_results = [covariance_fit(vectorial_id, alpha=alpha)[1:]]
-    _small_writer(output_filename, vec_results,
-            ['Rate', 'Min Rate', 'Max Rate', '% Error', 'Chi^2'],
-            header='# Fit of vectorial model to Melki data\n# alpha = %s' % alpha)
+    try:
+        vec_results = [direct_fit(vectorial_id, alpha=alpha)[1:]]
+        _small_writer(vectorial_filename, vec_results,
+                ['Rate', 'Min Rate', 'Max Rate', 'Rate % Error',
+                    'Chi^2', 'Min Chi^2', 'Max Chi^2', 'Chi^2 % Error'],
+                header='# Fit of vectorial model to Melki data\n# alpha = %s' % alpha)
+    except ValueError:
+        pass
