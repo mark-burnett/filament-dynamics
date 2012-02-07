@@ -74,7 +74,30 @@ TEST_F(CooperativeHydrolysisTest, RandomEquivalence) {
     EXPECT_DOUBLE_EQ(12, tr_12.R(0, filaments, concentrations, 1));
 }
 
-TEST_F(CooperativeHydrolysisTest, Mixed) {
+TEST_F(CooperativeHydrolysisTest, Mixed2) {
+    transitions::CooperativeHydrolysis t01_2(zero, one, two, 3, 2);
+
+    //         F0,      F1
+    // R: 3*3 = 9, 3*2 = 6
+    // V: 3*2 = 6, 3*0 = 0
+    EXPECT_DOUBLE_EQ(21, t01_2.initial_R(0, filaments, concentrations));
+
+    // Random Transition - no effect on boundaries
+    EXPECT_EQ(1, t01_2.perform(0, 11.2, filaments, concentrations));
+    //         F0,      F1
+    // R: 3*3 = 9, 3*1 = 3
+    // V: 3*2 = 6, 3*0 = 0
+    EXPECT_DOUBLE_EQ(18, t01_2.R(0, filaments, concentrations, 1));
+
+    // Vectorial Transition
+    EXPECT_EQ(0, t01_2.perform(0, 15.4, filaments, concentrations));
+    //         F0,      F1
+    // R: 3*2 = 6, 3*1 = 3
+    // V: 3*1 = 3, 3*0 = 0
+    EXPECT_DOUBLE_EQ(12, t01_2.R(0, filaments, concentrations, 0));
+}
+
+TEST_F(CooperativeHydrolysisTest, Mixed11) {
     transitions::CooperativeHydrolysis t01_2(zero, one, two, 3, 11);
 
     EXPECT_DOUBLE_EQ(75, t01_2.initial_R(0, filaments, concentrations));
@@ -86,6 +109,36 @@ TEST_F(CooperativeHydrolysisTest, Mixed) {
     // Vectorial Transition - subtracts (30 + 3 from Rate)
     EXPECT_EQ(0, t01_2.perform(0, 43, filaments, concentrations));
     EXPECT_DOUBLE_EQ(39, t01_2.R(0, filaments, concentrations, 0));
+}
+
+TEST_F(CooperativeHydrolysisTest, RecurringStates) {
+    transitions::CooperativeHydrolysis t01_0(zero, one, zero, 3, 2);
+
+    //         F0,      F1
+    // R: 3*3 = 9, 3*2 = 6
+    // V: 3*2 = 6, 3*0 = 0
+    EXPECT_DOUBLE_EQ(21, t01_0.initial_R(0, filaments, concentrations));
+
+    // Random Transition - creates new boundary!
+    EXPECT_EQ(1, t01_0.perform(0, 11.2, filaments, concentrations));
+    //         F0,      F1
+    // R: 3*3 = 9, 3*1 = 3
+    // V: 3*2 = 6, 3*1 = 3
+    EXPECT_DOUBLE_EQ(21, t01_0.R(0, filaments, concentrations, 1));
+
+    // Random Transition - deletes boundary
+    EXPECT_EQ(0, t01_0.perform(0, 2.5, filaments, concentrations));
+    //         F0,      F1
+    // R: 3*2 = 6, 3*1 = 3
+    // V: 3*1 = 3, 3*1 = 3
+    EXPECT_DOUBLE_EQ(15, t01_0.R(0, filaments, concentrations, 0));
+
+    // Vectorial Transition
+    EXPECT_EQ(0, t01_0.perform(0, 10, filaments, concentrations));
+    //         F0,      F1
+    // R: 3*1 = 3, 3*1 = 3
+    // V: 3*0 = 0, 3*1 = 3
+    EXPECT_DOUBLE_EQ(9, t01_0.R(0, filaments, concentrations, 0));
 }
 
 TEST_F(CooperativeHydrolysisTest, MixedWithByproduct) {

@@ -13,6 +13,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+// #include <iostream>
 #include <cmath>
 
 #include "simulation_strategy.h"
@@ -20,6 +21,7 @@
 namespace stochastic {
 
 measurements::container_t SimulationStrategy::run() {
+    size_t transition_count = 0;
     double time = 0;
 
     initialize_simulation();
@@ -37,6 +39,7 @@ measurements::container_t SimulationStrategy::run() {
     double r = _random(R);
 
     previous_filament_index = perform_transition(time, r);
+    ++transition_count;
 
     while (end_conditions_not_met(time)) {
         // Calculate rates for the next timestep.
@@ -60,8 +63,10 @@ measurements::container_t SimulationStrategy::run() {
         r = _random(R);
 
         previous_filament_index = perform_transition(time, r);
+        ++transition_count;
     }
 //    std::cerr << "Exitting." << std::endl;
+//    std::cout << "Number of events = " << transition_count << std::endl;
 
     return _measurements;
 }

@@ -45,8 +45,8 @@ double VectorialHydrolysis::R(double time,
 
     _filament_counts[previous_filament_index] = this_count;
 
-    _count += this_count;
-    _count -= previous_count;
+    int delta = static_cast<int>(this_count) - static_cast<int>(previous_count);
+    _count += delta;
 
     return _rate * _count;
 }

@@ -15,7 +15,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <map>
+// #include <map>
+#include <boost/unordered_map.hpp>
+#include <boost/functional/hash.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include "state.h"
@@ -35,7 +37,9 @@ class Concentration {
 
 typedef Concentration ZeroConcentration;
 
-typedef std::map<State, Concentration::ptr_t> container_t;
+// typedef std::map<State, Concentration::ptr_t> container_t;
+typedef boost::unordered_map<State, Concentration::ptr_t,
+        boost::hash<std::string> > container_t;
 
 } // namespace concentrations
 } // namespace stochastic

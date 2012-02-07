@@ -13,6 +13,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <exception>
 #include "filaments/segmented_filament.h"
 
 namespace stochastic {
@@ -324,8 +325,13 @@ void SegmentedFilament::_fracture(sl_t::iterator i,
     }
 }
 
+class IllegalStateIndex : public std::exception {};
+
 void SegmentedFilament::update_state(size_t instance_number,
         const State &old_state, const State &new_state) {
+    if (instance_number >= _state_counts[old_state]) {
+        throw IllegalStateIndex();
+    }
     --_state_counts[old_state];
     ++_state_counts[new_state];
 
@@ -342,9 +348,17 @@ void SegmentedFilament::update_state(size_t instance_number,
 }
 
 
+class IllegalBoundaryIndex : public std::exception {};
+
 void SegmentedFilament::update_boundary(size_t instance_number,
         const State &old_pointed_state, const State &old_barbed_state,
         const State &new_barbed_state) {
+    if (instance_number >= _boundary_counts[old_pointed_state][old_barbed_state]) {
+        throw IllegalBoundaryIndex();
+    }
+    --_state_counts[old_barbed_state];
+    ++_state_counts[new_barbed_state];
+
     size_t count = 0;
     std::list<Segment>::iterator barbed_segment(_segments.begin());
     std::list<Segment>::iterator pointed_segment(_segments.begin());

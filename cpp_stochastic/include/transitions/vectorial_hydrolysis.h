@@ -15,6 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <algorithm>
 #include <vector>
 
 #include "concentrations/concentration.h"
@@ -30,7 +31,7 @@ class VectorialHydrolysis : public Transition {
         VectorialHydrolysis(const State &pointed_neighbor,
                 const State &old_state, const State &new_state, double rate) :
             _pointed_neighbor(pointed_neighbor), _old_state(old_state),
-            _new_state(new_state), _rate(rate), _count(0) {}
+            _new_state(new_state), _rate(std::max(0.0, rate)), _count(0) {}
         double initial_R(double time,
                     const filaments::container_t &filaments,
                     const concentrations::container_t &concentrations);

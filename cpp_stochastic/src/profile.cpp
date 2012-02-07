@@ -39,6 +39,8 @@
 #include "transitions/random_hydrolysis.h"
 #include "transitions/tip_hydrolysis.h"
 
+#include "transitions/vectorial_hydrolysis.h"
+
 using namespace stochastic;
 
 const size_t number_of_filaments = 10;
@@ -52,8 +54,14 @@ const double duration = 2500.1;
 const double sample_period = 1;
 
 const double hydrolysis_rate = 0.3;
-const double dissociation_cooperativity = 1e11;
-const double dissociation_rate = 1.47e-7;
+// const double dissociation_cooperativity = 1e10;
+// const double dissociation_rate = 9.1e-10;
+const double dissociation_cooperativity = 1e2;
+const double dissociation_rate = 1.45e-4;
+
+// const double dissociation_cooperativity = 1;
+// const double dissociation_rate = 1.62e-3;
+// const double vectorial_rate = 9.1;
 
 const double b_atp_assoc_rate = 11.6;
 const double b_adppi_assoc_rate = 3.4;
@@ -72,6 +80,7 @@ const double p_adppi_dissoc_rate = 0.02;
 const double p_adp_dissoc_rate = 0.25;
 
 const double b_tip_pi_dissoc_rate = 2;
+const double p_tip_pi_dissoc_rate = 2; // could try vectorial rate
 
 const double sol_pi_dissoc_rate = 10000;
 
@@ -128,18 +137,33 @@ int main(int argc, char *argv[]) {
 
 
     // --- interesting transitions
-    transitions.push_back(transitions::Transition::ptr_t(
-                new transitions::Association(pi, adp, adppi,
-                    pi_association_rate)));
+//    transitions.push_back(transitions::Transition::ptr_t(
+//                new transitions::Association(pi, adp, adppi,
+//                    pi_association_rate)));
 
 
     transitions.push_back(transitions::Transition::ptr_t(
                 new transitions::RandomHydrolysis(atp, adppi,
                     hydrolysis_rate)));
 
+
+//    transitions.push_back(transitions::Transition::ptr_t(
+//                new transitions::RandomHydrolysisWithByproduct(adppi, adp,
+//                    dissociation_rate, pi)));
+
     transitions.push_back(transitions::Transition::ptr_t(
                 new transitions::CooperativeHydrolysisWithByproduct(adp, adppi,
                     adp, dissociation_rate, pi, dissociation_cooperativity)));
+
+//    transitions.push_back(transitions::Transition::ptr_t(
+//                new transitions::VectorialHydrolysisWithByproduct(adp, adppi, adp,
+//                    (dissociation_cooperativity - 1) * dissociation_rate, pi)));
+//                    vectorial_rate, pi)));
+
+    transitions.push_back(transitions::Transition::ptr_t(
+                new transitions::PointedTipHydrolysisWithByproduct(adppi, adp,
+                    p_tip_pi_dissoc_rate, pi)));
+
 
     transitions.push_back(transitions::Transition::ptr_t(
                 new transitions::BarbedTipHydrolysisWithByproduct(adppi, adp,

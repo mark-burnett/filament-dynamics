@@ -143,6 +143,10 @@ TEST(SegmentedFilament, UpdateBoundary) {
     EXPECT_EQ(1, f.boundary_count(zero, three));
     EXPECT_EQ(1, f.boundary_count(three, zero));
 
+    EXPECT_EQ(19, f.state_count(zero));
+    EXPECT_EQ(0, f.state_count(one));
+    EXPECT_EQ(1, f.state_count(three));
+
     f.update_state(10, zero, three);
     EXPECT_EQ(2, f.boundary_count(zero, three));
     f.update_boundary(1, zero, three, four);
@@ -150,6 +154,11 @@ TEST(SegmentedFilament, UpdateBoundary) {
     EXPECT_EQ(1, f.boundary_count(three, zero));
     EXPECT_EQ(1, f.boundary_count(zero, four));
     EXPECT_EQ(1, f.boundary_count(four, zero));
+
+    EXPECT_EQ(18, f.state_count(zero));
+    EXPECT_EQ(0, f.state_count(one));
+    EXPECT_EQ(1, f.state_count(three));
+    EXPECT_EQ(1, f.state_count(four));
 }
 
 // Specific SegmentedFilament cases to test

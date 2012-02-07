@@ -18,10 +18,13 @@
 #include <string>
 #include <boost/flyweight.hpp>
 #include <boost/flyweight/no_locking.hpp>
+#include <boost/flyweight/no_tracking.hpp>
 
 namespace stochastic {
 
-typedef boost::flyweight<std::string, boost::flyweights::no_locking> State;
+typedef boost::flyweight<std::string,
+        boost::flyweights::no_locking,
+        boost::flyweights::no_tracking> State;
 // typedef std::string State;
 // typedef size_t State;
 
