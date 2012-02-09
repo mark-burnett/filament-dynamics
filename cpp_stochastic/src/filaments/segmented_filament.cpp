@@ -138,6 +138,7 @@ void SegmentedFilament::append_pointed(const State &new_state) {
     ++_state_counts[new_state];
 }
 
+class DepolymerizingEmptyFilament : public std::exception {};
 State SegmentedFilament::pop_barbed() {
     if (_length > 0) {
         Segment &seg = _segments.back();
@@ -157,8 +158,7 @@ State SegmentedFilament::pop_barbed() {
 
         return state;
     } else {
-        // We shouldn't get here, but silently comply.
-        return State();
+        throw DepolymerizingEmptyFilament();
     }
 }
 
@@ -181,8 +181,7 @@ State SegmentedFilament::pop_pointed() {
 
         return state;
     } else {
-        // We shouldn't get here, but silently comply.
-        return State();
+        throw DepolymerizingEmptyFilament();
     }
 }
 
