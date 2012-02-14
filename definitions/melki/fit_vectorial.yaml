@@ -9,8 +9,8 @@ parameter_specifications:
     melki_fit:
         simulation:
             release_rate:
-                guess: 9.2
-#                lower_bound: 5
-#                upper_bound: 15
-#                mesh_type: linear
-#                num_points: 100
+#                guess: 9.2
+                lower_bound: 8.5
+                upper_bound: 10
+                mesh_type: linear
+                num_points: 150

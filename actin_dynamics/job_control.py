@@ -69,7 +69,7 @@ def get_job(process_id, db_session):
                 log.debug('No jobs found.')
     except sqlalchemy.exc.OperationalError as oe:
         if 1213 == oe.orig[0]:
-            _log.warn('Deadlock while acquiring job %s.', job.id)
+            log.warn('Deadlock while acquiring job %s.', job.id)
             job = None
         else:
             raise
@@ -80,11 +80,11 @@ def get_job(process_id, db_session):
 # XXX Fix session management
 def restart_incomplete_jobs():
     db_session = database.DBSession()
-    job_query = db_session.query(database.Job).filter_by(complete=False
-            ).filter(database.Job.worker != None)
+    with db_session.transaction:
+        job_query = db_session.query(database.Job).filter_by(complete=False
+                ).filter(database.Job.worker_id != None)
 
-    job_query.update({'worker': None})
-    db_session.commit()
+        job_query.update({'worker_id': None})
 
 def delete_jobs():
     db_session = database.DBSession()
