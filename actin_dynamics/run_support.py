@@ -43,10 +43,10 @@ def perform_simulation(run, db_session):
                 analysis_result = analysis.perform(results,
                         factories.analysis.make_result)
                 analysis_result.run_id = run.id
-                if analysis_result.measurement[0][-1] < expected_no_samples:
-                    log.warn('Failed analysis: %s for run_id %s',
-                            analysis_bind.label, run.id)
-                    raise RuntimeError('Failed analysis')
+#                if analysis_result.measurement[0][-1] < expected_no_samples:
+#                    log.warn('Failed analysis: %s for run_id %s',
+#                            analysis_bind.label, run.id)
+#                    raise RuntimeError('Failed analysis')
                 db_session.add(analysis_result)
 
             log.debug('Calculating %s objectives for run %s.',
