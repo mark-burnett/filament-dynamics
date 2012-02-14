@@ -1,0 +1,3 @@
+global_parameters:
+    release_cooperativity: 10.0
+    release_rate: 0.000603083719703
