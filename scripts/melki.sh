@@ -18,13 +18,14 @@
 echo 'Fitting...'
 for FILE in definitions/melki/fit_rho_*.yaml; do
     echo $FILE
-#    ./sim.sh -l -n 0 -s $FILE
-#    sleep 1
-    bin/simple_fit.py -o pi_fit $FILE
+    ./sim.sh -l -n 0 -s $FILE
+    sleep 1
+#    bin/simple_fit.py -o pi_fit $FILE &
 done
 
-#./sim.sh -l -n 0 -s definitions/melki/fit_vectorial.yaml
-bin/simple_fit.py -o pi_fit definitions/melki/fit_vectorial.yaml
+./sim.sh -l -n 0 -s definitions/melki/fit_vectorial.yaml
+#bin/simple_fit.py -o pi_fit definitions/melki/fit_vectorial.yaml &
+wait
 
 # Probably should wait, so I don't kill everything accidentally
 # bin/view_log.py -tf --process_type controller --min_level 50

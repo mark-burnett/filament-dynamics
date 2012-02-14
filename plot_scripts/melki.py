@@ -25,24 +25,40 @@ from actin_dynamics.numerical import meshes
 from plot_scripts import contexts
 from plot_scripts import settings
 
+HALFTIME = 433
+#RHO_CRIT = 69444444
+RHO_CRIT = (15/0.00167)**2
+
+MELKI_ERROR = 0.1
+
 def main():
-#    with contexts.complex_figure('plots/melki_rates_combined.eps',
-#            width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
-#            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2,
-#            right_label=True) as figure:
-#        melki_rate_plot(figure)
-#        melki_rate_error_plot(figure)
+    with contexts.complex_figure('plots/melki_rates_combined.eps',
+            width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
+            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2,
+            right_label=True) as figure:
+        melki_rate_plot(figure)
+        melki_rate_error_plot(figure)
 #    melki_timecourses()
-    single_timecourse()
+#    single_timecourse()
 #    stupid_melki_timecourses()
+    with contexts.complex_figure('plots/melki_fit_quality.eps',
+            width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
+            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2) as figure:
+        melki_rate_fit_quality(figure)
+        melki_sample_timecourses(figure)
+
 
 
 def melki_rate_plot(figure):
-    results = data.load_data('results/melki_rates.dat')
+#    results = data.load_data('results/melki_rates.dat')
+    results = data.load_data('results/melki_cooperative_fit.dat')
+    v_results = data.load_data('results/melki_vectorial_fit.dat')
+
 #    results = data.load_data('results/melki_rate_sensitivities.dat')
 #    cooperativities, rates, statistical_errors, halftimes, hte = results
 #    cooperativities, rates, errors = results[:3]
     cooperativities, rates = results[:2]
+    v_rate_pack = v_results[0][:3]
 
 #    with contexts.basic_figure('plots/melki_rates.eps',
     with contexts.subplot(figure, (2, 1, 1), title='A',
@@ -55,7 +71,7 @@ def melki_rate_plot(figure):
 
         cooperativities = numpy.array(cooperativities)
         contexts.plot(axes, 'plot',
-                cooperativities, 1.0 / (388 * numpy.sqrt(cooperativities)),
+                cooperativities, 1.0 / (HALFTIME * numpy.sqrt(cooperativities)),
                 'r-', linewidth=0.5)
 
         axes_2 = axes.twinx()
@@ -65,13 +81,14 @@ def melki_rate_plot(figure):
         for label in axes_2.get_yticklabels():
             label.set_size(settings.TICK_FONT_SIZE)
 
-        axes.axvline(69444444, 0, 1, linestyle='--', color='g', linewidth=0.5)
+        axes.axvline(RHO_CRIT, 0, 1, linestyle='--', color='g', linewidth=0.5)
 
 
         contexts.plot(axes_2, 'plot', cooperativities,
                 cooperativities * rates, 'k.', markerfacecolor='None')
 
-        axes_2.axhline(24, 0, 1, linestyle=':', color='b')
+        axes_2.axhline(v_rate_pack[0], 0, 1, linestyle=':', color='b')
+        axes_2.set_ylim([1.0e-4, 100])
 
         axes.set_xlim([0.1, 10**12])
 
@@ -83,12 +100,13 @@ def melki_rate_plot(figure):
         
 
 def melki_rate_error_plot(figure):
-    results = data.load_data('results/melki_rate_sensitivities.dat')
-    cooperativities, rates, errors = results[:3]
+#    results = data.load_data('results/melki_rate_sensitivities.dat')
+    results = data.load_data('results/melki_cooperative_fit.dat')
+    cooperativities, rates, min_rates, max_rates = results[:4]
 
-    theoretical_rates = 1.0 / (388 * numpy.sqrt(cooperativities))
+    theoretical_rates = 1.0 / (HALFTIME * numpy.sqrt(cooperativities))
+    errors = numpy.array(numpy.array(rates) - numpy.array(min_rates)) / theoretical_rates
     rates = numpy.array(rates) / theoretical_rates
-    errors = numpy.array(errors) / theoretical_rates
 
 #    with contexts.basic_figure('plots/melki_rate_errors.eps',
     with contexts.subplot(figure, (2, 1, 2), title='B',
@@ -100,9 +118,9 @@ def melki_rate_error_plot(figure):
         contexts.plot(axes, 'errorbar', cooperativities,
                 rates, errors, fmt='k.')
         contexts.plot(axes, 'plot', cooperativities,
-                [1 for c in cooperativities], 'r-')
+                [1 for c in cooperativities], 'r-', linewidth=0.5)
 
-        axes.axvline(69444444, 0, 1, linestyle='--', color='g', linewidth=0.5)
+        axes.axvline(RHO_CRIT, 0, 1, linestyle='--', color='g', linewidth=0.5)
 
         axes.set_xlim([0.1, 10**12])
 
@@ -110,134 +128,66 @@ def melki_rate_error_plot(figure):
             100000000, 10000000000])
         
 
+        axes.set_ylim([0, 1.2])
 #        axes.set_xlim([0.1, 10000000])
 #
 #        axes.set_xticks([1, 10, 100, 1000, 10000, 100000, 1000000])
 
+def melki_rate_fit_quality(figure):
+    results = data.load_data('results/melki_cooperative_fit.dat')
+    (cooperativities, rates, min_rates, max_rates, rate_pe,
+            chi2, min_chi2, max_chi2, chi2_pe) = results
+    v_results = data.load_data('results/melki_vectorial_fit.dat')
+    (v_rate, junk, junk, junk,
+            v_chi2, v_min_chi2, v_max_chi2, junk) = v_results
+    with contexts.subplot(figure, (2, 1, 2), title='B',
+            x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
+            y_label=r'$\chi^2$ Comparison To Data',
+            logscale_x=True) as axes:
+        contexts.plot(axes, 'errorbar', cooperativities,
+                chi2, [c - m for c, m in zip(chi2, min_chi2)],
+                fmt='k.')
+        axes.axhline(v_chi2, 0, 1, linestyle=':', color='b')
+        axes.axvline(RHO_CRIT, 0, 1, linestyle='--', color='g', linewidth=0.5)
 
+        axes.set_xlim([0.1, 10**12])
+        axes.set_ylim([0, 14])
 
-def stupid_melki_timecourses():
-    factin_sims = data.load_data('results/melki_factin_timecourses.dat')
-    pi_sims = data.load_data('results/melki_pi_timecourses.dat')
-    fs_cdot, f_rho_1e0, f_rho_1e3, f_rho_1e6 = factin_sims
-    ps_cdot, p_rho_1e0, p_rho_1e3, p_rho_1e6 = pi_sims
+        axes.set_xticks([1, 100, 10000, 1000000,
+            100000000, 10000000000])
 
-    np_sims = data.load_data('results/new_melki_pi_timecourses.dat')
-    nps_cdot, np_rho_1e0 = np_sims
-
-    f_data = data.load_data(
+def melki_sample_timecourses(figure):
+    data_f_times, data_f = data.load_data(
             'experimental_data/melki_fievez_carlier_1996/factin_concentration.dat')
-    p_data = data.load_data(
+    data_p_times, data_p = data.load_data(
             'experimental_data/melki_fievez_carlier_1996/phosphate_concentration.dat')
-    fd_cdot, fd_f = f_data
-    pd_cdot, pd_p = p_data
+    data_p = numpy.array(data_p)
 
-    scaled_pd_p = pd_p
+    sim_f = data.load_data('results/melki_timecourses_f.dat')
+    sim_p = data.load_data('results/melki_timecourses_p.dat')
+    sf_times, sf_vals = sim_f[0], sim_f[1:]
+    sp_times, sp_vals = sim_p[0], sim_p[1:]
 
-    with contexts.basic_figure('plots/melki_timecourses.eps',
+    colors = ['b', 'g', 'r', 'orange']
+    labels = ['Vectorial', 'Random', r'$\rho_d = 10^4$', r'$\rho_d = 10^8$']
+
+    with contexts.subplot(figure, (2, 1, 1), title='A',
             x_label=r'Time [s]',
-            y_label=r'Phosphate Concentration [$\mu$M]') as axes:
-        contexts.plot(axes, 'plot', pd_cdot, scaled_pd_p, 'k-',
-                label='Data')
+            y_label=r'Concentrations [$\mu$M]') as axes:
+        axes.fill_between(data_p_times,
+                data_p * (1 - MELKI_ERROR), data_p * (1 + MELKI_ERROR),
+                color='#CCCCCC')
+        axes.plot(data_f_times, data_f, 'k--')
+        axes.plot(data_p_times, data_p, 'k-', label='Data')
 
-        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e0, 'r:',
-                label=r'$r_d=0.00204$, $t_\frac{1}{2}=388$')
+        for f, p, c, l in zip(sf_vals, sp_vals, colors, labels):
+            axes.plot(sf_times, f, color=c, linestyle='--')
+            axes.plot(sp_times, p, color=c, linestyle='-', label=l)
 
-        contexts.plot(axes, 'plot', nps_cdot, np_rho_1e0, 'b:',
-                label=r'$r_d=0.00179$, $t_\frac{1}{2}=433$')
-
-        axes.set_xlim([0, 2500])
         axes.set_ylim([0, 35])
-
-        contexts.add_legend(axes, loc='lower right')
-
-
-
-def melki_timecourses():
-    factin_sims = data.load_data('results/melki_factin_timecourses.dat')
-    pi_sims = data.load_data('results/melki_pi_timecourses.dat')
-    fs_cdot, f_rho_1e0, f_rho_1e3, f_rho_1e6 = factin_sims
-    ps_cdot, p_rho_1e0, p_rho_1e3, p_rho_1e6 = pi_sims
-
-    f_data = data.load_data(
-            'experimental_data/melki_fievez_carlier_1996/factin_concentration.dat')
-    p_data = data.load_data(
-            'experimental_data/melki_fievez_carlier_1996/phosphate_concentration.dat')
-    fd_cdot, fd_f = f_data
-    pd_cdot, pd_p = p_data
-
-#    scaled_pd_p = _scale_data_to(pd_p, 30)
-    s_scaled_pd_p = _scale_data_to(pd_p, p_rho_1e0[-1] * 1.010)
-    scaled_pd_p = pd_p
-
-    with contexts.basic_figure('plots/melki_timecourses.eps',
-            x_label=r'Time [s]',
-            y_label=r'Phosphate Concentration [$\mu$M]') as axes:
-#        contexts.plot(axes, 'plot', fd_cdot, fd_f, 'k-')#, label='Data')
-#        contexts.plot(axes, 'plot', pd_cdot, scaled_pd_p, 'k:')
-        contexts.plot(axes, 'plot', pd_cdot, scaled_pd_p, 'k--',
-                label='Data')
-#        contexts.plot(axes, 'plot', pd_cdot, pd_p, 'k-')
-        contexts.plot(axes, 'plot', pd_cdot, s_scaled_pd_p, 'k-',
-                label='Scaled Data')
-
-#        contexts.plot(axes, 'plot', fs_cdot, f_rho_1e0, 'r-',
-#                label=r'$\rho_d =\,1$')
-#        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e0, 'r:')
-        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e0, 'r:',
-                label=r'$\rho_d =\,1$')
-
-#        contexts.plot(axes, 'plot', fs_cdot, f_rho_1e3, 'g-',
-#                label=r'$\rho_d =\,10^3$')
-#        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e3, 'g:')
-        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e3, 'g--',
-                label=r'$\rho_d =\,2$')
-
-#        contexts.plot(axes, 'plot', fs_cdot, f_rho_1e6, 'b-',
-#                label=r'$\rho_d =\,10^6$')
-#        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e6, 'b:')
-        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e6, 'b-.',
-                label=r'$\rho_d =\,10$')
-
-#        contexts.plot(axes, 'plot', ps_cdot, p_rho_1e6, 'k-.',
-#                label=r'$\rho_d =\,10$')
-
         axes.set_xlim([0, 2500])
-        axes.set_ylim([0, 35])
 
-        contexts.add_legend(axes, loc='lower right')
-
-def single_timecourse():
-    sim = data.load_data('results/timecourses.dat')
-    stime, sfactin, spi = sim
-
-    f_data = data.load_data(
-            'experimental_data/melki_fievez_carlier_1996/factin_concentration.dat')
-    p_data = data.load_data(
-            'experimental_data/melki_fievez_carlier_1996/phosphate_concentration.dat')
-    fd_cdot, fd_f = f_data
-    pd_cdot, pd_p = p_data
-
-    with contexts.basic_figure('plots/crazy_timecourses.eps',
-            x_label=r'Time [s]',
-            y_label=r'Phosphate Concentration [$\mu$M]') as axes:
-        contexts.plot(axes, 'plot', pd_cdot, pd_p, 'r-', label='Data [Pi]')
-        contexts.plot(axes, 'plot', stime, spi, 'r:', label='Simulated [Pi]')
-
-        contexts.plot(axes, 'plot', fd_cdot, fd_f, 'k-', label='Data [F-actin]')
-        contexts.plot(axes, 'plot', stime, sfactin, 'k:', label='Simulated [F-actin]')
-
-        axes.set_xlim([0, 2500])
-        axes.set_ylim([0, 35])
-
-        contexts.add_legend(axes, loc='lower right')
-
-
-def _scale_data_to(data, final_value):
-    result = numpy.array(data)
-    current_final_value = data[-1]
-    result *= float(final_value) / current_final_value
-    return result
+        axes.legend(loc=4)
 
 
 if '__main__' == __name__:
