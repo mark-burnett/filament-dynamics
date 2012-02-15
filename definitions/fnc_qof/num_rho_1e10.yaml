@@ -1,4 +1,4 @@
-name: 'FNC Numerator Variation, rho_r = 10^10'
+name: 'FNC Numerator Variation, rho_d = 10^10'
 
 import:
     - 'fnc/numerator_base.yaml'

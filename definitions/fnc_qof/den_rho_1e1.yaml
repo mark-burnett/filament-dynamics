@@ -1,4 +1,4 @@
-name: 'FNC Denominator Variation, rho_r = 10'
+name: 'FNC Denominator Variation, rho_d = 10'
 
 import:
     - 'fnc/denominator_base.yaml'
