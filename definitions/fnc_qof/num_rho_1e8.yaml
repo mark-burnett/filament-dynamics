@@ -1,0 +1,6 @@
+name: 'FNC Numerator Variation, rho_r = 10^8'
+
+import:
+    - 'fnc/numerator_base.yaml'
+    - 'random_cooperative_model.yaml'
+    - 'fit_rates/rho_100000000.yaml'

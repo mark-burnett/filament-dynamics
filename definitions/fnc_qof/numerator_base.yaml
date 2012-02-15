@@ -1,0 +1,5 @@
+import:
+    - 'fnc_qof/base.yaml'
+
+global_parameters:
+    filament_tip_concentration: 1.1e-3
