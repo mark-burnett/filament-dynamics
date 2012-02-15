@@ -1,6 +1,6 @@
 name: 'FNC Denominator Variation, rho_d = 100'
 
 import:
-    - 'fnc/denominator_base.yaml'
+    - 'fnc_qof/denominator_base.yaml'
     - 'random_cooperative_model.yaml'
     - 'fit_rates/rho_100.yaml'

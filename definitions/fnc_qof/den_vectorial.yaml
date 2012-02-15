@@ -1,6 +1,6 @@
 name: 'FNC Denominator Variation, vectorial'
 
 import:
-    - 'fnc/denominator_base.yaml'
+    - 'fnc_qof/denominator_base.yaml'
     - 'random_vectorial_model.yaml'
     - 'fit_rates/vectorial.yaml'
