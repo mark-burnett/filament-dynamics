@@ -1,0 +1,6 @@
+name: 'FNC Variation, rho_r = 10000000'
+
+import:
+    - 'fnc/base.yaml'
+    - 'random_cooperative_model.yaml'
+    - 'fit_rates/rho_10000000.yaml'

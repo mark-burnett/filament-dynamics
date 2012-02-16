@@ -6,19 +6,19 @@ import:
     - 'parameters/carlier86_conditions.yaml'
     - 'parameters/first_paper.yaml'
     - 'parameters/tip_release_rate.yaml'
-    - 'parameters/big_statistics.yaml'
 
 experiments:
     fnc_exploration:
         parameters:
             simulation_duration: 1200
             sample_period: 0.1
+            number_of_filaments: 1000
 
 parameter_specifications:
     fnc_exploration:
         simulation:
             filament_tip_concentration:
-                lower_bound: 0.001
+                lower_bound: 0.011
                 upper_bound: 0.02
-                mesh_type: log
-                num_points: 21
+                mesh_type: linear
+                num_points: 11
