@@ -16,13 +16,13 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 echo 'Running FNC variation...'
-for FILE in definitions/melki/fit_rho_*.yaml; do
+for FILE in definitions/fnc/rho_*.yaml; do
     echo $FILE
     ./sim.sh -l -n 0 -s $FILE
     sleep 1
 done
 
-./sim.sh -l -n 0 -s definitions/melki/fit_vectorial.yaml
+./sim.sh -l -n 0 -s definitions/fnc/vectorial.yaml
 
 # Probably should wait, so I don't kill everything accidentally
 # bin/view_log.py -tf --process_type controller --min_level 50
