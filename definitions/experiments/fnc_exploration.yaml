@@ -3,10 +3,9 @@ experiments:
         simulation:
             filaments:
                 filament_factory:
-                    class_name: SingleStateFixedLengthFromConcentrations
+                    class_name: DefaultFilament
                     variable_arguments:
-                        number: number_of_filaments
-                        concentration: seed_concentration
+                        seed_concentration: seed_concentration
                         filament_tip_concentration: filament_tip_concentration
                     fixed_arguments:
                         state: ADP
@@ -16,16 +15,14 @@ experiments:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                        sample_period: sample_period
+                        number_of_filaments: number_of_filaments
                         initial_concentration: initial_concentration
 
                 ADPPi:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                        sample_period: sample_period
+                        number_of_filaments: number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -33,8 +30,7 @@ experiments:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                        sample_period: sample_period
+                        number_of_filaments: number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -43,8 +39,7 @@ experiments:
                     class_name: FixedReagent
                     variable_arguments:
                         filament_tip_concentration: filament_tip_concentration
-                        number: number_of_filaments
-                        sample_period: sample_period
+                        number_of_filaments: number_of_filaments
                     fixed_arguments:
                         initial_concentration: 0
 
@@ -71,91 +66,78 @@ experiments:
 
             measurements:
                 length:
-                    class_name: Length
+                    class_name: FilamentLength
                     variable_arguments:
                         sample_period: sample_period
 
-                ADPPi:
-                    class_name: StateCount
-                    fixed_arguments:
-                        state: ADPPi
+                Pi:
+                    class_name: Concentration
                     variable_arguments:
                         sample_period: sample_period
+                    fixed_arguments:
+                        state: Pi
 
             
         analyses:
             factin:
                 class_name: StandardErrorMean
                 variable_arguments:
-                    sample_period: sample_period
-                    stop_time:     simulation_duration
-                    scale_by:      filament_tip_concentration
-                    subtract:      seed_concentration
+                    scale_by: filament_tip_concentration
+                    subtract: seed_concentration
                 fixed_arguments:
-                    interpolation_method: previous_value
                     measurement_name: length
-                    measurement_type: filament
-
-#            length:
-#                class_name: StandardErrorMean
-#                variable_arguments:
-#                    sample_period: sample_period
-#                    stop_time:     simulation_duration
-#                fixed_arguments:
-#                    interpolation_method: previous_value
-#                    measurement_name: length
-#                    measurement_type: filament
 
             Pi:
                 class_name: StandardErrorMean
-                variable_arguments:
-                    sample_period: sample_period
-                    stop_time:     simulation_duration
                 fixed_arguments:
-                    interpolation_method: previous_value
                     measurement_name: Pi
-                    measurement_type: concentration
 
-            ADPPi:
-                class_name: StandardErrorMean
-                variable_arguments:
-                    sample_period: sample_period
-                    stop_time:     simulation_duration
-                fixed_arguments:
-                    interpolation_method: previous_value
-                    measurement_name: ADPPi
-                    measurement_type: filament
 
         objectives:
             executors:
-                adppi_peak_time:
-                    class_name: PeakTime
-                    fixed_arguments:
-                        analysis_name: ADPPi
-
-                adppi_peak_value:
-                    class_name: PeakValue
-                    fixed_arguments:
-                        analysis_name: ADPPi
-
-                halftime:
-                    class_name: HalfTime
-                    variable_arguments:
-                        base_value: initial_concentration
-                    fixed_arguments:
-                        analysis_name: Pi
-
-                halftime_error:
-                    class_name: HalfTimeError
-                    variable_arguments:
-                        base_value: initial_concentration
-                    fixed_arguments:
-                        analysis_name: Pi
-
-                factin_halftime:
+                f_halftime:
                     class_name: HalfTime
                     variable_arguments:
                         base_value: initial_concentration
                     fixed_arguments:
                         analysis_name: factin
+
+                p_halftime:
+                    class_name: HalfTime
+                    variable_arguments:
+                        base_value: initial_concentration
+                    fixed_arguments:
+                        analysis_name: Pi
+
+
+#                adppi_peak_time:
+#                    class_name: PeakTime
+#                    fixed_arguments:
+#                        analysis_name: ADPPi
+#
+#                adppi_peak_value:
+#                    class_name: PeakValue
+#                    fixed_arguments:
+#                        analysis_name: ADPPi
+#
+#                halftime:
+#                    class_name: HalfTime
+#                    variable_arguments:
+#                        base_value: initial_concentration
+#                    fixed_arguments:
+#                        analysis_name: Pi
+#
+#                halftime_error:
+#                    class_name: HalfTimeError
+#                    variable_arguments:
+#                        base_value: initial_concentration
+#                    fixed_arguments:
+#                        analysis_name: Pi
+#
+#                factin_halftime:
+#                    class_name: HalfTime
+#                    variable_arguments:
+#                        base_value: initial_concentration
+#                    fixed_arguments:
+#                        analysis_name: factin
 

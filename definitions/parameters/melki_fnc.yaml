@@ -7,4 +7,8 @@ global_parameters:
 
 #   fit from 10/30/2011 to random model (with tip release)
 #   the f-actin timecourse doesn't seem highly sensitive to this
-    filament_tip_concentration: 0.00179
+#    filament_tip_concentration: 0.00179
+
+# fit from 2/11/2012 to full random model (both tips, etc
+# 99% confidence interval is 1.67 nM +/- 0.245%
+    filament_tip_concentration: 0.00167
