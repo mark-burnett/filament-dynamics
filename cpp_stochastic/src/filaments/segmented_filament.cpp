@@ -138,7 +138,6 @@ void SegmentedFilament::append_pointed(const State &new_state) {
     ++_state_counts[new_state];
 }
 
-class DepolymerizingEmptyFilament : public std::exception {};
 State SegmentedFilament::pop_barbed() {
     if (_length > 0) {
         Segment &seg = _segments.back();
@@ -324,7 +323,6 @@ void SegmentedFilament::_fracture(sl_t::iterator i,
     }
 }
 
-class IllegalStateIndex : public std::exception {};
 
 void SegmentedFilament::update_state(size_t instance_number,
         const State &old_state, const State &new_state) {
@@ -346,8 +344,6 @@ void SegmentedFilament::update_state(size_t instance_number,
     }
 }
 
-
-class IllegalBoundaryIndex : public std::exception {};
 
 void SegmentedFilament::update_boundary(size_t instance_number,
         const State &old_pointed_state, const State &old_barbed_state,

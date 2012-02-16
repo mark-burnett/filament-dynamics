@@ -97,11 +97,19 @@ TEST(SegmentedFilament, RemoveEmpty) {
     EXPECT_EQ(0, f.length());
     EXPECT_EQ(0, f.state_count(zero));
 
-    f.pop_barbed();
+    try {
+        f.pop_barbed();
+        EXPECT_TRUE(false) << "Should have thrown exception.";
+    } catch (filaments::DepolymerizingEmptyFilament e) {
+    }
     EXPECT_EQ(0, f.length());
     EXPECT_EQ(0, f.state_count(zero));
 
-    f.pop_pointed();
+    try {
+        f.pop_barbed();
+        EXPECT_TRUE(false) << "Should have thrown exception.";
+    } catch (filaments::DepolymerizingEmptyFilament e) {
+    }
     EXPECT_EQ(0, f.length());
     EXPECT_EQ(0, f.state_count(zero));
 }
@@ -374,6 +382,14 @@ TEST(SegmentedFilament, FractureSingleCaseNoEndMergeAll) {
     }
 }
 
+// Non 1 length segment fracture cases:
+// left segment edge, not at pointed end, with merge
+// left segment edge, not at pointed end, no merge
+// left segment edge, at pointed end, no merge
+// right segment edge, not at barbed end, with merge
+// right segment edge, not at barbed end, no merge
+// right segment edge, at barbed end, no merge
+// middle of segment, ??? - could be more explicit
 
 TEST(SegmentedFilament, FractureMultipleCaseLeftEdgeNoEndMerge) {
     std::vector<State> values;
@@ -417,6 +433,29 @@ TEST(SegmentedFilament, FractureMultipleCaseLeftEdgeNoEndNoMerge) {
 
     EXPECT_EQ(1, f.boundary_count(zero, two));
     EXPECT_EQ(1, f.boundary_count(two, one));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
+TEST(SegmentedFilament, FractureMultipleCaseLeftEdgePointedEnd) {
+    std::vector<State> values;
+    values += zero, zero, one, one, zero, one, zero, zero;
+
+    std::vector<State> expected_result;
+    expected_result += one, zero, one, one, zero, one, zero, zero;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(0, zero, one);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(2, f.boundary_count(zero, one));
+    EXPECT_EQ(3, f.boundary_count(one, zero));
 
     for (size_t i = 0; i < expected_result.size(); ++i) {
         EXPECT_EQ(expected_result[i], actual_result[i])
@@ -476,6 +515,29 @@ TEST(SegmentedFilament, FractureMultipleCaseRightEdgeNoEndNoMerge) {
     }
 }
 
+TEST(SegmentedFilament, FractureMultipleCaseRightEdgeBarbedEnd) {
+    std::vector<State> values;
+    values += zero, zero, one, one, zero, one, zero, zero;
+
+    std::vector<State> expected_result;
+    expected_result += zero, zero, one, one, zero, one, zero, one;
+
+    filaments::SegmentedFilament f(values.begin(), values.end());
+    f.update_state(4, zero, one);
+    std::vector<State> actual_result(f.get_states());
+
+    EXPECT_EQ(8, f.length());
+    EXPECT_EQ(8, actual_result.size());
+
+    EXPECT_EQ(3, f.boundary_count(zero, one));
+    EXPECT_EQ(2, f.boundary_count(one, zero));
+
+    for (size_t i = 0; i < expected_result.size(); ++i) {
+        EXPECT_EQ(expected_result[i], actual_result[i])
+            << "i = " << i << std::endl;
+    }
+}
+
 TEST(SegmentedFilament, FractureMultipleCaseMiddle) {
     std::vector<State> values;
     values += zero, one, zero, one, one, one, zero, one;
@@ -504,103 +566,3 @@ TEST(SegmentedFilament, FractureMultipleCaseMiddle) {
             << "i = " << i << std::endl;
     }
 }
-
-/*
-TEST(SegmentedFilament, FractureMultipleCaseRightEdgeBarbedEnd) {
-    std::vector<State> values;
-    values += zero, zero, one, one, zero, one, zero, zero;
-
-    std::vector<State> expected_result;
-    expected_result += zero, zero, one, one, zero, one, zero, one;
-
-    filaments::SegmentedFilament f(values.begin(), values.end());
-    f.update_state(4, zero, one);
-    std::vector<State> actual_result(f.get_states());
-
-    EXPECT_EQ(8, f.length());
-    EXPECT_EQ(8, actual_result.size());
-
-    EXPECT_EQ(3, f.boundary_count(zero, one));
-    EXPECT_EQ(2, f.boundary_count(one, zero));
-
-    for (size_t i = 0; i < expected_result.size(); ++i) {
-        EXPECT_EQ(expected_result[i], actual_result[i])
-            << "i = " << i << std::endl;
-    }
-}
-
-TEST(SegmentedFilament, FractureMultipleCaseLeftEdgePointedEnd) {
-    std::vector<State> values;
-    values += zero, zero, one, one, zero, one, zero, zero;
-
-    std::vector<State> expected_result;
-    expected_result += one, zero, one, one, zero, one, zero, zero;
-
-    filaments::SegmentedFilament f(values.begin(), values.end());
-    f.update_state(0, zero, one);
-    std::vector<State> actual_result(f.get_states());
-
-    EXPECT_EQ(8, f.length());
-    EXPECT_EQ(8, actual_result.size());
-
-    EXPECT_EQ(2, f.boundary_count(zero, one));
-    EXPECT_EQ(3, f.boundary_count(one, zero));
-
-    for (size_t i = 0; i < expected_result.size(); ++i) {
-        EXPECT_EQ(expected_result[i], actual_result[i])
-            << "i = " << i << std::endl;
-    }
-}
-
-TEST(SegmentedFilament, FractureMultipleCaseLeftEdgeBarbedEndMerge) {
-    std::vector<State> values;
-    values += zero, zero, one, one, zero, one, zero, zero;
-
-    std::vector<State> expected_result;
-    expected_result += zero, zero, one, one, zero, one, one, zero;
-
-    filaments::SegmentedFilament f(values.begin(), values.end());
-    f.update_state(3, zero, one);
-    std::vector<State> actual_result(f.get_states());
-
-    EXPECT_EQ(8, f.length());
-    EXPECT_EQ(8, actual_result.size());
-
-    EXPECT_EQ(2, f.boundary_count(zero, one));
-    EXPECT_EQ(2, f.boundary_count(one, zero));
-
-    for (size_t i = 0; i < expected_result.size(); ++i) {
-        EXPECT_EQ(expected_result[i], actual_result[i])
-            << "i = " << i << std::endl;
-    }
-}
-
-TEST(SegmentedFilament, FractureMultipleCaseLeftEdgeBarbedEndNoMerge) {
-    std::vector<State> values;
-    values += zero, zero, one, one, zero, one, zero, zero;
-
-    std::vector<State> expected_result;
-    expected_result += zero, zero, one, one, zero, one, two, zero;
-
-    filaments::SegmentedFilament f(values.begin(), values.end());
-    f.update_state(3, zero, two);
-    std::vector<State> actual_result(f.get_states());
-
-    EXPECT_EQ(8, f.length());
-    EXPECT_EQ(8, actual_result.size());
-
-    EXPECT_EQ(2, f.boundary_count(zero, one));
-    EXPECT_EQ(1, f.boundary_count(one, zero));
-
-    EXPECT_EQ(1, f.boundary_count(two, zero));
-    EXPECT_EQ(0, f.boundary_count(zero, two));
-
-    EXPECT_EQ(0, f.boundary_count(two, one));
-    EXPECT_EQ(1, f.boundary_count(one, two));
-
-    for (size_t i = 0; i < expected_result.size(); ++i) {
-        EXPECT_EQ(expected_result[i], actual_result[i])
-            << "i = " << i << std::endl;
-    }
-}
-*/

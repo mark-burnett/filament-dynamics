@@ -26,6 +26,10 @@
 namespace stochastic {
 namespace filaments {
 
+class DepolymerizingEmptyFilament : public std::exception {};
+class IllegalStateIndex : public std::exception {};
+class IllegalBoundaryIndex : public std::exception {};
+
 struct Segment {
     Segment(size_t new_number, State new_state) :
         number(new_number), state(new_state) {}
