@@ -21,7 +21,7 @@ COOP_FILE_TEMPLATE = \
     release_rate: %s
 """
 
-VEC_FILENAME = 'definitions/sensitivity/vectorial.yaml'
+VEC_FILENAME = 'definitions/fit_rates/vectorial.yaml'
 VEC_FILE_TEMPLATE = \
 """global_parameters:
     release_rate: %s
@@ -31,7 +31,7 @@ from actin_dynamics.io import data
 
 def main():
     # Cooperative parts
-    rate_results = data.load_data('results/melki_rates.dat')
+    rate_results = data.load_data('results/melki_cooperative_fit.dat')
 
     cooperativities, rates = rate_results[0], rate_results[1]
 
@@ -40,9 +40,9 @@ def main():
             f.write(COOP_FILE_TEMPLATE % (rho, r))
 
     # Vectorial part
-    vec_rates = data.load_data('results/melki_vectorial_rate.dat')
+    vec_rates = data.load_data('results/melki_vectorial_fit.dat')
 
-    r = vec_rates[1][0]
+    r = vec_rates[0][0]
 
     with open(VEC_FILENAME, 'w') as f:
         f.write(VEC_FILE_TEMPLATE % r)
