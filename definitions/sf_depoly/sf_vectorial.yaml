@@ -1,0 +1,6 @@
+name: 'SF Depoly - single filament, vectorial'
+
+import:
+    - 'sf_depoly/sf_base.yaml'
+    - 'random_vectorial_model.yaml'
+    - 'fit_rates/vectorial.yaml'

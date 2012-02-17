@@ -1,0 +1,6 @@
+name: 'SF Depoly - single filament, Random'
+
+import:
+    - 'sf_depoly/sf_base.yaml'
+    - 'random_cooperative_model.yaml'
+    - 'fit_rates/rho_1.yaml'

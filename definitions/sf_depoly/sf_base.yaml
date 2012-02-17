@@ -1,0 +1,16 @@
+# This set of simulations is for generating single filament traces
+
+import:
+    - 'sf_depoly/base.yaml'
+
+global_parameters:
+    number_of_filaments: 1
+
+parameter_specifications:
+    simple_depoly:
+        simulation:
+            dummy_parameter:
+                lower_bound: 1
+                upper_bound: 1
+                mesh_type: linear
+                num_points: 10

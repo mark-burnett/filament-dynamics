@@ -1,0 +1,7 @@
+name: 'SF Depoly - stats, vectorial'
+
+import:
+    - 'sf_depoly/stats_base.yaml'
+    - 'random_vectorial_model.yaml'
+    - 'fit_rates/vectorial.yaml'
+

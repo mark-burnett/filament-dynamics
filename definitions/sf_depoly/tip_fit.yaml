@@ -1,0 +1,18 @@
+name: 'SF Depoly - tip rate fit'
+
+import:
+    - 'sf_depoly/base.yaml'
+    - 'fit_rates/rho_1.yaml'
+
+global_parameters:
+    number_of_filaments: 1000
+
+
+parameter_specifications:
+    simple_depoly:
+        simulation:
+            barbed_tip_release_rate:
+                lower_bound: 7
+                upper_bound: 10
+                mesh_type: linear
+                num_points: 31

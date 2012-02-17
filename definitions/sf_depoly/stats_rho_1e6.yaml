@@ -1,0 +1,6 @@
+name: 'SF Depoly - stats, rho_d = 1e6'
+
+import:
+    - 'sf_depoly/stats_base.yaml'
+    - 'random_cooperative_model.yaml'
+    - 'fit_rates/rho_1000000.yaml'
