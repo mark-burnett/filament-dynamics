@@ -1,6 +1,0 @@
-name: 'Melki Timecourse, rho_v = 100'
-
-import:
-    - 'melki/timecourse_base.yaml'
-    - 'random_cooperative_model.yaml'
-    - 'fit_rates/rho_100.yaml'
