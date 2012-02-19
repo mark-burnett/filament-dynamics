@@ -3,15 +3,15 @@ import:
     - 'experiments/simple_depoly.yaml'
 
     # Model
-    - 'components/barbed_polymerization.yaml'
-    - 'components/pi_release_in_solution.yaml'
-    - 'components/pi_association.yaml'
+    - 'components/barbed_polymerization_depoly.yaml'
+#    - 'components/pi_release_in_solution.yaml'
+#    - 'components/pi_association.yaml'
     - 'components/fast_pi_tip_release.yaml'
 
     # Parameters
     - 'parameters/jegou_2011_conditions.yaml'
     - 'parameters/first_paper.yaml'
-    - 'parameters/tip_release_rate.yaml'
+#    - 'parameters/tip_release_rate.yaml'
 
 experiments:
     simple_depoly:

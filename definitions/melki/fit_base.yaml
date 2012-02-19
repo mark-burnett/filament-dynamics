@@ -2,6 +2,13 @@ import:
     # Experiment
     - 'experiments/melki_fit.yaml'
 
+    # Model
+    - 'components/barbed_polymerization.yaml'
+    - 'components/pointed_polymerization.yaml'
+    - 'components/pi_release_in_solution.yaml'
+    - 'components/pi_association.yaml'
+    - 'components/fast_pi_tip_release.yaml'
+
     # Parameters
     - 'parameters/melki_conditions.yaml'
     - 'parameters/first_paper.yaml'

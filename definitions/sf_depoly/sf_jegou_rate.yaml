@@ -1,9 +1,10 @@
 name: 'SF Depoly - single filament, Jegou Rate (random)'
 
-global_parameters:
-    release_cooperativity: 1
-    release_rate: 0.0076
-
 import:
     - 'sf_depoly/sf_base.yaml'
     - 'random_cooperative_model.yaml'
+
+global_parameters:
+    release_cooperativity: 1
+    release_rate: 0.0076
+    barbed_tip_release_rate: 2

@@ -3,10 +3,9 @@ experiments:
         simulation:
             filaments:
                 filament_factory:
-                    class_name: SingleStateFixedLengthFromConcentrations
+                    class_name: DefaultFilament
                     variable_arguments:
-                        number: number_of_filaments
-                        concentration: seed_concentration
+                        seed_concentration: seed_concentration
                         filament_tip_concentration: filament_tip_concentration
                     fixed_arguments:
                         state: ADP
@@ -15,37 +14,29 @@ experiments:
                 ATP:
                     class_name: FixedConcentration
                     variable_arguments:
-#                        filament_tip_concentration: filament_tip_concentration
-#                        number: number_of_filaments
                         sample_period: sample_period
                         concentration: initial_concentration
 
                 ADPPi:
-                    class_name: ZeroConcentration
+                    class_name: FixedConcentration
                     variable_arguments:
-#                        filament_tip_concentration: filament_tip_concentration
-#                        number: number_of_filaments
                         sample_period: sample_period
-#                    fixed_arguments:
-#                        concentration: 0
+                    fixed_arguments:
+                        concentration: 0
 
                 ADP:
-                    class_name: ZeroConcentration
+                    class_name: FixedConcentration
                     variable_arguments:
-#                        filament_tip_concentration: filament_tip_concentration
-#                        number: number_of_filaments
                         sample_period: sample_period
-#                    fixed_arguments:
-#                        concentration: 0
+                    fixed_arguments:
+                        concentration: 0
 
                 Pi:
-                    class_name: ZeroConcentration
+                    class_name: FixedConcentration
                     variable_arguments:
-#                        filament_tip_concentration: filament_tip_concentration
-#                        number: number_of_filaments
                         sample_period: sample_period
-#                    fixed_arguments:
-#                        concentration: 0
+                    fixed_arguments:
+                        concentration: 0
 
             end_conditions:
                 duration:
@@ -56,17 +47,31 @@ experiments:
 
             measurements:
                 length:
-                    class_name: Length
+                    class_name: FilamentLength
                     variable_arguments:
                         sample_period: sample_period
 
         analyses:
             length:
                 class_name: StandardErrorMean
-                variable_arguments:
-                    sample_period: sample_period
-                    stop_time:     simulation_duration
                 fixed_arguments:
-                    interpolation_method: previous_value
                     measurement_name: length
-                    measurement_type: filament
+
+
+        objectives:
+            loaders:
+                length_fit:
+                    class_name: DatReader
+                    fixed_arguments:
+                        filename: 'jegou_2011/sample_filament_timecourse.dat'
+                        interpolate_data: False
+
+            executors:
+                length_fit:
+                    class_name: SimpleDataFit
+                    fixed_arguments:
+                        interpolate_simulation: True
+                        measurement:   length
+                        scale_simulation_by: 0.0027
+                        residual_type: naked_chi_squared
+                        skip_beginning: 300

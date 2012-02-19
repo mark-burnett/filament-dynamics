@@ -2,19 +2,24 @@ import:
     # Experiment
     - 'experiments/adp_copoly.yaml'
 
+    # Model
+    - 'components/barbed_polymerization.yaml'
+    - 'components/pointed_polymerization.yaml'
+    - 'components/pi_release_in_solution.yaml'
+    - 'components/pi_association.yaml'
+    - 'components/fast_pi_tip_release.yaml'
+
     # Parameters
     - 'parameters/melki_conditions.yaml'
     - 'parameters/melki_fnc.yaml'
     - 'parameters/first_paper.yaml'
     - 'parameters/tip_release_rate.yaml'
-#    - 'parameters/small_statistics.yaml'
-#    - 'parameters/medium_statistics.yaml'
 
 experiments:
     adp_copoly:
         parameters:
-            simulation_duration: 500
-            sample_period: 0.1
+            simulation_duration: 1000
+            sample_period: 1
 
             number_of_filaments: 1000
 
@@ -22,7 +27,12 @@ parameter_specifications:
     adp_copoly:
         simulation:
             fraction_adp:
-                lower_bound: 0.005
-                upper_bound: 0.5
-                mesh_type: log
-                num_points: 31
+                lower_bound: 0
+                upper_bound: 0
+                mesh_type: linear
+                num_points: 1
+
+#                lower_bound: 0
+#                upper_bound: 0.5
+#                mesh_type: shiftlog
+#                num_points: 31

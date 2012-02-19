@@ -3,4 +3,4 @@ name: 'FNC Numerator Variation, rho_d = 10^9'
 import:
     - 'fnc_qof/numerator_base.yaml'
     - 'random_cooperative_model.yaml'
-    - 'fit_rates/rho_1000000.yaml'
+    - 'fit_rates/rho_1000000000.yaml'

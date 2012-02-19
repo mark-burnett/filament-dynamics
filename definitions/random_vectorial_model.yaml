@@ -1,8 +1,3 @@
 import:
-    - 'components/barbed_polymerization.yaml'
-    - 'components/pointed_polymerization.yaml'
-    - 'components/pi_release_in_solution.yaml'
-    - 'components/pi_association.yaml'
     - 'components/random_cleavage.yaml'
     - 'components/vectorial_release.yaml'
-    - 'components/fast_pi_tip_release.yaml'

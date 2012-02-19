@@ -4,3 +4,6 @@ import:
     - 'sf_depoly/sf_base.yaml'
     - 'random_vectorial_model.yaml'
     - 'fit_rates/vectorial.yaml'
+
+global_parameters:
+    barbed_tip_release_rate: 2

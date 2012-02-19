@@ -1,4 +1,4 @@
-name: 'SF Depoly - single filament, Random'
+name: 'SF Depoly - single filament, Fast barbed rate (random)'
 
 import:
     - 'sf_depoly/sf_base.yaml'
@@ -6,4 +6,4 @@ import:
     - 'fit_rates/rho_1.yaml'
 
 global_parameters:
-    barbed_tip_release_rate: 2
+    barbed_tip_release_rate: 7.5

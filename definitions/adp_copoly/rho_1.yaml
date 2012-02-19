@@ -2,5 +2,5 @@ name: 'ADP Copoly, rho_c = 1'
 
 import:
     - 'adp_copoly/base.yaml'
-    - 'random_cooperative_model.yaml'
+    - 'random_random_model.yaml'
     - 'fit_rates/rho_1.yaml'
