@@ -24,85 +24,95 @@ from plot_scripts import settings
 LINETYPES = ['k', ':r', ':b', 'b', 'm', 'y', 'k']
 
 SCALE_BY_RANDOM = False
+RHO_CRIT = (20/0.02)**2
 
 
 def main(filename='plots/fnc_lagtimes.eps'):
-    with contexts.complex_figure(filename#,
-#            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2
+    with contexts.complex_figure(filename,
+            width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
+            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2,
             ) as figure:
-        fnc_zoomed_out(figure)
-
-#    with contexts.complex_figure('plots/fnc_peak_times.eps'#,
-#            ) as figure:
-#        fnc_zoomed_out(figure, y_label='[F-ADP-Pi-actin] Peak Time [s]',
-#                cooperative_filename='results/fnc_adppi_peak_times_cooperative.dat',
-#                vectorial_filename='results/fnc_adppi_peak_times_vectorial.dat')
-#
-#    with contexts.complex_figure('plots/fnc_peak_values.eps'#,
-#            ) as figure:
-#        fnc_zoomed_out(figure, scale_by_x=True,
-#                y_label=r'[F-ADP-Pi-actin] Peak Values [$\mu$M]',
-#                cooperative_filename='results/fnc_adppi_peak_values_cooperative.dat',
-#                vectorial_filename='results/fnc_adppi_peak_values_vectorial.dat')
-
-def fnc_zoomed_out(figure, y_label='Scaled [Pi] Lag Time [AU]',
-        pi_cooperative_filename='results/fnc_pi_halftimes_cooperative.dat',
-        pi_vectorial_filename='results/fnc_pi_halftimes_vectorial.dat',
-        f_cooperative_filename='results/fnc_f_halftimes_cooperative.dat',
-        f_vectorial_filename='results/fnc_f_halftimes_vectorial.dat',
-        lagtime_data_filename='experimental_data/carlier_1986/lagtimes.dat'):
-    pi_results = data.load_data(pi_cooperative_filename)
-    pi_v_results = data.load_data(pi_vectorial_filename)
-
-    f_results = data.load_data(f_cooperative_filename)
-    f_v_results = data.load_data(f_vectorial_filename)
-
-    lagtime_data = data.load_data(lagtime_data_filename)
-
-    rescaled_lagtime_data = (lagtime_data[0],
-            _rescale_by_final_value(lagtime_data[1]))
+#        lagtime_plot(figure)
+        linear_lagtime_plot(figure)
+        qof_plot(figure)
 
 
-    fncs, pi_all_halftimes = pi_results[0], pi_results[1:]
-    pi_v_fncs, pi_v_halftimes = pi_v_results[0], pi_v_results[1]
+def linear_lagtime_plot(figure,
+        coop_linestyles=['k:', # Random
+                         'r:', # XXX Consider making green
+                         'b:',
+                         'm:'
+                         ],
+        cooperative_filename='results/fnc_cooperative_lagtimes.dat',
+        vectorial_filename='results/fnc_vectorial_lagtimes.dat',
+        data_filename='experimental_data/carlier_1986/lagtimes.dat'):
+    d_fncs, d_lagtimes = data.load_data(data_filename)
+    d_norm_lagtimes = d_lagtimes[0] / numpy.array(d_lagtimes)
 
-    fncs, f_all_halftimes = f_results[0], f_results[1:]
-    f_v_fncs, f_v_halftimes = f_v_results[0], f_v_results[1]
+    coop_data = data.load_data(cooperative_filename)
+    coop_fncs, coop_lagtimes = coop_data[0], coop_data[1:]
+    coop_fncs = numpy.array(coop_fncs) * 1000
 
-    fncs = numpy.array(fncs) * 1000
-    tfncs = numpy.linspace(1.1, 20, 20)
-    theory = 20 / tfncs
+    v_fncs, v_lagtimes = data.load_data(vectorial_filename)
+    v_fncs = numpy.array(v_fncs) * 1000
+    # index 0 is at fnc = 1.1 nM
+    v_lagtimes = v_lagtimes[0] / numpy.array(v_lagtimes)
 
-    v_lagtimes = numpy.array(pi_v_halftimes) - numpy.array(f_v_halftimes)
-    scaled_v_lagtimes = _rescale_by_final_value(v_lagtimes)
+    th_fncs = numpy.linspace(1, 20, 100)
+    v_theory = th_fncs / 1.1
 
-    with contexts.subplot(figure, (1, 1, 1),
+    r_theory = numpy.ones(len(th_fncs))
+
+    with contexts.subplot(figure, (2, 1, 1), title='A',
             x_label=r'Filament Number Concentration [nM]',
-            y_label=y_label,
-            logscale_x=False) as axes:
-        for pi_halftimes, f_halftimes, lt in zip(pi_all_halftimes,
-                f_all_halftimes, LINETYPES):
-            lagtimes = numpy.array(pi_halftimes) - numpy.array(f_halftimes)
-            scaled_lagtimes = _rescale_by_final_value(lagtimes)
-            contexts.plot(axes, 'plot', fncs, scaled_lagtimes, lt)
+            y_label=r'(Lag Time)$^{-1}$ [AU]') as axes:
+        # Cooperative simulations
+        for lagtimes, linestyle in zip(coop_lagtimes, coop_linestyles):
+            # index 0 is at fnc = 1.1 nM
+            y = lagtimes[0] / numpy.array(lagtimes)
+            axes.plot(coop_fncs, y, linestyle)
 
-        contexts.plot(axes, 'plot', fncs, scaled_v_lagtimes, 'k')
+        # Vectorial simulations
+        axes.plot(v_fncs, v_lagtimes, 'k:')
 
-        contexts.plot(axes, 'plot', rescaled_lagtime_data[0],
-                rescaled_lagtime_data[1], 'ok')
+        # Vectorial theory
+        axes.plot(th_fncs, v_theory, 'k-', linewidth=0.5)
 
-        contexts.plot(axes, 'plot', tfncs, theory, 'g-.', linewidth=0.5)
+        # Random theory
+        axes.plot(th_fncs, r_theory, 'k-', linewidth=0.5)
+        
+        # Carlier 1986 data
+        axes.plot(d_fncs, d_norm_lagtimes, 'ko')
 
+        axes.set_xlim([0, 22])
         x_ticks = [1.1, 5, 10, 15, 20]
         axes.set_xticks(x_ticks)
         axes.set_xticklabels(map(str, x_ticks))
 
-        axes.set_xlim(0, 22)
 
-def _rescale_by_final_value(trace):
-    final_value = trace[-1]
-    new_results = numpy.array(trace) / final_value
-    return new_results
+def qof_plot(figure):
+    coop_qof = data.load_data('results/fnc_cooperative_qof.dat')
+    vec_qof = data.load_data('results/fnc_vectorial_qof.dat')
+    coops, qof, min_qof, max_qof, pct_err = coop_qof
+    err = [m - q for m, q in zip(max_qof, qof)]
+    with contexts.subplot(figure, (2, 1, 2), title='B',
+            x_label=r'Phosphate Dissociation Cooperativity, $\rho_d$',
+            y_label=r'Lag-time Quality of Fit, $\chi^2$',
+            logscale_x=True, logscale_y=False) as axes:
+        axes.fill_between([0.1, 1.0e12],
+                [vec_qof[1][0], vec_qof[1][0]],
+                vec_qof[2][0],
+                color='#CCCCFF')
+        axes.axhline(0, 0, 1, color='k', linestyle='-', linewidth=0.5)
+        axes.axhline(vec_qof[0], 0, 1, color='b', linestyle=':')
+        axes.axvline(RHO_CRIT, 0, 1, color='g', linestyle='--', linewidth=0.5)
+
+        axes.errorbar(coops, qof, err, fmt='k.')
+
+        axes.set_ylim([-5, None])
+        axes.set_xlim([0.1, 10**12])
+        axes.set_xticks([1, 100, 10000, 1000000,
+            100000000, 10000000000])
 
 if '__main__' == __name__:
     main()

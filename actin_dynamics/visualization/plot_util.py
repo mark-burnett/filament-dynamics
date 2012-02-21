@@ -1,4 +1,4 @@
-#    Copyright (C) 2010 Mark Burnett
+#    Copyright (C) 2011 Mark Burnett
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import yaml
+from matplotlib.backends.backend_ps import FigureCanvasPS as _FigureCanvas
+from matplotlib.figure import Figure as _Figure
 
-def parse_object_graph_file(obj_file):
-    return yaml.safe_load(obj_file)
+def figure(interactive=False):
+    if interactive:
+        import pylab
+        return pylab.figure()
+    f = _Figure()
+    canvas = _FigureCanvas(f)
+    return f

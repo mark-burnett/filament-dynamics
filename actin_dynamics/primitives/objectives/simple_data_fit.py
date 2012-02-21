@@ -39,9 +39,9 @@ class SimpleDataFit(_Objective):
         log.debug('Performing SimpleDataFit of %s.', self.measurement_name)
         sim_result = run.analyses[self.measurement_name]
         data = run.experiment.objectives[self.label].measurement
-        sim_result = _measurements.scale(sim_result, self.scale_simulation_by)
         sim_result = _measurements.skip_beginning(sim_result,
                 self.skip_beginning)
+        sim_result = _measurements.scale(sim_result, self.scale_simulation_by)
 
         if self.interpolate_simulation:
             interp = _interpolation.resample_measurement(sim_result, data[0])

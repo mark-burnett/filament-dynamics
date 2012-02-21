@@ -17,10 +17,138 @@ import csv
 import bisect
 
 import numpy
+import scipy.stats
 
 from actin_dynamics import database
 from actin_dynamics.io import data
 
+
+def get_lagtimes(session):
+    results = []
+    for run in session.experiments[0].runs:
+        fnc = run.parameters['filament_tip_concentration']
+        f_ht = run.get_objective('f_halftime')
+        p_ht = run.get_objective('p_halftime')
+        if f_ht is not None and p_ht is not None:
+            results.append((fnc, p_ht - f_ht))
+
+    results.sort()
+    fncs, lagtimes = zip(*results)
+    cooperativity = session.parameters.get('release_cooperativity', None)
+    return cooperativity, fncs, lagtimes
+
+def scale_lagtimes(lagtimes):
+    return numpy.array(lagtimes) / lagtimes[-1]
+
+def save_lagtimes(session_ids,
+        cooperative_output_filename='results/fnc_cooperative_lagtimes.dat',
+        vectorial_output_filename='results/fnc_vectorial_lagtimes.dat'):
+    dbs = database.DBSession()
+
+    fncs = None
+    vectorial_lagtimes = None
+    all_lagtimes = []
+    for sid in session_ids:
+        session = dbs.query(database.Session).get(sid)
+        cooperativity, fncs, lagtimes = get_lagtimes(session)
+        s_lagtimes = scale_lagtimes(lagtimes)
+        if cooperativity is not None:
+            all_lagtimes.append((cooperativity, s_lagtimes))
+        else:
+            vectorial_lagtimes = s_lagtimes
+
+    if all_lagtimes:
+        all_lagtimes.sort()
+        cooperativities, cooperative_lagtimes = zip(*all_lagtimes)
+#        cooperative_lagtimes = numpy.array(cooperative_lagtimes)
+
+        rhos = ['%.0e' % c for c in cooperativities]
+        rows = zip(fncs, *cooperative_lagtimes)
+
+        _write_results(cooperative_output_filename, rows,
+                'FNC', 'Lagtime', 'Release Cooperativity',
+                rhos)
+
+    if vectorial_lagtimes is not None:
+        _small_writer(vectorial_output_filename,
+                zip(fncs, vectorial_lagtimes),
+                ['fnc', 'lagtime'],
+                header='# Lagtime for vectorial model.\n')
+
+def _get_single_lagtime(session):
+    cooperativity = session.parameters.get('release_cooperativity', None)
+
+    runs = session.experiments[0].runs
+    lagtimes = []
+    for r in runs:
+        p_ht = r.get_objective('p_halftime')
+        f_ht = r.get_objective('f_halftime')
+        if p_ht is not None and f_ht is not None:
+            lagtimes.append(p_ht - f_ht)
+
+    lagtime = numpy.mean(lagtimes)
+    error = numpy.std(lagtimes, ddof=1)
+
+    return cooperativity, lagtime, error, len(lagtimes)
+
+
+def save_qof(numerator_session_ids, denominator_session_ids, alpha=0.01,
+        cooperative_output_filename='results/fnc_cooperative_qof.dat',
+        vectorial_output_filename='results/fnc_vectorial_qof.dat'):
+    TARGET = 620.69 / 166.7 # about 3.72
+    dbs = database.DBSession()
+
+
+    n_rows = []
+    for nsid in numerator_session_ids:
+        session = dbs.query(database.Session).get(nsid)
+        n_rows.append(_get_single_lagtime(session))
+
+    d_rows = []
+    for dsid in denominator_session_ids:
+        session = dbs.query(database.Session).get(dsid)
+        d_rows.append(_get_single_lagtime(session))
+
+
+    n_rows.sort()
+    d_rows.sort()
+
+    coop_results = []
+    vec_results = None
+    for nrow, drow in zip(n_rows, d_rows):
+        nrho, nval, nerr, nnum = nrow
+        drho, dval, derr, dnum = drow
+        if nrho != drho:
+            raise RuntimeError("Numerator and Denominator FNCs don't match.")
+#        if nnum != dnum:
+#            raise RuntimeError("Numerator and Denominator simulation counts don't match.")
+
+        qof = (nval / dval - TARGET)**2
+
+        fit_std_error = numpy.sqrt((nerr/dval)**2 + (nval * derr / dval**2)**2)
+        t = scipy.stats.t.ppf(1 - alpha/2, min(nnum, dnum) - 1)
+        ci_size = t * fit_std_error
+
+        if nrho is not None:
+            coop_results.append((nrho, qof, qof - ci_size, qof + ci_size,
+                ci_size/qof * 100))
+        else:
+            vec_results = (qof, qof - ci_size, qof + ci_size, ci_size/qof * 100)
+
+    if coop_results:
+        coop_results.sort()
+        _small_writer(cooperative_output_filename, coop_results,
+                ['Cooperativity', 'Chi^2', 'Min CI', 'Max CI', '% Error'],
+                header="# Cooperative quality of fit for Carlier 86\n")
+
+    if vec_results:
+        _small_writer(vectorial_output_filename, [vec_results],
+                ['Chi^2', 'Min CI', 'Max CI', '% Error'],
+                header="# Vectorial quality of fit for Carlier 86\n")
+
+
+
+# Old stuff (maybe not that useful)
 def all(cooperative_session_ids, vectorial_session_id):
     multiple(cooperative_session_ids, objective_name='halftime',
             output_filename='results/fnc_pi_halftimes_cooperative.dat')

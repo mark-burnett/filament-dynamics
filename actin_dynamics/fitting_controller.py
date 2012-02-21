@@ -88,7 +88,9 @@ log = logger.getLogger(__file__)
 
 
 class SimplePopulation(object):
-    def __init__(self, parameter_guess=None, gaussian_width_fraction=0.06/2,
+    def __init__(self, parameter_guess=None,
+#            gaussian_width_fraction=0.6/2,
+            gaussian_width_fraction=1.2/2,
             parameter_name=None, objective_name=None, dbs=None,
             session=None, process=None, plot=False, max_population_size=None,
             parameter_tolerance=0.00001, parameter_distance_fraction=0.1):
@@ -290,7 +292,7 @@ class SimplePopulation(object):
 
 class SimpleFitController(object):
     def __init__(self, dbs=None, session=None, process=None, population=None,
-            min_queue_size=0, max_queue_size=200, initial_population_size=100,
+            min_queue_size=0, max_queue_size=200, initial_population_size=300,
             polling_period=5, min_iterations=5, max_iterations=1):
         self.dbs = dbs
         self.session = session

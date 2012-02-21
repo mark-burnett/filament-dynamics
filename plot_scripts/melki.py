@@ -58,7 +58,7 @@ def melki_rate_plot(figure):
 #    cooperativities, rates, statistical_errors, halftimes, hte = results
 #    cooperativities, rates, errors = results[:3]
     cooperativities, rates = results[:2]
-    v_rate_pack = v_results[0][:3]
+    v_rate_pack = zip(*v_results)[0][:3]
 
 #    with contexts.basic_figure('plots/melki_rates.eps',
     with contexts.subplot(figure, (2, 1, 1), title='A',
@@ -115,12 +115,12 @@ def melki_rate_error_plot(figure):
             logscale_x=True,
 #            logscale_y=True
             ) as axes:
+        axes.axvline(RHO_CRIT, 0, 1, linestyle='--', color='g', linewidth=0.5)
+
         contexts.plot(axes, 'errorbar', cooperativities,
                 rates, errors, fmt='k.')
         contexts.plot(axes, 'plot', cooperativities,
                 [1 for c in cooperativities], 'r-', linewidth=0.5)
-
-        axes.axvline(RHO_CRIT, 0, 1, linestyle='--', color='g', linewidth=0.5)
 
         axes.set_xlim([0.1, 10**12])
 
@@ -139,16 +139,20 @@ def melki_rate_fit_quality(figure):
             chi2, min_chi2, max_chi2, chi2_pe) = results
     v_results = data.load_data('results/melki_vectorial_fit.dat')
     (v_rate, junk, junk, junk,
-            v_chi2, v_min_chi2, v_max_chi2, junk) = v_results
+            v_chi2, v_min_chi2, v_max_chi2, junk) = zip(*v_results)[0]
     with contexts.subplot(figure, (2, 1, 2), title='B',
             x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
             y_label=r'$\chi^2$ Comparison To Data',
             logscale_x=True) as axes:
+        axes.fill_between([0.1, 1.0e12],
+                [v_min_chi2, v_min_chi2],
+                v_max_chi2, color='#CCCCFF')
+        axes.axhline(v_chi2, 0, 1, linestyle=':', color='b')
+        axes.axvline(RHO_CRIT, 0, 1, linestyle='--', color='g', linewidth=0.5)
+
         contexts.plot(axes, 'errorbar', cooperativities,
                 chi2, [c - m for c, m in zip(chi2, min_chi2)],
                 fmt='k.')
-        axes.axhline(v_chi2, 0, 1, linestyle=':', color='b')
-        axes.axvline(RHO_CRIT, 0, 1, linestyle='--', color='g', linewidth=0.5)
 
         axes.set_xlim([0.1, 10**12])
         axes.set_ylim([0, 14])

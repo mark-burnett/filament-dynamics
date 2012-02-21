@@ -18,7 +18,7 @@ experiments:
     fnc_exploration:
         parameters:
             simulation_duration: 1200
-            sample_period: 1
+            sample_period: 0.1
             number_of_filaments: 1000
 
 parameter_specifications:

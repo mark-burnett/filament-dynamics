@@ -14,7 +14,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from matplotlib.backends.backend_ps import FigureCanvasPS as _FigureCanvas
-#from matplotlib.backends.backend_svg import FigureCanvasSVG as _FigureCanvas
 from matplotlib.figure import Figure as _Figure
 
 import contextlib

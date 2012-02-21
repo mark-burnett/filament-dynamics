@@ -14,6 +14,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import numpy
+import scipy.interpolate
+
+#import pylab
+
+from actin_dynamics.io import data
 
 from plot_scripts import contexts
 from plot_scripts import settings
@@ -21,45 +27,95 @@ from plot_scripts import settings
 def main():
     constraint_plot()
 
-
-CONSTRAINTS = [
-        (1, 100, False, False, 'Melki, et al (1996)'), # Melki visual inspection
-        (10000, 1000000, False, False, 'Jegou, et al (2011)'), # Jegou/Carlier depoly sample filament
-        (1, 1000000, False, True, 'Carlier, et al (1986)') # Carlier86 FNC variation
-        ]
-
-TEXT_X = max(c[1] for c in CONSTRAINTS) * 10
+def my_spline(x, y, newx):
+    knots = scipy.interpolate.splmake(x, y, order=4, kind='smoothest')
+    return scipy.interpolate.spleval(knots, newx)
 
 def constraint_plot():
-    centers = [float(a + b)/2 for (a, b, l, u, n) in CONSTRAINTS]
-    widths = [float(b - a)/2 for (a, b, l, u, n) in CONSTRAINTS]
-    low_lims = [c[2] for c in CONSTRAINTS]
-    up_lims = [c[3] for c in CONSTRAINTS]
-    names = [c[4] for c in CONSTRAINTS]
+    MELKI_THRESHOLD = 4.5
+    FNC_THRESHOLD = 7.5
+    DEPOLY_THRESHOLD = 3
 
-    with contexts.basic_figure('plots/cooperativity_constraints.eps',
-            x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
-#            y_label=r'Pi Dissociation Rate, $r_d$ [$s^{-1}$]',
-            logscale_x=True) as axes:
-
-        contexts.plot(axes, 'errorbar',
-            centers, range(1, len(centers) + 1), xerr=widths,
-                fmt='k.', ms=0, xlolims=low_lims, xuplims=up_lims)
+    melki_constraints = data.load_data('results/melki_cooperative_fit.dat')
+    fnc_constraints = data.load_data('results/fnc_cooperative_qof.dat')
+    depoly_constraints = data.load_data('results/depoly_cooperative_qof.dat')
 
 
-        for i, (low, high, lowlim, uplim, name) in enumerate(CONSTRAINTS):
-            axes.text(TEXT_X, i + 0.9, name)
+    mrho, mchi = melki_constraints[0], melki_constraints[5]
+    frho, fchi = fnc_constraints[0], fnc_constraints[1]
+    drho, dchi = depoly_constraints[0], depoly_constraints[1]
+
+    mrho = numpy.array(mrho)
+    mchi = numpy.array(mchi) / MELKI_THRESHOLD
+    frho = numpy.array(frho)
+    fchi = numpy.array(fchi) / FNC_THRESHOLD
+    drho = numpy.array(drho)
+    dchi = numpy.array(dchi) / DEPOLY_THRESHOLD
+
+    lx = numpy.linspace(0, 10, 101)
+
+    lmr = numpy.log10(mrho)
+    lfr = numpy.log10(frho)
+    ldr = numpy.log10(drho)
+
+    m_inter = my_spline(lmr, mchi, lx)
+    f_inter = my_spline(lfr, fchi, lx)
+    d_inter = my_spline(ldr, dchi, lx)
+
+#    m_inter = scipy.interpolate.UnivariateSpline(lmr, mchi, k=3)(lx)
+#    f_inter = scipy.interpolate.UnivariateSpline(lfr, fchi, k=3)(lx)
+#    d_inter = scipy.interpolate.UnivariateSpline(ldr, dchi, k=3)(lx)
+
+#    m_inter = scipy.interpolate.InterpolatedUnivariateSpline(lmr, mchi, k=4)(lx)
+#    f_inter = scipy.interpolate.InterpolatedUnivariateSpline(lfr, fchi, k=4)(lx)
+#    d_inter = scipy.interpolate.InterpolatedUnivariateSpline(ldr, dchi, k=4)(lx)
+
+#    m_inter = numpy.exp(scipy.interpolate.InterpolatedUnivariateSpline(lmr,
+#        numpy.log(mchi), k=4)(lx))
+#    f_inter = numpy.exp(scipy.interpolate.InterpolatedUnivariateSpline(lfr,
+#        numpy.log(fchi), k=4)(lx))
+#    d_inter = numpy.exp(scipy.interpolate.InterpolatedUnivariateSpline(ldr,
+#        numpy.log(dchi), k=4)(lx))
+
+    with contexts.basic_figure('plots/cooperativity_constraints.svg',
+            x_label=r'Dissociation Cooperativity, $\rho_d$',
+            y_label=r'Scaled Quality of Fit',
+            logscale_x=False) as axes:
+
+    #    pylab.ioff()
+    #    figure = pylab.figure()
+    #    axes = pylab.gca()
+        axes.fill_between(lx, m_inter, 1, where=m_inter <= 1,
+                    color='r', alpha=0.6,
+    #            color='#BB6666',
+                interpolate=True)
+        axes.fill_between(lx, f_inter, 1, where=f_inter <= 1,
+                    color='b', alpha=0.6,
+    #            color='#6666BB',
+                interpolate=True)
+        axes.fill_between(lx, d_inter, 1, where=d_inter <= 1,
+                    color='y', alpha=0.6,
+    #            color='#6666BB',
+                interpolate=True)
+
+
+        axes.plot(lx, m_inter, 'k-')
+        axes.plot(lx, f_inter, 'k--')
+        axes.plot(lx, d_inter, 'k-.')
 
 
 
-        axes.set_xlim([0.1, 10**17])
-        axes.set_xticks([1, 10, 100, 1000, 10000, 100000, 1000000])
+        axes.axhline(1, 0, 1, color='k')
+        # XXX Optional vertical line
+#        axes.axvline(0, 0, 1.0/6, color='k')
 
-        # Remove extra ticks on the right.
-        axes.set_xticks([], minor=True)
+        axes.set_xlim([-1, 11])
+        axes.set_xticks([0, 2, 4, 6, 8, 10])
+        axes.set_xticklabels([1, r'$10^2$', r'$10^4$', r'$10^6$',
+            r'$10^8$', r'$10^{10}$'])
 
-        axes.set_ylim([0, len(centers) + 1])
-        axes.set_yticks([])
+        axes.set_ylim([0, None])
+#        pylab.show()
 
 
 if '__main__' == __name__:

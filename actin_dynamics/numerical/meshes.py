@@ -46,8 +46,25 @@ def make_mesh(lower_bound, upper_bound, num_points, mesh_type):
         transformed_range = numpy.linspace(ulower_bound, uupper_bound,
                                                num_points)
         return [math.exp(tr) for tr in transformed_range]
+    elif 'shiftlog' == mesh_type.lower():
+        return shiftlog_mesh(lower_bound, upper_bound, num_points)
     else:
         raise RuntimeError('Unsupported mesh type specified for make_mesh.')
+
+def shiftlog_mesh(lower_bound, upper_bound, num_points):
+    '''
+    Make a mesh that's part log, part linear, and includes exact end points.
+    '''
+    # scale UB -> 1.5, LB=0 -> 0.5
+    llb = numpy.log(0.5)
+    lub = numpy.log(1.5)
+
+    linmesh = numpy.linspace(llb, lub, num_points)
+    logmesh = numpy.exp(linmesh)
+    logmesh -= 0.5 - lower_bound
+    logmesh *= upper_bound
+
+    return logmesh
 
 
 def parameters_from_spec(par_specs):

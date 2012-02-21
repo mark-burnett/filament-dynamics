@@ -3,7 +3,8 @@ import:
     - 'sf_depoly/base.yaml'
 
 global_parameters:
-    number_of_filaments: 10
+    number_of_filaments: 1000
+    barbed_tip_release_rate: 2
 
 parameter_specifications:
     simple_depoly:

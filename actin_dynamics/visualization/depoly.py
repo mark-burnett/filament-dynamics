@@ -16,85 +16,139 @@
 import csv
 import numpy
 
+import scipy.stats
+
 from actin_dynamics import database
 from actin_dynamics.io import data
 
+from actin_dynamics.numerical import interpolation as _interpolation
 
-def bulk(session_id, output_filename='results/pyrene_timecourse.dat',
-        analysis_name='pyrene'):
+def _get_qof(session, alpha):
+    vals = [r.get_objective('length_fit') for r in session.experiments[0].runs]
+    vals = filter(None, vals)
+
+    chi2 = numpy.mean(vals)
+    std_err = numpy.std(vals, ddof=1)
+
+    t = scipy.stats.t.ppf(1 - alpha/2, len(vals) - 1)
+
+    ci = t * std_err
+
+    return chi2, chi2 - ci, chi2 + ci, ci / chi2 * 100
+
+def _get_dumb_qof(session, alpha):
+    vals = [r.get_objective('length_fit') for r in session.experiments[0].runs]
+    vals = filter(None, vals)
+    chi2 = numpy.mean(vals)
+
+    return chi2, 0, 0, 0
+
+
+def save_qof(session_ids, alpha=0.01,
+        cooperative_filename='results/depoly_cooperative_qof.dat',
+        vectorial_filename='results/depoly_vectorial_qof.dat'):
     dbs = database.DBSession()
-    session = dbs.query(database.Session).get(session_id)
-    run = session.experiments[0].runs[0]
-    results = numpy.transpose(run.analyses[analysis_name])
+    coop_results = []
+    vec_results = None
+    for sid in session_ids:
+        session = dbs.query(database.Session).get(sid)
 
-    _small_writer(output_filename, results, ['times', analysis_name])
+        chi2, chi2_min, chi2_max, chi2_pct = _get_qof(session, alpha)
+#        chi2, chi2_min, chi2_max, chi2_pct = _get_dumb_qof(session, alpha)
+
+        cooperativity = session.parameters.get('release_cooperativity')
+        if cooperativity is not None:
+            coop_results.append(
+                    [cooperativity, chi2, chi2_min, chi2_max, chi2_pct])
+        else:
+            vec_results = [chi2, chi2_min, chi2_max, chi2_pct]
+
+    if coop_results:
+        coop_results.sort()
+        _small_writer(cooperative_filename, coop_results,
+                ['Cooperativity', 'Chi^2', 'Min CI', 'Max CI', '% Error'],
+                header="# Cooperative quality of fit for Jegou 2011\n")
+
+    if vec_results:
+        _small_writer(vectorial_filename, [vec_results],
+                ['Chi^2', 'Min CI', 'Max CI', '% Error'],
+                header="# Vectorial quality of fit for Jegou 2011\n")
 
 
-def fit(session_id, fit_output='results/depoly_fit.dat',
-        timecourse_output='results/depoly_timecourse.dat'):
+def save_means(barbed_sid, jegou_sid, cooperative_sid):
+    save_mean(barbed_sid,
+            'results/depoly_mean_barbed.dat')
+    save_mean(jegou_sid,
+            'results/depoly_mean_jegou.dat')
+    save_mean(cooperative_sid,
+            'results/depoly_mean_cooperative.dat')
+
+def save_mean(sid, filename):
     dbs = database.DBSession()
-    session = dbs.query(database.Session).get(session_id)
+    session = dbs.query(database.Session).get(sid)
+    e = session.experiments[0]
 
-    best_fit = 99999999
-    best_rate = None
-    best_run = None
+    polymerization_duration = e.all_parameters['polymerization_duration']
+    simulation_duration = e.all_parameters['simulation_duration']
+    sample_period = e.all_parameters['sample_period']
+    times = numpy.arange(0, simulation_duration - polymerization_duration
+            + float(sample_period)/2, sample_period)
+    values = _get_timecourse(e.runs[0], times, polymerization_duration)
 
-    tip_rates = []
-    fits = []
-    for run in session.experiments[0].runs:
-        rate = run.parameters['barbed_tip_release_rate']
-        fit = run.get_objective('length_fit')
-        if fit is not None:
-            tip_rates.append(rate)
-            fits.append(fit)
-            if fit < best_fit:
-                best_fit = fit
-                best_run = run
-                best_rate = rate
+    rows = zip(times, values)
+    _small_writer(filename, rows, ['times', 'mean_filament_length'])
+    
 
-    tip_rates, fits = zip(*sorted(zip(tip_rates, fits)))
+def save_timecourses(random_sid, vectorial_sid, barbed_sid, jegou_sid,
+        cooperative_sid):
+    save(random_sid, 'results/depoly_tc_random.dat')
+    save(vectorial_sid, 'results/depoly_tc_vectorial.dat')
 
-    _small_writer(fit_output, zip(tip_rates, fits), ['tip rate', 'fit'])
+    save(barbed_sid, 'results/depoly_tc_barbed.dat')
 
-    length = run.analyses['length']
+    save(jegou_sid, 'results/depoly_tc_jegou.dat')
 
-    _small_writer(timecourse_output, zip(*length),
-            ['time (s)', 'filament length (monomers)', 'error (incorrect)'],
-            header='# Tip release rate: %s\n' % best_rate)
+    save(cooperative_sid, 'results/depoly_tc_cooperative.dat')
+
 
 def save(session_id,
         output_filename='results/depolymerization_timecourses.dat'):
     dbs = database.DBSession()
     session = dbs.query(database.Session).get(session_id)
+    e = session.experiments[0]
 
-    times = None
+    polymerization_duration = e.all_parameters['polymerization_duration']
+    simulation_duration = e.all_parameters['simulation_duration']
+    sample_period = e.all_parameters['sample_period']
+    
+    times = numpy.arange(0, simulation_duration - polymerization_duration
+            + float(sample_period)/2, sample_period)
     values = []
     for run in session.experiments[0].runs:
-        times, run_values = _get_timecourse(run)
-        values.append(run_values)
+        values.append(_get_timecourse(run, times, polymerization_duration))
 
     tv = numpy.transpose(values)
     results = numpy.vstack((times, values))
     results = numpy.transpose(results)
 
-#    results = list(times)
-#    results.extend(list(values))
-#    results = numpy.array(results)
-#    results = numpy.transpose(results)
-
     _small_writer(output_filename, results, ['times', 'filament_length'])
 
-def _get_timecourse(run):
+def _get_timecourse(run, resample_times, poly_duration):
     # Grab the analysis
     times, values, errors = run.analyses['length']
+
     times = numpy.array(times)
-
     values = numpy.array(values)
-    numpy.putmask(values, values < 50, float('nan'))
 
-    polymerization_duration = run.all_parameters['polymerization_duration']
+    times -= poly_duration
 
-    return times, values
+    # resample
+    sampled_values = numpy.array(_interpolation.resample_measurement(
+        (times, values), resample_times)[1])
+
+    numpy.putmask(sampled_values, sampled_values < 50, float('nan'))
+
+    return sampled_values
 
 def _small_writer(filename, results, names, header=None):
     with open(filename, 'w') as f:

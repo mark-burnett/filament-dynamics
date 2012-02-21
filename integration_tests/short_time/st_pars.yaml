@@ -1,0 +1,20 @@
+# Polymerization/Depolymerization parameters
+barbed_atp_polymerization_rate: 10
+
+# Hydrolysis parameters
+rate: 0.01
+cooperativity: 100
+
+# Initial Strand
+seed_concentration: 6
+number_of_filaments: 100
+
+# Concentrations
+filament_tip_concentration: 0.01
+atp_concentration: 5
+
+# End Conditions
+duration: 10 # Should be on the order of rate * cooperativity / 10
+
+# Simulation Parameters
+sample_period: 0.1

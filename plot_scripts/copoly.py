@@ -37,8 +37,8 @@ def main(filename='plots/copoly_results.eps'):
 #    copoly_adp_only(filename)
 #    copoly_halftime_plot(filename)
     with contexts.complex_figure(filename,
-            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2) as figure:
-        copoly_timecourse_plot(figure)
+            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM) as figure:
+#        copoly_timecourse_plot(figure)
         copoly_adp_only(figure)
 #        copoly_halftime_plot(figure)
 
@@ -84,20 +84,22 @@ def copoly_adp_only(figure):
     fractions, halftimes = adp_halftimes[0], adp_halftimes[1:]
     v_fractions, v_halftimes = adp_v_halftimes[0], adp_v_halftimes[1]
 
-    with contexts.subplot(figure, (2, 1, 2), title='B',
+    with contexts.subplot(figure, (1, 1, 1), #title='B',
             y_label=r'[Pi] Halftime [s]',
             x_label=r'% ADP-actin') as axes:
         for ht, lt, in zip(halftimes, LINETYPES):
-            contexts.plot(axes, 'plot', fractions, ht, lt)
+#            contexts.plot(axes, 'plot', fractions, numpy.array(ht)/ht[0], lt)
+            contexts.plot(axes, 'plot', fractions, numpy.array(ht), lt)
 
-        contexts.plot(axes, 'plot', v_fractions, v_halftimes, 'k-')
+#        contexts.plot(axes, 'plot', v_fractions, numpy.array(v_halftimes)/v_halftimes[0], 'k-')
+        contexts.plot(axes, 'plot', v_fractions, numpy.array(v_halftimes), 'k-')
 
         new_x_tick_labels = [0, 10, 20, 30, 40, 50]
 
         axes.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5])
         axes.set_xticklabels(new_x_tick_labels)
 
-        axes.set_ylim(0, 550)
+#        axes.set_ylim(0, 550)
 
 
 #def copoly_halftime_plot(figure):

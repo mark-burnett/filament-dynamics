@@ -1,0 +1,101 @@
+filaments:
+    filament_factory:
+        class_name: DefaultFilament
+        variable_arguments:
+            seed_concentration: seed_concentration
+            filament_tip_concentration: filament_tip_concentration
+        fixed_arguments:
+            state: ADP
+
+concentrations:
+    ATP:
+        class_name: FixedConcentration
+        variable_arguments:
+            concentration: atp_concentration
+
+    ADP:
+        class_name: FixedConcentration
+        fixed_arguments:
+            concentration: 0
+
+    Pi:
+        class_name: FixedConcentration
+        fixed_arguments:
+            concentration: 0
+
+end_conditions:
+    duration:
+        class_name: Duration
+        variable_arguments:
+            duration: duration
+
+measurements:
+    length:
+        class_name: FilamentLength
+        variable_arguments:
+            sample_period: sample_period
+
+    atp_count:
+        class_name: StateCount
+        variable_arguments:
+            sample_period: sample_period
+        fixed_arguments:
+            state: ATP
+
+    adp_count:
+        class_name: StateCount
+        variable_arguments:
+            sample_period: sample_period
+        fixed_arguments:
+            state: ADP
+
+    Pi:
+        class_name: Concentration
+        variable_arguments:
+            sample_period: sample_period
+        fixed_arguments:
+            state: Pi
+
+analyses:
+    length:
+        class_name: StandardErrorMean
+        fixed_arguments:
+            measurement_name: length
+
+    atp_count:
+        class_name: StandardErrorMean
+        fixed_arguments:
+            measurement_name: atp_count
+
+    adp_count:
+        class_name: StandardErrorMean
+        fixed_arguments:
+            measurement_name: adp_count
+
+    Pi:
+        class_name: StandardErrorMean
+        fixed_arguments:
+            measurement_name: Pi
+
+transitions:
+    # Polymerization
+    atp_polymerization:
+        class_name: BarbedEndPolymerization
+        fixed_arguments:
+            state: ATP
+            disable_time: -1
+        variable_arguments:
+            rate: barbed_atp_polymerization_rate
+
+    # Hydrolysis
+    hydrolysis:
+        class_name: CooperativeHydrolysisWithByproduct
+        fixed_arguments:
+            label: hydrolysis
+            pointed_neighbor: ADP
+            old_state: ATP
+            new_state: ADP
+            byproduct: Pi
+        variable_arguments:
+            rate: rate
+            cooperativity: cooperativity
