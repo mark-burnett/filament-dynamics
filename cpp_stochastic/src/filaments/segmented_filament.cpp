@@ -114,11 +114,15 @@ State SegmentedFilament::pointed_state() const {
 
 // Add and remove subunits
 void SegmentedFilament::append_barbed(const State &new_state) {
-    if (new_state == _segments.back().state) {
-        ++_segments.back().number;
-    } else {
-        ++_boundary_counts[_segments.back().state][new_state];
+    if (_segments.empty()) {
         _segments.push_back(Segment(1, new_state));
+    } else {
+        if (new_state == _segments.back().state) {
+            ++_segments.back().number;
+        } else {
+            ++_boundary_counts[_segments.back().state][new_state];
+            _segments.push_back(Segment(1, new_state));
+        }
     }
 
     ++_length;
@@ -126,11 +130,15 @@ void SegmentedFilament::append_barbed(const State &new_state) {
 }
 
 void SegmentedFilament::append_pointed(const State &new_state) {
-    if (new_state == _segments.front().state) {
-        ++_segments.front().number;
+    if (_segments.empty()) {
+        _segments.push_back(Segment(1, new_state));
     } else {
-        ++_boundary_counts[new_state][_segments.front().state];
-        _segments.push_front(Segment(1, new_state));
+        if (new_state == _segments.front().state) {
+            ++_segments.front().number;
+        } else {
+            ++_boundary_counts[new_state][_segments.front().state];
+            _segments.push_front(Segment(1, new_state));
+        }
     }
 
     ++_length;
@@ -155,11 +163,9 @@ State SegmentedFilament::pop_barbed() {
         --_state_counts[state];
 
         return state;
+    } else {
+        throw DepolymerizingEmptyFilament();
     }
-    return State();
-//    else {
-//        throw DepolymerizingEmptyFilament();
-//    }
 }
 
 State SegmentedFilament::pop_pointed() {
@@ -180,11 +186,9 @@ State SegmentedFilament::pop_pointed() {
         --_state_counts[state];
 
         return state;
+    } else {
+        throw DepolymerizingEmptyFilament();
     }
-    return State();
-//    else {
-//        throw DepolymerizingEmptyFilament();
-//    }
 }
 
 // fracture for case where segment number is 1
