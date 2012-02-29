@@ -65,11 +65,20 @@ class TipHydrolysisTest : public testing::Test {
 };
 
 TEST_F(TipHydrolysisTest, BETipHydrolysis) {
-    transitions::BarbedTipHydrolysis be_12(one, two, 3);
+    transitions::BarbedTipHydrolysis be_10(one, zero, 3);
+    transitions::BarbedTipHydrolysis be_01(zero, one, 2);
 
-    EXPECT_DOUBLE_EQ(3, be_12.initial_R(0, filaments, concentrations));
-    EXPECT_EQ(0, be_12.perform(0, 0.2, filaments, concentrations));
-    EXPECT_DOUBLE_EQ(0, be_12.R(0, filaments, concentrations, 0));
+    EXPECT_DOUBLE_EQ(3, be_10.initial_R(0, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(2, be_01.initial_R(0, filaments, concentrations));
+
+    EXPECT_EQ(0, be_10.perform(0, 0.2, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(0, be_10.R(0, filaments, concentrations, 0));
+    EXPECT_DOUBLE_EQ(4, be_01.R(0, filaments, concentrations, 0));
+
+    EXPECT_EQ(1, be_01.perform(0, 2.7, filaments, concentrations));
+    EXPECT_DOUBLE_EQ(3, be_10.R(0, filaments, concentrations, 1));
+    EXPECT_DOUBLE_EQ(2, be_01.R(0, filaments, concentrations, 1));
+
 }
 
 TEST_F(TipHydrolysisTest, PETipHydrolysis) {

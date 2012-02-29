@@ -13,6 +13,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <algorithm>
+
 #include "transitions/tip_hydrolysis.h"
 
 namespace stochastic {
@@ -64,6 +66,7 @@ size_t TipHydrolysis::perform(double time, double r,
                 return fi;
             }
             r -= _rate;
+            r = std::max(r, 0.0);
         }
     }
 

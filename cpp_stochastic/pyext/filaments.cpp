@@ -27,6 +27,27 @@
 using namespace boost::python;
 using namespace stochastic::filaments;
 
+void translateDepolymerizingEmptyFilament(const DepolymerizingEmptyFilament &e) {
+    PyErr_SetString(PyExc_RuntimeError, "Attempted to depolymerize an empty filament.");
+}
+
+void translateIllegalStateIndex(const IllegalStateIndex &e) {
+    PyErr_SetString(PyExc_RuntimeError, "Illegal state index.");
+}
+
+void translateIllegalBoundaryIndex(const IllegalBoundaryIndex &e) {
+    PyErr_SetString(PyExc_RuntimeError, "Illegal boundary index.");
+}
+
+void translateBoundaryUpdateEmptyFilament(const BoundaryUpdateEmptyFilament &e) {
+    PyErr_SetString(PyExc_RuntimeError, "Attempted to update boundary of empty filament.");
+}
+
+void translateBoundaryUpdateSmallFilament(const BoundaryUpdateSmallFilament &e) {
+    PyErr_SetString(PyExc_RuntimeError,
+            "Attempted to update boundary of single segment filament");
+}
+
 void filaments_level_definitions() {
     class_<Filament, boost::noncopyable>(
             "Filament", no_init)
@@ -95,4 +116,36 @@ void filaments_level_definitions() {
         .def("update_boundary", &SimpleFilament::update_boundary)
         .def("get_states", &SimpleFilament::get_states);
 
+
+    class_<std::exception>("CppException", no_init);
+
+    class_<DepolymerizingEmptyFilament, bases<std::exception> >
+        myDepolymerizingEmptyFilament("DepolymerizingEmptyFilament", no_init);
+//    PyObject *DepolymerizingEmptyFilamentType = myDepolymerizingEmptyFilament.ptr();
+    register_exception_translator<DepolymerizingEmptyFilament>(
+            &translateDepolymerizingEmptyFilament);
+
+    class_<IllegalStateIndex, bases<std::exception> >
+        myIllegalStateIndex("IllegalStateIndex", no_init);
+//    PyObject *IllegalStateIndexType = myIllegalStateIndex.ptr();
+    register_exception_translator<IllegalStateIndex>(
+            &translateIllegalStateIndex);
+
+    class_<IllegalBoundaryIndex, bases<std::exception> >(
+            "IllegalBoundaryIndex", no_init);
+//    PyObject *IllegalBoundaryIndexType = IllegalBoundaryIndex.ptr();
+    register_exception_translator<DepolymerizingEmptyFilament>(
+            &translateDepolymerizingEmptyFilament);
+
+    class_<BoundaryUpdateEmptyFilament, bases<std::exception> >(
+            "BoundaryUpdateEmptyFilament", no_init);
+//    PyObject *BoundaryUpdateEmptyFilamentType = BoundaryUpdateEmptyFilament.ptr();
+    register_exception_translator<DepolymerizingEmptyFilament>(
+            &translateDepolymerizingEmptyFilament);
+
+    class_<BoundaryUpdateSmallFilament, bases<std::exception> >(
+            "BoundaryUpdateSmallFilament", no_init);
+//    PyObject *BoundaryUpdateSmallFilamentType = BoundaryUpdateSmallFilament.ptr();
+    register_exception_translator<BoundaryUpdateSmallFilament>(
+            &translateBoundaryUpdateSmallFilament);
 }

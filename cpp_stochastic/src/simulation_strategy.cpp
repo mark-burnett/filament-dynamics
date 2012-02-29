@@ -15,6 +15,7 @@
 
 // #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 #include "simulation_strategy.h"
 
@@ -117,6 +118,8 @@ void SimulationStrategy::record_measurements(double time) {
 
 size_t SimulationStrategy::perform_transition(double time, double r) {
     for (size_t ti = 0; ti < _transition_rates.size(); ++ti) {
+        // Just avoiding rounding errors.
+        r = std::max(0.0, r);
         if (r < _transition_rates[ti]) {
             return _transitions[ti]->perform(time, r, _filaments, _concentrations);
         }

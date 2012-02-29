@@ -22,13 +22,10 @@
 
 #include "state.h"
 #include "filaments/filament.h"
+#include "exceptions.h"
 
 namespace stochastic {
 namespace filaments {
-
-class DepolymerizingEmptyFilament : public std::exception {};
-class IllegalStateIndex : public std::exception {};
-class IllegalBoundaryIndex : public std::exception {};
 
 struct Segment {
     Segment(size_t new_number, State new_state) :
@@ -80,8 +77,7 @@ class SegmentedFilament : public Filament {
 
         void _build_from_iterators(_vector_ui_ci start, _vector_ui_ci stop);
         void _init_number_state(size_t number, const State &state);
-        void _fracture_length_one(sl_t::iterator i, size_t protomer_index,
-                const State &new_state);
+        void _fracture_length_one(sl_t::iterator i, const State &new_state);
         void _fracture(sl_t::iterator i, size_t protomer_index,
                 const State &new_state);
 

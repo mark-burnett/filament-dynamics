@@ -13,7 +13,6 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <exception>
 #include "filaments/segmented_filament.h"
 
 namespace stochastic {
@@ -139,7 +138,7 @@ void SegmentedFilament::append_pointed(const State &new_state) {
 }
 
 State SegmentedFilament::pop_barbed() {
-    if (_length > 0) {
+//    if (_length > 0) {
         Segment &seg = _segments.back();
         State state = seg.state;
 
@@ -156,13 +155,13 @@ State SegmentedFilament::pop_barbed() {
         --_state_counts[state];
 
         return state;
-    } else {
-        throw DepolymerizingEmptyFilament();
-    }
+//    } else {
+//        throw DepolymerizingEmptyFilament();
+//    }
 }
 
 State SegmentedFilament::pop_pointed() {
-    if (_length > 0) {
+//    if (_length > 0) {
         Segment &seg = _segments.front();
         State state = seg.state;
 
@@ -179,14 +178,14 @@ State SegmentedFilament::pop_pointed() {
         --_state_counts[state];
 
         return state;
-    } else {
-        throw DepolymerizingEmptyFilament();
-    }
+//    } else {
+//        throw DepolymerizingEmptyFilament();
+//    }
 }
 
 // fracture for case where segment number is 1
 void SegmentedFilament::_fracture_length_one(sl_t::iterator i,
-    size_t protomer_index, const State &new_state) {
+        const State &new_state) {
     sl_t::iterator pn(i);
     --pn;
     sl_t::iterator bn(i);
@@ -201,6 +200,7 @@ void SegmentedFilament::_fracture_length_one(sl_t::iterator i,
 
     // cases are:
         // near pointed end
+            // only segment
             // merge no boundary
             // no merge & boundary
         // near barbed end
@@ -257,7 +257,7 @@ void SegmentedFilament::_fracture_length_one(sl_t::iterator i,
 void SegmentedFilament::_fracture(sl_t::iterator i,
         size_t protomer_index, const State &new_state) {
     if (1 == i->number) {
-        _fracture_length_one(i, protomer_index, new_state);
+        _fracture_length_one(i, new_state);
         return;
     }
 
@@ -278,18 +278,18 @@ void SegmentedFilament::_fracture(sl_t::iterator i,
         --pn;
         if (_segments.end() != pn) { // not near pointed end of filament
             if (new_state == pn->state) { // same, no boundary
-                ++pn->number;
-                --i->number;
+                ++(pn->number);
+                --(i->number);
             } else { // different, add boundary
                 --_boundary_counts[pn->state][i->state];
                 _segments.insert(i, Segment(1, new_state));
-                i->number = right;
+                --(i->number);
                 ++_boundary_counts[pn->state][new_state];
                 ++_boundary_counts[new_state][i->state];
             }
         } else { // near pointed end of filament
             _segments.insert(i, Segment(1, new_state));
-            i->number = right;
+            --(i->number);
             ++_boundary_counts[new_state][i->state];
         }
 
@@ -354,15 +354,23 @@ void SegmentedFilament::update_boundary(size_t instance_number,
     --_state_counts[old_barbed_state];
     ++_state_counts[new_barbed_state];
 
-    size_t count = 0;
-    std::list<Segment>::iterator barbed_segment(_segments.begin());
-    std::list<Segment>::iterator pointed_segment(_segments.begin());
     if (!_segments.empty()) {
+        size_t count = 0;
+
+        std::list<Segment>::iterator barbed_segment(_segments.begin());
+        std::list<Segment>::iterator pointed_segment(_segments.begin());
         ++barbed_segment;
+
+        if (_segments.end() == barbed_segment) {
+            throw BoundaryUpdateSmallFilament();
+        }
+
         while (barbed_segment != _segments.end()) {
             if (old_pointed_state == pointed_segment->state &&
                     old_barbed_state == barbed_segment->state) {
                 if (instance_number == count) {
+                    // When updating boundaries,
+                    // we always choose the left-most protomer.
                     _fracture(barbed_segment, 0, new_barbed_state);
                     return;
                 }
@@ -371,6 +379,8 @@ void SegmentedFilament::update_boundary(size_t instance_number,
             ++pointed_segment;
             ++barbed_segment;
         }
+    } else {
+        throw BoundaryUpdateEmptyFilament();
     }
 }
 

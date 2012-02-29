@@ -13,6 +13,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <algorithm>
+
 #include "transitions/depolymerization.h"
 
 namespace stochastic {
@@ -27,9 +29,8 @@ double FixedRateDepolymerization::initial_R(double time,
         return 0;
     }
 
-    size_t fi = 0;
     _count = 0;
-    for ( ; fi < filaments.size(); ++fi) {
+    for (size_t fi = 0; fi < filaments.size(); ++fi) {
         State fstate = get_state(*filaments[fi]);
         _states[fi] = fstate;
         if (_state == fstate) {
@@ -75,6 +76,7 @@ size_t FixedRateDepolymerization::perform(double time, double r,
                 return fi;
             }
             r -= _rate;
+            r = std::max(0.0, r);
         }
     }
 
