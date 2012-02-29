@@ -70,7 +70,7 @@ size_t FixedRateDepolymerization::perform(double time, double r,
     for (size_t fi = 0; fi < filaments.size(); ++fi) {
         if (_state == get_state(*filaments[fi])) {
             if (r < _rate) {
-                if (0 != filaments[fi]->length()) {
+                if (filaments[fi]->length() > 0) {
                     remove_state(*filaments[fi]);
                     concentrations[_state]->add_monomer();
                 }
