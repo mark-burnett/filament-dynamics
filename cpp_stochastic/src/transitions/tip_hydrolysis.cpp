@@ -61,7 +61,7 @@ size_t TipHydrolysis::perform(double time, double r,
         concentrations::container_t &concentrations) {
     for (size_t fi = 0; fi < filaments.size(); ++fi) {
         if (_old_state == get_state(*filaments[fi])) {
-            if (r < _rate) {
+            if (r < _rate && filaments[fi]->length() > 0) {
                 perform_filament(*filaments[fi]);
                 return fi;
             }
