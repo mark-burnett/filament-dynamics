@@ -138,7 +138,7 @@ void SegmentedFilament::append_pointed(const State &new_state) {
 }
 
 State SegmentedFilament::pop_barbed() {
-//    if (_length > 0) {
+    if (_length > 0) {
         Segment &seg = _segments.back();
         State state = seg.state;
 
@@ -155,13 +155,15 @@ State SegmentedFilament::pop_barbed() {
         --_state_counts[state];
 
         return state;
-//    } else {
+    }
+    return State();
+//    else {
 //        throw DepolymerizingEmptyFilament();
 //    }
 }
 
 State SegmentedFilament::pop_pointed() {
-//    if (_length > 0) {
+    if (_length > 0) {
         Segment &seg = _segments.front();
         State state = seg.state;
 
@@ -178,7 +180,9 @@ State SegmentedFilament::pop_pointed() {
         --_state_counts[state];
 
         return state;
-//    } else {
+    }
+    return State();
+//    else {
 //        throw DepolymerizingEmptyFilament();
 //    }
 }

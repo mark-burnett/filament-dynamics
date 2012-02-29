@@ -67,8 +67,7 @@ double FixedRateDepolymerization::R(double time,
 size_t FixedRateDepolymerization::perform(double time, double r,
         filaments::container_t &filaments,
         concentrations::container_t &concentrations) {
-    size_t fi = 0;
-    for ( ; fi < filaments.size(); ++fi) {
+    for (size_t fi = 0; fi < filaments.size(); ++fi) {
         if (_state == get_state(*filaments[fi])) {
             if (r < _rate) {
                 remove_state(*filaments[fi]);
@@ -80,7 +79,7 @@ size_t FixedRateDepolymerization::perform(double time, double r,
         }
     }
 
-    return fi;
+    return 0;
 }
 
 } // namespace transitions
