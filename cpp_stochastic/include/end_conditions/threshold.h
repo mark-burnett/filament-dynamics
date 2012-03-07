@@ -28,7 +28,7 @@ class Threshold : public EndCondition {
         Threshold(const State &state, double concentration,
                 double scaled_by=1,
                 double subtract_fraction=0) : _state(state),
-            _value(concentration * (scaled_by - subtract_fraction)) {}
+            _value(concentration * (1 - subtract_fraction) * scaled_by) {}
         void initialize(const filaments::container_t &filaments,
                 const concentrations::container_t &concentrations) {}
 
