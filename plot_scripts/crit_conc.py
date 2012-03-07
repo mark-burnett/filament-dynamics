@@ -26,8 +26,8 @@ from plot_scripts import contexts
 from plot_scripts import settings
 
 def main():
-#    with contexts.complex_figure('plots/critical_concentration.eps',
-    with contexts.complex_figure('plots/cc_tip.eps',
+#    with contexts.complex_figure('plots/critical_concentration.pdf',
+    with contexts.complex_figure('plots/cc_tip.pdf',
             width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
             height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2) as figure:
 #        crit_conc(figure)

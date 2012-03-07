@@ -25,7 +25,7 @@ THIN_LINE = 0.3
 THICK_LINE = 1
 
 def main():
-    with contexts.complex_figure('plots/depoly.eps',
+    with contexts.complex_figure('plots/depoly.pdf',
             height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2,
             width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM) as figure:
         quad_timecourses(figure)
@@ -116,6 +116,10 @@ def quad_timecourses(figure):
     plot_traces(top_left_axes,
             'results/depoly_tc_vectorial.dat',
             color='#8080FF', thickness=THIN_LINE)
+    # Vec non be
+#    plot_traces(top_left_axes,
+#            'results/depoly_nonbe_tc.dat',
+#            color='#80FF80', thickness=THIN_LINE)
     # Data on top
     top_left_axes.plot(expt[0], expt[1], 'k.',
             markersize=1, clip_on=False)
@@ -174,6 +178,7 @@ def coop_qof(figure):
     vec_data = data.load_data('results/depoly_vectorial_qof.dat')
 
     rhos, chis, minchis, maxchis, pct_chis = coop_data
+    errs = numpy.array(chis) - numpy.array(minchis)
 
     vchi, vminchi, vmaxchi, vpct_chi = zip(*vec_data)[0]
 
@@ -184,15 +189,15 @@ def coop_qof(figure):
         axes.axhline(vchi, 0, 1, color='b', linestyle=':')
 
         axes.plot(rhos, chis, 'k.')
-#        axes.errorbar(rhos, chis, pct_chis, fmt='k.')
-#        axes.set_ylim([0, 10])
+        axes.errorbar(rhos, chis, errs, fmt='k.')
+        axes.set_ylim([0, 8])
         axes.set_xlim([0.1, 10**12])
         axes.set_xticks([1, 100, 10000, 1000000,
             100000000, 10000000000])
 
 
 
-# def main(filename='plots/depoly_timecourses.eps'):
+# def main(filename='plots/depoly_timecourses.pdf'):
 #     with contexts.complex_figure(filename,
 # #            height=settings.DOUBLE_COLUMN_DEFAULT_HEIGHT_CM,
 # #            width=settings.DOUBLE_COLUMN_DEFAULT_WIDTH_CM) as figure:
@@ -215,7 +220,7 @@ def tip_fit(figure):
             'experimental_data/jegou_2011/sample_filament_timecourse.dat')
     etimes, evals = numpy.array(expt[0]), expt[1]
 
-#    with contexts.basic_figure('plots/depoly_tip_fit_timecourse.eps',
+#    with contexts.basic_figure('plots/depoly_tip_fit_timecourse.pdf',
     with contexts.subplot(figure, (2, 2, 2), title='B'
 #            x_label='Time [s]',
 #            y_label=r'Filament Length [$\mu$m]'
@@ -238,7 +243,7 @@ def rate_fit(figure):
 
     rtimes -= 300
 
-#    with contexts.basic_figure('plots/depoly_tip_filaments.eps',
+#    with contexts.basic_figure('plots/depoly_tip_filaments.pdf',
     with contexts.subplot(figure, (2, 2, 3), title='C',
             x_label='Time [s]',
             y_label=r'Filament Length [$\mu$m]') as axes:
@@ -264,7 +269,7 @@ def tip_filaments():
 
     rtimes -= 300
 
-#    with contexts.basic_figure('plots/depoly_tip_filaments.eps',
+#    with contexts.basic_figure('plots/depoly_tip_filaments.pdf',
     with contexts.subplot(figure, (2, 2, 3), title='A',
             x_label='Time [s]',
             y_label=r'Filament Length [$\mu$m]') as axes:
@@ -294,7 +299,7 @@ def random_vectorial_timecourse(figure):
     rtimes -= 300
     vtimes -= 300
 
-#    with contexts.basic_figure('plots/depoly_rv_timecourses.eps',
+#    with contexts.basic_figure('plots/depoly_rv_timecourses.pdf',
     with contexts.subplot(figure, (2, 2, 1), title='A',
 #            x_label='Time [s]',
             y_label=r'Filament Length [$\mu$m]') as axes:
@@ -336,7 +341,7 @@ def cooperative_timecourse(figure):
     ftimes -= 300
     mtimes -= 300
 
-#    with contexts.basic_figure('plots/depoly_coop_timecourses.eps',
+#    with contexts.basic_figure('plots/depoly_coop_timecourses.pdf',
     with contexts.subplot(figure, (2, 2, 4), title='D',
             x_label='Time [s]'
 #            y_label=r'Filament Length [$\mu$m]'

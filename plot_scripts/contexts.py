@@ -13,8 +13,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from matplotlib.backends.backend_ps import FigureCanvasPS as _FigureCanvas
+#from matplotlib.backends.backend_ps import FigureCanvasPS as _FigureCanvas
 #from matplotlib.backends.backend_svg import FigureCanvasSVG as _FigureCanvas
+from matplotlib.backends.backend_pdf import FigureCanvasPdf as _FigureCanvas
 from matplotlib.figure import Figure as _Figure
 
 import contextlib
@@ -28,7 +29,7 @@ import matplotlib
 
 matplotlib.rc('font', size=settings.DEFAULT_FONT_SIZE)
 
-@ contextlib.contextmanager
+@contextlib.contextmanager
 def complex_figure(filename, dpi=settings.DPI,
         width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
         height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,

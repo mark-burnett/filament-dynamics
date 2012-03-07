@@ -32,7 +32,7 @@ RHO_CRIT = (15/0.00167)**2
 MELKI_ERROR = 0.1
 
 def main():
-    with contexts.complex_figure('plots/melki_rates_combined.eps',
+    with contexts.complex_figure('plots/melki_rates_combined.pdf',
             width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
             height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2,
             right_label=True) as figure:
@@ -41,7 +41,7 @@ def main():
 #    melki_timecourses()
 #    single_timecourse()
 #    stupid_melki_timecourses()
-    with contexts.complex_figure('plots/melki_fit_quality.eps',
+    with contexts.complex_figure('plots/melki_fit_quality.pdf',
             width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
             height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2) as figure:
         melki_rate_fit_quality(figure)
@@ -60,7 +60,7 @@ def melki_rate_plot(figure):
     cooperativities, rates = results[:2]
     v_rate_pack = zip(*v_results)[0][:3]
 
-#    with contexts.basic_figure('plots/melki_rates.eps',
+#    with contexts.basic_figure('plots/melki_rates.pdf',
     with contexts.subplot(figure, (2, 1, 1), title='A',
 #            x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
             y_label=r'Non-Boundary Pi Dissociation Rate, $r_d$ [$s^{-1}$]',
@@ -108,7 +108,7 @@ def melki_rate_error_plot(figure):
     errors = numpy.array(numpy.array(rates) - numpy.array(min_rates)) / theoretical_rates
     rates = numpy.array(rates) / theoretical_rates
 
-#    with contexts.basic_figure('plots/melki_rate_errors.eps',
+#    with contexts.basic_figure('plots/melki_rate_errors.pdf',
     with contexts.subplot(figure, (2, 1, 2), title='B',
             x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
             y_label=r'$r_d$ [Simulation / Theory]',
@@ -191,7 +191,8 @@ def melki_sample_timecourses(figure):
         axes.set_ylim([0, 35])
         axes.set_xlim([0, 2500])
 
-        axes.legend(loc=4)
+        l = axes.legend(loc=4)
+        l.draw_frame(False)
 
 
 if '__main__' == __name__:

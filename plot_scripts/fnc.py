@@ -27,7 +27,7 @@ SCALE_BY_RANDOM = False
 RHO_CRIT = (20/0.02)**2
 
 
-def main(filename='plots/fnc_lagtimes.eps'):
+def main(filename='plots/fnc_lagtimes.pdf'):
     with contexts.complex_figure(filename,
             width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
             height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2,

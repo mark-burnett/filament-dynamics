@@ -35,13 +35,13 @@ def carlier_timecourses():
             'experimental_data/carlier_1986/factin_tc_fnc_1.1.dat',
             'experimental_data/carlier_1986/adppi_tc_fnc_1.1.dat',
             'results/carlier_timecourses_1.1.dat',
-            'plots/carlier_86_tc_1.1.eps')
+            'plots/carlier_86_tc_1.1.pdf')
 
     _timecourse(0.02,
             'experimental_data/carlier_1986/factin_tc_fnc_20.dat',
             'experimental_data/carlier_1986/adppi_tc_fnc_20.dat',
             'results/carlier_timecourses_20.dat',
-            'plots/carlier_86_tc_20.eps')
+            'plots/carlier_86_tc_20.pdf')
 
 def _timecourse(fnc, f_filename, p_filename, sim_filename,
         output_filename):

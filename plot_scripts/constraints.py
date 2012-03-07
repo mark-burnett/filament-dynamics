@@ -77,7 +77,7 @@ def constraint_plot():
 #    d_inter = numpy.exp(scipy.interpolate.InterpolatedUnivariateSpline(ldr,
 #        numpy.log(dchi), k=4)(lx))
 
-    with contexts.basic_figure('plots/cooperativity_constraints.svg',
+    with contexts.basic_figure('plots/cooperativity_constraints.pdf',
             x_label=r'Dissociation Cooperativity, $\rho_d$',
             y_label=r'Scaled Quality of Fit',
             logscale_x=False) as axes:

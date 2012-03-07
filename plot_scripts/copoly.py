@@ -33,7 +33,7 @@ HT_ARROW_X_OFFSET = 25
 INCREASING_RHO_TEXT = r'''increasing
 $\rho_d$'''
 
-def main(filename='plots/copoly_results.eps'):
+def main(filename='plots/copoly_results.pdf'):
 #    copoly_adp_only(filename)
 #    copoly_halftime_plot(filename)
     with contexts.complex_figure(filename,

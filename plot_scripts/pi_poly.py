@@ -26,7 +26,7 @@ from plot_scripts import settings
 TIMECOURSE_HALFTIME = 406
 HALF_CONCENTRATION = 1008
 
-def main(filename='plots/pi_saturation.eps'):
+def main(filename='plots/pi_saturation.pdf'):
     with contexts.complex_figure(filename,
 #            width=settings.DOUBLE_COLUMN_DEFAULT_WIDTH_CM,
 #            height=settings.DOUBLE_COLUMN_DEFAULT_HEIGHT_CM
