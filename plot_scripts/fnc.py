@@ -64,7 +64,7 @@ def linear_lagtime_plot(figure,
     r_theory = numpy.ones(len(th_fncs))
 
     with contexts.subplot(figure, (2, 1, 1), title='A',
-            x_label=r'Filament Number Concentration [nM]',
+            x_label=r'$n$ [nM]',
             y_label=r'(Lag Time)$^{-1}$ [AU]') as axes:
         # Cooperative simulations
         for lagtimes, linestyle in zip(coop_lagtimes, coop_linestyles):
@@ -96,7 +96,7 @@ def qof_plot(figure):
     coops, qof, min_qof, max_qof, pct_err = coop_qof
     err = [m - q for m, q in zip(max_qof, qof)]
     with contexts.subplot(figure, (2, 1, 2), title='B',
-            x_label=r'Phosphate Dissociation Cooperativity, $\rho_d$',
+            x_label=r'$\rho_d$',
             y_label=r'Lag-time Quality of Fit, $\chi^2$',
             logscale_x=True, logscale_y=False) as axes:
         axes.fill_between([0.1, 1.0e12],

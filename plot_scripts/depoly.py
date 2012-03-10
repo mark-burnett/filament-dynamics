@@ -183,7 +183,7 @@ def coop_qof(figure):
     vchi, vminchi, vmaxchi, vpct_chi = zip(*vec_data)[0]
 
     with contexts.subplot(figure, (2, 1, 2), title='E',
-            x_label=r'Dissociation Cooperativity, $\rho_d$',
+            x_label=r'$\rho_d$',
             y_label=r'Quality of Fit, $\chi^2$',
             logscale_x=True) as axes:
         axes.axhline(vchi, 0, 1, color='b', linestyle=':')

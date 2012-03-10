@@ -94,7 +94,7 @@ def copoly_adp_only(figure):
 #        contexts.plot(axes, 'plot', v_fractions, numpy.array(v_halftimes)/v_halftimes[0], 'k-')
         contexts.plot(axes, 'plot', v_fractions, numpy.array(v_halftimes), 'k-')
 
-        new_x_tick_labels = [0, 5, 10, 20]
+        new_x_tick_labels = [0, 5, 10, 15, 20]
 
         axes.set_xticks([0, 0.05, 0.1, 0.15, 0.2])
         axes.set_xticklabels(new_x_tick_labels)

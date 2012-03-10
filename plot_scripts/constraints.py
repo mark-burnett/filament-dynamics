@@ -78,7 +78,7 @@ def constraint_plot():
 #        numpy.log(dchi), k=4)(lx))
 
     with contexts.basic_figure('plots/cooperativity_constraints.pdf',
-            x_label=r'Dissociation Cooperativity, $\rho_d$',
+            x_label=r'$\rho_d$',
             y_label=r'Scaled Quality of Fit',
             logscale_x=False) as axes:
 
