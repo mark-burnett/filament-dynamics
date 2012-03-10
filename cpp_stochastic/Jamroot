@@ -1,6 +1,8 @@
 local INSTALL_ROOT = ".." ;
 
 using python ;
+using gcc ;
+# using clang ;
 
 project stochastic_module
   : default-build release
@@ -11,6 +13,7 @@ lib stochastic
     src/filaments/segmented_filament.cpp
     src/filaments/simple_filament.cpp
     src/transitions/association.cpp
+    src/transitions/barrier.cpp
     src/transitions/cooperative_hydrolysis.cpp
     src/transitions/depolymerization.cpp
     src/transitions/monomer.cpp
@@ -23,6 +26,8 @@ lib stochastic
     src/measurements/state_count.cpp
     src/random_seed.cpp
     src/simulation_strategy.cpp
+    src/barrier_position.cpp
+    src/physical_constants.cpp
   : <include>include
   ;
 
@@ -32,6 +37,7 @@ exe runtests
     tests/filaments/test_simple_filament.cpp
     tests/filaments/test_cached_filament.cpp
     tests/transitions/test_association.cpp
+    tests/transitions/test_barrier.cpp
     tests/transitions/test_cooperative_hydrolysis.cpp
     tests/transitions/test_depolymerization.cpp
     tests/transitions/test_monomer.cpp
@@ -48,7 +54,16 @@ exe runtests
  #  tests/test_old_integration.cpp
     stochastic
   : <include>tests/include <include>include
-    <library>/usr/lib/libgtest.so
+#    <library-path>/lib
+#    <library-path>/usr/lib
+#    <library-path>/usr/local/lib
+    <find-static-library>gtest
+    <find-static-library>pthread
+#    <find-static-library>nptl
+#    <find-static-library>c
+    <library>/lib/x86_64-linux-gnu/libc.so.6
+#    <library>/usr/lib/libgtest.a
+#    <library>/usr/lib/libpthread.so
   ;
 
 python-extension stochasticpy
