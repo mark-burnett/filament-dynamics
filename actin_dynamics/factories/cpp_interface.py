@@ -50,6 +50,8 @@ _filaments_lookup = {
             (str, 'state', None)] }
 
 _measurements_lookup = {
+        'BarrierPosition': [
+            (float, 'sample_period', None)],
         'Concentration': [
             (str, 'state', None),
             (float, 'sample_period', None)],
@@ -141,7 +143,20 @@ _transitions_lookup = {
             (str, 'old_state', None),
             (str, 'new_state', None),
             (float, 'rate', None),
-            (str, 'byproduct', None)] }
+            (str, 'byproduct', None)],
+        'RaiseBarrier': [
+            (float, 'force', None),
+            (float, 'D', None),
+            (int, 'divisions', 1)],
+        'LowerBarrier': [
+            (float, 'force', None),
+            (float, 'D', None),
+            (int, 'divisions', 1)],
+        'BarrierBarbedEndPolymerization': [
+            (str, 'state', None),
+            (float, 'rate', None),
+            (int, 'divisions', 1)]
+        }
 
 def build_binding(binding, parameters, module, lookup):
     class_name = binding.class_name

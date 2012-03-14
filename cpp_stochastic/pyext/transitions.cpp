@@ -193,4 +193,12 @@ void transitions_level_definitions() {
             .def("initial_R", &LowerBarrier::initial_R)
             .def("R", &LowerBarrier::R)
             .def("perform", &LowerBarrier::perform);
+
+    // Barrier polymerization
+    class_<BarrierBarbedEndPolymerization, bases<Transition>
+        >("BarrierBarbedEndPolymerization", init<
+                const State&, double, size_t>())
+            .def("initial_R", &BarbedEndPolymerization::initial_R)
+            .def("R", &BarbedEndPolymerization::R)
+            .def("perform", &BarbedEndPolymerization::perform);
 }
