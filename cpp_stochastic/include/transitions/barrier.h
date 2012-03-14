@@ -35,17 +35,20 @@ class RaiseBarrier : public Transition {
         RaiseBarrier(double force, double D, size_t divisions):
             _rate(D / std::pow(monomer_length / divisions, 2) *
                     std::exp(-force * monomer_length / (
-                            boltzman_constant * room_temperature * divisions))),
-            _divisions(divisions) {}
+                            boltzman_constant * room_temperature * divisions))) {}
 
         double initial_R(double time,
                     const filaments::container_t &filaments,
-                    const concentrations::container_t &concentrations);
+                    const concentrations::container_t &concentrations) {
+            return _rate;
+        }
 
         double R(double time,
                     const filaments::container_t &filaments,
                     const concentrations::container_t &concentrations,
-                    size_t previous_filament_index);
+                    size_t previous_filament_index) {
+            return _rate;
+        }
 
         size_t perform(double time, double r,
                     filaments::container_t &filaments,
@@ -55,12 +58,7 @@ class RaiseBarrier : public Transition {
         };
 
     private:
-//        const double _const;
         const double _rate;
-        const size_t _divisions;
-//        std::vector<unsigned int> _filament_lengths;
-
-//        double _check_rate(size_t max_length);
 };
 
 class LowerBarrier : public Transition {

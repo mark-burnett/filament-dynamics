@@ -20,19 +20,6 @@
 namespace stochastic {
 namespace transitions {
 
-double RaiseBarrier::initial_R(double time,
-            const filaments::container_t &filaments,
-            const concentrations::container_t &concentrations) {
-    return _rate;
-}
-
-double RaiseBarrier::R(double time,
-            const filaments::container_t &filaments,
-            const concentrations::container_t &concentrations,
-            size_t previous_filament_index) {
-    return _rate;
-}
-
 double LowerBarrier::initial_R(double time,
             const filaments::container_t &filaments,
             const concentrations::container_t &concentrations) {
@@ -50,6 +37,7 @@ double LowerBarrier::initial_R(double time,
 
     if (!_barrier_initialized) {
         barrier_position = max_length * _divisions + 1;
+        _barrier_initialized = true;
     }
 
     return _check_rate(max_length);
