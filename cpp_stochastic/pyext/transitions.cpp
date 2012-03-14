@@ -24,6 +24,7 @@
 #include "transitions/random_hydrolysis.h"
 #include "transitions/tip_hydrolysis.h"
 #include "transitions/vectorial_hydrolysis.h"
+#include "transitions/barrier.h"
 
 using namespace boost::python;
 using namespace stochastic;
@@ -179,4 +180,17 @@ void transitions_level_definitions() {
             .def("initial_R", &PointedEndDepolymerization::initial_R)
             .def("R", &PointedEndDepolymerization::R)
             .def("perform", &PointedEndDepolymerization::perform);
+
+    // Barrier Transitions
+    class_<RaiseBarrier, bases<Transition>
+            >("RaiseBarrier", init<double, double, size_t>())
+            .def("initial_R", &RaiseBarrier::initial_R)
+            .def("R", &RaiseBarrier::R)
+            .def("perform", &RaiseBarrier::perform);
+
+    class_<LowerBarrier, bases<Transition>
+            >("LowerBarrier", init<double, double, size_t>())
+            .def("initial_R", &LowerBarrier::initial_R)
+            .def("R", &LowerBarrier::R)
+            .def("perform", &LowerBarrier::perform);
 }

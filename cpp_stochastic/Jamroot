@@ -21,6 +21,7 @@ lib stochastic
     src/transitions/random_hydrolysis.cpp
     src/transitions/tip_hydrolysis.cpp
     src/transitions/vectorial_hydrolysis.cpp
+    src/measurements/barrier_position.cpp
     src/measurements/concentration.cpp
     src/measurements/filament_length.cpp
     src/measurements/state_count.cpp

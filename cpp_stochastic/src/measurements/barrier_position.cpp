@@ -14,7 +14,7 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "barrier_position.h"
-#include "measurements/concentration.h"
+#include "measurements/barrier_position.h"
 
 namespace stochastic {
 namespace measurements {
@@ -23,7 +23,7 @@ void BarrierPosition::initialize(const filaments::container_t &filaments,
                 const concentrations::container_t &concentrations) {
     previous_time = 0;
     _values.clear();
-    _values.push_back(stochastic::barrier_position);
+    _values.push_back(barrier_position);
 }
 
 void BarrierPosition::perform(double time,
@@ -36,7 +36,7 @@ void BarrierPosition::perform(double time,
         number_to_record = 1;
     }
     for (size_t n = 0; n < number_to_record; ++n) {
-        _values.push_back(stochastic::barrier_position);
+        _values.push_back(barrier_position);
     }
     previous_time = (_values.size() - 1) * sample_period;
 }

@@ -13,9 +13,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "physical_constants.h"
-//extern double boltzman_constant = 1.3806488e-23; // m^2 kg s^-2
-double boltzman_constant = 1.3806488e-11; // um^2 kg s^-2
+double boltzman_constant = 1.3806488e-23; // m^2 kg s^-2
+// double boltzman_constant = 1.3806488e-11; // um^2 kg s^-2
 double room_temperature = 293.15;
 
-double monomer_length = 0.0027; // um
+// double monomer_length = 0.0027; // um
+double monomer_length = 2.7e-9; // m

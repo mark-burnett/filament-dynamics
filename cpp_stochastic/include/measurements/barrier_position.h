@@ -26,6 +26,9 @@ namespace stochastic {
 namespace measurements {
 
 class BarrierPosition : public Measurement {
+    private:
+        std::vector<double> _values;
+
     public:
         BarrierPosition(double sample_period) :
             Measurement(sample_period) {}

@@ -32,26 +32,20 @@ namespace transitions {
 
 class RaiseBarrier : public Transition {
     public:
-        RaiseBarrier(double force, size_t divisions):
-            // Note the signs on these rates.
-            // XXX We're still missing a scale factor (probably D / dx**2 * f(pi))
-            // TODO add barrier dependent polymerization transition
-            _rate(std::exp(-force * monomer_length /
-                        (boltzman_constant * room_temperature * divisions))),
+        RaiseBarrier(double force, double D, size_t divisions):
+            _rate(D / std::pow(monomer_length / divisions, 2) *
+                    std::exp(-force * monomer_length / (
+                            boltzman_constant * room_temperature * divisions))),
             _divisions(divisions) {}
 
         double initial_R(double time,
                     const filaments::container_t &filaments,
-                    const concentrations::container_t &concentrations) {
-            return _rate;
-        };
+                    const concentrations::container_t &concentrations);
 
         double R(double time,
                     const filaments::container_t &filaments,
                     const concentrations::container_t &concentrations,
-                    size_t previous_filament_index) {
-            return _rate;
-        };
+                    size_t previous_filament_index);
 
         size_t perform(double time, double r,
                     filaments::container_t &filaments,
@@ -61,16 +55,20 @@ class RaiseBarrier : public Transition {
         };
 
     private:
+//        const double _const;
         const double _rate;
         const size_t _divisions;
+//        std::vector<unsigned int> _filament_lengths;
+
+//        double _check_rate(size_t max_length);
 };
 
 class LowerBarrier : public Transition {
     public:
-        LowerBarrier(double force, size_t divisions):
-            // Note the signs on these rates.
-            _rate(std::exp(force * monomer_length /
-                        (boltzman_constant * room_temperature * divisions))),
+        LowerBarrier(double force, double D, size_t divisions):
+            _rate(D / std::pow(monomer_length / divisions, 2) *
+                    std::exp(force * monomer_length / (
+                            boltzman_constant * room_temperature * divisions))),
             _divisions(divisions), _barrier_initialized(false) {}
 
         double initial_R(double time,
@@ -95,7 +93,6 @@ class LowerBarrier : public Transition {
         bool _barrier_initialized;
 
         std::vector<unsigned int> _filament_lengths;
-
 
         double _check_rate(size_t max_length);
 };
