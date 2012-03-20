@@ -121,31 +121,26 @@ void filaments_level_definitions() {
 
     class_<DepolymerizingEmptyFilament, bases<std::exception> >
         myDepolymerizingEmptyFilament("DepolymerizingEmptyFilament", no_init);
-//    PyObject *DepolymerizingEmptyFilamentType = myDepolymerizingEmptyFilament.ptr();
     register_exception_translator<DepolymerizingEmptyFilament>(
             &translateDepolymerizingEmptyFilament);
 
     class_<IllegalStateIndex, bases<std::exception> >
         myIllegalStateIndex("IllegalStateIndex", no_init);
-//    PyObject *IllegalStateIndexType = myIllegalStateIndex.ptr();
     register_exception_translator<IllegalStateIndex>(
             &translateIllegalStateIndex);
 
     class_<IllegalBoundaryIndex, bases<std::exception> >(
             "IllegalBoundaryIndex", no_init);
-//    PyObject *IllegalBoundaryIndexType = IllegalBoundaryIndex.ptr();
     register_exception_translator<DepolymerizingEmptyFilament>(
             &translateDepolymerizingEmptyFilament);
 
     class_<BoundaryUpdateEmptyFilament, bases<std::exception> >(
             "BoundaryUpdateEmptyFilament", no_init);
-//    PyObject *BoundaryUpdateEmptyFilamentType = BoundaryUpdateEmptyFilament.ptr();
     register_exception_translator<DepolymerizingEmptyFilament>(
             &translateDepolymerizingEmptyFilament);
 
     class_<BoundaryUpdateSmallFilament, bases<std::exception> >(
             "BoundaryUpdateSmallFilament", no_init);
-//    PyObject *BoundaryUpdateSmallFilamentType = BoundaryUpdateSmallFilament.ptr();
     register_exception_translator<BoundaryUpdateSmallFilament>(
             &translateBoundaryUpdateSmallFilament);
 }

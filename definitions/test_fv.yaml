@@ -1,0 +1,44 @@
+name: "Simple force-velocity test"
+
+import:
+    - 'experiments/test_fv.yaml'
+
+    - 'random_random_model.yaml'
+    - 'components/barrier_polymerization.yaml'
+    - 'components/pi_release_in_solution.yaml'
+    - 'components/fast_pi_tip_release.yaml'
+    - 'components/barrier.yaml'
+
+    - 'parameters/polymerization_fujiwara_barbed.yaml'
+    - 'parameters/tip_release_rate.yaml'
+    - 'parameters/in_solution_release_rate.yaml'
+
+    - 'fit_rates/rho_1.yaml'
+
+global_parameters:
+    sample_period: 1
+    simulation_duration: 1000
+    analysis_start_time: 500
+
+    number_of_filaments: 1
+
+    seed_concentration: 20
+    filament_tip_concentration: 0.002
+
+#    force: 5.0e-13 # 0.5 pN
+    actin_concentration: 0.2 # uM
+    divisions: 10
+
+    D: 1.0e-14 # (using 1/3 of 0.3 from PRL 74, no 9 pg 1506 - 1.5um bead)
+
+    cleavage_rate: 0.3
+
+parameter_specifications:
+    test_fv:
+        simulation:
+#            actin_concentration:
+            force: # N
+                lower_bound: 0.1e-12
+                upper_bound: 2.0e-12
+                mesh_type: linear
+                num_points: 20

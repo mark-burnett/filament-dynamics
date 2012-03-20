@@ -15,6 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy
+import itertools
 
 from actin_dynamics.io import data
 
@@ -30,18 +31,18 @@ RHO_CRIT = (20/0.02)**2
 def main(filename='plots/fnc_lagtimes.pdf'):
     with contexts.complex_figure(filename,
             width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
-            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2,
+            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
             ) as figure:
 #        lagtime_plot(figure)
         linear_lagtime_plot(figure)
-        qof_plot(figure)
+#        qof_plot(figure)
 
 
 def linear_lagtime_plot(figure,
-        coop_linestyles=['k:', # Random
-                         'r:', # XXX Consider making green
-                         'b:',
-                         'm:'
+        coop_linestyles=['k--', # Random
+                         'r--', # XXX Consider making green
+                         'b--',
+                         'g--'
                          ],
         cooperative_filename='results/fnc_cooperative_lagtimes.dat',
         vectorial_filename='results/fnc_vectorial_lagtimes.dat',
@@ -63,17 +64,17 @@ def linear_lagtime_plot(figure,
 
     r_theory = numpy.ones(len(th_fncs))
 
-    with contexts.subplot(figure, (2, 1, 1), title='A',
+    with contexts.subplot(figure, (1, 1, 1), #title='A',
             x_label=r'$n$ [nM]',
-            y_label=r'(Lag Time)$^{-1}$ [AU]') as axes:
+            y_label=r'$t_{lag}^{-1}$ [AU]') as axes:
         # Cooperative simulations
         for lagtimes, linestyle in zip(coop_lagtimes, coop_linestyles):
             # index 0 is at fnc = 1.1 nM
             y = lagtimes[0] / numpy.array(lagtimes)
-            axes.plot(coop_fncs, y, linestyle)
+            axes.plot(coop_fncs, y, linestyle, dashes=(3,3.5))
 
         # Vectorial simulations
-        axes.plot(v_fncs, v_lagtimes, 'k:')
+        axes.plot(v_fncs, v_lagtimes, 'k--', dashes=(3,3.5))
 
         # Vectorial theory
         axes.plot(th_fncs, v_theory, 'k-', linewidth=0.5)
@@ -88,6 +89,57 @@ def linear_lagtime_plot(figure,
         x_ticks = [1.1, 5, 10, 15, 20]
         axes.set_xticks(x_ticks)
         axes.set_xticklabels(map(str, x_ticks))
+
+        inset_qof_plot(figure)
+
+def inset_qof_plot(figure):
+    coop_qof = data.load_data('results/fnc_cooperative_qof.dat')
+    vec_qof = data.load_data('results/fnc_vectorial_qof.dat')
+    coops, qof, min_qof, max_qof, pct_err = coop_qof
+    err = [m - q for m, q in zip(max_qof, qof)]
+
+#    with contexts.subplot(figure, (2, 1, 2), title='B',
+#            x_label=r'$\rho_d$',
+#            y_label=r'Lag-time Quality of Fit, $\chi^2$',
+#            logscale_x=True, logscale_y=False) as axes:
+
+    # Box: left, bottom, width, height
+    box = (0.275, 0.575, 0.275, 0.275)
+    axes = figure.add_axes(box)
+    axes.set_xscale('log')
+    axes.minorticks_off()
+
+    axes.xaxis.set_tick_params(size=2, pad=2)
+    axes.yaxis.set_tick_params(size=2, pad=2)
+    
+
+    axes.set_xlabel(r'$\rho_d$', size=6, labelpad=0)
+    axes.set_ylabel(r'Quality of Fit, $\Delta^2$', size=6, labelpad=-1)
+
+    for spine in axes.spines.values():
+        spine.set_linewidth(0.5)
+
+    axes.fill_between([0.1, 1.0e12],
+            [vec_qof[1][0], vec_qof[1][0]],
+            vec_qof[2][0],
+            color='#CCCCFF')
+    axes.axhline(0, 0, 1, color='k', linestyle='-', linewidth=0.5)
+    axes.axhline(vec_qof[0], 0, 1, linestyle=':', color='b', linewidth=0.5, dashes=(0.5, 1))
+    axes.axvline(RHO_CRIT, 0, 1, linestyle='--', color='g', linewidth=0.3,
+            dashes=(2, 2))
+
+    axes.errorbar(coops, qof, err, fmt='k.', markersize=4, linewidth=0.5, capsize=2)
+
+    axes.set_ylim([-5, None])
+    axes.set_xlim([0.1, 10**12])
+    axes.set_xticks([1, 100, 10000, 1000000,
+        100000000, 10000000000])
+    axes.set_yticks([0, 10, 20, 30, 40, 50])
+
+    for label in itertools.chain(axes.get_xticklabels(),
+            axes.get_yticklabels()):
+        label.set_size(4)
+
 
 
 def qof_plot(figure):

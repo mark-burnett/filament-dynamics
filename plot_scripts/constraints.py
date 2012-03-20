@@ -79,7 +79,7 @@ def constraint_plot():
 
     with contexts.basic_figure('plots/cooperativity_constraints.pdf',
             x_label=r'$\rho_d$',
-            y_label=r'Scaled Quality of Fit',
+            y_label=r'Scaled Quality of Fit [AU]',
             logscale_x=False) as axes:
 
     #    pylab.ioff()
@@ -113,6 +113,7 @@ def constraint_plot():
         axes.set_xticks([0, 2, 4, 6, 8, 10])
         axes.set_xticklabels([1, r'$10^2$', r'$10^4$', r'$10^6$',
             r'$10^8$', r'$10^{10}$'])
+#        axes.set_yticks([])
 
         axes.set_ylim([0, None])
 #        pylab.show()

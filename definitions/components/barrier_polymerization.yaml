@@ -1,0 +1,48 @@
+models:
+    transitions:
+        # Polymerization
+        barbed_atp_polymerization:
+            class_name: BarrierBarbedEndPolymerization
+            fixed_arguments:
+                state: ATP
+            variable_arguments:
+                rate: barbed_atp_polymerization_rate
+                divisions: divisions
+
+        barbed_adppi_polymerization:
+            class_name: BarrierBarbedEndPolymerization
+            fixed_arguments:
+                state: ADPPi
+            variable_arguments:
+                rate: barbed_adppi_polymerization_rate
+                divisions: divisions
+
+        barbed_adp_polymerization:
+            class_name: BarrierBarbedEndPolymerization
+            fixed_arguments:
+                state: ADP
+            variable_arguments:
+                rate: barbed_adp_polymerization_rate
+                divisions: divisions
+
+        # Depolymerization
+        barbed_atp_depolymerization:
+            class_name: BarbedEndDepolymerization
+            fixed_arguments:
+                state: ATP
+            variable_arguments:
+                rate: barbed_atp_depolymerization_rate
+
+        barbed_adppi_depolymerization:
+            class_name: BarbedEndDepolymerization
+            fixed_arguments:
+                state: ADPPi
+            variable_arguments:
+                rate: barbed_adppi_depolymerization_rate
+
+        barbed_adp_depolymerization:
+            class_name: BarbedEndDepolymerization
+            fixed_arguments:
+                state: ADP
+            variable_arguments:
+                rate: barbed_adp_depolymerization_rate

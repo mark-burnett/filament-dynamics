@@ -1,0 +1,28 @@
+name: "Simple test for diffusing barrier"
+
+import:
+    - 'experiments/test_diffusion.yaml'
+    - 'components/barrier.yaml'
+
+global_parameters:
+    sample_period: 0.1
+    simulation_duration: 100
+
+    number_of_filaments: 1
+
+    seed_concentration: 0
+    filament_tip_concentration: 1
+
+    force: 3.0e-12
+    divisions: 100
+
+    D: 1.0e-14 # (using 1/3 of 0.3 from PRL 74, no 9 pg 1506 - 1.5um bead)
+
+parameter_specifications:
+    test_diffusion:
+        simulation:
+            dummy:
+                lower_bound: 0
+                upper_bound: 0
+                mesh_type: linear
+                num_points: 1

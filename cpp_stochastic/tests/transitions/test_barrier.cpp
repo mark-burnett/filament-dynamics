@@ -66,14 +66,14 @@ class RaiseBarrierTest : public testing::Test {
 
 TEST_F(RaiseBarrierTest, initial_R) {
     transitions::RaiseBarrier rb(3.0e-12, 1.0e-14, 10);
-    EXPECT_DOUBLE_EQ(112294.16134429042,
+    EXPECT_DOUBLE_EQ(124112.29999557146,
             rb.initial_R(0, filaments, concentrations));
 }
 
 TEST_F(RaiseBarrierTest, R) {
     transitions::RaiseBarrier rb(3.0e-12, 1.0e-14, 10);
 
-    EXPECT_DOUBLE_EQ(112294.16134429042,
+    EXPECT_DOUBLE_EQ(124112.29999557146,
             rb.R(0, filaments, concentrations, 0));
 }
 
@@ -119,24 +119,24 @@ class LowerBarrierTest : public testing::Test {
 
 TEST_F(LowerBarrierTest, initial_R) {
     transitions::LowerBarrier lb(3.0e-12, 1.0e-14, 10);
-    EXPECT_DOUBLE_EQ(167566.71946547239,
+    EXPECT_DOUBLE_EQ(151610.79306612333,
             lb.initial_R(0, filaments, concentrations));
     EXPECT_EQ(81, barrier_position);
 }
 
 TEST_F(LowerBarrierTest, R) {
     transitions::LowerBarrier lb(3.0e-12, 1.0e-14, 10);
-    EXPECT_DOUBLE_EQ(167566.71946547239,
+    EXPECT_DOUBLE_EQ(151610.79306612333,
             lb.initial_R(0, filaments, concentrations));
     EXPECT_EQ(81, barrier_position);
 
-    EXPECT_DOUBLE_EQ(167566.71946547239,
+    EXPECT_DOUBLE_EQ(151610.79306612333,
             lb.R(0, filaments, concentrations, 0));
 }
 
 TEST_F(LowerBarrierTest, perform) {
     transitions::LowerBarrier lb(3.0e-12, 1.0e-14, 10);
-    EXPECT_DOUBLE_EQ(167566.71946547239,
+    EXPECT_DOUBLE_EQ(151610.79306612333,
             lb.initial_R(0, filaments, concentrations));
     EXPECT_EQ(81, barrier_position);
 

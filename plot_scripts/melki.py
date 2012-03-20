@@ -44,9 +44,9 @@ def main():
 #    stupid_melki_timecourses()
     with contexts.complex_figure('plots/melki_fit_quality.pdf',
             width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
-            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2) as figure:
-        melki_rate_fit_quality(figure)
+            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM) as figure:
         melki_sample_timecourses(figure)
+#        melki_rate_fit_quality(figure)
 
 
 
@@ -192,7 +192,7 @@ def melki_rate_fit_quality(figure):
     (v_rate, junk, junk, junk,
             v_chi2, v_min_chi2, v_max_chi2, junk) = zip(*v_results)[0]
     with contexts.subplot(figure, (2, 1, 2), title='B',
-            x_label=r'Pi Dissociation Cooperativity, $\rho_d$',
+            x_label=r'$\rho_d$',
             y_label=r'$\chi^2$ Comparison To Data',
             logscale_x=True) as axes:
         axes.fill_between([0.1, 1.0e12],
@@ -211,6 +211,53 @@ def melki_rate_fit_quality(figure):
         axes.set_xticks([1, 100, 10000, 1000000,
             100000000, 10000000000])
 
+def inset_qof(figure):
+    results = data.load_data('results/melki_cooperative_fit.dat')
+    (cooperativities, rates, min_rates, max_rates, rate_pe,
+            chi2, min_chi2, max_chi2, chi2_pe) = results
+    v_results = data.load_data('results/melki_vectorial_fit.dat')
+    (v_rate, junk, junk, junk,
+            v_chi2, v_min_chi2, v_max_chi2, junk) = zip(*v_results)[0]
+
+    # Box: left, bottom, width, height
+    box = (0.525, 0.275, 0.325, 0.325)
+    axes = figure.add_axes(box)
+    axes.set_xscale('log')
+    axes.minorticks_off()
+    axes.xaxis.set_tick_params(size=2, pad=2)
+    axes.yaxis.set_tick_params(size=2, pad=2)
+
+    axes.set_xlabel(r'$\rho_d$', size=6, labelpad=0)
+    axes.set_ylabel(r'Quality of Fit, $\Delta^2$', size=6, labelpad=-1)
+
+    
+    for spine in axes.spines.values():
+        spine.set_linewidth(0.5)
+
+    axes.fill_between([0.1, 1.0e12],
+            [v_min_chi2, v_min_chi2],
+            v_max_chi2, color='#CCCCFF')
+
+#    axes.axhline(v_chi2, 0, 1, linestyle=':', color='b', linewidth=0.5)
+    axes.axhline(v_chi2, 0, 1, linestyle=':', color='b', linewidth=0.5, dashes=(0.5, 1))
+    axes.axvline(RHO_CRIT, 0, 1, linestyle='--', color='g', linewidth=0.3,
+            dashes=(2, 2))
+
+    axes.errorbar(cooperativities, chi2,
+            [c - m for c, m in zip(chi2, min_chi2)],
+            fmt='k.', markersize=4, linewidth=0.5, capsize=2)
+
+    axes.set_xlim([0.1, 10**12])
+    axes.set_ylim([0, 14])
+
+    axes.set_xticks([1, 100, 10000, 1000000,
+        100000000, 10000000000])
+
+    for label in itertools.chain(axes.get_xticklabels(),
+            axes.get_yticklabels()):
+        label.set_size(4)
+
+
 def melki_sample_timecourses(figure):
     data_f_times, data_f = data.load_data(
             'experimental_data/melki_fievez_carlier_1996/factin_concentration.dat')
@@ -224,9 +271,9 @@ def melki_sample_timecourses(figure):
     sp_times, sp_vals = sim_p[0], sim_p[1:]
 
     colors = ['b', 'g', 'r', 'orange']
-    labels = ['Vectorial', 'Random', r'$\rho_d = 10^4$', r'$\rho_d = 10^8$']
+#    labels = [r'$\rho_d\to\,\infty$', r'$\rho_d =\,1$', r'$\rho_d =\,10^4$', r'$\rho_d =\,10^8$']
 
-    with contexts.subplot(figure, (2, 1, 1), title='A',
+    with contexts.subplot(figure, (1, 1, 1), #title='A',
             x_label=r'Time [s]',
             y_label=r'Concentrations [$\mu$M]') as axes:
         axes.fill_between(data_p_times,
@@ -235,15 +282,17 @@ def melki_sample_timecourses(figure):
         axes.plot(data_f_times, data_f, 'k--')
         axes.plot(data_p_times, data_p, 'k-', label='Data')
 
-        for f, p, c, l in zip(sf_vals, sp_vals, colors, labels):
+        for f, p, c in zip(sf_vals, sp_vals, colors):
             axes.plot(sf_times, f, color=c, linestyle='--')
-            axes.plot(sp_times, p, color=c, linestyle='-', label=l)
+            axes.plot(sp_times, p, color=c, linestyle='-')
 
         axes.set_ylim([0, 35])
         axes.set_xlim([0, 2500])
 
-        l = axes.legend(loc=4)
-        l.draw_frame(False)
+        inset_qof(figure)
+
+#        l = axes.legend(loc=4)
+#        l.draw_frame(False)
 
 
 if '__main__' == __name__:

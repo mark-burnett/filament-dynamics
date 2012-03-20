@@ -111,11 +111,14 @@ def quad_timecourses(figure):
     # Random filaments
     plot_traces(top_left_axes,
             'results/depoly_tc_random.dat',
-            color='#FF8080', thickness=THIN_LINE)
+            color='#80CC80',
+            thickness=THIN_LINE)
     # Vectorial filaments
     plot_traces(top_left_axes,
             'results/depoly_tc_vectorial.dat',
-            color='#8080FF', thickness=THIN_LINE)
+            color='#BBBB80',
+#            color='#8080FF',
+            thickness=THIN_LINE)
     # Vec non be
 #    plot_traces(top_left_axes,
 #            'results/depoly_nonbe_tc.dat',
@@ -139,25 +142,25 @@ def quad_timecourses(figure):
     top_right_axes.plot(expt[0], expt[1], 'k.',
             markersize=1, clip_on=False)
 
-    # jegou's fast rate
+    # Cooperative fit
     bottom_left_axes = _quad_sub(figure, 'C', location='bl')
     plot_traces(bottom_left_axes,
-            'results/depoly_tc_jegou.dat',
+            'results/depoly_tc_cooperative.dat',
             color='#8080FF', thickness=THIN_LINE)
     plot_traces(bottom_left_axes,
-            'results/depoly_mean_jegou.dat',
+            'results/depoly_mean_cooperative.dat',
             color='r', thickness=THICK_LINE)
     # Data on top
     bottom_left_axes.plot(expt[0], expt[1], 'k.',
             markersize=1, clip_on=False)
 
-    # Cooperative fit
+    # jegou's fast rate
     bottom_right_axes = _quad_sub(figure, 'D', location='br')
     plot_traces(bottom_right_axes,
-            'results/depoly_tc_cooperative.dat',
+            'results/depoly_tc_jegou.dat',
             color='#8080FF', thickness=THIN_LINE)
     plot_traces(bottom_right_axes,
-            'results/depoly_mean_cooperative.dat',
+            'results/depoly_mean_jegou.dat',
             color='r', thickness=THICK_LINE)
     # Data on top
     bottom_right_axes.plot(expt[0], expt[1], 'k.',
@@ -184,8 +187,10 @@ def coop_qof(figure):
 
     with contexts.subplot(figure, (2, 1, 2), title='E',
             x_label=r'$\rho_d$',
-            y_label=r'Quality of Fit, $\chi^2$',
+            y_label=r'Quality of Fit, $\Delta^2$',
             logscale_x=True) as axes:
+        axes.fill_between([0.1, 1.0e12], [vminchi, vminchi],
+                vmaxchi, color='#CCCCFF')
         axes.axhline(vchi, 0, 1, color='b', linestyle=':')
 
         axes.plot(rhos, chis, 'k.')

@@ -1,0 +1,15 @@
+models:
+    transitions:
+        raise_barrier:
+            class_name: RaiseBarrier
+            variable_arguments:
+                force: force
+                D: D
+                divisions: divisions
+
+        lower_barrier:
+            class_name: LowerBarrier
+            variable_arguments:
+                force: force
+                D: D
+                divisions: divisions

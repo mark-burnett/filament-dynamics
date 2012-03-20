@@ -273,19 +273,20 @@ def plot_fit(session_id, x_range=0.1, alpha=0.01,
     cooperativity = session.parameters.get('release_cooperativity', None)
 
     x, y = get_xy(session_id)
-#    min_x = x[0]
-#    max_x = x[-1]
-#    filtered_x = x
-#    filtered_y = y
 
-    imin = numpy.argmin(y)
-    xmin = x[imin]
-    min_x = (1-x_range) * xmin
-    max_x = (1+x_range) * xmin
-    indices = numpy.intersect1d(numpy.argwhere( min_x < x),
-            numpy.argwhere(max_x > x))
-    filtered_x = x.take(indices)
-    filtered_y = y.take(indices)
+    min_x = x[0]
+    max_x = x[-1]
+    filtered_x = x
+    filtered_y = y
+
+#    imin = numpy.argmin(y)
+#    xmin = x[imin]
+#    min_x = (1-x_range) * xmin
+#    max_x = (1+x_range) * xmin
+#    indices = numpy.intersect1d(numpy.argwhere( min_x < x),
+#            numpy.argwhere(max_x > x))
+#    filtered_x = x.take(indices)
+#    filtered_y = y.take(indices)
 
     rate_pack, k_pack, c_pack = fit_xy(filtered_x, filtered_y, alpha)
 
