@@ -14,6 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
 import numpy
 
 from actin_dynamics.io import data
@@ -24,14 +25,154 @@ from plot_scripts import settings
 THIN_LINE = 0.3
 THICK_LINE = 1
 
+SHIFT = [15, 10, 5, 0]
+X_POSITION = -80
+Y_LABEL_SHIFT = -1
+
 def main():
     with contexts.complex_figure('plots/depoly.pdf',
-            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM * 2,
+            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
             width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM) as figure:
-        quad_timecourses(figure)
+        stacked_timecourses(figure)
+#        normal_timecourses(figure)
+#        coop_timecourses(figure)
+#        quad_timecourses(figure)
 
-        coop_qof(figure)
+#        coop_qof(figure)
 
+def stacked_timecourses(figure):
+    expt = data.load_data(
+            'experimental_data/jegou_2011/sample_filament_timecourse.dat')
+
+    with contexts.subplot(figure, (1, 1, 1)
+#            x_label=r'Time [s]',
+#            y_label=r'Filament Length [$\mu$M]'
+            ) as axes:
+        plot_rv_traces(axes, expt)
+        plot_be_traces(axes, expt)
+        plot_coop_traces(axes, expt)
+        plot_fast_traces(axes, expt)
+        axes.set_xlim([0, 1100])
+        axes.set_ylim([0, 30])
+        axes.set_xticks([])
+#        axes.set_xticks([0, 200, 400, 600, 800, 1000])
+        axes.set_yticks([])
+        axes.set_frame_on(False)
+
+        add_scale_bar(axes, (200, 2),
+#                scale_position=(0.875, 0.675))
+                scale_position=(0.05, 0.45))
+    inset_qof(figure)
+
+def plot_rv_traces(axes, expt):
+    # Random filaments
+    plot_traces(axes,
+            'results/depoly_tc_random.dat',
+            shift=SHIFT[0],
+            color='#80CC80',
+            thickness=THIN_LINE)
+
+    # Vectorial filaments
+    plot_traces(axes,
+            'results/depoly_tc_vectorial.dat',
+            shift=SHIFT[0],
+            color='#BBBB80',
+            thickness=THIN_LINE)
+
+    # Data on top
+    axes.plot(expt[0], SHIFT[0] + numpy.array(expt[1]), 'k.',
+            markersize=4, clip_on=False)
+
+    axes.text(X_POSITION, SHIFT[0] + expt[1][0] + Y_LABEL_SHIFT, 'A')
+
+def plot_be_traces(axes, expt):
+    # Fast Barbed release
+    plot_traces(axes,
+            'results/depoly_tc_barbed.dat',
+            shift=SHIFT[1],
+            color='#8080FF', thickness=THIN_LINE)
+    plot_traces(axes,
+            'results/depoly_mean_barbed.dat',
+            shift=SHIFT[1],
+            color='r', thickness=THICK_LINE)
+
+    # Data on top
+    axes.plot(expt[0], SHIFT[1] + numpy.array(expt[1]), 'k.',
+            markersize=4, clip_on=False)
+
+    axes.text(X_POSITION, SHIFT[1] + expt[1][0] + Y_LABEL_SHIFT, 'B')
+
+def plot_coop_traces(axes, expt):
+    # Fast Barbed release
+    plot_traces(axes,
+            'results/depoly_tc_cooperative.dat',
+            shift=SHIFT[2],
+            color='#8080FF', thickness=THIN_LINE)
+    plot_traces(axes,
+            'results/depoly_mean_cooperative.dat',
+            shift=SHIFT[2],
+            color='r', thickness=THICK_LINE)
+
+    # Data on top
+    axes.plot(expt[0], SHIFT[2] + numpy.array(expt[1]), 'k.',
+            markersize=4, clip_on=False)
+
+    axes.text(X_POSITION, SHIFT[2] + expt[1][0] + Y_LABEL_SHIFT, 'C')
+
+def plot_fast_traces(axes, expt):
+    # Fast Barbed release
+    plot_traces(axes,
+            'results/depoly_tc_jegou.dat',
+            shift=SHIFT[3],
+            color='#8080FF', thickness=THIN_LINE)
+    plot_traces(axes,
+            'results/depoly_mean_jegou.dat',
+            shift=SHIFT[3],
+            color='r', thickness=THICK_LINE)
+
+    # Data on top
+    axes.plot(expt[0], SHIFT[3] + numpy.array(expt[1]), 'k.',
+            markersize=4, clip_on=False)
+
+    axes.text(X_POSITION, SHIFT[3] + expt[1][0] + Y_LABEL_SHIFT, 'D')
+
+def inset_qof(figure):
+    coop_data = data.load_data('results/depoly_cooperative_qof.dat')
+    vec_data = data.load_data('results/depoly_vectorial_qof.dat')
+
+    rhos, chis, minchis, maxchis, pct_chis = coop_data
+    errs = numpy.array(chis) - numpy.array(minchis)
+
+    vchi, vminchi, vmaxchi, vpct_chi = zip(*vec_data)[0]
+
+    box = (0.1, 0.1, 0.275, 0.275)
+    axes = figure.add_axes(box)
+    axes.set_xscale('log')
+    axes.minorticks_off()
+    axes.xaxis.set_tick_params(size=2, pad=2)
+    axes.yaxis.set_tick_params(size=2, pad=2)
+    axes.set_xlabel(r'$\rho_d$', size=6, labelpad=0)
+    axes.set_ylabel(r'Quality of Fit, $\Delta^2$', size=6, labelpad=-1)
+
+    for spine in axes.spines.values():
+        spine.set_linewidth(0.5)
+    
+
+    axes.fill_between([0.1, 1.0e12], [vminchi, vminchi],
+            vmaxchi, color='#CCCCFF')
+    axes.axhline(vchi, 0, 1, color='b', linestyle=':',
+            linewidth=0.5, dashes=(0.5, 1))
+
+    axes.errorbar(rhos, chis, errs, fmt='ko',
+            ms=2, linewidth=0.5, capsize=2)
+    axes.set_ylim([0, 8])
+    axes.set_xlim([0.1, 10**12])
+    axes.set_xticks([1, 100, 10000, 1000000,
+        100000000, 10000000000])
+
+    for label in itertools.chain(axes.get_xticklabels(),
+            axes.get_yticklabels()):
+        label.set_size(4)
 
 # units for location box are normalized from 0-1 for the whole figure
 MARGIN = 0.05
@@ -60,6 +201,31 @@ def _quad_sub(figure, title, location='tl',
 
     axes.set_title(title, x=title_position)
     return axes
+
+def add_vertical_scalebar(axes, height=2, units=r'$\mu$m',
+        position=(0.8, 0.85)):
+    xmax = float(axes.get_xlim()[1])
+    ymax = float(axes.get_ylim()[1])
+
+    x_pos = position[0] * xmax
+
+    y_pos_min = position[1]
+    y_pos_max = y_pos_min + height / ymax
+
+    axes.axvline(x_pos, y_pos_min, y_pos_max,
+            color='k', linestyle='-', linewidth=1)
+
+    y_label = '%i %s' % (height, units)
+
+    offset = 0.025
+    y_text_pos = (height/ymax/2 + y_pos_min) * ymax
+    axes.text((position[0] - offset) * xmax,
+            y_text_pos,
+            y_label,
+            horizontalalignment='right',
+            verticalalignment='center',
+            fontsize=settings.TINY_FONT_SIZE
+            )
 
 def add_scale_bar(axes, scale_bar, scale_units=(r's', r'$\mu$m'),
         scale_position=(0.15, 0.15)):
@@ -167,15 +333,55 @@ def quad_timecourses(figure):
             markersize=1, clip_on=False)
 
 
-def plot_traces(axes, filename, color=None, thickness=1):
+def plot_traces(axes, filename, shift=0, color=None, thickness=1):
     tdat = data.load_data(filename)
     times, values = tdat[0], tdat[1:]
     for y in values:
         y = numpy.array(y)
         y *= 0.0027
+        y += shift
         axes.plot(times, y, '-', color=color,
                 linewidth=thickness)
 
+def normal_timecourses(figure):
+    expt = data.load_data(
+            'experimental_data/jegou_2011/sample_filament_timecourse.dat')
+
+    with contexts.subplot(figure, (2, 2, 1), title='A',
+            x_label=r'Time [s]',
+            y_label=r'Filament Length [$\mu$M]') as axes:
+        # Random filaments
+        plot_traces(axes,
+                'results/depoly_tc_random.dat',
+                color='#80CC80',
+                thickness=THIN_LINE)
+        # Vectorial filaments
+        plot_traces(axes,
+                'results/depoly_tc_vectorial.dat',
+                color='#BBBB80',
+    #            color='#8080FF',
+                thickness=THIN_LINE)
+        # Vec non be
+    #    plot_traces(top_left_axes,
+    #            'results/depoly_nonbe_tc.dat',
+    #            color='#80FF80', thickness=THIN_LINE)
+        # Data on top
+        axes.plot(expt[0], expt[1], 'k.',
+                markersize=1, clip_on=False)
+
+#        add_scale_bar(top_left_axes, (200, 2))
+
+def coop_timecourses(figure):
+    expt = data.load_data(
+            'experimental_data/jegou_2011/sample_filament_timecourse.dat')
+
+    with contexts.subplot(figure, (1, 2, 2), #title='E',
+            x_label=r'Time [s]'
+            ) as axes:
+        axes.plot(expt[0], expt[1], 'k.',
+                markersize=1, clip_on=False)
+
+# XXX Fix line widths, etc.
 def coop_qof(figure):
     coop_data = data.load_data('results/depoly_cooperative_qof.dat')
     vec_data = data.load_data('results/depoly_vectorial_qof.dat')
@@ -185,7 +391,7 @@ def coop_qof(figure):
 
     vchi, vminchi, vmaxchi, vpct_chi = zip(*vec_data)[0]
 
-    with contexts.subplot(figure, (2, 1, 2), title='E',
+    with contexts.subplot(figure, (2, 2, 3), title='E',
             x_label=r'$\rho_d$',
             y_label=r'Quality of Fit, $\Delta^2$',
             logscale_x=True) as axes:
