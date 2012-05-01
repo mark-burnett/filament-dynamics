@@ -1,5 +1,5 @@
-#ifndef _TRANSITIONS_BARRIER_H_
-#define _TRANSITIONS_BARRIER_H_
+#ifndef _TRANSITIONS_CONSTANT_FORCE_BARRIER_
+#define _TRANSITIONS_CONSTANT_FORCE_BARRIER_
 //    Copyright (C) 2012 Mark Burnett
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -20,8 +20,6 @@
 #include "barrier_position.h"
 #include "physical_constants.h"
 
-#include "state.h"
-
 #include "concentrations/concentration.h"
 #include "filaments/filament.h"
 
@@ -30,9 +28,9 @@
 namespace stochastic {
 namespace transitions {
 
-class RaiseBarrier : public Transition {
+class RaiseBarrierConstantForce : public Transition {
     public:
-        RaiseBarrier(double force, double D, size_t divisions):
+        RaiseBarrierConstantForce(double force, double D, size_t divisions):
             _rate(D / std::pow(monomer_length / divisions, 2) *
                     std::exp(-force * monomer_length / (
                             2 * boltzman_constant * room_temperature
@@ -62,9 +60,9 @@ class RaiseBarrier : public Transition {
         const double _rate;
 };
 
-class LowerBarrier : public Transition {
+class LowerBarrierConstantForce : public Transition {
     public:
-        LowerBarrier(double force, double D, size_t divisions):
+        LowerBarrierConstantForce(double force, double D, size_t divisions):
             _rate(D / std::pow(monomer_length / divisions, 2) *
                     std::exp(force * monomer_length / (
                             2 * boltzman_constant * room_temperature
@@ -97,32 +95,7 @@ class LowerBarrier : public Transition {
         double _check_rate(size_t max_length);
 };
 
-
-class BarrierBarbedEndPolymerization : public Transition {
-    private:
-        const State _state;
-        const double _rate;
-        const size_t _divisions;
-    public:
-        BarrierBarbedEndPolymerization(const State &state, double rate,
-                size_t divisions) :
-            _state(state), _rate(rate), _divisions(divisions) {}
-
-        double initial_R(double time,
-                    const filaments::container_t &filaments,
-                    const concentrations::container_t &concentrations);
-
-        double R(double time,
-                    const filaments::container_t &filaments,
-                    const concentrations::container_t &concentrations,
-                    size_t previous_filament_index);
-
-        size_t perform(double time, double r,
-                    filaments::container_t &filaments,
-                    concentrations::container_t &concentrations);
-};
-
 } // namespace transitions
 } // namespace stochastic
 
-#endif // _TRANSITIONS_BARRIER_H_
+#endif // _TRANSITIONS_CONSTANT_FORCE_BARRIER_

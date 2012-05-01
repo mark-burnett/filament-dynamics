@@ -26,13 +26,13 @@ using namespace boost::assign;
 
 #include "test_states.h"
 
-#include "transitions/barrier.h"
+#include "transitions/constant_force_barrier.h"
 #include "filaments/simple_filament.h"
 #include "concentrations/fixed_reagent.h"
 
 using namespace stochastic;
 
-class RaiseBarrierTest : public testing::Test {
+class RaiseBarrierConstantForceTest : public testing::Test {
     protected:
         virtual void SetUp() {
             std::vector<State> values1;
@@ -64,28 +64,28 @@ class RaiseBarrierTest : public testing::Test {
         concentrations::container_t concentrations;
 };
 
-TEST_F(RaiseBarrierTest, initial_R) {
-    transitions::RaiseBarrier rb(3.0e-12, 1.0e-14, 10);
+TEST_F(RaiseBarrierConstantForceTest, initial_R) {
+    transitions::RaiseBarrierConstantForce rb(3.0e-12, 1.0e-14, 10);
     EXPECT_DOUBLE_EQ(124112.29999557146,
             rb.initial_R(0, filaments, concentrations));
 }
 
-TEST_F(RaiseBarrierTest, R) {
-    transitions::RaiseBarrier rb(3.0e-12, 1.0e-14, 10);
+TEST_F(RaiseBarrierConstantForceTest, R) {
+    transitions::RaiseBarrierConstantForce rb(3.0e-12, 1.0e-14, 10);
 
     EXPECT_DOUBLE_EQ(124112.29999557146,
             rb.R(0, filaments, concentrations, 0));
 }
 
-TEST_F(RaiseBarrierTest, perform) {
-    transitions::RaiseBarrier rb(3.0e-6, 0.01, 10);
+TEST_F(RaiseBarrierConstantForceTest, perform) {
+    transitions::RaiseBarrierConstantForce rb(3.0e-6, 0.01, 10);
     barrier_position = 0;
 
     EXPECT_EQ(0, rb.perform(0, -1, filaments, concentrations));
     EXPECT_EQ(1, barrier_position);
 }
 
-class LowerBarrierTest : public testing::Test {
+class LowerBarrierConstantForceTest : public testing::Test {
     protected:
         virtual void SetUp() {
             std::vector<State> values1;
@@ -117,15 +117,15 @@ class LowerBarrierTest : public testing::Test {
         concentrations::container_t concentrations;
 };
 
-TEST_F(LowerBarrierTest, initial_R) {
-    transitions::LowerBarrier lb(3.0e-12, 1.0e-14, 10);
+TEST_F(LowerBarrierConstantForceTest, initial_R) {
+    transitions::LowerBarrierConstantForce lb(3.0e-12, 1.0e-14, 10);
     EXPECT_DOUBLE_EQ(151610.79306612333,
             lb.initial_R(0, filaments, concentrations));
     EXPECT_EQ(81, barrier_position);
 }
 
-TEST_F(LowerBarrierTest, R) {
-    transitions::LowerBarrier lb(3.0e-12, 1.0e-14, 10);
+TEST_F(LowerBarrierConstantForceTest, R) {
+    transitions::LowerBarrierConstantForce lb(3.0e-12, 1.0e-14, 10);
     EXPECT_DOUBLE_EQ(151610.79306612333,
             lb.initial_R(0, filaments, concentrations));
     EXPECT_EQ(81, barrier_position);
@@ -134,8 +134,8 @@ TEST_F(LowerBarrierTest, R) {
             lb.R(0, filaments, concentrations, 0));
 }
 
-TEST_F(LowerBarrierTest, perform) {
-    transitions::LowerBarrier lb(3.0e-12, 1.0e-14, 10);
+TEST_F(LowerBarrierConstantForceTest, perform) {
+    transitions::LowerBarrierConstantForce lb(3.0e-12, 1.0e-14, 10);
     EXPECT_DOUBLE_EQ(151610.79306612333,
             lb.initial_R(0, filaments, concentrations));
     EXPECT_EQ(81, barrier_position);
@@ -143,80 +143,4 @@ TEST_F(LowerBarrierTest, perform) {
     EXPECT_EQ(0, lb.perform(0, -1, filaments, concentrations));
     EXPECT_EQ(80, barrier_position);
     EXPECT_DOUBLE_EQ(0, lb.R(0, filaments, concentrations, 0));
-}
-
-class BarrierPolymerizationTest : public testing::Test {
-    protected:
-        virtual void SetUp() {
-            std::vector<State> values1;
-            values1 += zero, one, zero, zero, two, one, zero, one;
-            std::vector<State> values2;
-            values2 += one, one, two, zero, two, zero, zero, zero;
-
-            filaments.push_back(filaments::Filament::ptr_t(
-                        new filaments::SimpleFilament(values1)));
-            filaments.push_back(filaments::Filament::ptr_t(
-                        new filaments::SimpleFilament(values2)));
-
-            concentrations[zero] = concentrations::Concentration::ptr_t(
-                        new concentrations::FixedReagent(0, 1));
-            concentrations[one] = concentrations::Concentration::ptr_t(
-                        new concentrations::FixedReagent(0, 1));
-            concentrations[two] = concentrations::Concentration::ptr_t(
-                        new concentrations::FixedReagent(0, 1));
-            concentrations[three] = concentrations::Concentration::ptr_t(
-                        new concentrations::FixedReagent(4, 1));
-        }
-
-        virtual void TearDown() {
-            filaments.clear();
-            concentrations.clear();
-        }
-
-        filaments::container_t filaments;
-        concentrations::container_t concentrations;
-};
-
-TEST_F(BarrierPolymerizationTest, initial_R) {
-    transitions::BarrierBarbedEndPolymerization p0(zero, 3, 100);
-
-    barrier_position = 0;
-    EXPECT_DOUBLE_EQ(0, p0.initial_R(0, filaments, concentrations));
-    barrier_position = 10000;
-    EXPECT_DOUBLE_EQ(6, p0.initial_R(0, filaments, concentrations));
-
-    barrier_position = 899;
-    EXPECT_DOUBLE_EQ(0, p0.initial_R(0, filaments, concentrations));
-    barrier_position = 900;
-    EXPECT_DOUBLE_EQ(6, p0.initial_R(0, filaments, concentrations));
-    barrier_position = 901;
-    EXPECT_DOUBLE_EQ(6, p0.initial_R(0, filaments, concentrations));
-}
-
-TEST_F(BarrierPolymerizationTest, R) {
-    transitions::BarrierBarbedEndPolymerization p0(zero, 3, 100);
-
-    barrier_position = 0;
-    EXPECT_DOUBLE_EQ(0, p0.R(0, filaments, concentrations, 0));
-    barrier_position = 10000;
-    EXPECT_DOUBLE_EQ(6, p0.R(0, filaments, concentrations, 0));
-
-    barrier_position = 899;
-    EXPECT_DOUBLE_EQ(0, p0.R(0, filaments, concentrations, 0));
-    barrier_position = 900;
-    EXPECT_DOUBLE_EQ(6, p0.R(0, filaments, concentrations, 0));
-    barrier_position = 901;
-    EXPECT_DOUBLE_EQ(6, p0.R(0, filaments, concentrations, 0));
-}
-
-TEST_F(BarrierPolymerizationTest, perform) {
-    transitions::BarrierBarbedEndPolymerization p0(zero, 3, 100);
-
-    barrier_position = 999;
-    EXPECT_DOUBLE_EQ(6, p0.initial_R(0, filaments, concentrations));
-    EXPECT_DOUBLE_EQ(0, p0.perform(0, 2.1, filaments, concentrations));
-    EXPECT_DOUBLE_EQ(3, p0.R(0, filaments, concentrations, 0));
-
-    barrier_position = 1000;
-    EXPECT_DOUBLE_EQ(6, p0.R(0, filaments, concentrations, 0));
 }

@@ -13,14 +13,24 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "transitions/barrier.h"
+#include "transitions/spring_force_barrier.h"
 
 #include "barrier_position.h"
 
 namespace stochastic {
 namespace transitions {
 
-double LowerBarrier::initial_R(double time,
+double RaiseBarrierSpringForce::R(double time,
+            const filaments::container_t &filaments,
+            const concentrations::container_t &concentrations,
+            size_t previous_filament_index) {
+    // Note: Our sign convention is that positive force pushes against the filaments.
+    double force =  _spring_constant * (
+            barrier_position - _zero_force_barrier_position);
+    return _rate_scale * std::exp(-force * _force_scale);
+}
+
+double LowerBarrierSpringForce::initial_R(double time,
             const filaments::container_t &filaments,
             const concentrations::container_t &concentrations) {
     // cache filament lengths
@@ -35,21 +45,17 @@ double LowerBarrier::initial_R(double time,
         }
     }
 
-    if (!_barrier_initialized) {
-        barrier_position = max_length * _divisions + 1;
-        _barrier_initialized = true;
-    }
-
     return _check_rate(max_length);
 }
 
-double LowerBarrier::R(double time,
+double LowerBarrierSpringForce::R(double time,
             const filaments::container_t &filaments,
             const concentrations::container_t &concentrations,
             size_t previous_filament_index) {
     _filament_lengths[previous_filament_index] =
         filaments[previous_filament_index]->length();
 
+    // XXX This is bad, may as well remember the longest filament..
     size_t max_length = 0;
     for (size_t fi = 0; fi < _filament_lengths.size(); ++fi) {
         if (max_length < _filament_lengths[fi]) {
@@ -60,47 +66,12 @@ double LowerBarrier::R(double time,
     return _check_rate(max_length);
 }
 
-double LowerBarrier::_check_rate(size_t max_length) {
+double LowerBarrierSpringForce::_check_rate(size_t max_length) {
     if (barrier_position > (max_length * _divisions)) {
-        return _rate;
-    }
-    return 0;
-}
-
-
-double BarrierBarbedEndPolymerization::initial_R(double time,
-            const filaments::container_t &filaments,
-            const concentrations::container_t &concentrations) {
-    size_t count = 0;
-    size_t position_in_subunits = barrier_position / _divisions;
-    for (size_t fi = 0; fi < filaments.size(); ++fi) {
-        if (position_in_subunits > filaments[fi]->length()) {
-            ++count;
-        }
-    }
-    return count * _rate;
-}
-
-double BarrierBarbedEndPolymerization::R(double time,
-            const filaments::container_t &filaments,
-            const concentrations::container_t &concentrations,
-            size_t previous_filament_index) {
-    return initial_R(time, filaments, concentrations);
-}
-
-size_t BarrierBarbedEndPolymerization::perform(double time, double r,
-            filaments::container_t &filaments,
-            concentrations::container_t &concentrations) {
-    size_t count = r / _rate;
-    size_t position_in_subunits = barrier_position / _divisions;
-    for (size_t fi = 0; fi < filaments.size(); ++fi) {
-        if (position_in_subunits > filaments[fi]->length()) {
-            if (0 == count) {
-                filaments[fi]->append_barbed(_state);
-                return fi;
-            }
-            --count;
-        }
+        // Note: Our sign convention is that positive force pushes against the filaments.
+        double force = _spring_constant * (
+                barrier_position - _zero_force_barrier_position);
+        return _rate_scale * std::exp(force * _force_scale);
     }
     return 0;
 }

@@ -24,7 +24,9 @@
 #include "transitions/random_hydrolysis.h"
 #include "transitions/tip_hydrolysis.h"
 #include "transitions/vectorial_hydrolysis.h"
-#include "transitions/barrier.h"
+#include "transitions/barrier_polymerization.h"
+#include "transitions/constant_force_barrier.h"
+#include "transitions/spring_force_barrier.h"
 
 using namespace boost::python;
 using namespace stochastic;
@@ -182,23 +184,42 @@ void transitions_level_definitions() {
             .def("perform", &PointedEndDepolymerization::perform);
 
     // Barrier Transitions
-    class_<RaiseBarrier, bases<Transition>
-            >("RaiseBarrier", init<double, double, size_t>())
-            .def("initial_R", &RaiseBarrier::initial_R)
-            .def("R", &RaiseBarrier::R)
-            .def("perform", &RaiseBarrier::perform);
+    class_<RaiseBarrierConstantForce, bases<Transition>
+            >("RaiseBarrierConstantForce", init<double, double, size_t>())
+            .def("initial_R", &RaiseBarrierConstantForce::initial_R)
+            .def("R", &RaiseBarrierConstantForce::R)
+            .def("perform", &RaiseBarrierConstantForce::perform);
 
-    class_<LowerBarrier, bases<Transition>
-            >("LowerBarrier", init<double, double, size_t>())
-            .def("initial_R", &LowerBarrier::initial_R)
-            .def("R", &LowerBarrier::R)
-            .def("perform", &LowerBarrier::perform);
+    class_<LowerBarrierConstantForce, bases<Transition>
+            >("LowerBarrierConstantForce", init<double, double, size_t>())
+            .def("initial_R", &LowerBarrierConstantForce::initial_R)
+            .def("R", &LowerBarrierConstantForce::R)
+            .def("perform", &LowerBarrierConstantForce::perform);
+
+    class_<RaiseBarrierSpringForce, bases<Transition>
+            >("RaiseBarrierSpringForce", init<double, size_t, double, size_t>())
+            .def("initial_R", &RaiseBarrierSpringForce::initial_R)
+            .def("R", &RaiseBarrierSpringForce::R)
+            .def("perform", &RaiseBarrierSpringForce::perform);
+
+    class_<LowerBarrierSpringForce, bases<Transition>
+            >("LowerBarrierSpringForce", init<double, size_t, double, size_t>())
+            .def("initial_R", &LowerBarrierSpringForce::initial_R)
+            .def("R", &LowerBarrierSpringForce::R)
+            .def("perform", &LowerBarrierSpringForce::perform);
 
     // Barrier polymerization
-    class_<BarrierBarbedEndPolymerization, bases<Transition>
-        >("BarrierBarbedEndPolymerization", init<
+    class_<StepFunctionBarrierBarbedEndPolymerization, bases<Transition>
+        >("StepFunctionBarrierBarbedEndPolymerization", init<
                 const State&, double, size_t>())
-            .def("initial_R", &BarbedEndPolymerization::initial_R)
-            .def("R", &BarbedEndPolymerization::R)
-            .def("perform", &BarbedEndPolymerization::perform);
+            .def("initial_R", &StepFunctionBarrierBarbedEndPolymerization::initial_R)
+            .def("R", &StepFunctionBarrierBarbedEndPolymerization::R)
+            .def("perform", &StepFunctionBarrierBarbedEndPolymerization::perform);
+
+    class_<LinearFunctionBarrierBarbedEndPolymerization, bases<Transition>
+        >("LinearFunctionBarrierBarbedEndPolymerization", init<
+                const State&, double, size_t, size_t>())
+            .def("initial_R", &LinearFunctionBarrierBarbedEndPolymerization::initial_R)
+            .def("R", &LinearFunctionBarrierBarbedEndPolymerization::R)
+            .def("perform", &LinearFunctionBarrierBarbedEndPolymerization::perform);
 }

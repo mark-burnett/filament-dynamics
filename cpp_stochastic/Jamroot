@@ -13,7 +13,9 @@ lib stochastic
     src/filaments/segmented_filament.cpp
     src/filaments/simple_filament.cpp
     src/transitions/association.cpp
-    src/transitions/barrier.cpp
+    src/transitions/barrier_polymerization.cpp
+    src/transitions/constant_force_barrier.cpp
+    src/transitions/spring_force_barrier.cpp
     src/transitions/cooperative_hydrolysis.cpp
     src/transitions/depolymerization.cpp
     src/transitions/monomer.cpp
@@ -38,7 +40,9 @@ exe runtests
     tests/filaments/test_simple_filament.cpp
     tests/filaments/test_cached_filament.cpp
     tests/transitions/test_association.cpp
-    tests/transitions/test_barrier.cpp
+    tests/transitions/test_barrier_polymerization.cpp
+    tests/transitions/test_constant_force_barrier.cpp
+#    tests/transitions/test_spring_force_barrier.cpp
     tests/transitions/test_cooperative_hydrolysis.cpp
     tests/transitions/test_depolymerization.cpp
     tests/transitions/test_monomer.cpp
