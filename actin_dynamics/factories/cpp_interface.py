@@ -52,6 +52,10 @@ _filaments_lookup = {
 _measurements_lookup = {
         'BarrierPosition': [
             (float, 'sample_period', None)],
+        'BarrierForce': [
+            (float, 'sample_period', None),
+            (int, 'divisions', None),
+            (int, 'rest_position', None)],
         'Concentration': [
             (str, 'state', None),
             (float, 'sample_period', None)],
