@@ -144,18 +144,33 @@ _transitions_lookup = {
             (str, 'new_state', None),
             (float, 'rate', None),
             (str, 'byproduct', None)],
-        'RaiseBarrier': [
+        'RaiseBarrierConstantForce': [
             (float, 'force', None),
             (float, 'D', None),
             (int, 'divisions', 1)],
-        'LowerBarrier': [
+        'LowerBarrierConstantForce': [
             (float, 'force', None),
             (float, 'D', None),
             (int, 'divisions', 1)],
-        'BarrierBarbedEndPolymerization': [
+        'RaiseBarrierSpringForce': [
+            (float, 'force', None),
+            (int, 'rest_position', None),
+            (float, 'D', None),
+            (int, 'divisions', 1)],
+        'LowerBarrierSpringForce': [
+            (float, 'force', None),
+            (int, 'rest_position', None),
+            (float, 'D', None),
+            (int, 'divisions', 1)],
+        'StepFunctionBarrierBarbedEndPolymerization': [
             (str, 'state', None),
             (float, 'rate', None),
-            (int, 'divisions', 1)]
+            (int, 'divisions', 1)],
+        'LinearFunctionBarrierBarbedEndPolymerization': [
+            (str, 'state', None),
+            (float, 'rate', None),
+            (int, 'divisions', 1),
+            (int, 'linear_width', 1)]
         }
 
 def build_binding(binding, parameters, module, lookup):
