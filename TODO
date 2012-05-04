@@ -1,3 +1,22 @@
+[ --- F-v Paper --- ]
+
+D measurement
+    need infrastructure for this on a per filament basis for a bundle
+
+Interesting measurements:
+    stall force
+        vary barbed rate, cooperativity, num filaments, [G]
+    critical concentration
+        vary F & D & barbed rate & cooperativity & num filaments
+    tip D
+        vary F & D & barbed rate & cooperativity & [G] & num filaments
+
+    filament density as a function of distance from barrier
+        vary F, D, barbed rate, cooperativity
+        possibly vary [G] (or do at critical concentration)
+        possibly vary num filaments (or just do large N)
+
+
 [ --- Framework Thoughts --- ]
 
 Missing features:
