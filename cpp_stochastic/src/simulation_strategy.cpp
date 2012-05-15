@@ -13,11 +13,11 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// #include <iostream>
 #include <cmath>
 #include <algorithm>
 
 #include "simulation_strategy.h"
+#include "barrier_position.h"
 
 namespace stochastic {
 
@@ -32,7 +32,7 @@ measurements::container_t SimulationStrategy::run() {
     // Calculate rates for the next timestep.
     double R = calculate_initial_R(time);
     // First update the time & perform measurements
-    time += log(1 / _random(1)) / R;
+    time += _get_time_delta(R);
 
     record_measurements(time);
 
@@ -48,16 +48,15 @@ measurements::container_t SimulationStrategy::run() {
         if (0 == R) {
             // We should never really get here.
             // If we do, try to recover by re-initializing rates.
-//            std::cerr << "R = 0, retry" << std::endl;
             R = calculate_initial_R(time);
             if (0 == R) {
-//                std::cerr << "R = 0, exit!" << std::endl;
-                break;
+//                break;
+                throw std::exception();
             }
         }
 
         // First update the time & perform measurements
-        time += log(1 / _random(1)) / R;
+        time += _get_time_delta(R);
         record_measurements(time);
 
         // Decide which transition to perform.
@@ -66,8 +65,6 @@ measurements::container_t SimulationStrategy::run() {
         previous_filament_index = perform_transition(time, r);
         ++transition_count;
     }
-//    std::cerr << "Exitting." << std::endl;
-//    std::cout << "Number of events = " << transition_count << std::endl;
 
     return _measurements;
 }
@@ -136,6 +133,14 @@ bool SimulationStrategy::end_conditions_not_met(double time) {
         }
     }
     return true;
+}
+
+double SimulationStrategy::_get_time_delta(double R) {
+    double r = 0;
+    while (0 == r) {
+        r = _random(1);
+    }
+    return log(1 / r) / R;
 }
 
 double SimulationStrategy::_random(double max) {

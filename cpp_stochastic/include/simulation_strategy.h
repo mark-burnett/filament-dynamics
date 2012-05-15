@@ -67,6 +67,7 @@ class SimulationStrategy {
         size_t perform_transition(double time, double r);
         bool end_conditions_not_met(double time);
 
+        double _get_time_delta(double R);
         double _random(double max);
 };
 
