@@ -13,6 +13,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <algorithm>
 #include "transitions/spring_force_barrier.h"
 
 #include "barrier_position.h"
@@ -24,10 +25,19 @@ double RaiseBarrierSpringForce::R(double time,
             const filaments::container_t &filaments,
             const concentrations::container_t &concentrations,
             size_t previous_filament_index) {
-    // Note: Our sign convention is that positive force pushes against the filaments.
-    double force =  _spring_constant * (
-            barrier_position - _zero_force_barrier_position);
-    return _rate_scale * std::exp(-force * _force_scale);
+    size_t initial_distance = std::max(barrier_position,
+            _zero_force_barrier_position)
+        - std::min(barrier_position, _zero_force_barrier_position);
+
+    const double initial_energy = std::pow(_barrier_dist_scale * initial_distance, 2);
+
+    size_t final_distance = std::max(barrier_position + 1,
+            _zero_force_barrier_position)
+        - std::min(barrier_position + 1, _zero_force_barrier_position);
+
+    const double final_energy = std::pow(_barrier_dist_scale * final_distance, 2);
+
+    return _rate_scale * std::exp(-(final_energy - initial_energy) * _energy_scale);
 }
 
 double LowerBarrierSpringForce::initial_R(double time,
@@ -43,6 +53,12 @@ double LowerBarrierSpringForce::initial_R(double time,
         if (max_length < _filament_lengths[fi]) {
             max_length = _filament_lengths[fi];
         }
+    }
+
+    if (!_initialized) {
+        barrier_position = std::max(_zero_force_barrier_position,
+                max_length * _divisions);
+        _initialized = true;
     }
 
     return _check_rate(max_length);
@@ -69,9 +85,19 @@ double LowerBarrierSpringForce::R(double time,
 double LowerBarrierSpringForce::_check_rate(size_t max_length) {
     if (barrier_position > (max_length * _divisions)) {
         // Note: Our sign convention is that positive force pushes against the filaments.
-        double force = _spring_constant * (
-                barrier_position - _zero_force_barrier_position);
-        return _rate_scale * std::exp(force * _force_scale);
+        size_t initial_distance = std::max(barrier_position,
+                _zero_force_barrier_position)
+            - std::min(barrier_position, _zero_force_barrier_position);
+
+        const double initial_energy = std::pow(_barrier_dist_scale * initial_distance, 2);
+
+        size_t final_distance = std::max(barrier_position - 1,
+                _zero_force_barrier_position)
+            - std::min(barrier_position - 1, _zero_force_barrier_position);
+
+        const double final_energy = std::pow(_barrier_dist_scale * final_distance, 2);
+
+        return _rate_scale * std::exp(-(final_energy - initial_energy) * _energy_scale);
     }
     return 0;
 }

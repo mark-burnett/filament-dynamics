@@ -32,12 +32,11 @@ class RaiseBarrierSpringForce : public Transition {
     public:
         RaiseBarrierSpringForce(double spring_constant,
                 size_t zero_force_barrier_position, double D, size_t divisions):
-            _rate_scale(D / std::pow(monomer_length / divisions, 2)),
-            _force_scale(monomer_length / (
-                        2 * boltzman_constant * room_temperature * divisions)),
-            _spring_constant(spring_constant * monomer_length / divisions),
+            _rate_scale(2 * D / (std::pow(monomer_length / divisions, 2))),
+            _energy_scale(spring_constant / (4 * boltzman_constant * room_temperature)),
+            _barrier_dist_scale(monomer_length / divisions),
             _zero_force_barrier_position(zero_force_barrier_position) {
-                barrier_position = _zero_force_barrier_position;
+//                barrier_position = _zero_force_barrier_position;
             }
 
         double initial_R(double time,
@@ -60,8 +59,8 @@ class RaiseBarrierSpringForce : public Transition {
 
     private:
         const double _rate_scale;
-        const double _force_scale;
-        const double _spring_constant;
+        const double _energy_scale;
+        const double _barrier_dist_scale;
         const size_t _zero_force_barrier_position;
 };
 
@@ -70,13 +69,11 @@ class LowerBarrierSpringForce : public Transition {
         LowerBarrierSpringForce(double spring_constant,
                 size_t zero_force_barrier_position, double D, size_t divisions):
             _divisions(divisions),
-            _rate_scale(D / std::pow(monomer_length / divisions, 2)),
-            _force_scale(monomer_length / (
-                        2 * boltzman_constant * room_temperature * divisions)),
-            _spring_constant(spring_constant * monomer_length / divisions),
-            _zero_force_barrier_position(zero_force_barrier_position) {
-                barrier_position = _zero_force_barrier_position;
-            }
+            _rate_scale(2 * D / (std::pow(monomer_length / divisions, 2))),
+            _energy_scale(spring_constant / (4 * boltzman_constant * room_temperature)),
+            _barrier_dist_scale(monomer_length / divisions),
+            _zero_force_barrier_position(zero_force_barrier_position),
+            _initialized(false) {}
 
         double initial_R(double time,
                     const filaments::container_t &filaments,
@@ -95,11 +92,12 @@ class LowerBarrierSpringForce : public Transition {
         }
 
     private:
-        const double _divisions;
+        const size_t _divisions;
         const double _rate_scale;
-        const double _force_scale;
-        const double _spring_constant;
+        const double _energy_scale;
+        const double _barrier_dist_scale;
         const size_t _zero_force_barrier_position;
+        bool _initialized;
 
         std::vector<unsigned int> _filament_lengths;
 

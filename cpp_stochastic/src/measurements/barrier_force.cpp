@@ -43,7 +43,7 @@ void BarrierForce::perform(double time,
 
 double BarrierForce::_calculate_force() {
     // Note: our sign convention is that toward the bundle is positive.
-    return _k * (barrier_position - _rest_position);
+    return (_k * barrier_position - _k * _rest_position);
 }
 
 std::vector<double> BarrierForce::get_times() const {

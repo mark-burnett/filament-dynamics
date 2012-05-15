@@ -37,6 +37,7 @@ double LowerBarrierConstantForce::initial_R(double time,
 
     if (!_barrier_initialized) {
         barrier_position = max_length * _divisions + 1;
+//        barrier_position = 1000000000;
         _barrier_initialized = true;
     }
 
