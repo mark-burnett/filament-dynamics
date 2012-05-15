@@ -36,11 +36,10 @@ class BarrierForce : public Measurement {
         double _calculate_force();
     public:
         BarrierForce(double sample_period, size_t divisions,
-                size_t rest_position) :
+                size_t rest_position, double spring_constant) :
             Measurement(sample_period),
             _rest_position(rest_position),
-            _k(monomer_length / (
-                    2 * boltzman_constant * room_temperature * divisions)) {}
+            _k(spring_constant * monomer_length / divisions) {}
         ~BarrierForce() {}
 
         void initialize(const filaments::container_t &filaments,

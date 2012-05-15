@@ -26,9 +26,10 @@ double StepFunctionBarrierBarbedEndPolymerization::initial_R(double time,
             const filaments::container_t &filaments,
             const concentrations::container_t &concentrations) {
     size_t count = 0;
-    size_t position_in_subunits = barrier_position / _divisions;
+//    size_t position_in_subunits = barrier_position / _divisions;
     for (size_t fi = 0; fi < filaments.size(); ++fi) {
-        if (position_in_subunits > filaments[fi]->length()) {
+//        if (position_in_subunits > filaments[fi]->length()) {
+        if (filaments[fi]->length() * 10 < barrier_position) {
             ++count;
         }
     }
@@ -46,9 +47,10 @@ size_t StepFunctionBarrierBarbedEndPolymerization::perform(double time, double r
             filaments::container_t &filaments,
             concentrations::container_t &concentrations) {
     size_t count = r / _rate;
-    size_t position_in_subunits = barrier_position / _divisions;
+//    size_t position_in_subunits = barrier_position / _divisions;
     for (size_t fi = 0; fi < filaments.size(); ++fi) {
-        if (position_in_subunits > filaments[fi]->length()) {
+//        if (position_in_subunits > filaments[fi]->length()) {
+        if (filaments[fi]->length() * 10 < barrier_position) {
             if (0 == count) {
                 filaments[fi]->append_barbed(_state);
                 return fi;

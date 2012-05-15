@@ -35,7 +35,7 @@ class RaiseBarrierSpringForce : public Transition {
             _rate_scale(D / std::pow(monomer_length / divisions, 2)),
             _force_scale(monomer_length / (
                         2 * boltzman_constant * room_temperature * divisions)),
-            _spring_constant(spring_constant),
+            _spring_constant(spring_constant * monomer_length / divisions),
             _zero_force_barrier_position(zero_force_barrier_position) {
                 barrier_position = _zero_force_barrier_position;
             }
@@ -73,7 +73,7 @@ class LowerBarrierSpringForce : public Transition {
             _rate_scale(D / std::pow(monomer_length / divisions, 2)),
             _force_scale(monomer_length / (
                         2 * boltzman_constant * room_temperature * divisions)),
-            _spring_constant(spring_constant),
+            _spring_constant(spring_constant * monomer_length / divisions),
             _zero_force_barrier_position(zero_force_barrier_position) {
                 barrier_position = _zero_force_barrier_position;
             }

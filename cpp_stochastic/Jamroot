@@ -24,6 +24,7 @@ lib stochastic
     src/transitions/tip_hydrolysis.cpp
     src/transitions/vectorial_hydrolysis.cpp
     src/measurements/barrier_position.cpp
+    src/measurements/barrier_force.cpp
     src/measurements/concentration.cpp
     src/measurements/filament_length.cpp
     src/measurements/state_count.cpp
@@ -82,6 +83,12 @@ python-extension stochasticpy
   : <include>include
     <include>pyext
     <library>/usr/lib/libboost_python.so
+  ;
+
+exe memleak
+  : src/memleak.cpp
+    stochastic
+  : <include>include
   ;
 
 exe measure

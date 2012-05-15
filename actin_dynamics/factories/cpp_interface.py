@@ -55,7 +55,8 @@ _measurements_lookup = {
         'BarrierForce': [
             (float, 'sample_period', None),
             (int, 'divisions', None),
-            (int, 'rest_position', None)],
+            (int, 'rest_position', None),
+            (float, 'spring_constant', None)],
         'Concentration': [
             (str, 'state', None),
             (float, 'sample_period', None)],
@@ -157,12 +158,12 @@ _transitions_lookup = {
             (float, 'D', None),
             (int, 'divisions', 1)],
         'RaiseBarrierSpringForce': [
-            (float, 'force', None),
+            (float, 'spring_constant', None),
             (int, 'rest_position', None),
             (float, 'D', None),
             (int, 'divisions', 1)],
         'LowerBarrierSpringForce': [
-            (float, 'force', None),
+            (float, 'spring_constant', None),
             (int, 'rest_position', None),
             (float, 'D', None),
             (int, 'divisions', 1)],

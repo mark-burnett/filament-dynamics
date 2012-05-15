@@ -22,6 +22,7 @@
 #include "measurements/filament_length.h"
 #include "measurements/state_count.h"
 #include "measurements/barrier_position.h"
+#include "measurements/barrier_force.h"
 
 using namespace boost::python;
 using namespace stochastic;
@@ -82,4 +83,14 @@ void measurements_level_definitions() {
             .def("get_times",  &BarrierPosition::get_times)
             .def("get_means",  &BarrierPosition::get_means)
             .def("get_errors",  &BarrierPosition::get_errors);
+
+    class_<BarrierForce, bases<Measurement>,
+        boost::shared_ptr<BarrierForce>,
+                boost::noncopyable>("BarrierForce",
+                    init<double, size_t, size_t, double>())
+            .def("initialize", &BarrierForce::initialize)
+            .def("perform",    &BarrierForce::perform)
+            .def("get_times",  &BarrierForce::get_times)
+            .def("get_means",  &BarrierForce::get_means)
+            .def("get_errors",  &BarrierForce::get_errors);
 }
