@@ -1,0 +1,7 @@
+import:
+    - 'stall_fishing/base.yaml'
+
+    - 'components/random_cleavage.yaml'
+    - 'components/cooperative_release.yaml'
+
+    - 'fit_rates/rho_1000000.yaml'

@@ -1,0 +1,5 @@
+name: "Cooperative Model - Vary [G]"
+
+import:
+    - 'stall_fishing/cooperative_model.yaml'
+    - 'stall_fishing/vary_concentration.yaml'

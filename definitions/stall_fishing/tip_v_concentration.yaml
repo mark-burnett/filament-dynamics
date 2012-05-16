@@ -1,0 +1,5 @@
+name: "Tip Model - Vary [G]"
+
+import:
+    - 'stall_force/tip_model.yaml'
+    - 'stall_fishing/vary_concentration.yaml'

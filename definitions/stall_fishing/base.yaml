@@ -1,0 +1,27 @@
+import:
+    - 'experiments/stall_force.yaml'
+
+    - 'components/step_barrier_polymerization.yaml'
+    - 'components/spring_barrier.yaml'
+
+    - 'parameters/polymerization_fujiwara_barbed.yaml'
+
+global_parameters:
+    analysis_time: 1000
+    sample_period: 0.1
+
+    simulation_duration: 5000
+
+    seed_concentration: 30
+    filament_tip_concentration: 0.001
+
+
+    # Perhaps reasonable values
+    spring_constant: 8.0e-6 # Footer, et al 0.008 pN / nm
+
+    divisions: 4
+    rest_position: 120040
+
+    # XXX Probably need to use a much larger D to match Footer 2007
+    # D -> 1/3 of 0.3 um^2/s from PRL 74, no 9 pg 1506 - 1.5um bead
+    D: 1.0e-13
