@@ -113,9 +113,9 @@ def constraint_plot():
         axes.set_xticks([0, 2, 4, 6, 8, 10])
         axes.set_xticklabels([1, r'$10^2$', r'$10^4$', r'$10^6$',
             r'$10^8$', r'$10^{10}$'])
-#        axes.set_yticks([])
+        axes.set_yticks([0, 1, 2, 3])
 
-        axes.set_ylim([0, None])
+        axes.set_ylim([0, 3])
 #        pylab.show()
 
 

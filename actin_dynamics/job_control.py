@@ -60,13 +60,17 @@ def process(process_type, db_session):
 def get_job(process_id, db_session):
     try:
         with db_session.transaction:
-            job = db_session.query(database.Job).filter_by(complete=False,
-                    worker_id=None).with_lockmode('update_nowait').first()
-            if job:
-                job.worker_id = process_id
-                log.debug('Job acquired, id = %s.' % job.id)
+            maybe_job = db_session.query(database.Job).filter_by(complete=False,
+                    worker_id=None).with_lockmode('update_nowait')
+            if maybe_job:
+                job = maybe_job.first()
+                if job:
+                    job.worker_id = process_id
+                    log.debug('Job acquired, id = %s.' % job.id)
+                else:
+                    log.debug('No jobs found.')
             else:
-                log.debug('No jobs found.')
+                log.warn('Job query failed to return rows.')
     except sqlalchemy.exc.OperationalError as oe:
         if 1213 == oe.orig[0]:
             log.warn('Deadlock while acquiring job %s.', job.id)

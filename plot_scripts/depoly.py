@@ -31,7 +31,8 @@ Y_LABEL_SHIFT = -1
 
 def main():
     with contexts.complex_figure('plots/depoly.pdf',
-            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
+#            height=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM,
+            height=4 * 2.54,
             width=settings.SINGLE_COLUMN_DEFAULT_SIZE_CM) as figure:
         stacked_timecourses(figure)
 #        normal_timecourses(figure)
@@ -145,7 +146,7 @@ def inset_qof(figure):
 
     vchi, vminchi, vmaxchi, vpct_chi = zip(*vec_data)[0]
 
-    box = (0.1, 0.1, 0.275, 0.275)
+    box = (0.125, 0.1, 0.275, 0.275 * 3.25/4)
     axes = figure.add_axes(box)
     axes.set_xscale('log')
     axes.minorticks_off()
