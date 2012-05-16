@@ -1,0 +1,83 @@
+experiments:
+    stall_force:
+        simulation:
+            filaments:
+                filament_factory:
+                    class_name: DefaultFilament
+                    variable_arguments:
+                        seed_concentration: seed_concentration
+                        filament_tip_concentration: filament_tip_concentration
+                    fixed_arguments:
+                        state: ADP
+
+            concentrations:
+                ATP:
+                    class_name: FixedConcentration
+                    variable_arguments:
+                        concentration: actin_concentration
+
+                ADPPi:
+                    class_name: FixedConcentration
+                    fixed_arguments:
+                        concentration: 0
+
+                ADP:
+                    class_name: FixedConcentration
+                    fixed_arguments:
+                        concentration: 0
+
+                Pi:
+                    class_name: FixedConcentration
+                    fixed_arguments:
+                        concentration: 0
+
+            end_conditions:
+                duration:
+                    class_name: Duration
+                    variable_arguments:
+                        duration: simulation_duration
+
+            measurements:
+                barrier_force:
+                    class_name: BarrierForce
+                    variable_arguments:
+                        divisions: divisions
+                        rest_position: rest_position
+                        spring_constant: spring_constant
+                        sample_period: sample_period
+
+                barrier_position:
+                    class_name: BarrierPosition
+                    variable_arguments:
+                        sample_period: sample_period
+
+                length:
+                    class_name: FilamentLength
+                    variable_arguments:
+                        sample_period: sample_period
+
+        analyses:
+            barrier_force:
+                class_name: StandardErrorMean
+                fixed_arguments:
+                    measurement_name: barrier_force
+
+            barrier_position:
+                class_name: StandardErrorMean
+                fixed_arguments:
+                    measurement_name: barrier_position
+
+            length:
+                class_name: StandardErrorMean
+                fixed_arguments:
+                    measurement_name: length
+
+        objectives:
+            executors:
+                stall_force:
+                    class_name: Snapshot
+                    variable_arguments:
+                        time: stall_time
+                    fixed_arguments:
+                        analysis_name: barrier_force
+                        average: True

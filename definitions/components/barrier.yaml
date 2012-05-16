@@ -1,14 +1,14 @@
 models:
     transitions:
         raise_barrier:
-            class_name: RaiseBarrier
+            class_name: RaiseBarrierConstantForce
             variable_arguments:
                 force: force
                 D: D
                 divisions: divisions
 
         lower_barrier:
-            class_name: LowerBarrier
+            class_name: LowerBarrierConstantForce
             variable_arguments:
                 force: force
                 D: D

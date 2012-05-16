@@ -1,0 +1,17 @@
+models:
+    transitions:
+        raise_barrier:
+            class_name: RaiseBarrierSpringForce
+            variable_arguments:
+                D: D
+                divisions: divisions
+                spring_constant: spring_constant
+                rest_position: rest_position
+
+        lower_barrier:
+            class_name: LowerBarrierSpringForce
+            variable_arguments:
+                D: D
+                divisions: divisions
+                spring_constant: spring_constant
+                rest_position: rest_position
