@@ -28,6 +28,7 @@ lib stochastic
     src/measurements/concentration.cpp
     src/measurements/filament_length.cpp
     src/measurements/state_count.cpp
+    src/measurements/tip_state_matches.cpp
     src/random_seed.cpp
     src/simulation_strategy.cpp
     src/barrier_position.cpp

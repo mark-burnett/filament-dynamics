@@ -56,6 +56,30 @@ experiments:
                     variable_arguments:
                         sample_period: sample_period
 
+                tip_atp:
+                    class_name: TipStateMatches
+                    fixed_arguments:
+                        state: ATP
+                    variable_arguments:
+                        sample_period: sample_period
+                        number_of_filaments: number_of_filaments
+
+                tip_adppi:
+                    class_name: TipStateMatches
+                    fixed_arguments:
+                        state: ADPPi
+                    variable_arguments:
+                        sample_period: sample_period
+                        number_of_filaments: number_of_filaments
+
+                tip_adp:
+                    class_name: TipStateMatches
+                    fixed_arguments:
+                        state: ADP
+                    variable_arguments:
+                        sample_period: sample_period
+                        number_of_filaments: number_of_filaments
+
         analyses:
             barrier_force:
                 class_name: StandardErrorMean
@@ -72,12 +96,36 @@ experiments:
                 fixed_arguments:
                     measurement_name: length
 
+            atp_state_fraction:
+                class_name: StateFraction
+                fixed_arguments:
+                    measurement_name: tip_atp
+                variable_arguments:
+                    sample_period: sample_period
+                    window_size: state_window_size
+
+            adppi_state_fraction:
+                class_name: StateFraction
+                fixed_arguments:
+                    measurement_name: tip_adppi
+                variable_arguments:
+                    sample_period: sample_period
+                    window_size: state_window_size
+
+            adp_state_fraction:
+                class_name: StateFraction
+                fixed_arguments:
+                    measurement_name: tip_adp
+                variable_arguments:
+                    sample_period: sample_period
+                    window_size: state_window_size
+
         objectives:
             executors:
                 stall_force:
                     class_name: Snapshot
                     variable_arguments:
-                        time: stall_time
+                        time: analysis_time
                     fixed_arguments:
                         analysis_name: barrier_force
                         average: True

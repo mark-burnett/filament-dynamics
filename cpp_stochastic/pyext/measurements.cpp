@@ -23,6 +23,7 @@
 #include "measurements/state_count.h"
 #include "measurements/barrier_position.h"
 #include "measurements/barrier_force.h"
+#include "measurements/tip_state_matches.h"
 
 using namespace boost::python;
 using namespace stochastic;
@@ -82,7 +83,7 @@ void measurements_level_definitions() {
             .def("perform",    &BarrierPosition::perform)
             .def("get_times",  &BarrierPosition::get_times)
             .def("get_means",  &BarrierPosition::get_means)
-            .def("get_errors",  &BarrierPosition::get_errors);
+            .def("get_errors", &BarrierPosition::get_errors);
 
     class_<BarrierForce, bases<Measurement>,
         boost::shared_ptr<BarrierForce>,
@@ -92,5 +93,15 @@ void measurements_level_definitions() {
             .def("perform",    &BarrierForce::perform)
             .def("get_times",  &BarrierForce::get_times)
             .def("get_means",  &BarrierForce::get_means)
-            .def("get_errors",  &BarrierForce::get_errors);
+            .def("get_errors", &BarrierForce::get_errors);
+
+    class_<TipStateMatches, bases<Measurement>,
+        boost::shared_ptr<TipStateMatches>,
+                boost::noncopyable>("TipStateMatches",
+                    init<const stochastic::State &, double, size_t>())
+            .def("initialize", &TipStateMatches::initialize)
+            .def("perform",    &TipStateMatches::perform)
+            .def("get_times",  &TipStateMatches::get_times)
+            .def("get_means",  &TipStateMatches::get_means)
+            .def("get_errors", &TipStateMatches::get_errors);
 }

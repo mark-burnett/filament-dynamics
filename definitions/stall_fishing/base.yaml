@@ -10,6 +10,10 @@ global_parameters:
     analysis_time: 1000
     sample_period: 0.1
 
+    # Number of samples for tip state fraction analysis
+    # NOTE: simulation_duration % state_window_size must be 0
+    state_window_size: 50
+
     simulation_duration: 5000
 
     seed_concentration: 30
