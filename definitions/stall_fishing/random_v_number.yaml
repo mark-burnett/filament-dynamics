@@ -1,0 +1,5 @@
+name: "Random Model - Vary N"
+
+import:
+    - 'stall_fishing/random_model.yaml'
+    - 'stall_fishing/vary_number.yaml'

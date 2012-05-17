@@ -1,0 +1,5 @@
+name: "Cooperative Model - Vary N"
+
+import:
+    - 'stall_fishing/cooperative_model.yaml'
+    - 'stall_fishing/vary_number.yaml'

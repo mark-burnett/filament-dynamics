@@ -1,0 +1,5 @@
+name: "Ratchet Model - Vary N"
+
+import:
+    - 'stall_fishing/ratchet_model.yaml'
+    - 'stall_fishing/vary_number.yaml'

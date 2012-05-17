@@ -1,0 +1,5 @@
+name: "Tip Model - Vary N"
+
+import:
+    - 'stall_fishing/tip_model.yaml'
+    - 'stall_fishing/vary_number.yaml'

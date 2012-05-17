@@ -1,0 +1,5 @@
+name: "Cooperative Tip Model - Vary N"
+
+import:
+    - 'stall_fishing/cooperative_tip_model.yaml'
+    - 'stall_fishing/vary_number.yaml'
