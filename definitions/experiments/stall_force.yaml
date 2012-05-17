@@ -96,6 +96,21 @@ experiments:
                 fixed_arguments:
                     measurement_name: length
 
+            sem_atp_sf:
+                class_name: StandardErrorMean
+                fixed_arguments:
+                    measurement_name: tip_atp
+
+            sem_adppi_sf:
+                class_name: StandardErrorMean
+                fixed_arguments:
+                    measurement_name: tip_adppi
+
+            sem_adp_sf:
+                class_name: StandardErrorMean
+                fixed_arguments:
+                    measurement_name: tip_adp
+
             atp_state_fraction:
                 class_name: StateFraction
                 fixed_arguments:

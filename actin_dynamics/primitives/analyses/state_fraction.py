@@ -33,12 +33,13 @@ class StateFraction(base_classes.Analysis):
         m_times = numpy.array(measurement.get_times())
         m_means = numpy.array(measurement.get_means())
 
-        output_times = numpy.linspace(m_times[0], m_times[1],
+        output_times = numpy.linspace(m_times[0], m_times[-1],
                 self.sample_period * self.window_size)
 
 
-        num_rows = len(m_means) / self.window_size
-        reshaped = m_means.reshape(num_rows, self.window_size)
+        num_rows = int(len(m_means) / self.window_size)
+        reshaped = m_means[:num_rows * self.window_size].reshape(num_rows,
+                self.window_size)
         output_means = map(numpy.mean, reshaped)
 
         output_errors = numpy.zeros(len(output_times))
