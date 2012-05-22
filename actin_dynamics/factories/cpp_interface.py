@@ -64,8 +64,10 @@ _measurements_lookup = {
             (float, 'sample_period', None)],
         'TipStateMatches': [
             (str, 'state', None),
-            (float, 'sample_period', None),
-            (int, 'number_of_filaments', None)],
+            (float, 'sample_period', None)],
+        'LongestTipStateMatches': [
+            (str, 'state', None),
+            (float, 'sample_period', None)],
         'StateCount': [
             (str, 'state', None),
             (float, 'sample_period', None)] }

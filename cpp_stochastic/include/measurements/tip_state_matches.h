@@ -27,10 +27,8 @@ namespace measurements {
 
 class TipStateMatches : public Measurement {
     public:
-        TipStateMatches(const State &state, double sample_period,
-                size_t number_of_filaments) :
-            Measurement(sample_period), _state(state),
-            _number_filaments(number_of_filaments) {}
+        TipStateMatches(const State &state, double sample_period) :
+            Measurement(sample_period), _state(state) {}
 
         void initialize(const filaments::container_t &filaments,
                 const concentrations::container_t &concentrations);
@@ -43,8 +41,28 @@ class TipStateMatches : public Measurement {
 
     private:
         const State _state; 
-        const size_t _number_filaments;
         std::vector<double> _fractions;
+        void _record_once(const filaments::container_t &filaments);
+};
+
+class LongestTipStateMatches : public Measurement {
+    public:
+        LongestTipStateMatches(const State &state, double sample_period) :
+            Measurement(sample_period), _state(state) {}
+
+        void initialize(const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations);
+        void perform(double time, const filaments::container_t &filaments,
+                const concentrations::container_t &concentrations);
+
+        std::vector<double> get_times() const;
+        std::vector<double> get_means() const;
+        std::vector<double> get_errors(size_t number_of_filaments) const;
+
+    private:
+        const State _state; 
+        std::vector<double> _fractions;
+        void _record_once(const filaments::container_t &filaments);
 };
 
 } // namespace measurements

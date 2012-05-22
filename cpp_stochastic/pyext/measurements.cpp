@@ -98,10 +98,20 @@ void measurements_level_definitions() {
     class_<TipStateMatches, bases<Measurement>,
         boost::shared_ptr<TipStateMatches>,
                 boost::noncopyable>("TipStateMatches",
-                    init<const stochastic::State &, double, size_t>())
+                    init<const stochastic::State &, double>())
             .def("initialize", &TipStateMatches::initialize)
             .def("perform",    &TipStateMatches::perform)
             .def("get_times",  &TipStateMatches::get_times)
             .def("get_means",  &TipStateMatches::get_means)
             .def("get_errors", &TipStateMatches::get_errors);
+
+    class_<LongestTipStateMatches, bases<Measurement>,
+        boost::shared_ptr<LongestTipStateMatches>,
+                boost::noncopyable>("LongestTipStateMatches",
+                    init<const stochastic::State &, double>())
+            .def("initialize", &LongestTipStateMatches::initialize)
+            .def("perform",    &LongestTipStateMatches::perform)
+            .def("get_times",  &LongestTipStateMatches::get_times)
+            .def("get_means",  &LongestTipStateMatches::get_means)
+            .def("get_errors", &LongestTipStateMatches::get_errors);
 }
