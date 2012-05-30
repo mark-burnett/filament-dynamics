@@ -35,6 +35,7 @@ _default_color_scheme = {
         'worker':     {'foreground': colors.PURPLE},
         'controller': {'foreground': colors.YELLOW, 'bold': True},
         'test':       {'foreground': colors.BLUE, 'bold': True},
+        'hostname':   {'foreground': colors.WHITE},
 
         # Logging levels
         'DEBUG':     {'foreground': colors.GREY},
@@ -85,11 +86,11 @@ class LogDisplayer(object):
         else:
             log_level = record.levelname
 
-        print '%s %s\tProcess type: %s, Process id: %s' % (
+        print '%s %s - Host name: %s, Process id: %s' % (
                 self.wrap(log_level, log_level),
                 self.wrap(record.time, 'time'),
-                self.wrap(record.process.type,
-                          record.process.type),
+                self.wrap(record.process.hostname.split('.')[0],
+                    record.process.type),
                 self.wrap(record.process.id,
                           record.process.type))
         # Directory
