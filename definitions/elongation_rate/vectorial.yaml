@@ -1,6 +1,6 @@
-name: 'Polymerization Velocity, vectorial'
+name: 'Elongation Rate, vectorial'
 
 import:
-    - 'poly_velocity/base.yaml'
+    - 'elongation_rate/base.yaml'
     - 'random_vectorial_model.yaml'
     - 'fit_rates/vectorial.yaml'

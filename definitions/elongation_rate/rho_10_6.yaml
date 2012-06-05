@@ -1,6 +1,6 @@
-name: 'Polymerization Velocity, rho_d = 1000000'
+name: 'Elongation Rate, rho = 10^6'
 
 import:
-    - 'poly_velocity/base.yaml'
+    - 'elongation_rate/base.yaml'
     - 'random_cooperative_model.yaml'
     - 'fit_rates/rho_1000000.yaml'

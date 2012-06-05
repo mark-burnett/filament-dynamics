@@ -1,0 +1,58 @@
+experiments:
+    elongation_rate:
+        simulation:
+            filaments:
+                filament_factory:
+                    class_name: DefaultFilament
+                    variable_arguments:
+                        seed_concentration: seed_concentration
+                        filament_tip_concentration: filament_tip_concentration
+                    fixed_arguments:
+                        state: ADP
+
+            concentrations:
+                ATP:
+                    class_name: FixedConcentration
+                    variable_arguments:
+                        concentration: actin_concentration
+
+                ADPPi:
+                    class_name: FixedConcentration
+                    fixed_arguments:
+                        concentration: 0
+
+                ADP:
+                    class_name: FixedConcentration
+                    fixed_arguments:
+                        concentration: 0
+
+                Pi:
+                    class_name: FixedConcentration
+                    fixed_arguments:
+                        concentration: 0
+
+            end_conditions:
+                duration:
+                    class_name: Duration
+                    variable_arguments:
+                        duration: simulation_duration
+
+            measurements:
+                length:
+                    class_name: Length
+                    variable_arguments:
+                        sample_period: sample_period
+
+        analyses:
+            length:
+                class_name: StandardErrorMean
+                fixed_arguments:
+                    measurement_name: length
+
+        objectives:
+            executors:
+                elongation_rate:
+                    class_name: ElongationRate
+                    variable_arguments:
+                        sample_period: sample_period
+                        start_time: analysis_start_time

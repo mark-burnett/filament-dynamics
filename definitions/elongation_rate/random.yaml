@@ -1,0 +1,6 @@
+name: 'Elongation Rate, Random'
+
+import:
+    - 'elongation_rate/base.yaml'
+    - 'random_random_model.yaml'
+    - 'fit_rates/rho_1.yaml'

@@ -14,6 +14,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy
+import scipy
 
 from .base_classes import Objective as _Objective
 
@@ -35,10 +36,10 @@ class ElongationRate(_Objective):
         _Objective.__init__(self, label=label)
 
     def perform(self, run, target):
-        length = run.analyses['length']
-        velocity = measurements.derivative(length)
+        time, length, error = run.analyses['length']
         starting_index = int(self.start_time / self.sample_period)
-        target.value = numpy.mean(velocity[starting_index:])
+        m, b = scipy.polyfit(time[starting_index:], length[starting_index:], 1)
+        target.value = m
 
 class SquaredElongationRate(_Objective):
     def __init__(self, sample_period=None, label=None):

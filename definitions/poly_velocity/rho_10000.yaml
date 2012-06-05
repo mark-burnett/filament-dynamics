@@ -1,6 +1,0 @@
-name: 'Polymerization Velocity, rho_d = 10000'
-
-import:
-    - 'poly_velocity/base.yaml'
-    - 'random_cooperative_model.yaml'
-    - 'fit_rates/rho_10000.yaml'
