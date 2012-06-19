@@ -78,6 +78,11 @@ _transitions_lookup = {
             (str, 'old_state', None),
             (str, 'new_state', None),
             (float, 'rate', None)],
+        'BarbedEndAssociation': [
+            (str, 'associating_state', None),
+            (str, 'old_state', None),
+            (str, 'new_state', None),
+            (float, 'rate', None)],
         'CooperativeHydrolysis': [
             (str, 'pointed_neighbor', None),
             (str, 'old_state', None),

@@ -56,6 +56,34 @@ class Association : public Transition {
         std::vector<size_t> _filament_counts;
 };
 
+class BarbedEndAssociation : public Transition {
+    public:
+        BarbedEndAssociation(
+                const State &associating_state, const State &old_state,
+                const State &new_state, double rate):
+            _associating_state(associating_state), _new_state(new_state),
+            _old_state(old_state), _rate(rate) {}
+
+        double initial_R(double time,
+                    const filaments::container_t &filaments,
+                    const concentrations::container_t &concentrations);
+
+        double R(double time,
+                    const filaments::container_t &filaments,
+                    const concentrations::container_t &concentrations,
+                    size_t previous_filament_index);
+
+        size_t perform(double time, double r,
+                    filaments::container_t &filaments,
+                    concentrations::container_t &concentrations);
+
+    private:
+        const State _associating_state;
+        const State _new_state;
+        const State _old_state;
+        const double _rate;
+};
+
 } // namespace transitions
 } // namespace stochastic
 

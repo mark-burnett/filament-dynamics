@@ -22,12 +22,17 @@ from . import base_classes
 from actin_dynamics.numerical import measurements
 
 class Snapshot(base_classes.Objective):
-    def __init__(self, time=None, analysis_name=None,
-            secondary_name=None, average=False, *args, **kwargs):
+    def __init__(self, time=None, analysis_name=None, secondary_name=None,
+            subtract_first=0, scale_by=1, divide_by=1,
+            average=False, *args, **kwargs):
         self.time = float(time)
         self.average = average
         self.analysis_name = analysis_name
         self.secondary_name = secondary_name
+
+        self.subtract_first = subtract_first
+        self.scale_by = scale_by
+        self.divide_by = divide_by
 
         base_classes.Objective.__init__(self, *args, **kwargs)
 
@@ -40,6 +45,11 @@ class Snapshot(base_classes.Objective):
 
         i = bisect.bisect_left(times, self.time)
         if not self.average:
-            target.value = values[i]
+            value = values[i]
         else:
-            target.value = numpy.mean(values[i:])
+            value = numpy.mean(values[i:])
+
+        value -= self.subtract_first
+        value *= self.scale_by
+        value /= self.divide_by
+        target.value = value

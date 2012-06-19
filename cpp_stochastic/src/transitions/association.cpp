@@ -69,5 +69,43 @@ size_t Association::perform(double time, double r,
     return 0;
 }
 
+double BarbedEndAssociation::initial_R(double time,
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations) {
+    size_t count = 0;
+    for (size_t i = 0; i < filaments.size(); ++i) {
+        if (_old_state == filaments[i]->barbed_state()) {
+            ++count;
+        }
+    }
+
+    return _rate * count
+        * concentrations.find(_associating_state)->second->value();
+}
+
+double BarbedEndAssociation::R(double time,
+        const filaments::container_t &filaments,
+        const concentrations::container_t &concentrations,
+        size_t previous_filament_index) {
+    return initial_R(time, filaments, concentrations);
+}
+
+size_t BarbedEndAssociation::perform(double time, double r,
+        filaments::container_t &filaments,
+        concentrations::container_t &concentrations) {
+    size_t count = r /
+        (_rate * concentrations[_associating_state]->value());
+    for (size_t i = 0; i < filaments.size(); ++i) {
+        if (i == count) {
+            filaments[i]->pop_barbed();
+            filaments[i]->append_barbed(_new_state);
+            concentrations[_associating_state]->remove_monomer();
+            return i;
+        }
+        --count;
+    }
+    return 0;
+}
+
 } // namespace transitions
 } // namespace stochastic

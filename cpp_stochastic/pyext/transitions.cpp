@@ -47,6 +47,14 @@ void transitions_level_definitions() {
             .def("R", &Association::R)
             .def("perform", &Association::perform);
 
+    class_<BarbedEndAssociation, bases<Transition>
+        >("BarbedEndAssociation", init<
+                const State&, const State&, const State &, double>())
+            .def("initial_R", &BarbedEndAssociation::initial_R)
+            .def("R", &BarbedEndAssociation::R)
+            .def("perform", &BarbedEndAssociation::perform);
+
+
     class_<Monomer, bases<Transition>
         >("Monomer", init<
                 const State&, const State&, double>())
