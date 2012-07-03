@@ -96,13 +96,15 @@ size_t BarbedEndAssociation::perform(double time, double r,
     size_t count = r /
         (_rate * concentrations[_associating_state]->value());
     for (size_t i = 0; i < filaments.size(); ++i) {
-        if (i == count) {
-            filaments[i]->pop_barbed();
-            filaments[i]->append_barbed(_new_state);
-            concentrations[_associating_state]->remove_monomer();
-            return i;
+        if (_old_state == filaments[i]->barbed_state()) {
+            if (i == count) {
+                filaments[i]->pop_barbed();
+                filaments[i]->append_barbed(_new_state);
+                concentrations[_associating_state]->remove_monomer();
+                return i;
+            }
+            --count;
         }
-        --count;
     }
     return 0;
 }
